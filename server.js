@@ -3,9 +3,9 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 require('dotenv').config();
-const errorHandler = require("./middleware/error-handler");
-const errorMessage = require("./middleware/error-message");
-const accessControls = require("./middleware/access-controls");
+const errorHandler = require("./node/middleware/error-handler");
+const errorMessage = require("./node/middleware/error-message");
+const accessControls = require("./node/middleware/access-controls");
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser')
@@ -19,8 +19,8 @@ app.use(bodyParser.json()); // to support JSON-encoded bodies
 
 // Requiring Routes
 
-const UsersRoutes = require('./routes/users.routes');
-const ProductsRoutes = require('./routes/products.routes');
+const UsersRoutes = require('./node/routes/users.routes');
+const ProductsRoutes = require('./node/routes/products.routes');
 
 // connection to mongoose
 const mongoCon = process.env.mongoCon;
@@ -41,8 +41,8 @@ const connect = async function () {
 
 
 const fs = require('fs');
-fs.readdirSync(__dirname + "/models").forEach(function (file) {
-  require(__dirname + "/models/" + file);
+fs.readdirSync(__dirname + "/node/models").forEach(function (file) {
+  require(__dirname + "/node/models/" + file);
 });
 
 // in case you want to serve images 
