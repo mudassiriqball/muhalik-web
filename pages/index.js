@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import Layout from './layouts/Layout';
+import Layout from './components/customer/layout/CustomerLayout';
 
 const Index = () => {
     return (
         <div>
             <Layout>
-                <Link href='./admin/dashboard'>Admin dashboard</Link>
+                <Link href='./admin'>Admin dashboard</Link>
             </Layout>
         </div>
     );
