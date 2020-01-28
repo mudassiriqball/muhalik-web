@@ -23675,8 +23675,7 @@ var styles = {
   },
   brand: {
     color: "".concat(_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color),
-    fontSize: 'larger',
-    fontWeight: 'bolder'
+    fontSize: 'medium'
   },
   form: {
     border: "2px solid ".concat(_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color),
@@ -23692,19 +23691,19 @@ var Toolbar = function Toolbar() {
   return __jsx("div", {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 22
+      lineNumber: 21
     },
     __self: this
   }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Card"], {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 23
+      lineNumber: 22
     },
     __self: this
   }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Card"].Body, {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 24
+      lineNumber: 23
     },
     __self: this
   }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Navbar"], {
@@ -23712,7 +23711,7 @@ var Toolbar = function Toolbar() {
     expand: "lg",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 25
+      lineNumber: 24
     },
     __self: this
   }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Navbar"].Brand, {
@@ -23720,36 +23719,28 @@ var Toolbar = function Toolbar() {
     style: styles.brand,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 27
+      lineNumber: 26
     },
     __self: this
-  }, "Muhalik"), __jsx("link", {
-    rel: "shortcut icon",
-    href: "/static/favicon.png",
-    __source: {
-      fileName: _jsxFileName,
-      lineNumber: 28
-    },
-    __self: this
-  }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Navbar"].Toggle, {
+  }, "Muhalik"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Navbar"].Toggle, {
     "aria-controls": "responsive-navbar-nav",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 29
+      lineNumber: 27
     },
     __self: this
   }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Navbar"].Collapse, {
     id: "responsive-navbar-nav",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 30
+      lineNumber: 28
     },
     __self: this
   }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Nav"], {
     className: "mr-auto",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 32
+      lineNumber: 29
     },
     __self: this
   }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"], {
@@ -23758,14 +23749,14 @@ var Toolbar = function Toolbar() {
     className: "mr-auto",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 34
+      lineNumber: 30
     },
     __self: this
   }, __jsx("label", {
     className: "mr-auto",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 35
+      lineNumber: 31
     },
     __self: this
   }, "Fuck"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["FormControl"], (_jsx = {
@@ -23777,7 +23768,7 @@ var Toolbar = function Toolbar() {
     }
   }, Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(_jsx, "className", "mr-auto"), Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(_jsx, "__source", {
     fileName: _jsxFileName,
-    lineNumber: 36
+    lineNumber: 32
   }), Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(_jsx, "__self", this), _jsx)), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Button"], {
     style: {
       background: 'none',
@@ -23785,35 +23776,35 @@ var Toolbar = function Toolbar() {
     },
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 37
+      lineNumber: 33
     },
     __self: this
   }, "Search")), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Nav"], {
     className: true,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 40
+      lineNumber: 36
     },
     __self: this
   }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Nav"].Link, {
     href: "#home",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 41
+      lineNumber: 37
     },
     __self: this
   }, "Login/Signup"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Nav"].Link, {
     href: "#features",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 42
+      lineNumber: 38
     },
     __self: this
   }, "Orders"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Nav"].Link, {
     href: "#pricing",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 43
+      lineNumber: 39
     },
     __self: this
   }, "Cart")))))));
@@ -23893,7 +23884,7 @@ var GlobalStyleSheet = {
 
 /***/ }),
 
-/***/ 3:
+/***/ 1:
 /*!*****************************************************************************************************************************************!*\
   !*** multi next-client-pages-loader?page=%2F&absolutePagePath=C%3A%5CUsers%5CMudassirR%5CDesktop%5CFYP%5Cmuhalikweb%5Cpages%5Cindex.js ***!
   \*****************************************************************************************************************************************/
@@ -23916,5 +23907,5 @@ module.exports = dll_ef0ff7c60362f24a921f;
 
 /***/ })
 
-},[[3,"static/runtime/webpack.js"]]]);
+},[[1,"static/runtime/webpack.js"]]]);
 //# sourceMappingURL=index.js.map

@@ -1,6 +1,6 @@
 import GlobalStyleSheet from '../../../../styleSheet';
 
-const Footer = () => (
+const AdminFooter = () => (
     <div>
         <div className="footer">
             <p className="fooeter_text text-center">
@@ -29,4 +29,4 @@ const Footer = () => (
     </div>
 )
 
-export default Footer;
+export default AdminFooter;
