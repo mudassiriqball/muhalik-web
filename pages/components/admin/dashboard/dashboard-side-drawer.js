@@ -18,33 +18,6 @@ export const styles = {
     background: {
         background: `${GlobalStyleSheet.primry_color}`,
     },
-
-    // Styles for the dashboard.js
-    search_bar: {
-        width: '75%',
-        flex: '7',
-        border: `2px solid ${GlobalStyleSheet.primry_color}`,
-        margin: '2px 2.5px 1px 1.2px',
-    },
-    search_btn: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        flex: '1',
-        border: 'none',
-        color: 'white',
-        width: '20%',
-        float: 'right',
-        borderRadius: 'none',
-    },
-    side_drawer_search_bars: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        margin: '0px 1px',
-        color: 'white',
-        width: '17%',
-        maxHeight: '40px',
-        maxWidth: '40px',
-        border: 'none',
-        borderRadius: 'none',
-    },
     border: {
         border: '1px solid white',
         background: `${GlobalStyleSheet.primry_color}`,
@@ -57,10 +30,15 @@ export const styles = {
     fontawesome: {
         color: `${GlobalStyleSheet.primary_text_color}`,
         marginRight: '20px',
-        width: '10%',
-        maxHeight: '22px',
-        maxWidth: '22px',
+        width: '15px',
+        height: '15px',
+        maxHeight: '15px',
+        maxWidth: '15px',
     },
+    span: {
+        fontSize: 'smaller',
+    },
+    
 }
 
 const DashboardSideDrawer = props => {
@@ -80,7 +58,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="one" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faPersonBooth} style={styles.fontawesome} />
-                                            Vendors
+                                            <spna style={styles.span}>Vendors</spna>
                                                 </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -88,7 +66,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="two" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
-                                            Customers
+                                            <spna style={styles.span}>Customers</spna>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -96,7 +74,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="three" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faProductHunt} style={styles.fontawesome} />
-                                            Products
+                                            <spna style={styles.span}>Products</spna>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -104,7 +82,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="four" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faListAlt} style={styles.fontawesome} />
-                                            Categories
+                                            <spna style={styles.span}>Categories</spna>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -112,7 +90,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="five" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
-                                            Inventory
+                                            <spna style={styles.span}>Inventory</spna>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -120,7 +98,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="six" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
-                                            Discounts
+                                            <spna style={styles.span}>Discounts</spna>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -128,7 +106,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="seven" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
-                                            Commision
+                                            <spna style={styles.span}>Commision</spna>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -136,7 +114,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="eight" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
-                                            Reports
+                                            <spna style={styles.span}>Reports</spna>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>

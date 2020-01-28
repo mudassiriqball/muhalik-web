@@ -25,8 +25,7 @@ const AdminToolbar = () => (
       <Navbar.Brand href="#home" className="mr-auto" style={styles.brand}>Admin Dashboard</Navbar.Brand>
 
       <Dropdown as={ButtonGroup} alignRight>
-        <Button variant="light">Settings</Button>
-        <Dropdown.Toggle split variant="light" id="dropdown-split" />
+        <Dropdown.Toggle size="sm" split variant="dark" id="dropdown-split" style={{background: 'none', border: 'none'}} />
         <Dropdown.Menu>
           <Dropdown.Item href="#/action-1">Acount</Dropdown.Item>
           <Dropdown.Item href="#/action-2">Feedback</Dropdown.Item>

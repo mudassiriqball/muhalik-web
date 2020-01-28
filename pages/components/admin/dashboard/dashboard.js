@@ -37,15 +37,19 @@ export const styles = {
         float: 'right',
         borderRadius: 'none',
     },
-    side_drawer_search_bars: {
+    side_drawer_search_btn: {
         background: `${GlobalStyleSheet.primry_color}`,
-        margin: '0px 1px',
+        margin: '0px 2px',
         color: 'white',
-        width: '17%',
+        width: '38px',
+        height: '38px',
         maxHeight: '40px',
         maxWidth: '40px',
         border: 'none',
-        borderRadius: 'none',
+    },
+    side_drawer_search_bar: {
+        margin: '2px 0px',
+        flex: '1',
     },
     border: {
         border: '1px solid white',
@@ -59,9 +63,10 @@ export const styles = {
     fontawesome: {
         color: `${GlobalStyleSheet.primary_text_color}`,
         marginRight: '20px',
-        width: '10%',
-        maxHeight: '22px',
-        maxWidth: '22px',
+        width: '15px',
+        height: '15px',
+        maxHeight: '15px',
+        maxWidth: '15px',
     },
 }
 
@@ -71,11 +76,11 @@ const Dashboard = props => (
             {/* Toogle Button Components */}
             <div className="side_tab_toogle_btn" style={{ width: '100%' }}>
                 <Form inline>
-                    <Button style={styles.side_drawer_search_bars} onClick={props.drawerClickHandler}>
+                    <Button style={styles.side_drawer_search_btn} onClick={props.drawerClickHandler}>
                         <FontAwesomeIcon icon={faBars} />
                     </Button>
-                    <FormControl type="text" placeholder="Search" className="mr-sm-6" style={{ flex: '1', margin: '0px 5px' }}></FormControl>
-                    <Button style={styles.side_drawer_search_bars}>
+                    <FormControl type="text" placeholder="Search" className="mr-sm-6" style={styles.side_drawer_search_bar}></FormControl>
+                    <Button style={styles.side_drawer_search_btn}>
                         <FontAwesomeIcon icon={faSearch} />
                     </Button>
                 </Form>
@@ -98,7 +103,7 @@ const Dashboard = props => (
                             <Nav.Item>
                                 <div className="hover" style={styles.border}>
                                     <Nav.Link eventKey="one" style={styles.link_color}>
-                                        <FontAwesomeIcon icon={faPersonBooth} style={styles.fontawesome} />
+                                        <FontAwesomeIcon size="xs" icon={faPersonBooth} style={styles.fontawesome} />
                                         Vendors
                                                 </Nav.Link>
                                 </div>
