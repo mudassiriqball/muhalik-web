@@ -2308,39 +2308,54 @@ var _jsxFileName = "C:\\Users\\MudassirR\\Desktop\\FYP\\muhalikweb\\pages\\compo
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
+const styles = {
+  background: {
+    background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`
+  },
+  brand: {
+    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primary_text_color}`,
+    fontSize: 'medium'
+  },
+  form: {
+    border: `2px solid ${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
+    width: '60%',
+    borderRadius: '25px',
+    padding: '0px 5px'
+  }
+};
 
 const AdminToolbar = () => __jsx("div", {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 5
+    lineNumber: 22
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"], {
   collapseOnSelect: true,
   expand: "lg",
-  style: {
-    background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`
-  },
+  style: styles.background,
   variant: "dark",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 6
+    lineNumber: 23
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Brand, {
   href: "/",
   className: "mr-auto",
+  style: styles.brand,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 7
+    lineNumber: 24
   },
   __self: undefined
 }, "Muhalik"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Brand, {
   href: "#home",
   className: "mr-auto",
+  style: styles.brand,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 8
+    lineNumber: 25
   },
   __self: undefined
 }, "Admin Dashboard"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
@@ -2348,14 +2363,14 @@ const AdminToolbar = () => __jsx("div", {
   alignRight: true,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 10
+    lineNumber: 27
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
   variant: "light",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 11
+    lineNumber: 28
   },
   __self: undefined
 }, "Settings"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Dropdown"].Toggle, {
@@ -2364,47 +2379,47 @@ const AdminToolbar = () => __jsx("div", {
   id: "dropdown-split",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 12
+    lineNumber: 29
   },
   __self: undefined
 }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Dropdown"].Menu, {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 13
+    lineNumber: 30
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Dropdown"].Item, {
   href: "#/action-1",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 14
+    lineNumber: 31
   },
   __self: undefined
 }, "Acount"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Dropdown"].Item, {
   href: "#/action-2",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 15
+    lineNumber: 32
   },
   __self: undefined
 }, "Feedback"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Dropdown"].Item, {
   href: "#/action-3",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 16
+    lineNumber: 33
   },
   __self: undefined
 }, "Help?"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Dropdown"].Divider, {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 17
+    lineNumber: 34
   },
   __self: undefined
 }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Dropdown"].Item, {
   href: "#/action-3",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 18
+    lineNumber: 35
   },
   __self: undefined
 }, "Signout")))));

@@ -5592,9 +5592,8 @@ const styles = {
     background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`
   },
   brand: {
-    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}` // fontSize: 'medium',
-    // fontWeight: 'bold'
-
+    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
+    fontSize: '5px'
   },
   form: {
     border: `2px solid ${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
@@ -5607,19 +5606,19 @@ const styles = {
 const Toolbar = () => __jsx("div", {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 22
+    lineNumber: 21
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Card"], {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 23
+    lineNumber: 22
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Card"].Body, {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 24
+    lineNumber: 23
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"], {
@@ -5627,7 +5626,7 @@ const Toolbar = () => __jsx("div", {
   expand: "lg",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 25
+    lineNumber: 24
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Brand, {
@@ -5635,36 +5634,28 @@ const Toolbar = () => __jsx("div", {
   style: styles.brand,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 27
+    lineNumber: 26
   },
   __self: undefined
-}, "Muhalik"), __jsx("link", {
-  rel: "shortcut icon",
-  href: "/static/favicon.png",
-  __source: {
-    fileName: _jsxFileName,
-    lineNumber: 28
-  },
-  __self: undefined
-}), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Toggle, {
+}, "Muhalik"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Toggle, {
   "aria-controls": "responsive-navbar-nav",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 29
+    lineNumber: 27
   },
   __self: undefined
 }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Collapse, {
   id: "responsive-navbar-nav",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 30
+    lineNumber: 28
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"], {
   className: "mr-auto",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 32
+    lineNumber: 29
   },
   __self: undefined
 }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Form"], {
@@ -5673,14 +5664,14 @@ const Toolbar = () => __jsx("div", {
   className: "mr-auto",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 34
+    lineNumber: 30
   },
   __self: undefined
 }, __jsx("label", {
   className: "mr-auto",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 35
+    lineNumber: 31
   },
   __self: undefined
 }, "Fuck"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["FormControl"], {
@@ -5693,7 +5684,7 @@ const Toolbar = () => __jsx("div", {
   className: "mr-auto",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 36
+    lineNumber: 32
   },
   __self: undefined
 }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
@@ -5703,35 +5694,35 @@ const Toolbar = () => __jsx("div", {
   },
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 37
+    lineNumber: 33
   },
   __self: undefined
 }, "Search")), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"], {
   className: true,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 40
+    lineNumber: 36
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"].Link, {
   href: "#home",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 41
+    lineNumber: 37
   },
   __self: undefined
 }, "Login/Signup"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"].Link, {
   href: "#features",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 42
+    lineNumber: 38
   },
   __self: undefined
 }, "Orders"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"].Link, {
   href: "#pricing",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 43
+    lineNumber: 39
   },
   __self: undefined
 }, "Cart")))))));

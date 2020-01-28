@@ -1,11 +1,28 @@
 import { Navbar, Dropdown, ButtonGroup, Button } from 'react-bootstrap';
 import GlobalStyleSheet from '../../../../styleSheet';
 
+const styles = {
+  background: {
+      background: `${GlobalStyleSheet.primry_color}`,
+  },
+  brand: {
+      color: `${GlobalStyleSheet.primary_text_color}`,
+      fontSize: 'medium',
+
+  },
+  form: {
+      border: `2px solid ${GlobalStyleSheet.primry_color}`,
+      width: '60%',
+      borderRadius: '25px',
+      padding: '0px 5px'
+  }
+}
+
 const AdminToolbar = () => (
   <div>
-    <Navbar collapseOnSelect expand="lg" style={{ background: `${GlobalStyleSheet.primry_color}` }} variant="dark">
-      <Navbar.Brand href="/" className="mr-auto">Muhalik</Navbar.Brand>
-      <Navbar.Brand href="#home" className="mr-auto">Admin Dashboard</Navbar.Brand>
+    <Navbar collapseOnSelect expand="lg" style={styles.background} variant="dark">
+      <Navbar.Brand href="/" className="mr-auto" style={styles.brand}>Muhalik</Navbar.Brand>
+      <Navbar.Brand href="#home" className="mr-auto" style={styles.brand}>Admin Dashboard</Navbar.Brand>
 
       <Dropdown as={ButtonGroup} alignRight>
         <Button variant="light">Settings</Button>

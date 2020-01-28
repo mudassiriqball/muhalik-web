@@ -7,8 +7,7 @@ const styles = {
     },
     brand: {
         color: `${GlobalStyleSheet.primry_color}`,
-        // fontSize: 'medium',
-        // fontWeight: 'bold'
+        fontSize: '5px'
     },
     form: {
         border: `2px solid ${GlobalStyleSheet.primry_color}`,
@@ -25,12 +24,9 @@ const Toolbar = () => (
                 <Navbar collapseOnSelect expand="lg">
 
                     <Navbar.Brand href="#home" style={styles.brand}>Muhalik</Navbar.Brand>
-                    <link rel="shortcut icon" href="/static/favicon.png" />
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
-
                         <Nav className="mr-auto"></Nav>
-
                         <Form inline style={styles.form} className="mr-auto">
                             <label className="mr-auto">Fuck</label>
                             <FormControl type="text" placeholder="Search" className="mr-sm-2" style={{ width: '80%' }} className="mr-auto"></FormControl>
