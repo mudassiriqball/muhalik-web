@@ -6,6 +6,10 @@ const Index = () => {
         <div>
             <Layout>
                 <Link href='./admin'>Admin dashboard</Link>
+                <br />
+                <Link href='./login'>Login</Link>
+                <br />
+                <Link href='./signup'>Signup</Link>
             </Layout>
         </div>
     );
