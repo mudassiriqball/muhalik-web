@@ -7,7 +7,7 @@ const styles = {
     },
     brand: {
         color: `${GlobalStyleSheet.primry_color}`,
-        fontSize: '5px'
+        fontSize: 'medium'
     },
     form: {
         border: `2px solid ${GlobalStyleSheet.primry_color}`,

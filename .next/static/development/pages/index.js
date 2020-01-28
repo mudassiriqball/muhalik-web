@@ -23675,7 +23675,7 @@ var styles = {
   },
   brand: {
     color: "".concat(_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color),
-    fontSize: '5px'
+    fontSize: 'medium'
   },
   form: {
     border: "2px solid ".concat(_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color),

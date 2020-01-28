@@ -5593,7 +5593,7 @@ const styles = {
   },
   brand: {
     color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
-    fontSize: '5px'
+    fontSize: 'medium'
   },
   form: {
     border: `2px solid ${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
