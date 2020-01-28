@@ -1,10 +1,9 @@
-import { Navbar, Nav, NavDropdown, Dropdown, ButtonGroup, Button } from 'react-bootstrap';
-import ToolbarStyleSheet from './toolbar-style-sheet';
-
+import { Navbar, Dropdown, ButtonGroup, Button } from 'react-bootstrap';
+import GlobalStyleSheet from '../../../../styleSheet';
 
 const AdminToolbar = () => (
   <div>
-    <Navbar collapseOnSelect expand="lg" style={ToolbarStyleSheet.background} variant="dark">
+    <Navbar collapseOnSelect expand="lg" style={{ background: `${GlobalStyleSheet.primry_color}` }} variant="dark">
       <Navbar.Brand href="/" className="mr-auto">Muhalik</Navbar.Brand>
       <Navbar.Brand href="#home" className="mr-auto">Admin Dashboard</Navbar.Brand>
 
@@ -21,24 +20,6 @@ const AdminToolbar = () => (
 
       </Dropdown>
     </Navbar>
-    <style jsx>
-      {`
-        .hover:hover {
-          margin-left: 10px;
-          margin-right: -10px;
-          margin-bottom: 5px;
-          margin-top: -5px;
-          background: red;
-        }        
-        .spliter_hover:hover {
-          margin-left: 10px;
-          margin-right: -10px;
-          margin-bottom: 13px;
-          margin-top: -5px;
-          background: red;
-        }
-     `}
-    </style>
   </div>
 );
 

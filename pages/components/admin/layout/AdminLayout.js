@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import AdminToolbar from '../toolbar/admin-toolbar';
-import Footer from '../../customer/footer/footer';
+import AdminFooter from '../footer/admin-footer';
 const AdminLayout = (props) => (
     <div>
         <Head>
@@ -16,7 +16,7 @@ const AdminLayout = (props) => (
         </Head>
         <AdminToolbar />
         {props.children}
-        <Footer />
+        <AdminFooter />
     </div>
 );
 

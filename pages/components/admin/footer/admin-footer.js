@@ -1,14 +1,31 @@
-import FooterStyleSheet from './footer-style-sheet';
+import GlobalStyleSheet from '../../../../styleSheet';
 
 const Footer = () => (
     <div>
-        <div style={FooterStyleSheet.footer}>
-            <p className="text-center" style={FooterStyleSheet.fooeter_text}>
+        <div className="footer">
+            <p className="fooeter_text text-center">
                 Copyright@ 2020
-                    <span style={{ fontSize: 'medium', fontWeight: 'bold', }}> Muhalik </span>
+                    <span> Muhalik </span>
                 - Online Shopping Website
             </p>
         </div>
+        <style jsx>{`
+            .footer {
+                background: ${GlobalStyleSheet.primry_color};
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                right: 0;
+            }
+            .fooeter_text {
+                margin: 10px;
+                font-size: smaller;
+                color: ${GlobalStyleSheet.primary_text_color};
+            }
+            span {
+                font-weight: bold;
+            }
+        `}</style>
     </div>
 )
 

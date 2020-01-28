@@ -88,7 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -5408,19 +5408,25 @@ module.exports = __webpack_require__(/*! ./dist/client/link */ "./node_modules/n
 
 /***/ }),
 
-/***/ "./pages/components/customer/footer/footer-style-sheet.js":
-/*!****************************************************************!*\
-  !*** ./pages/components/customer/footer/footer-style-sheet.js ***!
-  \****************************************************************/
-/*! exports provided: default */
+/***/ "./pages/components/customer/footer/footer.js":
+/*!****************************************************!*\
+  !*** ./pages/components/customer/footer/footer.js ***!
+  \****************************************************/
+/*! exports provided: FooterStyleSheet, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _global_styles_styleSheet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../global-styles/styleSheet */ "./pages/global-styles/styleSheet.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FooterStyleSheet", function() { return FooterStyleSheet; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _styleSheet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../styleSheet */ "./styleSheet.js");
+var _jsxFileName = "C:\\Users\\MudassirR\\Desktop\\FYP\\muhalikweb\\pages\\components\\customer\\footer\\footer.js";
 
-const primry_color = _global_styles_styleSheet__WEBPACK_IMPORTED_MODULE_0__["default"].primry_color;
-const primary_text_color = _global_styles_styleSheet__WEBPACK_IMPORTED_MODULE_0__["default"].primary_text_color;
+var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
+
+const primry_color = _styleSheet__WEBPACK_IMPORTED_MODULE_1__["default"].primry_color;
+const primary_text_color = _styleSheet__WEBPACK_IMPORTED_MODULE_1__["default"].primary_text_color;
 const FooterStyleSheet = {
   footer: {
     background: `${primry_color}`,
@@ -5435,46 +5441,26 @@ const FooterStyleSheet = {
     color: `${primary_text_color}`
   }
 };
-/* harmony default export */ __webpack_exports__["default"] = (FooterStyleSheet);
-
-/***/ }),
-
-/***/ "./pages/components/customer/footer/footer.js":
-/*!****************************************************!*\
-  !*** ./pages/components/customer/footer/footer.js ***!
-  \****************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _footer_style_sheet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./footer-style-sheet */ "./pages/components/customer/footer/footer-style-sheet.js");
-var _jsxFileName = "C:\\Users\\MudassirR\\Desktop\\FYP\\muhalikweb\\pages\\components\\customer\\footer\\footer.js";
-
-var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
-
 
 const Footer = () => __jsx("div", {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 4
+    lineNumber: 21
   },
   __self: undefined
 }, __jsx("div", {
-  style: _footer_style_sheet__WEBPACK_IMPORTED_MODULE_1__["default"].footer,
+  style: FooterStyleSheet.footer,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 5
+    lineNumber: 22
   },
   __self: undefined
 }, __jsx("p", {
   className: "text-center",
-  style: _footer_style_sheet__WEBPACK_IMPORTED_MODULE_1__["default"].fooeter_text,
+  style: FooterStyleSheet.fooeter_text,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 6
+    lineNumber: 23
   },
   __self: undefined
 }, "Copyright@ 2020", __jsx("span", {
@@ -5484,7 +5470,7 @@ const Footer = () => __jsx("div", {
   },
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 8
+    lineNumber: 25
   },
   __self: undefined
 }, " Muhalik "), "- Online Shopping Website")));
@@ -5582,39 +5568,6 @@ const Layout = props => __jsx("div", {
 
 /***/ }),
 
-/***/ "./pages/components/customer/toolbar/toolbar-style-sheet.js":
-/*!******************************************************************!*\
-  !*** ./pages/components/customer/toolbar/toolbar-style-sheet.js ***!
-  \******************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _global_styles_styleSheet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../global-styles/styleSheet */ "./pages/global-styles/styleSheet.js");
-
-const primry_color = _global_styles_styleSheet__WEBPACK_IMPORTED_MODULE_0__["default"].primry_color;
-const primary_text_color = _global_styles_styleSheet__WEBPACK_IMPORTED_MODULE_0__["default"].primary_text_color;
-const ToolbarStyleSheet = {
-  background: {
-    background: `${primry_color}`
-  },
-  brand: {
-    color: `${primry_color}`,
-    fontSize: 'larger',
-    fontWeight: 'bolder'
-  },
-  form: {
-    border: `2px solid ${primry_color}`,
-    width: '60%',
-    borderRadius: '25px',
-    padding: '0px 5px'
-  }
-};
-/* harmony default export */ __webpack_exports__["default"] = (ToolbarStyleSheet);
-
-/***/ }),
-
 /***/ "./pages/components/customer/toolbar/toolbar.js":
 /*!******************************************************!*\
   !*** ./pages/components/customer/toolbar/toolbar.js ***!
@@ -5628,29 +5581,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap */ "react-bootstrap");
 /* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _toolbar_style_sheet__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./toolbar-style-sheet */ "./pages/components/customer/toolbar/toolbar-style-sheet.js");
+/* harmony import */ var _styleSheet__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../styleSheet */ "./styleSheet.js");
 var _jsxFileName = "C:\\Users\\MudassirR\\Desktop\\FYP\\muhalikweb\\pages\\components\\customer\\toolbar\\toolbar.js";
 
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
+const styles = {
+  background: {
+    background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`
+  },
+  brand: {
+    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
+    fontSize: 'larger',
+    fontWeight: 'bolder'
+  },
+  form: {
+    border: `2px solid ${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
+    width: '60%',
+    borderRadius: '25px',
+    padding: '0px 5px'
+  }
+};
 
 const Toolbar = () => __jsx("div", {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 5
+    lineNumber: 22
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Card"], {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 6
+    lineNumber: 23
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Card"].Body, {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 7
+    lineNumber: 24
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"], {
@@ -5658,52 +5627,60 @@ const Toolbar = () => __jsx("div", {
   expand: "lg",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 8
+    lineNumber: 25
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Brand, {
   href: "#home",
-  style: _toolbar_style_sheet__WEBPACK_IMPORTED_MODULE_2__["default"].brand,
+  style: styles.brand,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 9
+    lineNumber: 27
   },
   __self: undefined
-}, "Muhalik"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Toggle, {
+}, "Muhalik"), __jsx("link", {
+  rel: "shortcut icon",
+  href: "/static/favicon.png",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 28
+  },
+  __self: undefined
+}), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Toggle, {
   "aria-controls": "responsive-navbar-nav",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 10
+    lineNumber: 29
   },
   __self: undefined
 }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Collapse, {
   id: "responsive-navbar-nav",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 11
+    lineNumber: 30
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"], {
   className: "mr-auto",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 13
+    lineNumber: 32
   },
   __self: undefined
 }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Form"], {
   inline: true,
-  style: _toolbar_style_sheet__WEBPACK_IMPORTED_MODULE_2__["default"].form,
+  style: styles.form,
   className: "mr-auto",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 15
+    lineNumber: 34
   },
   __self: undefined
 }, __jsx("label", {
   className: "mr-auto",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 16
+    lineNumber: 35
   },
   __self: undefined
 }, "Fuck"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["FormControl"], {
@@ -5716,7 +5693,7 @@ const Toolbar = () => __jsx("div", {
   className: "mr-auto",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 17
+    lineNumber: 36
   },
   __self: undefined
 }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
@@ -5726,59 +5703,40 @@ const Toolbar = () => __jsx("div", {
   },
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 18
+    lineNumber: 37
   },
   __self: undefined
 }, "Search")), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"], {
   className: true,
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 21
+    lineNumber: 40
   },
   __self: undefined
 }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"].Link, {
   href: "#home",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 22
+    lineNumber: 41
   },
   __self: undefined
 }, "Login/Signup"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"].Link, {
   href: "#features",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 23
+    lineNumber: 42
   },
   __self: undefined
 }, "Orders"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"].Link, {
   href: "#pricing",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 24
+    lineNumber: 43
   },
   __self: undefined
 }, "Cart")))))));
 
 /* harmony default export */ __webpack_exports__["default"] = (Toolbar);
-
-/***/ }),
-
-/***/ "./pages/global-styles/styleSheet.js":
-/*!*******************************************!*\
-  !*** ./pages/global-styles/styleSheet.js ***!
-  \*******************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-const StyleSheet = {
-  // primry_color: '#563D7C',
-  // primry_color: '#563D7C',
-  primry_color: '#28A745',
-  primary_text_color: 'white'
-};
-/* harmony default export */ __webpack_exports__["default"] = (StyleSheet);
 
 /***/ }),
 
@@ -5829,7 +5787,30 @@ const Index = () => {
 
 /***/ }),
 
-/***/ 3:
+/***/ "./styleSheet.js":
+/*!***********************!*\
+  !*** ./styleSheet.js ***!
+  \***********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// export const GlobalStyleSheet = {
+//     // primry_color: '#563D7C',
+//     primry_color: '#28A745',
+//     primary_text_color: 'white',
+// }
+const GlobalStyleSheet = {
+  // primry_color: '#563D7C',
+  primry_color: '#28A745',
+  primary_text_color: 'white'
+};
+/* harmony default export */ __webpack_exports__["default"] = (GlobalStyleSheet);
+
+/***/ }),
+
+/***/ 5:
 /*!******************************!*\
   !*** multi ./pages/index.js ***!
   \******************************/

@@ -1,0 +1,1 @@
+{"code":"(window.webpackJsonp=window.webpackJsonp||[]).push([[34],{bEtG:function(n,o,t){\"use strict\";t.r(o);o.default={primry_color:\"#28A745\",primary_text_color:\"white\"}},pAaR:function(n,o,t){(window.__NEXT_P=window.__NEXT_P||[]).push([\"/components/styleSheet\",function(){return t(\"bEtG\")}])}},[[\"pAaR\",0]]]);"}

@@ -1,0 +1,1 @@
+{"code":"(window.webpackJsonp=window.webpackJsonp||[]).push([[37],{YdTC:function(n,o,t){\"use strict\";t.r(o),t.d(o,\"GlobalStyleSheet\",(function(){return e}));var e={primry_color:\"#28A745\",primary_text_color:\"white\"}},zmTX:function(n,o,t){(window.__NEXT_P=window.__NEXT_P||[]).push([\"/global-styles/styleSheet\",function(){return t(\"YdTC\")}])}},[[\"zmTX\",0]]]);"}

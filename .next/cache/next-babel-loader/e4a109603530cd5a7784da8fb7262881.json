@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const StyleSheet = () => {\n  // primry_color: '#563D7C',\n  // primry_color: '#563D7C',\n  primry_color: '#28A745';\n\n  primary_text_color: 'white';\n};","map":null,"metadata":{},"sourceType":"module"}

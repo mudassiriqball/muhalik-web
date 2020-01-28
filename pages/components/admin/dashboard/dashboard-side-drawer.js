@@ -1,10 +1,8 @@
-import DashboardStyleSheet from './dashboard_style-sheet';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faBars, faPersonBooth, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { faPersonBooth, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
-import { Nav, Form, FormControl, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
+import { Nav, Tab, Row, Col, } from "react-bootstrap"
 
 import Vendors from './dashboard-tabs-content/vendors';
 import Customers from './dashboard-tabs-content/customers';
@@ -14,6 +12,56 @@ import Inventory from './dashboard-tabs-content/inventory';
 import Discounts from './dashboard-tabs-content/discount';
 import Commision from './dashboard-tabs-content/commision';
 import Reports from './dashboard-tabs-content/reports';
+
+import GlobalStyleSheet from '../../../../styleSheet';
+export const styles = {
+    background: {
+        background: `${GlobalStyleSheet.primry_color}`,
+    },
+
+    // Styles for the dashboard.js
+    search_bar: {
+        width: '75%',
+        flex: '7',
+        border: `2px solid ${GlobalStyleSheet.primry_color}`,
+        margin: '2px 2.5px 1px 1.2px',
+    },
+    search_btn: {
+        background: `${GlobalStyleSheet.primry_color}`,
+        flex: '1',
+        border: 'none',
+        color: 'white',
+        width: '20%',
+        float: 'right',
+        borderRadius: 'none',
+    },
+    side_drawer_search_bars: {
+        background: `${GlobalStyleSheet.primry_color}`,
+        margin: '0px 1px',
+        color: 'white',
+        width: '17%',
+        maxHeight: '40px',
+        maxWidth: '40px',
+        border: 'none',
+        borderRadius: 'none',
+    },
+    border: {
+        border: '1px solid white',
+        background: `${GlobalStyleSheet.primry_color}`,
+        color: 'white',
+        borderRadius: '4px'
+    },
+    link_color: {
+        color: `${GlobalStyleSheet.primary_text_color}`,
+    },
+    fontawesome: {
+        color: `${GlobalStyleSheet.primary_text_color}`,
+        marginRight: '20px',
+        width: '10%',
+        maxHeight: '22px',
+        maxWidth: '22px',
+    },
+}
 
 const DashboardSideDrawer = props => {
     let drawerClasses = "tabs_side_drawer";
@@ -29,65 +77,65 @@ const DashboardSideDrawer = props => {
                         <div>
                             <Nav className="flex-column" variant="tabs">
                                 <Nav.Item>
-                                    <div className="hover" style={DashboardStyleSheet.border}>
-                                        <Nav.Link eventKey="one" onClick={props.click} style={DashboardStyleSheet.link_color}>
-                                            <FontAwesomeIcon icon={faPersonBooth} style={DashboardStyleSheet.tabs_fontawesome} />
+                                    <div className="hover" style={styles.border}>
+                                        <Nav.Link eventKey="one" onClick={props.click} style={styles.link_color}>
+                                            <FontAwesomeIcon icon={faPersonBooth} style={styles.fontawesome} />
                                             Vendors
                                                 </Nav.Link>
                                     </div>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <div className="hover" style={DashboardStyleSheet.border}>
-                                        <Nav.Link eventKey="two" onClick={props.click} style={DashboardStyleSheet.link_color}>
-                                            <FontAwesomeIcon icon={faUsers} style={DashboardStyleSheet.tabs_fontawesome} />
+                                    <div className="hover" style={styles.border}>
+                                        <Nav.Link eventKey="two" onClick={props.click} style={styles.link_color}>
+                                            <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
                                             Customers
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <div className="hover" style={DashboardStyleSheet.border}>
-                                        <Nav.Link eventKey="three" onClick={props.click} style={DashboardStyleSheet.link_color}>
-                                            <FontAwesomeIcon icon={faProductHunt} style={DashboardStyleSheet.tabs_fontawesome} />
+                                    <div className="hover" style={styles.border}>
+                                        <Nav.Link eventKey="three" onClick={props.click} style={styles.link_color}>
+                                            <FontAwesomeIcon icon={faProductHunt} style={styles.fontawesome} />
                                             Products
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <div className="hover" style={DashboardStyleSheet.border}>
-                                        <Nav.Link eventKey="four" onClick={props.click} style={DashboardStyleSheet.link_color}>
-                                            <FontAwesomeIcon icon={faListAlt} style={DashboardStyleSheet.tabs_fontawesome} />
+                                    <div className="hover" style={styles.border}>
+                                        <Nav.Link eventKey="four" onClick={props.click} style={styles.link_color}>
+                                            <FontAwesomeIcon icon={faListAlt} style={styles.fontawesome} />
                                             Categories
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <div className="hover" style={DashboardStyleSheet.border}>
-                                        <Nav.Link eventKey="five" onClick={props.click} style={DashboardStyleSheet.link_color}>
-                                            <FontAwesomeIcon icon={faWarehouse} style={DashboardStyleSheet.tabs_fontawesome} />
+                                    <div className="hover" style={styles.border}>
+                                        <Nav.Link eventKey="five" onClick={props.click} style={styles.link_color}>
+                                            <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
                                             Inventory
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <div className="hover" style={DashboardStyleSheet.border}>
-                                        <Nav.Link eventKey="six" onClick={props.click} style={DashboardStyleSheet.link_color}>
-                                            <FontAwesomeIcon icon={faTags} style={DashboardStyleSheet.tabs_fontawesome} />
+                                    <div className="hover" style={styles.border}>
+                                        <Nav.Link eventKey="six" onClick={props.click} style={styles.link_color}>
+                                            <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
                                             Discounts
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <div className="hover" style={DashboardStyleSheet.border}>
-                                        <Nav.Link eventKey="seven" onClick={props.click} style={DashboardStyleSheet.link_color}>
-                                            <FontAwesomeIcon icon={faPercent} style={DashboardStyleSheet.tabs_fontawesome} />
+                                    <div className="hover" style={styles.border}>
+                                        <Nav.Link eventKey="seven" onClick={props.click} style={styles.link_color}>
+                                            <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
                                             Commision
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <div className="hover" style={DashboardStyleSheet.border}>
-                                        <Nav.Link eventKey="eight" onClick={props.click} style={DashboardStyleSheet.link_color}>
-                                            <FontAwesomeIcon icon={faChartBar} style={DashboardStyleSheet.tabs_fontawesome} />
+                                    <div className="hover" style={styles.border}>
+                                        <Nav.Link eventKey="eight" onClick={props.click} style={styles.link_color}>
+                                            <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
                                             Reports
                                             </Nav.Link>
                                     </div>
@@ -168,6 +216,5 @@ const DashboardSideDrawer = props => {
         </div>
     );
 }
-
 
 export default DashboardSideDrawer;

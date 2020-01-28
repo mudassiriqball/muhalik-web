@@ -1,0 +1,1 @@
+{"ast":null,"code":"import React from \"react\";\nvar __jsx = React.createElement;\n\nconst Vendors = () => {\n  return __jsx(\"div\", null, __jsx(\"p\", null, \"It is the Vendors page\"));\n};\n\nexport default Vendors;","map":null,"metadata":{},"sourceType":"module"}
