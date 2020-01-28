@@ -5592,9 +5592,9 @@ const styles = {
     background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`
   },
   brand: {
-    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
-    fontSize: 'larger',
-    fontWeight: 'bolder'
+    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}` // fontSize: 'medium',
+    // fontWeight: 'bold'
+
   },
   form: {
     border: `2px solid ${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,

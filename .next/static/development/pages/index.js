@@ -23674,9 +23674,9 @@ var styles = {
     background: "".concat(_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color)
   },
   brand: {
-    color: "".concat(_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color),
-    fontSize: 'larger',
-    fontWeight: 'bolder'
+    color: "".concat(_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color) // fontSize: 'medium',
+    // fontWeight: 'bold'
+
   },
   form: {
     border: "2px solid ".concat(_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color),
