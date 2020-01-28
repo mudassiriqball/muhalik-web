@@ -58,7 +58,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="one" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faPersonBooth} style={styles.fontawesome} />
-                                            <spna style={styles.span}>Vendors</spna>
+                                            <span style={styles.span}>Vendors</span>
                                                 </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -66,7 +66,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="two" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
-                                            <spna style={styles.span}>Customers</spna>
+                                            <span style={styles.span}>Customers</span>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -74,7 +74,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="three" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faProductHunt} style={styles.fontawesome} />
-                                            <spna style={styles.span}>Products</spna>
+                                            <span style={styles.span}>Products</span>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -82,7 +82,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="four" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faListAlt} style={styles.fontawesome} />
-                                            <spna style={styles.span}>Categories</spna>
+                                            <span style={styles.span}>Categories</span>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -90,7 +90,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="five" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
-                                            <spna style={styles.span}>Inventory</spna>
+                                            <span style={styles.span}>Inventory</span>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -98,7 +98,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="six" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
-                                            <spna style={styles.span}>Discounts</spna>
+                                            <span style={styles.span}>Discounts</span>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -106,7 +106,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="seven" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
-                                            <spna style={styles.span}>Commision</spna>
+                                            <span style={styles.span}>Commision</span>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
@@ -114,7 +114,7 @@ const DashboardSideDrawer = props => {
                                     <div className="hover" style={styles.border}>
                                         <Nav.Link eventKey="eight" onClick={props.click} style={styles.link_color}>
                                             <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
-                                            <spna style={styles.span}>Reports</spna>
+                                            <span style={styles.span}>Reports</span>
                                             </Nav.Link>
                                     </div>
                                 </Nav.Item>
