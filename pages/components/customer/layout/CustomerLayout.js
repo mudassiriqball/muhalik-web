@@ -18,8 +18,9 @@ const Layout = (props) => (
             />
         </Head>
         <Toolbar />
+
         {props.children}
-        <br />
+
         <Footer />
     </div>
 );

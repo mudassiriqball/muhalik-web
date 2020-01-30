@@ -88,7 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -533,15 +533,32 @@ var __jsx = react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement;
 
 
 const styles = {
+  body: {
+    background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].body_color}`,
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    right: '0',
+    bottom: '0'
+  },
   submit_btn: {
     background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color}`,
-    border: 'none',
-    marginTop: '50px'
+    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primary_text_color}`,
+    // background: 'white',
+    border: 'none' // marginTop: '50px',
+
   },
   container: {
-    border: `2px solid ${_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color}`,
-    padding: '50px'
-  }
+    // background: `${GlobalStyleSheet.primry_color}`,
+    background: 'white',
+    border: `0.5px solid ${_styleSheet__WEBPACK_IMPORTED_MODULE_3__["default"].primry_color}`,
+    marginTop: '50px',
+    padding: '20px 30px'
+  } // label: {
+  //     color: `${GlobalStyleSheet.primary_text_color}`,
+  //     marginRight: '10px',
+  // },
+
 };
 
 class Login extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
@@ -553,9 +570,10 @@ class Login extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 
   render() {
     return __jsx("div", {
+      style: styles.body,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 20
+        lineNumber: 38
       },
       __self: this
     }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Navbar"], {
@@ -565,7 +583,7 @@ class Login extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       },
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 21
+        lineNumber: 39
       },
       __self: this
     }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Navbar"].Brand, {
@@ -573,114 +591,146 @@ class Login extends react__WEBPACK_IMPORTED_MODULE_1__["Component"] {
       className: "mr-auto",
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 22
+        lineNumber: 40
       },
       __self: this
-    }, " Muhalik    "), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Navbar"].Brand, {
-      href: "#",
-      className: "mr-auto",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 23
-      },
-      __self: this
-    }, " Login    ")), __jsx("div", {
+    }, " Muhalik    ")), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Container"], {
       style: {
-        height: '100px'
+        padding: '0px 50px'
       },
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 25
+        lineNumber: 42
       },
       __self: this
-    }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Container"], {
+    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Row"], {
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 43
+      },
+      __self: this
+    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Col"], {
+      lg: 4,
+      md: 3,
+      sm: 3,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 44
+      },
+      __self: this
+    }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Col"], {
+      lg: 4,
+      md: 6,
+      sm: 6,
       style: styles.container,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 26
+        lineNumber: 45
       },
       __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"], {
+    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Navbar"].Brand, {
+      href: "#",
+      style: styles.label,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 27
+        lineNumber: 46
+      },
+      __self: this
+    }, " Login    "), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"], {
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 47
       },
       __self: this
     }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Group, {
-      as: react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Row"],
-      controlId: "formPlaintextEmail",
+      controlId: "formBasicEmail",
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 28
+        lineNumber: 48
       },
       __self: this
     }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Label, {
-      column: true,
-      sm: "2",
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 29
+        lineNumber: 49
       },
       __self: this
-    }, " Email "), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Col"], {
-      sm: "10",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 30
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Control, {
+    }, "Email address"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Control, {
       type: "email",
-      required: true,
-      placeholder: "email@example.com",
+      placeholder: "Enter email",
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 31
+        lineNumber: 50
       },
       __self: this
-    }))), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Group, {
-      as: react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Row"],
-      controlId: "formPlaintextPassword",
+    })), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Group, {
+      controlId: "formBasicPassword",
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 35
+        lineNumber: 54
       },
       __self: this
     }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Label, {
-      column: true,
-      sm: "2",
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 36
+        lineNumber: 55
       },
       __self: this
-    }, " Password "), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Col"], {
-      sm: "10",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 37
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Control, {
+    }, "Password"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Control, {
       type: "password",
-      required: true,
       placeholder: "Password",
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 38
+        lineNumber: 56
       },
       __self: this
-    }))), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Button"], {
-      variant: "primary",
+    })), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Group, {
+      controlId: "formBasicCheckbox",
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 59
+      },
+      __self: this
+    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Form"].Check, {
+      type: "checkbox",
+      label: "Check me out",
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 60
+      },
+      __self: this
+    })), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+      variant: "light",
+      size: "sm",
       block: true,
       type: "submit",
       style: styles.submit_btn,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 41
+        lineNumber: 63
       },
       __self: this
-    }, " Login "))));
+    }, " Login "), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Button"], {
+      variant: "light",
+      size: "sm",
+      block: true,
+      type: "submit",
+      style: styles.submit_btn,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 64
+      },
+      __self: this
+    }, " Sighnup "))), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Col"], {
+      lg: 4,
+      md: 3,
+      sm: 3,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 67
+      },
+      __self: this
+    }))));
   }
 
 }
@@ -706,13 +756,15 @@ __webpack_require__.r(__webpack_exports__);
 const GlobalStyleSheet = {
   // primry_color: '#563D7C',
   primry_color: '#28A745',
-  primary_text_color: 'white'
+  primary_text_color: 'white',
+  body_color: '#DDE1E3' // body_color: '#F0F0F0',
+
 };
 /* harmony default export */ __webpack_exports__["default"] = (GlobalStyleSheet);
 
 /***/ }),
 
-/***/ 6:
+/***/ 4:
 /*!******************************!*\
   !*** multi ./pages/login.js ***!
   \******************************/

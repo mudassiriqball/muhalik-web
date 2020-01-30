@@ -1,85 +1,225 @@
+import { Navbar, Container, Form, Col, Row, InputGroup, Button } from 'react-bootstrap';
 import React, { Component } from 'react';
-import { Navbar, Form, Button, Col, Container } from 'react-bootstrap';
+import { Formik } from 'formik';
+import * as yup from 'yup';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import GlobalStyleSheet from '../styleSheet';
+import Link from 'next/link';
+
 const styles = {
-    submit_btn: {
+    body: {
+        background: `${GlobalStyleSheet.body_color}`,
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        right: '0',
+        bottom: '0',
+
+    },
+    buttons: {
         background: `${GlobalStyleSheet.primry_color}`,
+        // background: 'white',
         border: 'none',
-        marginTop: '50px',
+        // marginTop: '50px',
     },
     container: {
-        border: `2px solid ${GlobalStyleSheet.primry_color}`,
-        padding: '50px'
-    }
+        // background: `${GlobalStyleSheet.primry_color}`,
+        background: 'white',
+        border: `0.5px solid ${GlobalStyleSheet.primry_color}`,
+        marginTop: '50px',
+        padding: '20px 30px'
+    },
+    label: {
+        color: `${GlobalStyleSheet.primary_text_color}`,
+        marginRight: '10px',
+    },
+    fontawesome: {
+        color: `${GlobalStyleSheet.primary_text_color}`,
+        width: '15px',
+        height: '15px',
+        maxHeight: '15px',
+        maxWidth: '15px',
+    },
 }
+
+
+const schema = yup.object({
+    fullName: yup.string().required(),
+    username: yup.string().required(),
+    mobile: yup.string().required(),
+    verificationCode: yup.string().required(),
+    email: yup.string(),
+    dob: yup.string().required(),
+    gender: yup.string().required(),
+    city: yup.string().required(),
+});
+
 class Signup extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {}
-    }
+
+    state = {
+        startDate: new Date()
+    };
+
+    handleChange = date => {
+        this.setState({
+            startDate: date
+        });
+    };
+
     render() {
         return (
-            <div>
-                <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
-                    <Navbar.Brand href="/" className="mr-auto" > Muhalik    </Navbar.Brand>
-                    <Navbar.Brand href="#" className="mr-auto" > Signup    </Navbar.Brand>
-                </Navbar>
-                <div style={{height: '100px'}}></div>
-                <Container style={styles.container}>
-                    <Form>
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="formGridEmail">
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control type="email" required placeholder="Enter email" />
-                            </Form.Group>
+            <Formik validationSchema={schema} onSubmit={console.log} initialValues={{}} >
+                {
+                    ({
+                        handleSubmit,
+                        handleChange,
+                        handleBlur,
+                        values,
+                        touched,
+                        isValid,
+                        errors,
+                    }) => (
+                            <div style={styles.body}>
+                                <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
+                                    <Navbar.Brand href="/" className="mr-auto" > Muhalik </Navbar.Brand>
+                                </Navbar>
+                                <Container style={{ padding: '0px 50px' }}>
+                                    <Row>
+                                        <Col lg={1} md={1} sm={1}></Col>
+                                        <Col lg={10} md={10} sm={10} style={styles.container}>
+                                            <Form noValidate onSubmit={handleSubmit}>
+                                                <Form.Row>
+                                                    <Form.Group as={Col} md="6" controlId="validationFormikUsername">
+                                                        <Form.Label>Mobile Number <span>*</span></Form.Label>
+                                                        <InputGroup>
+                                                            <Form.Control
+                                                                type="text"
+                                                                placeholder="Username"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                name="username"
+                                                                value={values.username}
+                                                                onChange={handleChange}
+                                                                isInvalid={!!errors.username}
+                                                            />
+                                                            <InputGroup.Prepend>
+                                                                <Button id="inputGroupPrepend" style={styles.buttons}>Send Code</Button>
+                                                            </InputGroup.Prepend>
+                                                            <Form.Control.Feedback type="invalid">
+                                                                {errors.username}
+                                                            </Form.Control.Feedback>
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="6" controlId="validationFormik01">
+                                                        <Form.Label>Full Name <span>*</span></Form.Label>
+                                                        <Form.Control
+                                                            type="text"
+                                                            name="firstName"
+                                                            value={values.firstName}
+                                                            onChange={handleChange}
+                                                            isValid={touched.firstName && !errors.firstName}
+                                                        />
+                                                        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                    </Form.Group>
+                                                </Form.Row>
 
-                            <Form.Group as={Col} controlId="formGridPassword">
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control required type="password" placeholder="Password" />
-                            </Form.Group>
-                        </Form.Row>
+                                                <Form.Row>
+                                                    <Form.Group as={Col} md="6" controlId="validationFormik03">
+                                                        <Form.Label>Verification Code <span>*</span></Form.Label>
+                                                        <Form.Control
+                                                            type="text"
+                                                            placeholder="City"
+                                                            name="city"
+                                                            value={values.city}
+                                                            onChange={handleChange}
+                                                            isInvalid={!!errors.city}
+                                                        />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.city}
+                                                        </Form.Control.Feedback>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="6" controlId="validationFormik03">
+                                                        <Form.Label>Email Address</Form.Label>
+                                                        <Form.Control
+                                                            type="text"
+                                                            placeholder="City"
+                                                            name="city"
+                                                            value={values.city}
+                                                            onChange={handleChange}
+                                                            isInvalid={!!errors.city}
+                                                        />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.city}
+                                                        </Form.Control.Feedback>
+                                                    </Form.Group>
+                                                </Form.Row>
 
-                        <Form.Group controlId="formGridAddress1">
-                            <Form.Label>Address</Form.Label>
-                            <Form.Control required placeholder="1234 Main St" />
-                        </Form.Group>
+                                                <Form.Row>
+                                                    <Form.Group as={Col} controlId="validationFormikUsername">
+                                                        <Form.Label>Password <span>*</span></Form.Label>
+                                                        <InputGroup>
+                                                            <Form.Control
+                                                                type="text"
+                                                                placeholder="Username"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                name="username"
+                                                                value={values.username}
+                                                                onChange={handleChange}
+                                                                isInvalid={!!errors.username}
+                                                            />
+                                                            <InputGroup.Prepend>
+                                                                <Button id="inputGroupPrepend" style={styles.buttons}>
+                                                                    <FontAwesomeIcon icon={faEye} style={styles.fontawesome} />
+                                                                </Button>
+                                                            </InputGroup.Prepend>
+                                                            <Form.Control.Feedback type="invalid">
+                                                                {errors.username}
+                                                            </Form.Control.Feedback>
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} controlId="validationFormikUsername">
+                                                        <Form.Label>Conform Password <span>*</span></Form.Label>
+                                                        <InputGroup>
+                                                            <Form.Control
+                                                                type="text"
+                                                                placeholder="Username"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                name="username"
+                                                                value={values.username}
+                                                                onChange={handleChange}
+                                                                isInvalid={!!errors.username}
+                                                            />
+                                                            <InputGroup.Prepend>
+                                                                <Button id="inputGroupPrepend" style={styles.buttons}>
+                                                                    <FontAwesomeIcon icon={faEye} style={styles.fontawesome} />
+                                                                </Button>
+                                                            </InputGroup.Prepend>
+                                                            <Form.Control.Feedback type="invalid">
+                                                                {errors.username}
+                                                            </Form.Control.Feedback>
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                </Form.Row>
 
-                        <Form.Group controlId="formGridAddress2">
-                            <Form.Label>Address 2</Form.Label>
-                            <Form.Control required placeholder="Apartment, studio, or floor" />
-                        </Form.Group>
-
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="formGridCity">
-                                <Form.Label>City</Form.Label>
-                                <Form.Control required />
-                            </Form.Group>
-
-                            <Form.Group as={Col} controlId="formGridState">
-                                <Form.Label>State</Form.Label>
-                                <Form.Control required as="select">
-                                    <option>Choose...</option>
-                                    <option>...</option>
-                                </Form.Control>
-                            </Form.Group>
-
-                            <Form.Group as={Col} required controlId="formGridZip">
-                                <Form.Label>Zip</Form.Label>
-                                <Form.Control required/>
-                            </Form.Group>
-                        </Form.Row>
-
-                        <Form.Group id="formGridCheckbox">
-                            <Form.Check type="checkbox" required label="Check me out" />
-                        </Form.Group>
-
-                        <Button variant="primary" block type="submit" style={styles.submit_btn}> Submit </Button>
-                    </Form>
-                </Container>
-            </div>
+                                            </Form>
+                                        </Col>
+                                        <Col lg={1} md={1} sm={1}></Col>
+                                    </Row>
+                                </Container>
+                                <style jsx>
+                                    {`
+                                    span {
+                                        color: red;
+                                    }
+                                `}
+                                </style>
+                            </div>
+                        )}
+            </Formik>
         );
     }
 }
+
 
 export default Signup;
