@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar, Form, InputGroup, Button, Row, Col, Container, Image } from 'react-bootstrap';
-import Link from 'next/Link';
+import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMobile, faLock, faEye, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
 
