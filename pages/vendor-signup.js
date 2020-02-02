@@ -1,12 +1,15 @@
+import React, { Component } from 'react';
+import Link from 'next/link';
 
 import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image } from 'react-bootstrap';
-import React, { Component } from 'react';
+
 import { Formik } from 'formik';
 import * as yup from 'yup';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 import GlobalStyleSheet from '../styleSheet';
-import Link from 'next/link';
 
 // RegEx for phone number validation
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
@@ -108,8 +111,8 @@ class Signup extends Component {
 
                                 <Container>
                                     <Row>
-                                        <Col lg={1} md={1} sm={0} xs={0}></Col>
-                                        <Col style={styles.container}>
+                                        <Col lg={1} md={0} sm={0} xs={0} style={styles.side_column}></Col>
+                                        <Col style={styles.center_column}>
                                             <p>
                                                 <Image src="/static/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
                                             </p>
@@ -130,7 +133,7 @@ class Signup extends Component {
                                                                 isInvalid={touched.mobile && errors.mobile}
                                                             />
                                                             <InputGroup.Prepend>
-                                                                <Button id="sndCodeBtn" style={styles.buttons}>Send Code</Button>
+                                                                <Button id="sndCodeBtn" disabled={!touched.mobile && errors.mobile} style={styles.buttons}>Send Code</Button>
                                                             </InputGroup.Prepend>
                                                             <Form.Control.Feedback type="invalid">
                                                                 {errors.mobile}
@@ -355,8 +358,8 @@ class Signup extends Component {
                                                     <Form.Group as={Col} lg={4} controlId="loginGrop">
                                                         <Form.Label className="text-center" style={styles.label}>
                                                             Already have an account...
-                                                                <span>
-                                                                <Link href="#"> Login </Link>
+                                                            <span>
+                                                                <Link href="login"> Login </Link>
                                                             </span>
                                                         </Form.Label>
                                                         <Button type="submit" onSubmit={handleSubmit} block style={styles.submit_btn}>Signup</Button>
@@ -365,7 +368,7 @@ class Signup extends Component {
                                                 {/* End 4th Row */}
                                             </Form>
                                         </Col>
-                                        <Col lg={1} md={1} sm={0} xs={0}></Col>
+                                        <Col lg={1} md={0} sm={0} xs={0} style={styles.side_column}></Col>
                                     </Row>
                                 </Container>
                                 <style jsx>
@@ -404,11 +407,13 @@ const styles = {
     submit_btn: {
         background: `${GlobalStyleSheet.primry_color}`,
     },
-    container: {
+    center_column: {
         background: 'white',
-        // border: `0.5px solid ${GlobalStyleSheet.primry_color}`,
         padding: '20px 30px',
-        margin: '5% 5%',
+        margin: '3% 3%',
+    },
+    side_column: {
+        margin: '0 2%',
     },
     label: {
         width: '100%',
