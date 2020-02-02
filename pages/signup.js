@@ -8,15 +8,34 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 import GlobalStyleSheet from '../styleSheet';
 import Link from 'next/link';
 
+// RegEx for phone number validation
+const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
 
 const schema = yup.object({
-    mobile: yup.string().required(),
-    name: yup.string().required(),
-    verificationCode: yup.string().required(),
-    email: yup.string(),
-    password: yup.string().required(),
-    confirmPassword: yup.string().required(),
-    gender: yup.string().required(),
+    mobile: yup.string().required("Mobile number is required")
+        .matches(phoneRegExp, "Phone number is not valid"),
+
+    fullName: yup.string().required("Full Name is required")
+        .min(5, "Full Name must have at least 5 characters")
+        .max(20, "Full Name can't be longer than 20 characters"),
+
+    verificationCode: yup.string().required("Verification Code is required"),
+
+    email: yup.string().email("Must be a valid email address")
+        .max(100, "Email must be less than 100 characters"),
+
+    password: yup.string().required("Password is required")
+        .min(8, "Password must have at least 8 characters")
+        .max(20, "Password can't be longer than 20 characters"),
+
+    confirmPassword: yup.string().required("Conform Password is required")
+        .min(8, "Conform Password must have at least 8 characters")
+        .max(20, "Conform Password can't be longer than 20 characters"),
+
+
+    countary: yup.string().required("Countary is required"),
+
+    gender: yup.string().required("Gender is required"),
 });
 
 class Signup extends Component {
@@ -26,16 +45,38 @@ class Signup extends Component {
     };
     render() {
         return (
-            <Formik validationSchema={schema} onSubmit={console.log} initialValues={{}} >
+            <Formik
+                validationSchema={schema}
+                // onSubmit={console.log}
+                initialValues={{
+                    mobile: '', fullName: '', verificationCode: '', email: '', password: '', confirmPassword: '',
+                    countary: '', gender: ''
+                }}
+                onSubmit={(values, { setSubmitting, resetForm }) => {
+                    // When button submits form and form is in the process of submitting, submit button is disabled
+                    setSubmitting(true);
+                    // Resets form after submission is complete
+                    resetForm();
+                    // Sets setSubmitting to false after form is reset
+                    setSubmitting(false);
+
+                    setTimeout(() => {
+                        alert(JSON.stringify(values, null, 2));
+                        resetForm();
+                        setSubmitting(false);
+                    }, 500);
+                }}
+            >
                 {
                     ({
                         handleSubmit,
                         handleChange,
-                        handleBlur,
                         values,
                         touched,
                         isValid,
                         errors,
+                        handleBlur,
+                        isSubmitting
                     }) => (
                             <div style={styles.body}>
                                 <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
@@ -51,6 +92,7 @@ class Signup extends Component {
                                             </p>
                                             <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Create Your Acount</h6>
                                             <Form noValidate onSubmit={handleSubmit}>
+                                                {console.log("fucking values fffffffffffffffff: ", values)}
                                                 <Form.Row>
                                                     <Form.Group as={Col} md="6" controlId="validationMobile">
                                                         <Form.Label style={styles.label}>Mobile Number <span>*</span></Form.Label>
@@ -58,14 +100,14 @@ class Signup extends Component {
                                                             <Form.Control
                                                                 type="text"
                                                                 placeholder="+966590911891"
-                                                                aria-describedby="inputGrouphh"
+                                                                aria-describedby="mobile"
                                                                 name="mobile"
                                                                 value={values.mobile}
                                                                 onChange={handleChange}
-                                                                isInvalid={!!errors.mobile}
+                                                                isInvalid={touched.mobile && errors.mobile}
                                                             />
                                                             <InputGroup.Prepend>
-                                                                <Button id="inputGroupPrepend" style={styles.buttons}>Send Code</Button>
+                                                                <Button id="sndCodeBtn" style={styles.buttons}>Send Code</Button>
                                                             </InputGroup.Prepend>
                                                             <Form.Control.Feedback type="invalid">
                                                                 {errors.mobile}
@@ -78,14 +120,14 @@ class Signup extends Component {
                                                             <Form.Control
                                                                 type="text"
                                                                 placeholder="Full Name"
-                                                                aria-describedby="inputGroupPrepend"
-                                                                name="Full name"
-                                                                value={values.name}
+                                                                aria-describedby="fullName"
+                                                                name="fullName"
+                                                                value={values.fullName}
                                                                 onChange={handleChange}
-                                                                isInvalid={!!errors.name}
+                                                                isInvalid={touched.fullName && errors.fullName}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.name}
+                                                                {errors.fullName}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Form.Group>
@@ -93,14 +135,15 @@ class Signup extends Component {
 
                                                 <Form.Row>
                                                     <Form.Group as={Col} md="6" controlId="validationVerificationCode">
-                                                        <Form.Label style={styles.label}>Verification Code <span>*</span></Form.Label>
+                                                        <Form.Label style={styles.label}>Verification Code
+                                                        <span> * </span></Form.Label>
                                                         <Form.Control
                                                             type="text"
                                                             placeholder="Verification Code"
                                                             name="verificationCode"
                                                             value={values.verificationCode}
                                                             onChange={handleChange}
-                                                            isInvalid={!!errors.verificationCode}
+                                                            isInvalid={touched.verificationCode && errors.verificationCode}
                                                         />
                                                         <Form.Control.Feedback type="invalid">
                                                             {errors.verificationCode}
@@ -109,12 +152,12 @@ class Signup extends Component {
                                                     <Form.Group as={Col} md="6" controlId="validationEmail">
                                                         <Form.Label style={styles.label}>Email Address</Form.Label>
                                                         <Form.Control
-                                                            type="Email"
+                                                            type="email"
                                                             placeholder="mr.x@gmail.com"
                                                             name="email"
                                                             value={values.email}
                                                             onChange={handleChange}
-                                                            isInvalid={!!errors.email}
+                                                            isInvalid={touched.email && errors.email}
                                                         />
                                                         <Form.Control.Feedback type="invalid">
                                                             {errors.email}
@@ -133,10 +176,10 @@ class Signup extends Component {
                                                                 name="password"
                                                                 value={values.password}
                                                                 onChange={handleChange}
-                                                                isInvalid={!!errors.password}
+                                                                isInvalid={touched.password && errors.password}
                                                             />
                                                             <InputGroup.Prepend>
-                                                                <Button id="eyeBtn" style={styles.buttons}>
+                                                                <Button id="passwordEyeBtn" style={styles.buttons}>
                                                                     <FontAwesomeIcon icon={faEye} style={styles.fontawesome} />
                                                                 </Button>
                                                             </InputGroup.Prepend>
@@ -151,14 +194,14 @@ class Signup extends Component {
                                                             <Form.Control
                                                                 type="password"
                                                                 placeholder="Re-enter Password"
-                                                                aria-describedby="inputGroupPrepend"
+                                                                aria-describedby="confirmPassword"
                                                                 name="confirmPassword"
                                                                 value={values.confirmPassword}
                                                                 onChange={handleChange}
-                                                                isInvalid={!!errors.confirmPassword}
+                                                                isInvalid={touched.confirmPassword && errors.confirmPassword}
                                                             />
                                                             <InputGroup.Prepend>
-                                                                <Button id="inputGroupPrepend" style={styles.buttons}>
+                                                                <Button id="confirmPasswordEyeBtn" style={styles.buttons}>
                                                                     <FontAwesomeIcon icon={faEye} style={styles.fontawesome} />
                                                                 </Button>
                                                             </InputGroup.Prepend>
@@ -169,16 +212,50 @@ class Signup extends Component {
                                                     </Form.Group>
                                                 </Form.Row>
 
+                                                
                                                 {/* 4th Row */}
                                                 <Form.Row>
-                                                    <Form.Group as={Col} lg={3} controlId="formGridState">
-                                                        <Form.Label style={styles.label}>Gender</Form.Label>
-                                                        <Form.Control as="select">
+                                                    <Form.Group as={Col} lg={2} md={3} controlId="countary">
+                                                        <Form.Label style={styles.label}>Countary
+                                                        <span> * </span>
+                                                        </Form.Label>
+                                                        <Form.Control
+                                                            as="select"
+                                                            aria-describedby="countary"
+                                                            name="countary"
+                                                            value={values.countary}
+                                                            onChange={handleChange}
+                                                            isInvalid={touched.countary && errors.countary}
+
+                                                        >
+                                                            <option>Select</option>
+                                                            <option> KSA </option>
+                                                            <option> Pak </option>
+                                                        </Form.Control>
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.countary}
+                                                        </Form.Control.Feedback>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} lg={2} md={3} controlId="gender">
+                                                        <Form.Label style={styles.label}>Gender
+                                                        <span> * </span>
+                                                        </Form.Label>
+                                                        <Form.Control
+                                                            as="select"
+                                                            aria-describedby="gender"
+                                                            name="gender"
+                                                            value={values.gender}
+                                                            onChange={handleChange}
+                                                            isInvalid={touched.gender && errors.gender}
+                                                        >
                                                             <option>Select</option>
                                                             <option> Male </option>
                                                             <option> Female </option>
                                                             <option> Other </option>
                                                         </Form.Control>
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.gender}
+                                                        </Form.Control.Feedback>
                                                     </Form.Group>
                                                     <Col style={{}}>
                                                         <div style={{ height: '30%' }}></div>
@@ -187,9 +264,9 @@ class Signup extends Component {
                                                                     <span>
                                                                 <Link href="#"> Terms & Conditions </Link>
                                                             </span>
-                                                            </Form.Label>
+                                                        </Form.Label>
                                                     </Col>
-                                                    <Form.Group as={Col} lg={4} controlId="formGridState">
+                                                    <Form.Group as={Col} lg={4} controlId="loginGrop">
                                                         <Form.Label className="text-center" style={styles.label}>
                                                             Already have an account...
                                                                 <span>
