@@ -368,7 +368,7 @@ class Signup extends Component {
                                                                 <Link href="login"> Login </Link>
                                                             </span>
                                                         </Form.Label>
-                                                        <Button type="submit" onSubmit={handleSubmit} block style={styles.submit_btn}>Signup</Button>
+                                                        <Button type="submit" onSubmit={handleSubmit} block style={styles.submit_btn}>Register Shop</Button>
                                                     </Form.Group>
                                                 </Form.Row>
                                                 {/* End 4th Row */}
