@@ -275,14 +275,20 @@ class Signup extends Component {
                                                             {errors.gender}
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
-                                                    <Col style={{}}>
-                                                        <div style={{ height: '30%' }}></div>
-                                                        <Form.Label className="text-center" style={styles.label}>
-                                                            By creating an account, you agree to Muhalik's
-                                                                    <span>
-                                                                <Link href="#"> Terms & Conditions </Link>
-                                                            </span>
-                                                        </Form.Label>
+                                                    <Col>
+                                                        <Form.Group >
+                                                            <Form.Label style={{color: 'white', fontSize: '0.1px'}}> . </Form.Label>
+                                                            <Form.Label className="text-center" style={styles.term_condition_label}>
+                                                                By creating acount, you agree to Muhalik's
+                                                                <span>
+                                                                    <Link href="./help/terms-and-conditions"> Terms & Conditions </Link>
+                                                                </span>
+                                                                and
+                                                                <span>
+                                                                    <Link href="./help/privacy-policy"> Privacy Statement </Link>
+                                                                </span>
+                                                            </Form.Label>
+                                                        </Form.Group>
                                                     </Col>
                                                     <Form.Group as={Col} lg={4} controlId="loginGrop">
                                                         <Form.Label className="text-center" style={styles.label}>
@@ -347,7 +353,13 @@ const styles = {
     },
     label: {
         width: '100%',
-        fontSize: '14px',
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
+    },
+    term_condition_label: {
+        width: '100%',
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
+        paddingTop: '-10px',
+        marginTop: '-10px',
     },
     fontawesome: {
         color: `${GlobalStyleSheet.primary_text_color}`,

@@ -167,11 +167,11 @@ class Login extends Component {
                                                     <Form.Label className="text-center" style={styles.term_condition_label}>
                                                         By logingin, you agree to Muhalik's
                                                         <span>
-                                                            <Link href="#"> Terms & Conditions </Link>
+                                                            <Link href="./help/terms-and-conditions"> Terms & Conditions </Link>
                                                         </span>
                                                         and
-                                                        <span>
-                                                            <Link href="#"> Privacy Statement </Link>
+                                                            <span>
+                                                            <Link href="./help/privacy-policy"> Privacy Statement </Link>
                                                         </span>
                                                     </Form.Label>
                                                 </Form.Row>
@@ -227,11 +227,11 @@ const styles = {
     },
     label: {
         width: '100%',
-        fontSize: '14px',
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
     },
     term_condition_label: {
         width: '100%',
-        fontSize: '13px',
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
         padding: '10px',
     },
     fontawesome_btn: {
