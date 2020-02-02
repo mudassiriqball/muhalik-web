@@ -2,13 +2,26 @@ import React, { Component } from 'react';
 import { Navbar, Form, InputGroup, Button, Row, Col, Container, Image } from 'react-bootstrap';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMobile, faLock, faEye, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEyeSlash, faLock, faEye, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
 
 import GlobalStyleSheet from '../styleSheet';
 
 class Login extends Component {
-    state = {}
+    state = {
+        hide: true
+    };
+    showPassword = ev => {
+        this.setState({ hide: !this.state.hide })
+    }
     render() {
+        const { hide } = this.state;
+        let eyeBtn;
+        if (this.state.hide) {
+            eyeBtn = <FontAwesomeIcon icon={faEye} style={styles.fontawesome_eye} />;
+        } else {
+            eyeBtn = <FontAwesomeIcon icon={faEyeSlash} style={styles.fontawesome_eye} />;
+        }
+
         return (
             <div style={styles.body}>
                 <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
@@ -27,7 +40,7 @@ class Login extends Component {
                                     <Form.Label style={styles.label}>Mobile Number</Form.Label>
                                     <InputGroup>
                                         <InputGroup.Prepend>
-                                            <Button id="eyeBtn" style={styles.fontawesome_btn}>
+                                            <Button id="mobileIcon" style={styles.fontawesome_btn}>
                                                 <FontAwesomeIcon icon={faMobileAlt} style={styles.fontawesome} />
                                             </Button>
                                         </InputGroup.Prepend>
@@ -41,14 +54,14 @@ class Login extends Component {
                                     <Form.Label style={styles.label}> Password</Form.Label>
                                     <InputGroup>
                                         <InputGroup.Prepend>
-                                            <Button id="eyeBtn" style={styles.fontawesome_btn}>
+                                            <Button id="passwordBtn" style={styles.fontawesome_btn}>
                                                 <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
                                             </Button>
                                         </InputGroup.Prepend>
-                                        <Form.Control type="password" placeholder="Enter Password" />
+                                        <Form.Control type={hide ? 'password' : 'text'} placeholder="Enter Password" />
                                         <InputGroup.Prepend>
-                                            <Button id="eyeBtn" style={styles.fontawesome_eye_btn}>
-                                                <FontAwesomeIcon icon={faEye} style={styles.fontawesome_eye} />
+                                            <Button id="eyeBtn" onClick={this.showPassword} style={styles.fontawesome_eye_btn}>
+                                                {eyeBtn}
                                             </Button>
                                         </InputGroup.Prepend>
                                     </InputGroup>

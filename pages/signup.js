@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import GlobalStyleSheet from '../styleSheet';
 import Link from 'next/link';
 
@@ -41,9 +41,21 @@ const schema = yup.object({
 class Signup extends Component {
 
     state = {
-
+        hide: true
     };
+    showPassword = ev => {
+        this.setState({ hide: !this.state.hide })
+    }
+
     render() {
+        const { hide } = this.state;
+        let eyeBtn;
+        if (this.state.hide) {
+            eyeBtn = <FontAwesomeIcon icon={faEye} style={styles.fontawesome} />;
+        } else {
+            eyeBtn = <FontAwesomeIcon icon={faEyeSlash} style={styles.fontawesome} />;
+        }
+
         return (
             <Formik
                 validationSchema={schema}
@@ -170,7 +182,7 @@ class Signup extends Component {
                                                         <Form.Label style={styles.label}>Password <span>*</span></Form.Label>
                                                         <InputGroup>
                                                             <Form.Control
-                                                                type="password"
+                                                                type={hide ? 'password' : 'text'}
                                                                 placeholder="Enter Password"
                                                                 aria-describedby="inputGroup"
                                                                 name="password"
@@ -179,8 +191,8 @@ class Signup extends Component {
                                                                 isInvalid={touched.password && errors.password}
                                                             />
                                                             <InputGroup.Prepend>
-                                                                <Button id="passwordEyeBtn" style={styles.buttons}>
-                                                                    <FontAwesomeIcon icon={faEye} style={styles.fontawesome} />
+                                                                <Button id="passwordEyeBtn" onClick={this.showPassword} style={styles.buttons}>
+                                                                    {eyeBtn}
                                                                 </Button>
                                                             </InputGroup.Prepend>
                                                             <Form.Control.Feedback type="invalid">
@@ -192,7 +204,7 @@ class Signup extends Component {
                                                         <Form.Label style={styles.label}>Confirm Password <span>*</span></Form.Label>
                                                         <InputGroup>
                                                             <Form.Control
-                                                                type="password"
+                                                                type={hide ? 'password' : 'text'}
                                                                 placeholder="Re-enter Password"
                                                                 aria-describedby="confirmPassword"
                                                                 name="confirmPassword"
@@ -201,8 +213,8 @@ class Signup extends Component {
                                                                 isInvalid={touched.confirmPassword && errors.confirmPassword}
                                                             />
                                                             <InputGroup.Prepend>
-                                                                <Button id="confirmPasswordEyeBtn" style={styles.buttons}>
-                                                                    <FontAwesomeIcon icon={faEye} style={styles.fontawesome} />
+                                                                <Button id="confirmPasswordEyeBtn" onClick={this.showPassword} style={styles.buttons}>
+                                                                    {eyeBtn}
                                                                 </Button>
                                                             </InputGroup.Prepend>
                                                             <Form.Control.Feedback type="invalid">
@@ -212,7 +224,7 @@ class Signup extends Component {
                                                     </Form.Group>
                                                 </Form.Row>
 
-                                                
+
                                                 {/* 4th Row */}
                                                 <Form.Row>
                                                     <Form.Group as={Col} lg={2} md={3} controlId="countary">
