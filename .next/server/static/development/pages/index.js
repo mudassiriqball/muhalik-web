@@ -88,7 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -200,36 +200,6 @@ module.exports = __webpack_require__(/*! core-js/library/fn/symbol/iterator */ "
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(/*! core-js/library/fn/weak-map */ "./node_modules/@babel/runtime-corejs2/node_modules/core-js/library/fn/weak-map.js");
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty.js":
-/*!***************************************************************************!*\
-  !*** ./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty.js ***!
-  \***************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _defineProperty; });
-/* harmony import */ var _core_js_object_define_property__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../core-js/object/define-property */ "./node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-/* harmony import */ var _core_js_object_define_property__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_object_define_property__WEBPACK_IMPORTED_MODULE_0__);
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    _core_js_object_define_property__WEBPACK_IMPORTED_MODULE_0___default()(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
 
 /***/ }),
 
@@ -5438,418 +5408,409 @@ module.exports = __webpack_require__(/*! ./dist/client/link */ "./node_modules/n
 
 /***/ }),
 
-/***/ "./pages/login.js":
+/***/ "./pages/components/customer/footer/footer.js":
+/*!****************************************************!*\
+  !*** ./pages/components/customer/footer/footer.js ***!
+  \****************************************************/
+/*! exports provided: FooterStyleSheet, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FooterStyleSheet", function() { return FooterStyleSheet; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _styleSheet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../styleSheet */ "./styleSheet.js");
+var _jsxFileName = "C:\\Users\\MudassirR\\Desktop\\FYP\\muhalikweb\\pages\\components\\customer\\footer\\footer.js";
+
+var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
+
+const primry_color = _styleSheet__WEBPACK_IMPORTED_MODULE_1__["default"].primry_color;
+const primary_text_color = _styleSheet__WEBPACK_IMPORTED_MODULE_1__["default"].primary_text_color;
+const FooterStyleSheet = {
+  footer: {
+    background: `${primry_color}`,
+    position: 'absolute',
+    left: "0",
+    bottom: '0',
+    right: '0'
+  },
+  fooeter_text: {
+    margin: '10px',
+    fontSize: 'smaller',
+    color: `${primary_text_color}`
+  }
+};
+
+const Footer = () => __jsx("div", {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 21
+  },
+  __self: undefined
+}, __jsx("div", {
+  style: FooterStyleSheet.footer,
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 22
+  },
+  __self: undefined
+}, __jsx("p", {
+  className: "text-center",
+  style: FooterStyleSheet.fooeter_text,
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 23
+  },
+  __self: undefined
+}, "Copyright@ 2020", __jsx("span", {
+  style: {
+    fontSize: 'medium',
+    fontWeight: 'bold'
+  },
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 25
+  },
+  __self: undefined
+}, " Muhalik "), "- Online Shopping Website")));
+
+/* harmony default export */ __webpack_exports__["default"] = (Footer);
+
+/***/ }),
+
+/***/ "./pages/components/customer/layout/CustomerLayout.js":
+/*!************************************************************!*\
+  !*** ./pages/components/customer/layout/CustomerLayout.js ***!
+  \************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/head */ "next/head");
+/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(next_head__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _toolbar_toolbar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../toolbar/toolbar */ "./pages/components/customer/toolbar/toolbar.js");
+/* harmony import */ var _footer_footer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../footer/footer */ "./pages/components/customer/footer/footer.js");
+var _jsxFileName = "C:\\Users\\MudassirR\\Desktop\\FYP\\muhalikweb\\pages\\components\\customer\\layout\\CustomerLayout.js";
+
+var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
+
+
+
+
+const Layout = props => __jsx("div", {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 6
+  },
+  __self: undefined
+}, __jsx(next_head__WEBPACK_IMPORTED_MODULE_1___default.a, {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 7
+  },
+  __self: undefined
+}, __jsx("title", {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 8
+  },
+  __self: undefined
+}, "Muhalik"), __jsx("meta", {
+  name: "viewport",
+  content: "width=device-width, initial-scale=1",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 11
+  },
+  __self: undefined
+}), __jsx("meta", {
+  charSet: "utf-8",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 12
+  },
+  __self: undefined
+}), __jsx("link", {
+  rel: "stylesheet",
+  href: "https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
+  integrity: "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh",
+  crossorigin: "anonymous",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 13
+  },
+  __self: undefined
+})), __jsx(_toolbar_toolbar__WEBPACK_IMPORTED_MODULE_2__["default"], {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 20
+  },
+  __self: undefined
+}), props.children, __jsx(_footer_footer__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 24
+  },
+  __self: undefined
+}));
+
+/* harmony default export */ __webpack_exports__["default"] = (Layout);
+
+/***/ }),
+
+/***/ "./pages/components/customer/toolbar/toolbar.js":
+/*!******************************************************!*\
+  !*** ./pages/components/customer/toolbar/toolbar.js ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap */ "react-bootstrap");
+/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _styleSheet__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../styleSheet */ "./styleSheet.js");
+var _jsxFileName = "C:\\Users\\MudassirR\\Desktop\\FYP\\muhalikweb\\pages\\components\\customer\\toolbar\\toolbar.js";
+
+var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
+
+
+const styles = {
+  background: {
+    background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`
+  },
+  brand: {
+    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
+    fontSize: 'medium'
+  },
+  form: {
+    border: `2px solid ${_styleSheet__WEBPACK_IMPORTED_MODULE_2__["default"].primry_color}`,
+    width: '60%',
+    borderRadius: '25px',
+    padding: '0px 5px'
+  }
+};
+
+const Toolbar = () => __jsx("div", {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 21
+  },
+  __self: undefined
+}, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Card"], {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 22
+  },
+  __self: undefined
+}, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Card"].Body, {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 23
+  },
+  __self: undefined
+}, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"], {
+  collapseOnSelect: true,
+  expand: "lg",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 24
+  },
+  __self: undefined
+}, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Brand, {
+  href: "#home",
+  style: styles.brand,
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 26
+  },
+  __self: undefined
+}, "Muhalik"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Toggle, {
+  "aria-controls": "responsive-navbar-nav",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 27
+  },
+  __self: undefined
+}), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Navbar"].Collapse, {
+  id: "responsive-navbar-nav",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 28
+  },
+  __self: undefined
+}, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"], {
+  className: "mr-auto",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 29
+  },
+  __self: undefined
+}), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Form"], {
+  inline: true,
+  style: styles.form,
+  className: "mr-auto",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 30
+  },
+  __self: undefined
+}, __jsx("label", {
+  className: "mr-auto",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 31
+  },
+  __self: undefined
+}, "Fuck"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["FormControl"], {
+  type: "text",
+  placeholder: "Search",
+  className: "mr-sm-2",
+  style: {
+    width: '80%'
+  },
+  className: "mr-auto",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 32
+  },
+  __self: undefined
+}), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Button"], {
+  style: {
+    background: 'none',
+    border: 'none'
+  },
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 33
+  },
+  __self: undefined
+}, "Search")), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"], {
+  className: true,
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 36
+  },
+  __self: undefined
+}, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"].Link, {
+  href: "#home",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 37
+  },
+  __self: undefined
+}, "Login/Signup"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"].Link, {
+  href: "#features",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 38
+  },
+  __self: undefined
+}, "Orders"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Nav"].Link, {
+  href: "#pricing",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 39
+  },
+  __self: undefined
+}, "Cart")))))));
+
+/* harmony default export */ __webpack_exports__["default"] = (Toolbar);
+
+/***/ }),
+
+/***/ "./pages/index.js":
 /*!************************!*\
-  !*** ./pages/login.js ***!
+  !*** ./pages/index.js ***!
   \************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime-corejs2/helpers/esm/defineProperty */ "./node_modules/@babel/runtime-corejs2/helpers/esm/defineProperty.js");
-/* harmony import */ var styled_jsx_style__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! styled-jsx/style */ "styled-jsx/style");
-/* harmony import */ var styled_jsx_style__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(styled_jsx_style__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap */ "react-bootstrap");
-/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! next/link */ "./node_modules/next/link.js");
-/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(next_link__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/react-fontawesome */ "@fortawesome/react-fontawesome");
-/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "@fortawesome/free-solid-svg-icons");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _styleSheet__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../styleSheet */ "./styleSheet.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/link */ "./node_modules/next/link.js");
+/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(next_link__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _components_customer_layout_CustomerLayout__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/customer/layout/CustomerLayout */ "./pages/components/customer/layout/CustomerLayout.js");
+var _jsxFileName = "C:\\Users\\MudassirR\\Desktop\\FYP\\muhalikweb\\pages\\index.js";
 
-var _jsxFileName = "C:\\Users\\MudassirR\\Desktop\\FYP\\muhalikweb\\pages\\login.js";
-
-var __jsx = react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement;
+var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
 
-
-
-
-
-class Login extends react__WEBPACK_IMPORTED_MODULE_2__["Component"] {
-  constructor(...args) {
-    super(...args);
-
-    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(this, "state", {
-      hide: true
-    });
-
-    Object(_babel_runtime_corejs2_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(this, "showPassword", ev => {
-      this.setState({
-        hide: !this.state.hide
-      });
-    });
-  }
-
-  render() {
-    const {
-      hide
-    } = this.state;
-    let eyeBtn;
-
-    if (this.state.hide) {
-      eyeBtn = __jsx(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
-        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faEye"],
-        style: styles.fontawesome_eye,
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 20
-        },
-        __self: this
-      });
-    } else {
-      eyeBtn = __jsx(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
-        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faEyeSlash"],
-        style: styles.fontawesome_eye,
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 22
-        },
-        __self: this
-      });
-    }
-
-    return __jsx("div", {
-      style: styles.body,
-      className: "jsx-2713768715",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 26
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Navbar"], {
-      variant: "dark",
-      style: {
-        background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_7__["default"].primry_color}`
-      },
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 27
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Navbar"].Brand, {
-      href: "/",
-      className: "mr-auto",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 28
-      },
-      __self: this
-    }, " Muhalik    ")), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Container"], {
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 30
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Row"], {
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 31
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Col"], {
-      lg: 3,
-      md: 3,
-      sm: 1,
-      xs: 0,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 32
-      },
-      __self: this
-    }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Col"], {
-      style: styles.container,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 33
-      },
-      __self: this
-    }, __jsx("p", {
-      className: "jsx-2713768715",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 34
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Image"], {
-      src: "/static/muhalik.jpg",
-      roundedCircle: true,
-      thumbnail: true,
-      fluid: true,
-      style: {
-        width: '25%',
-        maxWidth: '150px'
-      },
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 35
-      },
-      __self: this
-    })), __jsx("h6", {
-      style: {
-        width: '100%',
-        paddingBottom: '10px'
-      },
-      className: "jsx-2713768715" + " " + "text-center",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 37
-      },
-      __self: this
-    }, "Welcome To Muhalik"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Form"], {
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 38
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Form"].Group, {
-      controlId: "formBasicEmail",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 39
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Form"].Label, {
-      style: styles.label,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 40
-      },
-      __self: this
-    }, "Mobile Number"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["InputGroup"], {
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 41
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["InputGroup"].Prepend, {
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 42
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Button"], {
-      id: "mobileIcon",
-      style: styles.fontawesome_btn,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 43
-      },
-      __self: this
-    }, __jsx(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
-      icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faMobileAlt"],
-      style: styles.fontawesome,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 44
-      },
-      __self: this
-    }))), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Form"].Control, {
-      type: "text",
-      placeholder: "+966590911891",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 47
-      },
-      __self: this
-    }))), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Form"].Group, {
-      controlId: "formBasicPassword",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 53
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Form"].Label, {
-      style: styles.label,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 54
-      },
-      __self: this
-    }, " Password"), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["InputGroup"], {
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 55
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["InputGroup"].Prepend, {
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 56
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Button"], {
-      id: "passwordBtn",
-      style: styles.fontawesome_btn,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 57
-      },
-      __self: this
-    }, __jsx(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"], {
-      icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faLock"],
-      style: styles.fontawesome,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 58
-      },
-      __self: this
-    }))), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Form"].Control, {
-      type: hide ? 'password' : 'text',
-      placeholder: "Enter Password",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 61
-      },
-      __self: this
-    }), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["InputGroup"].Prepend, {
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 62
-      },
-      __self: this
-    }, __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Button"], {
-      id: "eyeBtn",
-      onClick: this.showPassword,
-      style: styles.fontawesome_eye_btn,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 63
-      },
-      __self: this
-    }, eyeBtn)))), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Form"].Label, {
-      className: "text-right",
-      style: styles.label,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 70
-      },
-      __self: this
-    }, __jsx("label", {
-      style: {
-        flex: '1'
-      },
-      className: "jsx-2713768715",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 71
-      },
-      __self: this
-    }), __jsx(next_link__WEBPACK_IMPORTED_MODULE_4___default.a, {
-      href: "#",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 72
-      },
-      __self: this
-    }, " Forgot Password ")), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Button"], {
-      variant: "light",
-      block: true,
-      type: "submit",
-      style: styles.submit_btn,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 75
-      },
-      __self: this
-    }, " Login "), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Form"].Label, {
-      className: "text-center",
-      style: styles.label,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 77
-      },
-      __self: this
-    }, "Don't have an account..??", __jsx("span", {
-      className: "jsx-2713768715",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 79
-      },
-      __self: this
-    }, __jsx(next_link__WEBPACK_IMPORTED_MODULE_4___default.a, {
-      href: "#",
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 80
-      },
-      __self: this
-    }, " Signup "))))), __jsx(react_bootstrap__WEBPACK_IMPORTED_MODULE_3__["Col"], {
-      lg: 3,
-      md: 3,
-      sm: 1,
-      xs: 0,
-      __source: {
-        fileName: _jsxFileName,
-        lineNumber: 85
-      },
-      __self: this
-    }))), __jsx(styled_jsx_style__WEBPACK_IMPORTED_MODULE_1___default.a, {
-      id: "2713768715",
-      __self: this
-    }, "p.jsx-2713768715{text-align:center;margin:0px;}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkM6XFxVc2Vyc1xcTXVkYXNzaXJSXFxEZXNrdG9wXFxGWVBcXG11aGFsaWt3ZWJcXHBhZ2VzXFxsb2dpbi5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUF3RnFCLEFBRytDLGtCQUNQLFdBQ2YiLCJmaWxlIjoiQzpcXFVzZXJzXFxNdWRhc3NpclJcXERlc2t0b3BcXEZZUFxcbXVoYWxpa3dlYlxccGFnZXNcXGxvZ2luLmpzIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IFJlYWN0LCB7IENvbXBvbmVudCB9IGZyb20gJ3JlYWN0JztcclxuaW1wb3J0IHsgTmF2YmFyLCBGb3JtLCBJbnB1dEdyb3VwLCBCdXR0b24sIFJvdywgQ29sLCBDb250YWluZXIsIEltYWdlIH0gZnJvbSAncmVhY3QtYm9vdHN0cmFwJztcclxuaW1wb3J0IExpbmsgZnJvbSAnbmV4dC9saW5rJztcclxuaW1wb3J0IHsgRm9udEF3ZXNvbWVJY29uIH0gZnJvbSAnQGZvcnRhd2Vzb21lL3JlYWN0LWZvbnRhd2Vzb21lJ1xyXG5pbXBvcnQgeyBmYUV5ZVNsYXNoLCBmYUxvY2ssIGZhRXllLCBmYU1vYmlsZUFsdCB9IGZyb20gJ0Bmb3J0YXdlc29tZS9mcmVlLXNvbGlkLXN2Zy1pY29ucyc7XHJcblxyXG5pbXBvcnQgR2xvYmFsU3R5bGVTaGVldCBmcm9tICcuLi9zdHlsZVNoZWV0JztcclxuXHJcbmNsYXNzIExvZ2luIGV4dGVuZHMgQ29tcG9uZW50IHtcclxuICAgIHN0YXRlID0ge1xyXG4gICAgICAgIGhpZGU6IHRydWVcclxuICAgIH07XHJcbiAgICBzaG93UGFzc3dvcmQgPSBldiA9PiB7XHJcbiAgICAgICAgdGhpcy5zZXRTdGF0ZSh7IGhpZGU6ICF0aGlzLnN0YXRlLmhpZGUgfSlcclxuICAgIH1cclxuICAgIHJlbmRlcigpIHtcclxuICAgICAgICBjb25zdCB7IGhpZGUgfSA9IHRoaXMuc3RhdGU7XHJcbiAgICAgICAgbGV0IGV5ZUJ0bjtcclxuICAgICAgICBpZiAodGhpcy5zdGF0ZS5oaWRlKSB7XHJcbiAgICAgICAgICAgIGV5ZUJ0biA9IDxGb250QXdlc29tZUljb24gaWNvbj17ZmFFeWV9IHN0eWxlPXtzdHlsZXMuZm9udGF3ZXNvbWVfZXllfSAvPjtcclxuICAgICAgICB9IGVsc2Uge1xyXG4gICAgICAgICAgICBleWVCdG4gPSA8Rm9udEF3ZXNvbWVJY29uIGljb249e2ZhRXllU2xhc2h9IHN0eWxlPXtzdHlsZXMuZm9udGF3ZXNvbWVfZXllfSAvPjtcclxuICAgICAgICB9XHJcblxyXG4gICAgICAgIHJldHVybiAoXHJcbiAgICAgICAgICAgIDxkaXYgc3R5bGU9e3N0eWxlcy5ib2R5fT5cclxuICAgICAgICAgICAgICAgIDxOYXZiYXIgdmFyaWFudD1cImRhcmtcIiBzdHlsZT17eyBiYWNrZ3JvdW5kOiBgJHtHbG9iYWxTdHlsZVNoZWV0LnByaW1yeV9jb2xvcn1gIH19PlxyXG4gICAgICAgICAgICAgICAgICAgIDxOYXZiYXIuQnJhbmQgaHJlZj1cIi9cIiBjbGFzc05hbWU9XCJtci1hdXRvXCIgPiBNdWhhbGlrICAgIDwvTmF2YmFyLkJyYW5kPlxyXG4gICAgICAgICAgICAgICAgPC9OYXZiYXI+XHJcbiAgICAgICAgICAgICAgICA8Q29udGFpbmVyPlxyXG4gICAgICAgICAgICAgICAgICAgIDxSb3c+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxDb2wgbGc9ezN9IG1kPXszfSBzbT17MX0geHM9ezB9PjwvQ29sPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8Q29sIHN0eWxlPXtzdHlsZXMuY29udGFpbmVyfT5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxJbWFnZSBzcmM9XCIvc3RhdGljL211aGFsaWsuanBnXCIgcm91bmRlZENpcmNsZSB0aHVtYm5haWwgZmx1aWQgc3R5bGU9e3sgd2lkdGg6ICcyNSUnLCBtYXhXaWR0aDogJzE1MHB4JyB9fSAvPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9wPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPGg2IGNsYXNzTmFtZT1cInRleHQtY2VudGVyXCIgc3R5bGU9e3sgd2lkdGg6ICcxMDAlJywgcGFkZGluZ0JvdHRvbTogJzEwcHgnIH19PldlbGNvbWUgVG8gTXVoYWxpazwvaDY+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Rm9ybT5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Rm9ybS5Hcm91cCBjb250cm9sSWQ9XCJmb3JtQmFzaWNFbWFpbFwiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Rm9ybS5MYWJlbCBzdHlsZT17c3R5bGVzLmxhYmVsfT5Nb2JpbGUgTnVtYmVyPC9Gb3JtLkxhYmVsPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8SW5wdXRHcm91cD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxJbnB1dEdyb3VwLlByZXBlbmQ+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPEJ1dHRvbiBpZD1cIm1vYmlsZUljb25cIiBzdHlsZT17c3R5bGVzLmZvbnRhd2Vzb21lX2J0bn0+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxGb250QXdlc29tZUljb24gaWNvbj17ZmFNb2JpbGVBbHR9IHN0eWxlPXtzdHlsZXMuZm9udGF3ZXNvbWV9IC8+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9CdXR0b24+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L0lucHV0R3JvdXAuUHJlcGVuZD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxGb3JtLkNvbnRyb2wgdHlwZT1cInRleHRcIiBwbGFjZWhvbGRlcj1cIis5NjY1OTA5MTE4OTFcIiAvPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L0lucHV0R3JvdXA+XHJcblxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB7LyogPEZvcm0uVGV4dCBjbGFzc05hbWU9XCJ0ZXh0LW11dGVkXCI+IFdlJ2xsIG5ldmVyIHNoYXJlIHlvdXIgZW1haWwgd2l0aCBhbnlvbmUgZWxzZS4gPC9Gb3JtLlRleHQ+ICovfVxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvRm9ybS5Hcm91cD5cclxuXHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPEZvcm0uR3JvdXAgY29udHJvbElkPVwiZm9ybUJhc2ljUGFzc3dvcmRcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPEZvcm0uTGFiZWwgc3R5bGU9e3N0eWxlcy5sYWJlbH0+IFBhc3N3b3JkPC9Gb3JtLkxhYmVsPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8SW5wdXRHcm91cD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxJbnB1dEdyb3VwLlByZXBlbmQ+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPEJ1dHRvbiBpZD1cInBhc3N3b3JkQnRuXCIgc3R5bGU9e3N0eWxlcy5mb250YXdlc29tZV9idG59PlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Rm9udEF3ZXNvbWVJY29uIGljb249e2ZhTG9ja30gc3R5bGU9e3N0eWxlcy5mb250YXdlc29tZX0gLz5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L0J1dHRvbj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvSW5wdXRHcm91cC5QcmVwZW5kPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPEZvcm0uQ29udHJvbCB0eXBlPXtoaWRlID8gJ3Bhc3N3b3JkJyA6ICd0ZXh0J30gcGxhY2Vob2xkZXI9XCJFbnRlciBQYXNzd29yZFwiIC8+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8SW5wdXRHcm91cC5QcmVwZW5kPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxCdXR0b24gaWQ9XCJleWVCdG5cIiBvbkNsaWNrPXt0aGlzLnNob3dQYXNzd29yZH0gc3R5bGU9e3N0eWxlcy5mb250YXdlc29tZV9leWVfYnRufT5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAge2V5ZUJ0bn1cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L0J1dHRvbj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvSW5wdXRHcm91cC5QcmVwZW5kPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L0lucHV0R3JvdXA+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9Gb3JtLkdyb3VwPlxyXG5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Rm9ybS5MYWJlbCBjbGFzc05hbWU9XCJ0ZXh0LXJpZ2h0XCIgc3R5bGU9e3N0eWxlcy5sYWJlbH0+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxsYWJlbCBzdHlsZT17eyBmbGV4OiAnMScgfX0+PC9sYWJlbD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPExpbmsgaHJlZj1cIiNcIj4gRm9yZ290IFBhc3N3b3JkIDwvTGluaz5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L0Zvcm0uTGFiZWw+XHJcblxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD1cImxpZ2h0XCIgYmxvY2sgdHlwZT1cInN1Ym1pdFwiIHN0eWxlPXtzdHlsZXMuc3VibWl0X2J0bn0+IExvZ2luIDwvQnV0dG9uPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHsvKiA8QnV0dG9uIHZhcmlhbnQ9XCJsaWdodFwiIGJsb2NrIHR5cGU9XCJzdWJtaXRcIiBzdHlsZT17c3R5bGVzLnN1Ym1pdF9idG59PiBTaWdobnVwIDwvQnV0dG9uPiAqL31cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Rm9ybS5MYWJlbCBjbGFzc05hbWU9XCJ0ZXh0LWNlbnRlclwiIHN0eWxlPXtzdHlsZXMubGFiZWx9PlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEb24ndCBoYXZlIGFuIGFjY291bnQuLj8/XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPExpbmsgaHJlZj1cIiNcIj4gU2lnbnVwIDwvTGluaz5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9zcGFuPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvRm9ybS5MYWJlbD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvRm9ybT5cclxuICAgICAgICAgICAgICAgICAgICAgICAgPC9Db2w+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxDb2wgbGc9ezN9IG1kPXszfSBzbT17MX0geHM9ezB9PjwvQ29sPlxyXG4gICAgICAgICAgICAgICAgICAgIDwvUm93PlxyXG4gICAgICAgICAgICAgICAgPC9Db250YWluZXI+XHJcbiAgICAgICAgICAgICAgICA8c3R5bGUganN4PlxyXG4gICAgICAgICAgICAgICAgICAgIHtgXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIHAge1xyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyOyBcclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIG1hcmdpbjogMHB4O1xyXG4gICAgICAgICAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgICAgICAgICAgYH1cclxuICAgICAgICAgICAgICAgIDwvc3R5bGU+XHJcbiAgICAgICAgICAgIDwvZGl2PlxyXG4gICAgICAgICk7XHJcbiAgICB9XHJcbn1cclxuXHJcbmNvbnN0IHN0eWxlcyA9IHtcclxuICAgIGJvZHk6IHtcclxuICAgICAgICBiYWNrZ3JvdW5kOiBgJHtHbG9iYWxTdHlsZVNoZWV0LmJvZHlfY29sb3J9YCxcclxuICAgICAgICBwb3NpdGlvbjogJ2Fic29sdXRlJyxcclxuICAgICAgICB0b3A6ICcwJyxcclxuICAgICAgICBsZWZ0OiAnMCcsXHJcbiAgICAgICAgcmlnaHQ6ICcwJyxcclxuICAgICAgICBib3R0b206ICcwJyxcclxuXHJcbiAgICB9LFxyXG4gICAgc3VibWl0X2J0bjoge1xyXG4gICAgICAgIGJhY2tncm91bmQ6IGAke0dsb2JhbFN0eWxlU2hlZXQucHJpbXJ5X2NvbG9yfWAsXHJcbiAgICAgICAgY29sb3I6IGAke0dsb2JhbFN0eWxlU2hlZXQucHJpbWFyeV90ZXh0X2NvbG9yfWAsXHJcbiAgICAgICAgLy8gYmFja2dyb3VuZDogJ3doaXRlJyxcclxuICAgICAgICBib3JkZXI6ICdub25lJyxcclxuICAgICAgICBtYXJnaW5Ub3A6ICc1JScsXHJcbiAgICAgICAgbWFyZ2luQm90dG9tOiAnMiUnLFxyXG4gICAgfSxcclxuICAgIGNvbnRhaW5lcjoge1xyXG4gICAgICAgIC8vIGJhY2tncm91bmQ6IGAke0dsb2JhbFN0eWxlU2hlZXQucHJpbXJ5X2NvbG9yfWAsXHJcbiAgICAgICAgYmFja2dyb3VuZDogJ3doaXRlJyxcclxuICAgICAgICAvLyBib3JkZXI6IGAwLjVweCBzb2xpZCAke0dsb2JhbFN0eWxlU2hlZXQucHJpbXJ5X2NvbG9yfWAsXHJcbiAgICAgICAgcGFkZGluZzogJzIwcHggMzBweCcsXHJcbiAgICAgICAgbWFyZ2luOiAnNSUgNSUnLFxyXG4gICAgfSxcclxuICAgIGxhYmVsOiB7XHJcbiAgICAgICAgd2lkdGg6ICcxMDAlJyxcclxuICAgICAgICBmb250U2l6ZTogJzE0cHgnLFxyXG4gICAgfSxcclxuICAgIGZvbnRhd2Vzb21lX2J0bjoge1xyXG4gICAgICAgIGJhY2tncm91bmQ6IGAke0dsb2JhbFN0eWxlU2hlZXQucHJpbXJ5X2NvbG9yfWAsXHJcbiAgICAgICAgYm9yZGVyOiAnbm9uZScsXHJcbiAgICB9LFxyXG4gICAgZm9udGF3ZXNvbWU6IHtcclxuICAgICAgICBjb2xvcjogYCR7R2xvYmFsU3R5bGVTaGVldC5wcmltYXJ5X3RleHRfY29sb3J9YCxcclxuICAgICAgICB3aWR0aDogJzE1cHgnLFxyXG4gICAgICAgIGhlaWdodDogJzE1cHgnLFxyXG4gICAgICAgIG1heEhlaWdodDogJzE1cHgnLFxyXG4gICAgICAgIG1heFdpZHRoOiAnMTVweCcsXHJcbiAgICB9LFxyXG4gICAgZm9udGF3ZXNvbWVfZXllX2J0bjoge1xyXG4gICAgICAgIGJhY2tncm91bmQ6ICdub25lJyxcclxuICAgICAgICBib3JkZXI6ICcwLjVweCBzb2xpZCAjRERFMUUzJyxcclxuICAgIH0sXHJcbiAgICBmb250YXdlc29tZV9leWU6IHtcclxuICAgICAgICBjb2xvcjogYCR7R2xvYmFsU3R5bGVTaGVldC5wcmltcnlfY29sb3J9YCxcclxuICAgICAgICB3aWR0aDogJzE1cHgnLFxyXG4gICAgICAgIGhlaWdodDogJzE1cHgnLFxyXG4gICAgICAgIG1heEhlaWdodDogJzE1cHgnLFxyXG4gICAgICAgIG1heFdpZHRoOiAnMTVweCcsXHJcbiAgICB9LFxyXG59XHJcblxyXG5leHBvcnQgZGVmYXVsdCBMb2dpbjsiXX0= */\n/*@ sourceURL=C:\\\\Users\\\\MudassirR\\\\Desktop\\\\FYP\\\\muhalikweb\\\\pages\\\\login.js */"));
-  }
-
-}
-
-const styles = {
-  body: {
-    background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_7__["default"].body_color}`,
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    right: '0',
-    bottom: '0'
-  },
-  submit_btn: {
-    background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_7__["default"].primry_color}`,
-    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_7__["default"].primary_text_color}`,
-    // background: 'white',
-    border: 'none',
-    marginTop: '5%',
-    marginBottom: '2%'
-  },
-  container: {
-    // background: `${GlobalStyleSheet.primry_color}`,
-    background: 'white',
-    // border: `0.5px solid ${GlobalStyleSheet.primry_color}`,
-    padding: '20px 30px',
-    margin: '5% 5%'
-  },
-  label: {
-    width: '100%',
-    fontSize: '14px'
-  },
-  fontawesome_btn: {
-    background: `${_styleSheet__WEBPACK_IMPORTED_MODULE_7__["default"].primry_color}`,
-    border: 'none'
-  },
-  fontawesome: {
-    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_7__["default"].primary_text_color}`,
-    width: '15px',
-    height: '15px',
-    maxHeight: '15px',
-    maxWidth: '15px'
-  },
-  fontawesome_eye_btn: {
-    background: 'none',
-    border: '0.5px solid #DDE1E3'
-  },
-  fontawesome_eye: {
-    color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_7__["default"].primry_color}`,
-    width: '15px',
-    height: '15px',
-    maxHeight: '15px',
-    maxWidth: '15px'
-  }
+const Index = () => {
+  return __jsx("div", {
+    style: {
+      background: '#F5F5F5'
+    },
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 6
+    },
+    __self: undefined
+  }, __jsx(_components_customer_layout_CustomerLayout__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 7
+    },
+    __self: undefined
+  }, __jsx(next_link__WEBPACK_IMPORTED_MODULE_1___default.a, {
+    href: "./admin",
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 8
+    },
+    __self: undefined
+  }, "Admin dashboard"), __jsx("br", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 9
+    },
+    __self: undefined
+  }), __jsx(next_link__WEBPACK_IMPORTED_MODULE_1___default.a, {
+    href: "./login",
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 10
+    },
+    __self: undefined
+  }, "Login"), __jsx("br", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 11
+    },
+    __self: undefined
+  }), __jsx(next_link__WEBPACK_IMPORTED_MODULE_1___default.a, {
+    href: "./signup",
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 12
+    },
+    __self: undefined
+  }, "Signup"), __jsx("br", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 13
+    },
+    __self: undefined
+  }), __jsx(next_link__WEBPACK_IMPORTED_MODULE_1___default.a, {
+    href: "./vendor-signup",
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 14
+    },
+    __self: undefined
+  }, "Vendor Signup")));
 };
-/* harmony default export */ __webpack_exports__["default"] = (Login);
+
+/* harmony default export */ __webpack_exports__["default"] = (Index);
 
 /***/ }),
 
@@ -5878,37 +5839,26 @@ const GlobalStyleSheet = {
 
 /***/ }),
 
-/***/ 6:
+/***/ 3:
 /*!******************************!*\
-  !*** multi ./pages/login.js ***!
+  !*** multi ./pages/index.js ***!
   \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\MudassirR\Desktop\FYP\muhalikweb\pages\login.js */"./pages/login.js");
+module.exports = __webpack_require__(/*! C:\Users\MudassirR\Desktop\FYP\muhalikweb\pages\index.js */"./pages/index.js");
 
 
 /***/ }),
 
-/***/ "@fortawesome/free-solid-svg-icons":
-/*!****************************************************!*\
-  !*** external "@fortawesome/free-solid-svg-icons" ***!
-  \****************************************************/
+/***/ "next/head":
+/*!****************************!*\
+  !*** external "next/head" ***!
+  \****************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = require("@fortawesome/free-solid-svg-icons");
-
-/***/ }),
-
-/***/ "@fortawesome/react-fontawesome":
-/*!*************************************************!*\
-  !*** external "@fortawesome/react-fontawesome" ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = require("@fortawesome/react-fontawesome");
+module.exports = require("next/head");
 
 /***/ }),
 
@@ -5967,17 +5917,6 @@ module.exports = require("react-is");
 
 /***/ }),
 
-/***/ "styled-jsx/style":
-/*!***********************************!*\
-  !*** external "styled-jsx/style" ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = require("styled-jsx/style");
-
-/***/ }),
-
 /***/ "url":
 /*!**********************!*\
   !*** external "url" ***!
@@ -5990,4 +5929,4 @@ module.exports = require("url");
 /***/ })
 
 /******/ });
-//# sourceMappingURL=login.js.map
+//# sourceMappingURL=index.js.map

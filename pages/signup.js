@@ -12,30 +12,33 @@ import Link from 'next/link';
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
 
 const schema = yup.object({
-    mobile: yup.string().required("Mobile number is required")
+    mobile: yup.string().required("Enter Mobile Number")
         .matches(phoneRegExp, "Phone number is not valid"),
 
-    fullName: yup.string().required("Full Name is required")
+    fullName: yup.string().required("Enter Full Name")
         .min(5, "Full Name must have at least 5 characters")
         .max(20, "Full Name can't be longer than 20 characters"),
 
-    verificationCode: yup.string().required("Verification Code is required"),
+    verificationCode: yup.string().required("Enter Verification Code"),
 
     email: yup.string().email("Must be a valid email address")
         .max(100, "Email must be less than 100 characters"),
 
-    password: yup.string().required("Password is required")
+    password: yup.string().required("Enter Password")
         .min(8, "Password must have at least 8 characters")
         .max(20, "Password can't be longer than 20 characters"),
 
-    confirmPassword: yup.string().required("Conform Password is required")
-        .min(8, "Conform Password must have at least 8 characters")
-        .max(20, "Conform Password can't be longer than 20 characters"),
+    confirmPassword: yup.string().required("Enter Confirm Password").when("password", {
+        is: val => (val && val.length > 0 ? true : false),
+        then: yup.string().oneOf(
+            [yup.ref("password")],
+            "Passwords must match"
+        )
+    }),
 
+    countary: yup.string().required("Enter Countary"),
 
-    countary: yup.string().required("Countary is required"),
-
-    gender: yup.string().required("Gender is required"),
+    gender: yup.string().required("Enter Gender"),
 });
 
 class Signup extends Component {
