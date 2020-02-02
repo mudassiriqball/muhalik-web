@@ -285,7 +285,7 @@ class Signup extends Component {
                                                                 </span>
                                                                 and
                                                                 <span>
-                                                                    <Link href="./help/privacy-policy"> Privacy Statement </Link>
+                                                                    <Link href="./help/privacy-statement"> Privacy Statement </Link>
                                                                 </span>
                                                             </Form.Label>
                                                         </Form.Group>
@@ -331,7 +331,7 @@ const styles = {
         top: '0',
         left: '0',
         right: '0',
-        bottom: '0',
+        bottom: '-100',
 
     },
     buttons: {
