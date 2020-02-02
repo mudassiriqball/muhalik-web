@@ -315,7 +315,7 @@ class Signup extends Component {
                                                         <Form.Control
                                                             as="select"
                                                             aria-describedby="city"
-                                                            name="countary"
+                                                            name="city"
                                                             value={values.city}
                                                             onChange={handleChange}
                                                             isInvalid={touched.city && errors.city}
