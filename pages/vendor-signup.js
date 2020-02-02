@@ -356,7 +356,7 @@ class Signup extends Component {
                                                                 </span>
                                                                 and
                                                                 <span>
-                                                                    <Link href="./help/privacy-policy"> Privacy Statement </Link>
+                                                                    <Link href="./help/privacy-statement"> Privacy Statement </Link>
                                                                 </span>
                                                             </Form.Label>
                                                         </Form.Group>

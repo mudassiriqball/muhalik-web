@@ -293,7 +293,7 @@ class Signup extends Component {
                                                     <Form.Group as={Col} lg={4} controlId="loginGrop">
                                                         <Form.Label className="text-center" style={styles.label}>
                                                             Already have an account...
-                                                                <span>
+                                                            <span>
                                                                 <Link href="login"> Login </Link>
                                                             </span>
                                                         </Form.Label>
