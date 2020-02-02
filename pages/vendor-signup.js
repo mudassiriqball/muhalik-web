@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import GlobalStyleSheet from '../styleSheet';
 import Link from 'next/link';
 
@@ -202,7 +202,7 @@ class Signup extends Component {
                                                                 isInvalid={touched.password && errors.password}
                                                             />
                                                             <InputGroup.Prepend>
-                                                                <Button id="passwordEyeBtn" style={styles.buttons}>
+                                                                <Button id="passwordEyeBtn" onClick={this.showPassword} style={styles.buttons}>
                                                                     {eyeBtn}
                                                                 </Button>
                                                             </InputGroup.Prepend>
