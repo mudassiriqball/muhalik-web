@@ -8,6 +8,8 @@
 const GlobalStyleSheet = {
     // primry_color: '#563D7C',
     primry_color: '#28A745',
+
+    admin_primry_color: '#373948',
     primary_text_color: 'white',
 
     // Body color

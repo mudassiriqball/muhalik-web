@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Dashboard from './components/admin/dashboard/dashboard';
 import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-drawer';
 import AdminLayout from './components/admin/layout/AdminLayout';
+import GlobalStyleSheet from '../styleSheet';
 
 const BackDrop = props => (
     <div>
@@ -40,7 +41,7 @@ class AdminDashboard extends Component {
         }
 
         return (
-            <div>
+            <div style={styles.body}>
                 <AdminLayout>
                     <Dashboard drawerClickHandler={this.drawerToggleClickHandler} />
                     <DashboardSideDrawer show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
@@ -49,6 +50,18 @@ class AdminDashboard extends Component {
             </div>
         );
     }
+}
+
+const styles = {
+    body: {
+        background: `${GlobalStyleSheet.body_color}`,
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        right: '0',
+        bottom: '0',
+
+    },
 }
 
 export default AdminDashboard;

@@ -1,10 +1,8 @@
-
+import { Nav, Form, FormControl, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faBars, faPersonBooth, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBars, faChevronRight, faTachometerAlt, faPersonBooth, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
-
-import { Nav, Form, FormControl, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
 
 import Vendors from './dashboard-tabs-content/vendors';
 import Customers from './dashboard-tabs-content/customers';
@@ -16,197 +14,182 @@ import Commision from './dashboard-tabs-content/commision';
 import Reports from './dashboard-tabs-content/reports';
 
 import GlobalStyleSheet from '../../../../styleSheet';
-export const styles = {
-    background: {
-        background: `${GlobalStyleSheet.primry_color}`,
-    },
 
-    // Styles for the dashboard.js
-    search_bar: {
-        width: '75%',
-        flex: '7',
-        border: `2px solid ${GlobalStyleSheet.primry_color}`,
-        margin: '2px 2.5px 1px 1.2px',
-    },
-    search_btn: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        flex: '1',
-        border: 'none',
-        color: 'white',
-        width: '20%',
-        float: 'right',
-        borderRadius: 'none',
-    },
-    side_drawer_search_btn: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        margin: '0px 2px',
-        color: 'white',
-        width: '38px',
-        height: '38px',
-        maxHeight: '40px',
-        maxWidth: '40px',
-        border: 'none',
-    },
-    side_drawer_search_bar: {
-        margin: '2px 0px',
-        flex: '1',
-    },
-    border: {
-        border: '1px solid white',
-        background: `${GlobalStyleSheet.primry_color}`,
-        color: 'white',
-        borderRadius: '4px'
-    },
-    link_color: {
-        color: `${GlobalStyleSheet.primary_text_color}`,
-    },
-    fontawesome: {
-        color: `${GlobalStyleSheet.primary_text_color}`,
-        marginRight: '20px',
-        width: '15px',
-        height: '15px',
-        maxHeight: '15px',
-        maxWidth: '15px',
-    },
-}
+const Dashboard = props => {
+    return (
+        <div>
 
-const Dashboard = props => (
-    <div>
-        <Tab.Container id="dashboard-tabs" defaultActiveKey="one">
             {/* Toogle Button Components */}
             <div className="side_tab_toogle_btn" style={{ width: '100%' }}>
-                <Form inline>
-                    <Button style={styles.side_drawer_search_btn} onClick={props.drawerClickHandler}>
-                        <FontAwesomeIcon icon={faBars} />
-                    </Button>
-                    <FormControl type="text" placeholder="Search" className="mr-sm-6" style={styles.side_drawer_search_bar}></FormControl>
-                    <Button style={styles.side_drawer_search_btn}>
-                        <FontAwesomeIcon icon={faSearch} />
-                    </Button>
+                <Form inline style={{ margin: '2px 3px' }}>
+                    <InputGroup.Prepend>
+                        <Button style={styles.search_btn} onClick={props.drawerClickHandler}>
+                            <FontAwesomeIcon icon={faBars} style={styles.search_fontawesome} />
+                        </Button>
+                    </InputGroup.Prepend>
+                    <Form.Control
+                        style={styles.search_bar}
+                        className="mr-sm-6"
+                        type="text"
+                        placeholder="Search here"
+                        aria-describedby="side_drawer_searchbar"
+                        name="side_drawer_searchbar"
+                    />
+                    <InputGroup.Prepend>
+                        <Button id="side_drawer_searchBtn" style={styles.search_btn}>
+                            <FontAwesomeIcon icon={faSearch} style={styles.search_fontawesome} />
+                        </Button>
+                    </InputGroup.Prepend>
                 </Form>
             </div>
             {/* End of the Toogle Button Components */}
 
+            <Tab.Container id="dashboard-tabs" defaultActiveKey="zero" >
+                <Row>
+                    {/* Tabs Components */}
+                    <Col lg={3} md={3} style={{ maxWidth: '310px' }}>
+                        <div className="tabs" style={styles.body}>
+                            <Nav className="flex-column" variant="pills">
+                                <Form.Row style={{ margin: '5px' }}>
+                                    <Form.Control
+                                        style={{ flex: '3' }}
+                                        type="text"
+                                        placeholder="Search here"
+                                        aria-describedby="searchBtn"
+                                        name="searchBtn"
+                                    />
+                                    <Button id="searchBtn" style={styles.search_btn}>
+                                        <FontAwesomeIcon icon={faSearch} style={styles.search_fontawesome} />
+                                    </Button>
+                                </Form.Row>
 
-            <Row style={{ padding: '0px', margin: '0px' }}>
-
-                {/* Tabs Components */}
-                <div className="tabs">
-                    <Col sm={2} style={{ padding: '0px', maxWidth: '280px', minWidth: '110px' }}>
-                        <Nav className="flex-column" variant='tabs'>
-                            <Form inline>
-                                <FormControl style={styles.search_bar} type="text" placeholder="Search" className="mr-sm-6"></FormControl>
-                                <Button style={styles.search_btn}>
-                                    <FontAwesomeIcon icon={faSearch} />
-                                </Button>
-                            </Form>
-                            <Nav.Item>
-                                <div className="hover" style={styles.border}>
-                                    <Nav.Link eventKey="one" style={styles.link_color}>
-                                        <FontAwesomeIcon size="xs" icon={faPersonBooth} style={styles.fontawesome} />
-                                        Vendors
-                                                </Nav.Link>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className="hover" style={styles.border}>
-                                    <Nav.Link eventKey="two" style={styles.link_color}>
-                                        <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
-                                        Customers
-                                                 </Nav.Link>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className="hover" style={styles.border}>
-                                    <Nav.Link eventKey="three" style={styles.link_color}>
-                                        <FontAwesomeIcon icon={faProductHunt} style={styles.fontawesome} />
-                                        Products
-                                                </Nav.Link>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className="hover" style={styles.border}>
-                                    <Nav.Link eventKey="four" style={styles.link_color}>
-                                        <FontAwesomeIcon icon={faListAlt} style={styles.fontawesome} />
-                                        Categories
-                                                </Nav.Link>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className="hover" style={styles.border}>
-                                    <Nav.Link eventKey="five" style={styles.link_color}>
-                                        <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
-                                        Inventory
-                                                </Nav.Link>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className="hover" style={styles.border}>
-                                    <Nav.Link eventKey="six" style={styles.link_color}>
-                                        <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
-                                        Discounts
-                                                </Nav.Link>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className="hover" style={styles.border}>
-                                    <Nav.Link eventKey="seven" style={styles.link_color}>
-                                        <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
-                                        Commision
-                                                </Nav.Link>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className="hover" style={styles.border}>
-                                    <Nav.Link eventKey="eight" style={styles.link_color}>
-                                        <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
-                                        Reports
-                                    </Nav.Link>
-                                </div>
-                            </Nav.Item>
-                        </Nav>
+                                {/* Links */}
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="zero" style={styles.tab_link}>
+                                            <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
+                                            Dashboard
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="one" style={styles.tab_link}>
+                                            <FontAwesomeIcon size="xs" icon={faPersonBooth} style={styles.fontawesome} />
+                                            Vendors
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="two" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
+                                            Customers
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="three" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faProductHunt} style={styles.fontawesome} />
+                                            Products
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="four" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faListAlt} style={styles.fontawesome} />
+                                            Categories
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="five" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
+                                            Inventory
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="six" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
+                                            Discounts
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover" >
+                                        <Nav.Link eventKey="seven" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
+                                            Commission
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover" >
+                                        <Nav.Link eventKey="eight" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
+                                            Reports
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                            </Nav>
+                        </div>
                     </Col>
-                </div>
-                <div className="tab_content">
-                    <Col sm={"auto"} style={{ padding: '5px', margin: '0px', minWidth: '100%' }}>
-                        <Tab.Content>
-                            <Tab.Pane eventKey="one">
-                                <Vendors />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="two">
-                                <Customers />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="three">
-                                <Products />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="four">
-                                <ProductCategories />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="five">
-                                <Inventory />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="six">
-                                <Discounts />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="seven">
-                                <Commision />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="eight">
-                                <Reports />
-                            </Tab.Pane>
-                        </Tab.Content>
+                    <Col>
+                        <div className="tab_content">
+                            <Tab.Content>
+                                <Tab.Pane eventKey="one">
+                                    <Vendors />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="two">
+                                    <Customers />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="three">
+                                    <Products />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="four">
+                                    <ProductCategories />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="five">
+                                    <Inventory />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="six">
+                                    <Discounts />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="seven">
+                                    <Commision />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="eight">
+                                    <Reports />
+                                </Tab.Pane>
+                            </Tab.Content>
+                        </div>
                     </Col>
-                </div>
-                {/* End of the Tabs Components */}
-            </Row>
-        </Tab.Container>
-        <style jsx>
-            {`
+                    {/* End of the Tabs Components */}
+                </Row>
+            </Tab.Container>
+            <style type="text/css">
+                {`
+                .hover {
+                    // margin: 2px 0px;
+                    background: ${GlobalStyleSheet.admin_primry_color};
+                    color: ${GlobalStyleSheet.body_color};
+                }
                 .hover:hover {
-                    margin-left: 10px;
-                    margin-right: -10px;
-                    margin-top: -4px;
-                    margin-bottom: 4px;
+                    background: #30313E;
                 }
                 @media (max-width: 991px) {
                     .tabs {
@@ -222,8 +205,57 @@ const Dashboard = props => (
                     }
                 }
             `}
-        </style>
-    </div>
-)
+            </style>
+        </div>
+    )
+}
+
+const styles = {
+    body: {
+        background: `${GlobalStyleSheet.admin_primry_color}`,
+    },
+    row: {
+        padding: '0px',
+        margin: '0px',
+    },
+    search_btn: {
+        background: `${GlobalStyleSheet.admin_primry_color}`,
+        border: 'none',
+        float: 'right',
+    },
+    search_bar: {
+        flex: '1',
+    },
+    tab_link: {
+        color: '#cccccc',
+        fontSize: '14px',
+        paddingTop: '8%',
+        paddingBottom: '8%',
+    },
+    fontawesome: {
+        color: `${GlobalStyleSheet.body_color}`,
+        margin: '0px 8% 0px 12%',
+        width: '17px',
+        height: '17px',
+        maxHeight: '17px',
+        maxWidth: '17px',
+    },
+    forword_fontawesome: {
+        color: `${GlobalStyleSheet.body_color}`,
+        marginRight: '10%',
+        float: 'right',
+        width: '14px',
+        height: '14px',
+        maxHeight: '14px',
+        maxWidth: '14px',
+    },
+    search_fontawesome: {
+        color: `${GlobalStyleSheet.body_color}`,
+        width: '15px',
+        height: '15px',
+        maxHeight: '15px',
+        maxWidth: '15px',
+    },
+}
 
 export default Dashboard;
