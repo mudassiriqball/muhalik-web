@@ -2357,12 +2357,12 @@ const styles = {
   },
   forword_fontawesome: {
     color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_13__["default"].body_color}`,
-    marginRight: '10%',
+    margin: '8px 5% 0px 0px',
     float: 'right',
-    width: '14px',
-    height: '14px',
-    maxHeight: '14px',
-    maxWidth: '14px'
+    width: '10px',
+    height: '10px',
+    maxHeight: '10px',
+    maxWidth: '10px'
   },
   search_fontawesome: {
     color: `${_styleSheet__WEBPACK_IMPORTED_MODULE_13__["default"].body_color}`,
