@@ -29,7 +29,7 @@ const DashboardSideDrawer = props => {
                 <div className={drawerClasses}>
                     <p>
                         <Image src="/static/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
-                        <h6>Mr.X</h6>
+                        <label>Mr.X</label>
                     </p>
                     <Nav className="flex-column" variant="pills">
                         <Nav.Item>
@@ -172,7 +172,7 @@ const DashboardSideDrawer = props => {
                         padding: 5% 0px;
                         border-bottom: 1px solid gray;
                     }
-                    h6 {
+                    label {
                         margin-top: 4%;
                         color: ${GlobalStyleSheet.body_color};
                     }
