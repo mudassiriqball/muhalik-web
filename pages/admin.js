@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import Dashboard from './components/admin/dashboard/dashboard';
+import DashboardTabs from './components/admin/dashboard/dashboard-tabs';
 import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-drawer';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import GlobalStyleSheet from '../styleSheet';
@@ -23,13 +23,20 @@ const BackDrop = props => (
 
 class AdminDashboard extends Component {
     state = {
-        sideDrawerOpen: false
+        sideDrawerOpen: false,
+        fuck: true
     };
     drawerToggleClickHandler = () => {
         this.setState(prevState => {
             return { sideDrawerOpen: !prevState.sideDrawerOpen };
         });
     };
+    fuckClickHandler = () => {
+        this.setState(prevState => {
+            return { fuck: !prevState.fuck };
+        });
+    };
+
     backdropClickHandler = () => {
         this.setState({ sideDrawerOpen: false });
     };
@@ -42,11 +49,11 @@ class AdminDashboard extends Component {
 
         return (
             <div style={styles.body}>
-                <AdminLayout>
-                    <Dashboard drawerClickHandler={this.drawerToggleClickHandler} />
+                {/* <AdminLayout> */}
+                    <DashboardTabs show={this.state.fuck} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.fuckClickHandler}/>
                     <DashboardSideDrawer show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
                     {backdrop}
-                </AdminLayout>
+                {/* </AdminLayout> */}
             </div>
         );
     }

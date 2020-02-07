@@ -22,7 +22,6 @@ const Toolbar = () => (
         <Card>
             <Card.Body>
                 <Navbar collapseOnSelect expand="lg">
-
                     <Navbar.Brand href="#home" style={styles.brand}>Muhalik</Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
@@ -32,7 +31,6 @@ const Toolbar = () => (
                             <FormControl type="text" placeholder="Search" className="mr-sm-2" style={{ width: '80%' }} className="mr-auto"></FormControl>
                             <Button style={{ background: 'none', border: 'none' }}>Search</Button>
                         </Form>
-
                         <Nav className>
                             <Nav.Link href="#home">Login/Signup</Nav.Link>
                             <Nav.Link href="#features">Orders</Nav.Link>
