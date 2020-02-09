@@ -11,14 +11,17 @@ import GlobalStyleSheet from '../../../../../styleSheet'
 
 class Vendor extends React.Component {
     static async getInitialProps(ctx) {
-        const res = await fetch('https://api.github.com/repos/zeit/next.js')
+        const res = await fetch('http://localhost:3000/users/5e3dc17b1c9d44000095ad67')
         const json = await res.json()
-        return { stars: 10 }
+        return { stars: json }
     }
 
     render() {
         return (
             <div >
+                <Row>
+                    <p>Next stars: {this.props.stars}</p>
+                </Row>
                 <Row style={styles.row}>
                     <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
                         <div className="hover">
