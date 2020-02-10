@@ -15,9 +15,11 @@ nextApp.prepare().then(() => {
       const http = require('http');
       const server = http.createServer(app);
       require('dotenv').config();
+
       const errorHandler = require("./node/middleware/error-handler");
       const errorMessage = require("./node/middleware/error-message");
       const accessControls = require("./node/middleware/access-controls");
+
       const mongoose = require('mongoose');
       const cors = require('cors');
       const bodyParser = require('body-parser')
@@ -30,6 +32,7 @@ nextApp.prepare().then(() => {
       // Requiring Routes
       const UsersRoutes = require('./node/routes/users.routes');
       const ProductsRoutes = require('./node/routes/products.routes');
+      
       // connection to mongoose
       const mongoCon = process.env.mongoCon;
       const connect = async function () {

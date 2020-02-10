@@ -3,7 +3,7 @@ const Users = require('../models/users.model');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jsonwebtoken = require('jsonwebtoken');
-
+const mongoose = require('mongoose');
 usersController.getAll = async (req, res) => {
   let users;
   try {
@@ -46,37 +46,53 @@ usersController.getSingleUser = async (req, res) => {
 };
 
 usersController.registerUser = async (req, res) => {
-  try {
-    const body = req.body;
-    // there must be a password in body
-    // we follow these 2 steps
-    const password = body.password;
-    var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(password, salt);
-    body.password = hash;
-    const user = new Users(body);
-    const result = await user.save();
+  const user = new Users ({
+    _id: new mongoose.Types.ObjectId(),
+    name: req.body.name,
+    number: req.body.number,
+  });
+  user.save().then(result => {
     res.send({
       message: 'Signup successful'
     });
-  } catch (ex) {
-    console.log('ex', ex);
-    if (ex.code === 11000) {
-      res
+  }).catch(err => {
+    res
         .send({
           message: 'This email has been registered already',
         })
         .status(500);
-    }
-    else {
-      res
-        .send({
-          message: 'Error',
-          detail: ex
-        })
-        .status(500);
-    }
-  }
+  })
+  // try {
+  //   const body = req.body;
+  //   // there must be a password in body
+  //   // we follow these 2 steps
+  //   const password = body.password;
+  //   var salt = bcrypt.genSaltSync(10);
+  //   var hash = bcrypt.hashSync(password, salt);
+  //   body.password = hash;
+  //   const user = new Users(body);
+  //   const result = await user.save();
+    // res.send({
+    //   message: 'Signup successful'
+    // });
+  // } catch (ex) {
+  //   console.log('ex', ex);
+  //   if (ex.code === 11000) {
+      // res
+      //   .send({
+      //     message: 'This email has been registered already',
+      //   })
+      //   .status(500);
+  //   }
+  //   else {
+  //     res
+  //       .send({
+  //         message: 'Error',
+  //         detail: ex
+  //       })
+  //       .status(500);
+  //   }
+  // }
 };
 
 
