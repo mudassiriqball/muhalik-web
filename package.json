@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "startt": "node app.js",
-    "devv": "nodemon app.js",
+    "startt": "node server.js",
+    "devv": "nodemon server.js",
     "dev": "next",
     "build": "next build",
     "start": "next start",
