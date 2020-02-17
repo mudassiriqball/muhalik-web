@@ -12,6 +12,7 @@ const Index = () => {
                 <Link href='./signup'>Signup</Link>
                 <br />
                 <Link href='./vendor-signup'>Vendor Signup</Link>
+                <Link href='./vendor-signup'>Nothing</Link>
             </Layout>
         </div>
     );
