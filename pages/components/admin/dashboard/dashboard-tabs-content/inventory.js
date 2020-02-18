@@ -10,11 +10,11 @@ import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import GlobalStyleSheet from '../../../../../styleSheet'
 
 class Inventory extends React.Component {
-    static async getInitialProps(ctx) {
-        const res = await fetch('https://api.github.com/repos/zeit/next.js')
-        const json = await res.json()
-        return { stars: 10 }
-    }
+    // static async getInitialProps(ctx) {
+    //     const res = await fetch('https://api.github.com/repos/zeit/next.js')
+    //     const json = await res.json()
+    //     return { stars: 10 }
+    // }
 
     render() {
         return (
