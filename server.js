@@ -1,16 +1,17 @@
+
+const PORT = process.env.PORT || 3000;
 const express = require('express');
 const next = require('next');
 
-const PORT = process.env.PORT || 3000
 const dev = process.env.NODE_ENV !== "production";
-const app = next({ dev });
-const handle = app.getRequestHandler();
+const nextApp = next({ dev });
+const handle = nextApp.getRequestHandler();
 
-app.prepare()
+nextApp.prepare()
   .then(() => {
     const app = express();
     const http = require('http');
-    const server = http.createServer(app);
+    // const server = http.createServer(app);
     require('dotenv').config();
 
     require('dotenv').config();
@@ -70,12 +71,18 @@ app.prepare()
       return handle(req, res);
     })
 
-    // server.listen(PORT, err => {
-    //   if (err) throw err;
-    //   console.log(`> ready on port ${PORT}`);
-    // })
-    app.set('port', (process.env.PORT));
-    server.listen(app.get('port'));
+    
+    app.use(errorHandler);
+    app.use(errorMessage);
+
+    // app.set('port', (process.env.PORT));
+    // server.listen(app.get('port'));
+    
+    app.listen(PORT, err => {
+      if (err) throw err;
+      console.log(`> ready on port ${PORT}`);
+    })
+
     console.log('listening on port', app.get('port'));
   })
   .catch(ex => {
