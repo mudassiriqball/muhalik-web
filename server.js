@@ -62,6 +62,7 @@ app.prepare()
 
     const UsersRoutes = require('./api/routes/users.routes');
     const ProductsRoutes = require('./api/routes/products.routes');
+    
     app.use("/api/users", UsersRoutes);
     app.use("/api/products", ProductsRoutes);
 
@@ -80,4 +81,3 @@ app.prepare()
   .catch(ex => {
     console.error(ex.stack);
   })
-
