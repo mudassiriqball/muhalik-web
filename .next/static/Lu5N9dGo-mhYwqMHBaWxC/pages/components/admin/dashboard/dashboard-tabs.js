@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[31],{stHF:function(n,o,s){(window.__NEXT_P=window.__NEXT_P||[]).push(["/components/admin/dashboard/dashboard-tabs",function(){return s("xv3N")}])}},[["stHF",0,1,5,2,3,4,6,7,9,14,12,15]]]);

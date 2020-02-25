@@ -4,12 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "startt": "node server.js",
-    "devv": "nodemon server.js",
-    "dev": "next",
+    "dev": "nodemon server.js",
     "build": "next build",
     "start": "next start",
-    "export": "npm run build && next export && npm run startt"
+    "export": "npm run build && npm run dev"
   },
   "keywords": [],
   "author": "",

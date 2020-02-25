@@ -35,7 +35,7 @@ const DashboardTabs = props => {
                                     <Nav.Item>
                                         <Row style={styles.image_div}>
                                             <Col>
-                                                <Image className="text-center" src="/static/a.png" fluid style={styles.image} />
+                                                <Image className="text-center" src="/public/a.png" fluid style={styles.image} />
                                             </Col>
                                             <Col>
                                                 <Nav.Link style={styles.muhalik}>
