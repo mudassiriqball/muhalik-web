@@ -35,12 +35,12 @@ const DashboardTabs = props => {
                                     <Nav.Item>
                                         <Row style={styles.image_div}>
                                             <Col>
-                                                <Image className="text-center" src="/public/a.png" fluid style={styles.image} />
+                                                <Image className="text-center" src="/static/a.png" fluid style={styles.image} />
                                             </Col>
                                             <Col>
-                                                <Nav.Link style={styles.muhalik}>
+                                                <Nav.Link href="/index" style={styles.muhalik}>
                                                     Muhalik
-                                            </Nav.Link>
+                                                </Nav.Link>
                                             </Col>
                                         </Row>
                                     </Nav.Item>
@@ -156,7 +156,7 @@ const DashboardTabs = props => {
                                     </Button>
                                 </InputGroup.Prepend>
                             </Form>
-                            <Dropdown as={ButtonGroup} >
+                            <Dropdown as={ButtonGroup} alignRight>
                                 <Dropdown.Toggle size="sm" split variant="light" id="dropdown-split" style={{ background: 'none', border: 'none' }} />
                                 <Dropdown.Menu>
                                     <Dropdown.Item href="#/action-1">
@@ -262,8 +262,11 @@ const styles = {
     },
     muhalik: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
-        fontSize: '28px',
-        fontWeight: 'bold'
+        fontSize: '20px',
+        fontWeight: 'bold',
+        border: 'none',
+        cursor: 'pointer',
+        background: 'none'
     },
     body: {
         background: `${GlobalStyleSheet.admin_primry_color}`,
@@ -271,7 +274,7 @@ const styles = {
     navbar: {
         borderBottom: `1px solid ${GlobalStyleSheet.admin_primry_color}`,
         background: 'white',
-        padding: '2% 2%',
+        padding: '1% 1%',
     },
     row: {
         padding: '0px',
@@ -291,7 +294,7 @@ const styles = {
         flex: '1',
     },
     tab_link: {
-        color: '#cccccc',
+        color: 'white',
         fontSize: '14px',
         paddingTop: '8%',
         paddingBottom: '8%',

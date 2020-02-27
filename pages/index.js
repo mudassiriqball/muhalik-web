@@ -5,14 +5,16 @@ const Index = () => {
     return (
         <div style={{ background: '#F5F5F5'}}>
             <Layout>
-                <Link href='./admin'>Admin dashboard</Link>
+                <Link href='./admin'><a>Admin dashboard</a></Link>
                 <br />
-                <Link href='./login'>Login</Link>
+                <Link href='./vendor'><a>Vendor dashboard</a></Link>
                 <br />
-                <Link href='./signup'>Signup</Link>
+                <Link href='./login'><a>Login</a></Link>
                 <br />
-                <Link href='./vendor-signup'>Vendor Signup</Link>
-                <Link href='./vendor-signup'>Nothing</Link>
+                <Link href='./signup'><a>Signup</a></Link>
+                <br />
+                <Link href='./vendor-signup'><a>Vendor Signup</a></Link>
+                <Link href='./vendor-signup'><a>Nothing</a></Link>
             </Layout>
         </div>
     );

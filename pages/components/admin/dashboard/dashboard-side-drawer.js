@@ -33,7 +33,7 @@ const DashboardSideDrawer = props => {
                         <Nav.Item>
                             <Row style={styles.image_div}>
                                 <Col sm={5} xs={5}>
-                                    <Image className="text-center" src="/public/a.png" fluid style={styles.image} />
+                                    <Image className="text-center" src="/static/a.png" fluid style={styles.image} />
                                 </Col>
                                 <Col sm={5} xs={5}>
                                     <Nav.Link href="/index" style={styles.muhalik}>
@@ -64,8 +64,8 @@ const DashboardSideDrawer = props => {
                             <div className="hover">
                                 <Nav.Link eventKey="two" onClick={props.click} style={styles.tab_link}>
                                     <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
-                                    Customers
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        Customers
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
@@ -126,7 +126,7 @@ const DashboardSideDrawer = props => {
                     </Nav>
                 </div>
 
-                <div className="tabs_side_drawer_tab_content">
+                <div className="tabs_side_drawer_tab_content" >
                     <Col sm={"auto"} style={{ padding: '0px' }}>
                         <Tab.Content>
                             <Tab.Pane eventKey="zero">
@@ -218,8 +218,10 @@ const styles = {
     },
     muhalik: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
-        fontSize: '28px',
-        fontWeight: 'bold'
+        fontSize: '16px',
+        fontWeight: 'bold',
+        background: 'none',
+        border: 'none'
     },
     // tab_link: {
     //     color: '#cccccc',
@@ -228,10 +230,10 @@ const styles = {
     //     paddingBottom: '2%',
     // },
     tab_link: {
-        color: '#cccccc',
+        color: 'white',
         fontSize: '14px',
-        paddingTop: '8%',
-        paddingBottom: '8%',
+        paddingTop: '5%',
+        paddingBottom: '5%',
     },
     fontawesome: {
         color: `${GlobalStyleSheet.body_color}`,

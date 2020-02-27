@@ -106,7 +106,7 @@ class Signup extends Component {
                                         <Col lg={1} md={1} sm={0} xs={0} style={styles.side_column}></Col>
                                         <Col style={styles.center_column}>
                                             <p>
-                                                <Image src="/public/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
+                                                <Image src="/static/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
                                             </p>
                                             <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Create Your Acount</h6>
                                             <Form noValidate onSubmit={handleSubmit}>
@@ -281,11 +281,11 @@ class Signup extends Component {
                                                             <Form.Label className="text-center" style={styles.term_condition_label}>
                                                                 By creating acount, you agree to Muhalik's
                                                                 <span>
-                                                                    <Link href="./help/terms-and-conditions"> Terms & Conditions </Link>
+                                                                    <Link href="./help/terms-and-conditions"><a>Terms & Conditions</a></Link>
                                                                 </span>
                                                                 and
                                                                 <span>
-                                                                    <Link href="./help/privacy-statement"> Privacy Statement </Link>
+                                                                    <Link href="./help/privacy-statement"><a>Privacy Statement</a></Link>
                                                                 </span>
                                                             </Form.Label>
                                                         </Form.Group>
@@ -294,7 +294,7 @@ class Signup extends Component {
                                                         <Form.Label className="text-center" style={styles.label}>
                                                             Already have an account...
                                                             <span>
-                                                                <Link href="login"> Login </Link>
+                                                                <Link href="login"><a>Login</a></Link>
                                                             </span>
                                                         </Form.Label>
                                                         <Button type="submit" onSubmit={handleSubmit} block style={styles.submit_btn}>Signup</Button>

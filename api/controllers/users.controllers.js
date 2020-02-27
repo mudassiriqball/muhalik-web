@@ -30,20 +30,19 @@ usersController.getAll = async (req, res) => {
 };
 
 usersController.getSingleUser = async (req, res) => {
-  // let user;
-  // try {
-  //   const _id = req.params._id;
-  //   user = await Users.findOne({ _id: _id });
-  //   res.status(200).send({
-  //     code: 200,
-  //     message: 'Successful',
-  //     data: user
-  //   });
-  // } catch (error) {
-  //   console.log('error', error);
-  //   return res.status(500).send(error);
-  // }
-  res.send("fuck")
+  let user;
+  try {
+    const _id = req.params._id;
+    user = await Users.findOne({ _id: _id });
+    res.status(200).send({
+      code: 200,
+      message: 'Successful',
+      data: user
+    });
+  } catch (error) {
+    console.log('error', error);
+    return res.status(500).send(error);
+  }
 };
 
 usersController.registerUser = async (req, res) => {

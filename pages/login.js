@@ -84,7 +84,7 @@ class Login extends Component {
                                         <Col lg={3} md={2} sm={1} xs={0} style={styles.side_column}></Col>
                                         <Col style={styles.center_column}>
                                             <p>
-                                                <Image src="/public/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
+                                                <Image src="/static/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
                                             </p>
                                             <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Login To Muhalik</h6>
                                             <Form noValidate onSubmit={handleSubmit}>
@@ -97,7 +97,7 @@ class Login extends Component {
 
                                                         <InputGroup>
                                                             <InputGroup.Prepend>
-                                                                <Button id="eyeBtn" style={styles.fontawesome_btn}>
+                                                                <Button id="mobileIcon" style={styles.fontawesome_btn}>
                                                                     <FontAwesomeIcon icon={faMobileAlt} style={styles.fontawesome} />
                                                                 </Button>
                                                             </InputGroup.Prepend>
@@ -121,7 +121,7 @@ class Login extends Component {
                                                         <Form.Label style={styles.label}>Password <span>*</span></Form.Label>
                                                         <InputGroup>
                                                             <InputGroup.Prepend>
-                                                                <Button id="eyeBtn" style={styles.fontawesome_btn}>
+                                                                <Button id="lockIcon" style={styles.fontawesome_btn}>
                                                                     <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
                                                                 </Button>
                                                             </InputGroup.Prepend>
@@ -147,14 +147,14 @@ class Login extends Component {
                                                 </Form.Row>
                                                 <Form.Row>
                                                     <Form.Label className="text-right" style={styles.label}>
-                                                        <Link href="forgot-password"> Forgot Password </Link>
+                                                        <Link href="forgot-password"><a>Forgot Password</a></Link>
                                                     </Form.Label>
                                                 </Form.Row>
                                                 <Form.Row>
                                                     <Form.Label className="text-center" style={styles.label}>
                                                         Don't have an account..??
                                                         <span>
-                                                            <Link href="signup"> Signup </Link>
+                                                            <Link href="signup"><a>Signup</a></Link>
                                                         </span>
                                                     </Form.Label>
                                                 </Form.Row>
@@ -167,11 +167,11 @@ class Login extends Component {
                                                     <Form.Label className="text-center" style={styles.term_condition_label}>
                                                         By logingin, you agree to Muhalik's
                                                         <span>
-                                                            <Link href="./help/terms-and-conditions"> Terms & Conditions </Link>
+                                                            <Link href="./help/terms-and-conditions"><a>Terms & Conditions</a></Link>
                                                         </span>
                                                         and
                                                             <span>
-                                                            <Link href="./help/privacy-statement"> Privacy Statement </Link>
+                                                            <Link href="./help/privacy-statement"><a>Privacy Statement</a></Link>
                                                         </span>
                                                     </Form.Label>
                                                 </Form.Row>

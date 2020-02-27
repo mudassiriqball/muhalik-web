@@ -48,6 +48,30 @@ productsController.addProduct = async (req, res) => {
         return res.status(500).send({message: 'Product Added Successfully', error});
     }
 };
+
+productsController.bulkUpload = async (req, res) => {
+    res.send('fuck you')
+    try {
+        const body = req.body;
+        console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbb: ",req.body);
+        // const product = new Products(body);
+        // product.image.data = fs.readFileSync('./img.png');
+        // imgPath = './img.png';
+        // product.image.data = fs.readFileSync(imgPath);
+        // product.image.data = body.image;
+        // product.image.contentType = 'image/png';
+
+        // const result = await product.save();
+        // res.status(200).send({
+        //     code: 200,
+        //     message: 'Product Added Successfully',
+        // });
+    } catch (error) {
+        console.log('error', error);
+        return res.status(500).send({message: 'Product Added Successfully', error});
+    }
+};
+
 module.exports = productsController;
 
 productsController.getSingleProduct = async (req, res) => {
