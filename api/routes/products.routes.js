@@ -5,8 +5,8 @@ const checkAuth = require('../middleware/check-auth');
 const productController = require('../controllers/products.controllers');
 
 router.get("/", productController.getAll);
-router.post("/add", checkAuth, productController.addProduct);
-router.post("/bulk", productController.bulkUpload);
+router.post("/add", productController.addProduct);
+router.post("/bulk_upload", productController.bulkupload);
 router.put("/:_id", checkAuth, productController.updateProduct);
 router.delete("/:_id", checkAuth, productController.deleteProduct);
 

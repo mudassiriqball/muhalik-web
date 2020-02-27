@@ -75,8 +75,7 @@ nextApp.prepare()
     app.use(errorHandler);
     app.use(errorMessage);
 
-    app.set('port', (process.env.PORT));
-    server.listen(app.get('port'));
+    server.listen(process.env.PORT || 3000)
     
     // app.listen(PORT, err => {
     //   if (err) throw err;
