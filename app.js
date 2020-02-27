@@ -11,7 +11,7 @@ nextApp.prepare()
   .then(() => {
     const app = express();
     const http = require('http');
-    // const server = http.createServer(app);
+    const server = http.createServer(app);
     require('dotenv').config();
 
     require('dotenv').config();
