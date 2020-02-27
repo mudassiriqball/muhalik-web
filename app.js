@@ -71,7 +71,6 @@ nextApp.prepare()
       return handle(req, res);
     })
 
-    
     app.use(errorHandler);
     app.use(errorMessage);
 

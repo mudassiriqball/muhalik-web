@@ -1,8 +1,8 @@
 const productsController = {};
 const Products = require("../models/products.model");
 const fs = require("fs");
-const xlsx = require("xlsx");
-var wb = xlsx.readFile("../prd_inv_template.xlsx");
+// const xlsx = require("xlsx");
+// var wb = xlsx.readFile("../prd_inv_template.xlsx");
 // fs.readdirSync(__dirname + "/models").forEach(function (file) {
 //   require(__dirname + "/models/" + file);
 // });
@@ -52,12 +52,13 @@ productsController.addProduct = async (req, res) => {
 
 productsController.bulkupload = async (req, res) => {
   try {
-    var ws = wb.Sheets["Worksheet"];
-    var data = xlsx.utils.sheet_to_json(ws);
-    data.forEach(element => {
-        const product = new Products(element);
-        product.save();
-    });
+      console.log("datadatadatadatada: ", req.body);
+    // var ws = wb.Sheets["Worksheet"];
+    // var data = xlsx.utils.sheet_to_json(ws);
+    // data.forEach(element => {
+    //     const product = new Products(element);
+    //     product.save();
+    // });
     res.status(200).send({
         code: 200,
         message: "Product Added Successfully"

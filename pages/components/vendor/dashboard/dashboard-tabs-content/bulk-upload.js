@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUpload, faDownload } from '@fortawesome/free-solid-svg-icons';
 import axios, { post } from 'axios';
 import GlobalStyleSheet from '../../../../../styleSheet'
-
+import MuhalikConfig from '../../../../../sdk/muhalik.config';
 class BulkUpload extends React.Component {
 
     constructor(props) {
@@ -28,7 +28,7 @@ class BulkUpload extends React.Component {
         this.setState({ file: e.target.files[0] })
     }
     fileUpload(file) {
-        const url = 'http://localhost:3000/api/products/bulk';
+        const url = MuhalikConfig.PATH + '/api/products/bulk-upload';
         const formData = new FormData();
         formData.append('file',file)
         const config = {
@@ -36,7 +36,7 @@ class BulkUpload extends React.Component {
                 'content-type': 'multipart/form-data'
             }
         }
-        return  post(url, formData,config)
+        return  post(url, formData, config);
     }
 
     downloadBulkUploadTemplete = () => {
