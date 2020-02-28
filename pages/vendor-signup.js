@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
-
+import axios from 'axios';
 import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image } from 'react-bootstrap';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import MuhalikConfig from '../sdk/muhalik.config';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -50,11 +51,11 @@ const schema = yup.object({
         .max(30, "Shop Address can't be longer than 30 characters"),
 
     countary: yup.string().required("Enter Countary"),
-
     city: yup.string().required("Enter City"),
+    role: yup.string(),
 });
 
-class Signup extends Component {
+class VendorSignup extends Component {
 
     state = {
         hide: true
@@ -62,6 +63,18 @@ class Signup extends Component {
     showPassword = ev => {
         this.setState({ hide: !this.state.hide })
     }
+
+    uploadData(data) {
+        const url = MuhalikConfig.PATH + '/api/users/register';
+        axios.post(url, {
+            data
+          }).then(function (response) {
+            alert(response.data.message);
+          }).catch(function (error) {
+            alert(error);
+        });
+    }
+
     render() {
         const { hide } = this.state;
         let eyeBtn;
@@ -73,10 +86,9 @@ class Signup extends Component {
         return (
             <Formik
                 validationSchema={schema}
-                // onSubmit={console.log}
                 initialValues={{
                     mobile: '', fullName: '', verificationCode: '', email: '', password: '', confirmPassword: '',
-                    shopName: '', category: '', shopAddress: '', countary: '', city: ''
+                    shopName: '', category: '', shopAddress: '', countary: '', city: '', role: 'vendor'
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     // When button submits form and form is in the process of submitting, submit button is disabled
@@ -87,7 +99,7 @@ class Signup extends Component {
                     setSubmitting(false);
 
                     setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
+                        this.uploadData(values);
                         resetForm();
                         setSubmitting(false);
                     }, 500);
@@ -118,7 +130,6 @@ class Signup extends Component {
                                             </p>
                                             <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Register Your Shop</h6>
                                             <Form noValidate onSubmit={handleSubmit}>
-                                                {console.log("fucking values fffffffffffffffff: ", values)}
                                                 <Form.Row>
                                                     <Form.Group as={Col} md="6" controlId="validationMobile">
                                                         <Form.Label style={styles.label}>Mobile Number <span>*</span></Form.Label>
@@ -263,18 +274,18 @@ class Signup extends Component {
                                                         </Form.Label>
                                                         <Form.Control
                                                             as="select"
-                                                            aria-describedby="countary"
-                                                            name="countary"
-                                                            value={values.countary}
+                                                            aria-describedby="category"
+                                                            name="category"
+                                                            value={values.category}
                                                             onChange={handleChange}
-                                                            isInvalid={touched.countary && errors.countary}
+                                                            isInvalid={touched.category && errors.category}
                                                         >
                                                             <option>Select</option>
                                                             <option> KSA </option>
                                                             <option> Pak </option>
                                                         </Form.Control>
                                                         <Form.Control.Feedback type="invalid">
-                                                            {errors.countary}
+                                                            {errors.category}
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
                                                     <Form.Group as={Col} lg={6} md={6}>
@@ -315,7 +326,6 @@ class Signup extends Component {
                                                             value={values.countary}
                                                             onChange={handleChange}
                                                             isInvalid={touched.countary && errors.countary}
-
                                                         >
                                                             <option>Select</option>
                                                             <option> KSA </option>
@@ -368,7 +378,7 @@ class Signup extends Component {
                                                                 <Link href="login"><a>Login</a></Link>
                                                             </span>
                                                         </Form.Label>
-                                                        <Button type="submit" onSubmit={handleSubmit} block style={styles.submit_btn}>Register Shop</Button>
+                                                        <Button type="submit" onSubmit={handleSubmit} block style={styles.submit_btn}>Signup</Button>
                                                     </Form.Group>
                                                 </Form.Row>
                                                 {/* End 4th Row */}
@@ -440,4 +450,4 @@ const styles = {
     },
 }
 
-export default Signup;
+export default VendorSignup;

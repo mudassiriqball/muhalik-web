@@ -52,17 +52,20 @@ productsController.addProduct = async (req, res) => {
 
 productsController.bulkupload = async (req, res) => {
   try {
-      console.log("datadatadatadatada: ", req.body);
+      console.log("datadatadatadatada Body: ", req.body);
+      console.log("datadatadatadatada Body: ", req.body.file);
+
+      res.send(req.body.file)
     // var ws = wb.Sheets["Worksheet"];
     // var data = xlsx.utils.sheet_to_json(ws);
     // data.forEach(element => {
     //     const product = new Products(element);
     //     product.save();
     // });
-    res.status(200).send({
-        code: 200,
-        message: "Product Added Successfully"
-      });
+    // res.status(200).send({
+    //     code: 200,
+    //     message: "Product Added Successfully"
+    //   });
   } catch (error) {
     console.log("error", error);
     return res

@@ -27,16 +27,65 @@ class BulkUpload extends React.Component {
     onChange(e) {
         this.setState({ file: e.target.files[0] })
     }
-    fileUpload(file) {
-        const url = MuhalikConfig.PATH + '/api/products/bulk-upload';
-        const formData = new FormData();
-        formData.append('file',file)
-        const config = {
+    async fileUpload(file) {
+        const url = MuhalikConfig.PATH + '/api/products/bulk_upload';
+
+        const form = new FormData();
+        form.append('file', file)
+
+        axios.post(url, form, {
             headers: {
-                'content-type': 'multipart/form-data'
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             }
-        }
-        return  post(url, formData, config);
+        })
+            .then(function (response) {
+                return response;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        return "fuck";
+
+
+        // const form = new FormData()
+        // form.append('username', 'malcoded')
+        // form.append('file', file)
+        // const response = await fetch(url, {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'multipart/form-data' },
+        //     body: form,
+        // })
+        // return response;
+
+
+        // const response = await axios.post(
+        //     url,
+        //     { example: 'data' },
+        //     { headers: { 'Content-Type': 'application/json',"Access-Control-Allow-Origin": "*"  } }
+        //   )
+
+        return response;
+
+        // const form = new FormData();
+        // form.set('username', 'malcoded');
+        // form.append('file', file);
+        // return axios.post(url, file, {
+        //     headers: { 'Content-Type': 'multipart/form-data' },
+        // })
+
+        // const formData = new FormData();
+        // formData.append('file', file)
+        // const config = {
+        //     headers: {
+        //         "Access-Control-Allow-Origin": "*"
+        //     }
+        // }
+        // return post(url, formData, {
+        //     headers: {
+        //         'Access-Control-Allow-Origin': true,
+        //     }
+        // });
     }
 
     downloadBulkUploadTemplete = () => {

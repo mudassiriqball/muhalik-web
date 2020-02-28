@@ -46,53 +46,40 @@ usersController.getSingleUser = async (req, res) => {
 };
 
 usersController.registerUser = async (req, res) => {
-  const user = new Users ({
-    _id: new mongoose.Types.ObjectId(),
-    name: req.body.name,
-    number: req.body.number,
-  });
-  user.save().then(result => {
+  try {
+    const body = req.body.data;
+    console.log("data fucking shit:",req.body.data);
+    // there must be a password in body
+    // we follow these 2 steps
+    const password = body.password;
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(password, salt);
+    body.password = hash;
+
+    body.date = new Date();
+    const user = new Users(body);
+    const result = await user.save();
     res.send({
       message: 'Signup successful'
     });
-  }).catch(err => {
-    res
+  } catch (ex) {
+    console.log('ex', ex);
+    if (ex.code === 11000) {
+      res
         .send({
-          message: 'This email has been registered already',
+          message: 'This mobile number has been registered already',
         })
         .status(500);
-  })
-  // try {
-  //   const body = req.body;
-  //   // there must be a password in body
-  //   // we follow these 2 steps
-  //   const password = body.password;
-  //   var salt = bcrypt.genSaltSync(10);
-  //   var hash = bcrypt.hashSync(password, salt);
-  //   body.password = hash;
-  //   const user = new Users(body);
-  //   const result = await user.save();
-    // res.send({
-    //   message: 'Signup successful'
-    // });
-  // } catch (ex) {
-  //   console.log('ex', ex);
-  //   if (ex.code === 11000) {
-      // res
-      //   .send({
-      //     message: 'This email has been registered already',
-      //   })
-      //   .status(500);
-  //   }
-  //   else {
-  //     res
-  //       .send({
-  //         message: 'Error',
-  //         detail: ex
-  //       })
-  //       .status(500);
-  //   }
-  // }
+    }
+    else {
+      res
+        .send({
+          message: 'Error',
+          detail: ex
+        })
+        .status(500);
+    }
+  }
 };
 
 

@@ -22,7 +22,7 @@ const DashboardTabs = props => {
 
     return (
         <div>
-            <Tab.Container id="dashboard-tabs" defaultActiveKey="bulkUpload" style={styles.row}>
+            <Tab.Container id="dashboard-tabs" defaultActiveKey="products" style={styles.row}>
                 <Row style={styles.row}>
                     {/* Tabs Components */}
                     <div className={drawerClasses}>

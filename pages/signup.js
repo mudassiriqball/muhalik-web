@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
-
+import axios from 'axios';
 import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image } from 'react-bootstrap';
 
 import { Formik } from 'formik';
@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 import GlobalStyleSheet from '../styleSheet';
-
+import MuhalikConfig from '../sdk/muhalik.config';
 // RegEx for phone number validation
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
 
@@ -40,17 +40,27 @@ const schema = yup.object({
     }),
 
     countary: yup.string().required("Enter Countary"),
-
+    role: yup.string(),
     gender: yup.string().required("Enter Gender"),
 });
 
 class Signup extends Component {
-
     state = {
         hide: true
     };
     showPassword = ev => {
         this.setState({ hide: !this.state.hide })
+    }
+
+    uploadData(data) {
+        const url = MuhalikConfig.PATH + '/api/users/register';
+        axios.post(url, {
+            data
+        }).then(function (response) {
+            alert(response.data.message);
+        }).catch(function (error) {
+            alert(error);
+        });
     }
 
     render() {
@@ -62,13 +72,14 @@ class Signup extends Component {
             eyeBtn = <FontAwesomeIcon icon={faEyeSlash} style={styles.fontawesome} />;
         }
 
+
+
         return (
             <Formik
                 validationSchema={schema}
-                // onSubmit={console.log}
                 initialValues={{
                     mobile: '', fullName: '', verificationCode: '', email: '', password: '', confirmPassword: '',
-                    countary: '', gender: ''
+                    countary: '', gender: '', role: 'customer'
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     // When button submits form and form is in the process of submitting, submit button is disabled
@@ -79,7 +90,7 @@ class Signup extends Component {
                     setSubmitting(false);
 
                     setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
+                        this.uploadData(values);
                         resetForm();
                         setSubmitting(false);
                     }, 500);
@@ -110,7 +121,6 @@ class Signup extends Component {
                                             </p>
                                             <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Create Your Acount</h6>
                                             <Form noValidate onSubmit={handleSubmit}>
-                                                {console.log("fucking values fffffffffffffffff: ", values)}
                                                 <Form.Row>
                                                     <Form.Group as={Col} md="6" controlId="validationMobile">
                                                         <Form.Label style={styles.label}>Mobile Number <span>*</span></Form.Label>
@@ -277,7 +287,7 @@ class Signup extends Component {
                                                     </Form.Group>
                                                     <Col>
                                                         <Form.Group >
-                                                            <Form.Label style={{color: 'white', fontSize: '0.1px'}}> . </Form.Label>
+                                                            <Form.Label style={{ color: 'white', fontSize: '0.1px' }}> . </Form.Label>
                                                             <Form.Label className="text-center" style={styles.term_condition_label}>
                                                                 By creating acount, you agree to Muhalik's
                                                                 <span>
