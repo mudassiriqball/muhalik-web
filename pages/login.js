@@ -84,11 +84,10 @@ class Login extends Component {
                                         <Col lg={3} md={2} sm={1} xs={0} style={styles.side_column}></Col>
                                         <Col style={styles.center_column}>
                                             <p>
-                                                <Image src="/static/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
+                                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
                                             </p>
                                             <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Login To Muhalik</h6>
                                             <Form noValidate onSubmit={handleSubmit}>
-                                                {console.log("fucking values fffffffffffffffff: ", values)}
                                                 <Form.Row>
                                                     <Form.Group as={Col} controlId="validationMobile">
                                                         <Form.Label style={styles.label}>Enter Your Mobile Number

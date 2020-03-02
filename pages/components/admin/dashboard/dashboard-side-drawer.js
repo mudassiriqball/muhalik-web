@@ -33,7 +33,7 @@ const DashboardSideDrawer = props => {
                         <Nav.Item>
                             <Row style={styles.image_div}>
                                 <Col sm={5} xs={5}>
-                                    <Image className="text-center" src="/static/a.png" fluid style={styles.image} />
+                                    <Image className="text-center" src="muhalik.jpg" fluid style={styles.image} />
                                 </Col>
                                 <Col sm={5} xs={5}>
                                     <Nav.Link href="/index" style={styles.muhalik}>

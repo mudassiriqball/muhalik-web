@@ -53,6 +53,7 @@ const schema = yup.object({
     countary: yup.string().required("Enter Countary"),
     city: yup.string().required("Enter City"),
     role: yup.string(),
+    
 });
 
 class VendorSignup extends Component {
@@ -126,7 +127,7 @@ class VendorSignup extends Component {
                                         <Col lg={1} md={0} sm={0} xs={0} style={styles.side_column}></Col>
                                         <Col style={styles.center_column}>
                                             <p>
-                                                <Image src="/static/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
+                                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
                                             </p>
                                             <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Register Your Shop</h6>
                                             <Form noValidate onSubmit={handleSubmit}>

@@ -1,11 +1,16 @@
 const productsController = {};
 const Products = require("../models/products.model");
-const fs = require("fs");
+// const fs = require("fs");
 // const xlsx = require("xlsx");
 // var wb = xlsx.readFile("../prd_inv_template.xlsx");
+
 // fs.readdirSync(__dirname + "/models").forEach(function (file) {
 //   require(__dirname + "/models/" + file);
 // });
+
+productsController.getDate = async (req, res) => {
+
+};
 productsController.getAll = async (req, res) => {
   let products;
   try {
@@ -26,17 +31,14 @@ productsController.getAll = async (req, res) => {
     return res.status(500).send(error);
   }
 };
-
 productsController.addProduct = async (req, res) => {
-  try {
-    const body = req.body;
-    const product = new Products(body);
-    // product.image.data = fs.readFileSync('./img.png');
-    // imgPath = './img.png';
-    // product.image.data = fs.readFileSync(imgPath);
-    // product.image.data = body.image;
-    // product.image.contentType = 'image/png';
 
+  try {
+    var datetime = new Date();
+    var date=datetime.toISOString().slice(0,10);
+    const body = req.body;
+    req.body.product_entry_date=date;
+    const product = new Products(body);
     const result = await product.save();
     res.status(200).send({
       code: 200,
@@ -48,24 +50,33 @@ productsController.addProduct = async (req, res) => {
       .status(500)
       .send({ message: "Product Added Successfully", error });
   }
+
+  // product.image.data = fs.readFileSync('./img.png');
+    // imgPath = './img.png';
+    // product.image.data = fs.readFileSync(imgPath);
+    // product.image.data = body.image;
+    // product.image.contentType = 'image/png';
 };
 
 productsController.bulkupload = async (req, res) => {
+  console.log("Check:",req.body);
+  var datetime = new Date();
+  var date=datetime.toISOString().slice(0,10);
+    // const body = req.body;
+    // req.body.product_entry_date=date;
   try {
-      console.log("datadatadatadatada Body: ", req.body);
-      console.log("datadatadatadatada Body: ", req.body.file);
-
-      res.send(req.body.file)
     // var ws = wb.Sheets["Worksheet"];
     // var data = xlsx.utils.sheet_to_json(ws);
+    
     // data.forEach(element => {
-    //     const product = new Products(element);
-    //     product.save();
+    //   element.product_entry_date=date;
+    //   const product = new Products(element);
+    //   product.save();
     // });
-    // res.status(200).send({
-    //     code: 200,
-    //     message: "Product Added Successfully"
-    //   });
+    res.status(200).send({
+      code: 200,
+      message: "Product Added Successfully"
+    });
   } catch (error) {
     console.log("error", error);
     return res

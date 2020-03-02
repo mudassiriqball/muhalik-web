@@ -23,16 +23,16 @@ const BackDrop = props => (
 class AdminDashboard extends Component {
     state = {
         sideDrawerOpen: false,
-        fuck: true
+        showSideDrawer: true
     };
     drawerToggleClickHandler = () => {
         this.setState(prevState => {
             return { sideDrawerOpen: !prevState.sideDrawerOpen };
         });
     };
-    fuckClickHandler = () => {
+    showSideDrawerClickHandler = () => {
         this.setState(prevState => {
-            return { fuck: !prevState.fuck };
+            return { showSideDrawer: !prevState.showSideDrawer };
         });
     };
 
@@ -49,7 +49,7 @@ class AdminDashboard extends Component {
         return (
             <div style={styles.body}>
                 {/* <AdminLayout> */}
-                    <DashboardTabs show={this.state.fuck} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.fuckClickHandler}/>
+                    <DashboardTabs show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.showSideDrawerClickHandler}/>
                     <DashboardSideDrawer show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
                     {backdrop}
                 {/* </AdminLayout> */}

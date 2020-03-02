@@ -1,1 +1,0 @@
-{"ast":null,"code":"import React from \"react\";\nvar __jsx = React.createElement;\n\nvar Inventory = function Inventory() {\n  return __jsx(\"div\", null, __jsx(\"p\", null, \"Inventory page\"));\n};\n\nexport default Inventory;","map":null,"metadata":{},"sourceType":"module"}

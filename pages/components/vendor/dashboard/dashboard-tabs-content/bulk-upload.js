@@ -28,8 +28,7 @@ class BulkUpload extends React.Component {
         this.setState({ file: e.target.files[0] })
     }
     async fileUpload(file) {
-        const url = MuhalikConfig.PATH + '/api/products/bulk_upload';
-
+        const url = MuhalikConfig.PATH + '/api/products/bulk-upload';
         const form = new FormData();
         form.append('file', file)
 

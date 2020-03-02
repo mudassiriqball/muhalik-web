@@ -25,15 +25,14 @@ const DashboardTabs = props => {
             <Tab.Container id="dashboard-tabs" defaultActiveKey="products" style={styles.row}>
                 <Row style={styles.row}>
                     {/* Tabs Components */}
-                    <div className={drawerClasses}>
-                        <Col lg={3} md={3} style={{ maxWidth: '300px', padding: '0px' }}>
+                    <Col lg={3} md={3} style={{maxWidth: '350px', margin: '0px', padding: '0px' }}>
+                        <div className={drawerClasses}>
                             <div className="tabs" style={styles.body}>
                                 <Nav className="flex-column" variant="pills">
-                                    {/* Links */}
                                     <Nav.Item>
                                         <Row style={styles.image_div}>
                                             <Col>
-                                                <Image className="text-center" src="/static/a.png" fluid style={styles.image} />
+                                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
                                             </Col>
                                             <Col>
                                                 <Nav.Link href="/index" style={styles.muhalik}>
@@ -107,8 +106,8 @@ const DashboardTabs = props => {
                                     </Nav.Item>
                                 </Nav>
                             </div>
-                        </Col>
-                    </div>
+                        </div>
+                    </Col>
                     <Col style={styles.row}>
                         <Navbar collapseOnSelect expand="lg" style={styles.navbar} variant="dark">
                             <div className="side_tab_toogle_btn mr-auto">
@@ -229,7 +228,7 @@ const styles = {
     image_div: {
         background: 'white',
         marginRight: '1px',
-        padding: '30px 10px'
+        padding: '10px'
     },
     image: {
         width: '100px'
