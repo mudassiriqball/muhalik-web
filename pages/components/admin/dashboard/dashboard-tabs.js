@@ -26,12 +26,12 @@ const DashboardTabs = props => {
         <div>
             <Tab.Container id="dashboard-tabs" defaultActiveKey="zero" style={styles.row}>
                 <Row style={styles.row}>
-                    {/* Tabs Components */}
-                    <Col lg={4} md={4} style={{ margin: '0px', padding: '0px' }}>
-                        <div className={drawerClasses}>
-                            <div className="tabs" style={styles.body}>
+                    {/* Show/Hide Tabs & Tabs-Content when screen Switches to Large/Medium,Small,Extra-Small Devices*/}
+                    <div className={drawerClasses}>
+                        {/* Show/Hide Tabs SIde Drawer in Lg-Devices when bar btn Clicked*/}
+                        <div className="tabs" style={styles.body}>
+                            <Col lg={4} md={4} style={{ margin: '0px', padding: '0px' }}>
                                 <Nav className="flex-column" variant="pills">
-                                    {/* Links */}
                                     <Nav.Item>
                                         <Row style={styles.image_div}>
                                             <Col>
@@ -126,21 +126,27 @@ const DashboardTabs = props => {
                                         </div>
                                     </Nav.Item>
                                 </Nav>
-                            </div>
+                            </Col>
+                            {/* End Tabs Side Drawer */}
                         </div>
-                    </Col>
+                    </div>
+                    {/* Toolbar & Tabs Contents */}
                     <Col style={styles.row}>
+                        {/* Toolbar */}
                         <Navbar collapseOnSelect expand="lg" style={styles.navbar} variant="dark">
+                            {/* Show/Hide bar btn while screen switches to Large to Small,Medium,Extra-Small Devices */}
                             <div className="side_tab_toogle_btn mr-auto">
                                 <Button className="mr-auto" style={styles.buttons} onClick={props.drawerClickHandler}>
                                     <FontAwesomeIcon icon={faBars} style={styles.search_fontawesome} />
                                 </Button>
                             </div>
+                            {/* Bars Btn to Show/Hide Tabs Sde Drawer in Large Devices */}
                             <div className="tabs mr-sm-4">
                                 <Button className="mr-auto" style={styles.buttons} onClick={props.ClickHandler}>
                                     <FontAwesomeIcon icon={faBars} style={styles.search_fontawesome} />
                                 </Button>
                             </div>
+                            {/* Search Bar */}
                             <Form inline className="mr-auto">
                                 <Form.Control
                                     style={styles.search_bar}
@@ -156,6 +162,7 @@ const DashboardTabs = props => {
                                     </Button>
                                 </InputGroup.Prepend>
                             </Form>
+                            {/* Account Setting Dropdown */}
                             <Dropdown as={ButtonGroup} alignRight>
                                 <Dropdown.Toggle size="sm" split variant="light" id="dropdown-split" style={{ background: 'none', border: 'none' }} />
                                 <Dropdown.Menu>
@@ -179,7 +186,8 @@ const DashboardTabs = props => {
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Navbar>
-
+                        {/* End of toolbar */}
+                        {/* Tab Content for Large Devices */}
                         <div className="tab_content">
                             <Tab.Content>
                                 <Tab.Pane eventKey="zero">
@@ -211,8 +219,9 @@ const DashboardTabs = props => {
                                 </Tab.Pane>
                             </Tab.Content>
                         </div>
+                        {/* End of Tab Content for Large Devices */}
                     </Col>
-                    {/* End of the Tabs Components */}
+                    {/* End of the Toolbar & Tabs Components */}
                 </Row>
             </Tab.Container>
             <style jsx>
@@ -231,7 +240,7 @@ const DashboardTabs = props => {
                     background: #30313E;
                 }
                 .side_tab_toogle_btn {
-                    margin: 1% 0%
+                    margin: 0%
                 }
                 @media (max-width: 991px) {
                     .tabs {
