@@ -353,8 +353,8 @@ class Products extends Component {
                             values.product_color = this.state.color;
                             values.product_category = this.state.category;
                             values.product_image_link = this.state.image_link;
+                            console.log("Data Values:", JSON.stringify(values, null, 2))
                             this.uploadData(values)
-                            // console.log("Data Values:", JSON.stringify(values, null, 2))
                             // alert(JSON.stringify(values, null, 2));
                             this.setState({ size: [], color: [], category: [], image_link: [], inputValue: '' });
                             resetForm();
