@@ -14,14 +14,14 @@ __webpack_require__(/*! __next_polyfill__fetch */ "./node_modules/whatwg-fetch/d
 
 __webpack_require__(/*! url-polyfill */ "./node_modules/url-polyfill/url-polyfill.js");
 
-Object.assign = __webpack_require__(/*! __next_polyfill__object_assign */ "./node_modules/next/node_modules/object-assign/index.js");
+Object.assign = __webpack_require__(/*! __next_polyfill__object_assign */ "./node_modules/object-assign/index.js");
 
 /***/ }),
 
-/***/ "./node_modules/next/node_modules/object-assign/index.js":
-/*!***************************************************************!*\
-  !*** ./node_modules/next/node_modules/object-assign/index.js ***!
-  \***************************************************************/
+/***/ "./node_modules/object-assign/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/object-assign/index.js ***!
+  \*********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

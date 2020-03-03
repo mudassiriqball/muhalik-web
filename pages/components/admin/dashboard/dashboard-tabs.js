@@ -135,14 +135,14 @@ const DashboardTabs = props => {
                         {/* Toolbar */}
                         <Navbar collapseOnSelect expand="lg" style={styles.navbar} variant="dark">
                             {/* Show/Hide bar btn while screen switches to Large to Small,Medium,Extra-Small Devices */}
-                            <div className="side_tab_toogle_btn mr-auto">
-                                <Button className="mr-auto" style={styles.buttons} onClick={props.drawerClickHandler}>
+                            <div className="side_tab_toogle_btn" style={styles.drawerBtn}>
+                                <Button style={styles.buttons} onClick={props.drawerClickHandler}>
                                     <FontAwesomeIcon icon={faBars} style={styles.search_fontawesome} />
                                 </Button>
                             </div>
                             {/* Bars Btn to Show/Hide Tabs Sde Drawer in Large Devices */}
-                            <div className="tabs mr-sm-4">
-                                <Button className="mr-auto" style={styles.buttons} onClick={props.ClickHandler}>
+                            <div className="tabs mr-sm-4" style={styles.drawerBtn}>
+                                <Button style={styles.buttons} onClick={props.ClickHandler}>
                                     <FontAwesomeIcon icon={faBars} style={styles.search_fontawesome} />
                                 </Button>
                             </div>
@@ -286,6 +286,9 @@ const styles = {
         background: 'white',
         padding: '1% 1%',
     },
+    drawerBtn: {
+        marginRight: '1%',
+    },
     row: {
         padding: '0px',
         margin: '0px',
@@ -328,10 +331,10 @@ const styles = {
     },
     search_fontawesome: {
         color: `${GlobalStyleSheet.body_color}`,
-        width: '18px',
-        height: '18px',
-        maxHeight: '18px',
-        maxWidth: '18px',
+        width: '16px',
+        height: '16px',
+        maxHeight: '16px',
+        maxWidth: '16px',
     },
     dropDown_fontawesome: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
