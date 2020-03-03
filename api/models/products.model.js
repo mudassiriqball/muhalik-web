@@ -10,38 +10,51 @@ const Product = new Schema({
   },
   product_name: {
     type: String,
-    required: true
   },
   product_price: {
     type: Number,
-    required: true
   },
   product_brand_name: {
     type: String
   },
-  product_image_link: {
-    type: String,
-    required: true
-  },
-  product_colors: {
-    type: String
-  },
+  product_image_link: [
+    {
+      label: { type: String},
+      value: { type: String}
+    }
+  ],
+  product_colors: [
+    {
+      label: { type: String },
+      value: { type: String }
+    }
+  ],
   product_in_stock: {
     type: Number
   },
   product_shipping_cost: {
     type: Number
   },
-  product_size: {
-    type: String
-  },
-  product_category: {
-    type: String
-  },
+  product_size: [
+    {
+      
+      label: { type: String },
+      value: { type: String }
+    }
+  ],
+  product_category: [
+    {
+      value: { type: String },
+      label: { type: String }
+    }
+  ],
   product_warranty: {
     type: String
   },
   product_discount: {
+    type: String
+  },
+  warranty_type: {
     type: String
   },
   product_description: {
@@ -55,6 +68,7 @@ const Product = new Schema({
   //     data: Buffer,
   //     contentType: String
   // },
+  
   // is_deleted: {
   //     type: Boolean,
   //     default: false
