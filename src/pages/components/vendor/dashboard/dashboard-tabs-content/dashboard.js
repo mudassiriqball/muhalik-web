@@ -14,10 +14,17 @@ class Dashboard extends React.Component {
         return (
             <div >
                 <Row style={styles.row}>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
+                    <Card style={styles.card_headerr}>
+                        <Card.Header style={styles.card_headerr}>
+                            Products
+                    </Card.Header>
+                    </Card>
+                </Row>
+                <Row style={styles.row}>
+                    <Col lg={4} md={4} sm={12} xs={12} style={styles.col}>
                         <div className="hover">
                             <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Vendors</Card.Header>
+                                <Card.Header style={styles.card_header}>All Products</Card.Header>
                                 <Card.Body>
                                     <Row>
                                         <Col>
@@ -35,10 +42,10 @@ class Dashboard extends React.Component {
                             </Card>
                         </div>
                     </Col>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
+                    <Col lg={4} md={4} sm={12} xs={12} style={styles.col}>
                         <div className="hover">
                             <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Customers</Card.Header>
+                                <Card.Header style={styles.card_header}>Product Sold</Card.Header>
                                 <Card.Body>
                                     <Row>
                                         <Col>
@@ -56,10 +63,10 @@ class Dashboard extends React.Component {
                             </Card>
                         </div>
                     </Col>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
+                    <Col lg={4} md={4} sm={12} xs={12} style={styles.col}>
                         <div className="hover">
                             <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}> Product Sold </Card.Header>
+                                <Card.Header style={styles.card_header}> In Stock </Card.Header>
                                 <Card.Body>
                                     <Row>
                                         <Col>
@@ -77,16 +84,29 @@ class Dashboard extends React.Component {
                             </Card>
                         </div>
                     </Col>
-                    <Col lg={3} md={3} sm={12} xs={12}  style={styles.col}>
+                </Row>
+
+
+
+
+                <Row style={styles.row}>
+                    <Card style={{ width: '100%' }}>
+                        <Card.Header style={styles.card_headerr}>
+                            Earning
+                    </Card.Header>
+                    </Card>
+                </Row>
+                <Row style={styles.row}>
+                    <Col lg={4} md={4} sm={12} xs={12} style={styles.col}>
                         <div className="hover">
-                            <Card style={styles.card}>
-                                <Card.Header style={styles.card_header}> Oredrs </Card.Header>
+                            <Card style={styles.card} >
+                                <Card.Header style={styles.card_header}>Total</Card.Header>
                                 <Card.Body>
                                     <Row>
                                         <Col>
                                             <Card.Text style={styles.card_text}>
-                                                5678
-                                            </Card.Text>
+                                                1234
+                                        </Card.Text>
                                         </Col>
                                         <Col>
                                             <Card.Text style={styles.card_text}>
@@ -98,24 +118,44 @@ class Dashboard extends React.Component {
                             </Card>
                         </div>
                     </Col>
-                </Row>
-
-
-                <Row style={styles.row}>
-                    <Col lg={6} md={6} sm={12} xs={12} style={styles.col}>
+                    <Col lg={4} md={4} sm={12} xs={12} style={styles.col}>
                         <div className="hover">
                             <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Vendors</Card.Header>
+                                <Card.Header style={styles.card_header}>This Month</Card.Header>
                                 <Card.Body>
+                                    <Row>
+                                        <Col>
+                                            <Card.Text style={styles.card_text}>
+                                                1234
+                                        </Card.Text>
+                                        </Col>
+                                        <Col>
+                                            <Card.Text style={styles.card_text}>
+                                                <FontAwesomeIcon icon={faUserPlus} style={styles.fontawesome} />
+                                            </Card.Text>
+                                        </Col>
+                                    </Row>
                                 </Card.Body>
                             </Card>
                         </div>
                     </Col>
-                    <Col lg={6} md={6} sm={12} xs={12} style={styles.col}>
+                    <Col lg={4} md={4} sm={12} xs={12} style={styles.col}>
                         <div className="hover">
                             <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Customers</Card.Header>
+                                <Card.Header style={styles.card_header}> Loss </Card.Header>
                                 <Card.Body>
+                                    <Row>
+                                        <Col>
+                                            <Card.Text style={styles.card_text}>
+                                                1234
+                                        </Card.Text>
+                                        </Col>
+                                        <Col>
+                                            <Card.Text style={styles.card_text}>
+                                                <FontAwesomeIcon icon={faThumbsUp} style={styles.fontawesome} />
+                                            </Card.Text>
+                                        </Col>
+                                    </Row>
                                 </Card.Body>
                             </Card>
                         </div>
@@ -132,7 +172,7 @@ class Dashboard extends React.Component {
                         }
                     `}
                 </style>
-            </div>
+            </div >
         )
     }
 }
@@ -140,7 +180,7 @@ class Dashboard extends React.Component {
 const styles = {
     row: {
         margin: '2%',
-         padding: '0px'
+        padding: '0px'
     },
     col: {
         padding: '0px',
@@ -154,7 +194,13 @@ const styles = {
     card_header: {
         background: 'white',
         color: 'gray',
-        border: 'none'
+        borderBottom: `0.5px solid ${GlobalStyleSheet.body_color}`
+    },
+    card_headerr: {
+        // background: `${GlobalStyleSheet.admin_primry_color}`,
+        // color: `${GlobalStyleSheet.body_color}`,
+        borderBottom: '1px solid gray',
+        width: '100%'
     },
     card_text: {
         color: '#6A7074',

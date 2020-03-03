@@ -13,6 +13,8 @@ nextApp.prepare()
     const http = require('http');
     const server = http.createServer(app);
     require('dotenv').config();
+    var multer = require("multer");
+    var upload = multer();
 
     require('dotenv').config();
     const errorHandler = require("./api/middleware/error-handler");
@@ -27,6 +29,10 @@ nextApp.prepare()
       })
     );
     app.use(bodyParser.json());
+
+    // for parsing multipart/form-data
+    app.use(upload.array());
+    app.use(express.static("public"));
 
     // connection to mongoose
     const mongoCon = process.env.mongoCon;
@@ -64,7 +70,7 @@ nextApp.prepare()
     const UsersRoutes = require('./api/routes/users.routes');
     const ProductsRoutes = require('./api/routes/products.routes');
     const Products_CategoriesRoutes = require('./api/routes/products-categories.routes');
-    
+
     app.use("/api/users", UsersRoutes);
     app.use("/api/products", ProductsRoutes);
     app.use("/api/products-categories", Products_CategoriesRoutes);
@@ -78,7 +84,7 @@ nextApp.prepare()
     app.use(errorMessage);
 
     server.listen(process.env.PORT || 3000)
-    
+
     // app.listen(PORT, err => {
     //   if (err) throw err;
     //   console.log(`> ready on port ${PORT}`);

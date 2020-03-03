@@ -22,7 +22,7 @@ const DashboardTabs = props => {
 
     return (
         <div>
-            <Tab.Container id="dashboard-tabs" defaultActiveKey="products" style={styles.row}>
+            <Tab.Container id="dashboard-tabs" defaultActiveKey="dashboard" style={styles.row}>
                 <Row style={styles.row}>
                     {/* Show/Hide Tabs & Tabs-Content when screen Switches to Large/Medium,Small,Extra-Small Devices*/}
                     <div className={drawerClasses}>
