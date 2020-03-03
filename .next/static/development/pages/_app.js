@@ -4044,11 +4044,11 @@ module.exports = (__webpack_require__(/*! dll-reference dll_3a359c314b014ea1ed53
 
 
     (window.__NEXT_P=window.__NEXT_P||[]).push(["/_app", function() {
-      var mod = __webpack_require__(/*! private-next-pages/_app.js */ "./pages/_app.js")
+      var mod = __webpack_require__(/*! private-next-pages/_app.js */ "./src/pages/_app.js")
       if(true) {
-        module.hot.accept(/*! private-next-pages/_app.js */ "./pages/_app.js", function() {
+        module.hot.accept(/*! private-next-pages/_app.js */ "./src/pages/_app.js", function() {
           if(!next.router.components["/_app"]) return
-          var updatedPage = __webpack_require__(/*! private-next-pages/_app.js */ "./pages/_app.js")
+          var updatedPage = __webpack_require__(/*! private-next-pages/_app.js */ "./src/pages/_app.js")
           next.router.update("/_app", updatedPage)
         })
       }
@@ -8456,10 +8456,10 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./pages/_app.js":
-/*!***********************!*\
-  !*** ./pages/_app.js ***!
-  \***********************/
+/***/ "./src/pages/_app.js":
+/*!***************************!*\
+  !*** ./src/pages/_app.js ***!
+  \***************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 

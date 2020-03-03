@@ -104,10 +104,10 @@ module.exports =
 
 /***/ }),
 
-/***/ "./pages/_app.js":
-/*!***********************!*\
-  !*** ./pages/_app.js ***!
-  \***********************/
+/***/ "./src/pages/_app.js":
+/*!***************************!*\
+  !*** ./src/pages/_app.js ***!
+  \***************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -151,7 +151,7 @@ function MyApp({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! private-next-pages/_app.js */"./pages/_app.js");
+module.exports = __webpack_require__(/*! private-next-pages/_app.js */"./src/pages/_app.js");
 
 
 /***/ }),

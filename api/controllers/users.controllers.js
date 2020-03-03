@@ -86,9 +86,10 @@ usersController.registerUser = async (req, res) => {
 usersController.loginUser = async (req, res) => {
   try {
     const body = req.body;
-    const email = body.email;
+    console.log("asdfgfdsasdfgfdsasdf:",body)
+    const mobile = body.mobile;
     // lets check if email exists
-    const result = await Users.findOne({ email: email });
+    const result = await Users.findOne({ mobile: mobile });
     if (!result) {
       // this means result is null
       res.status(401).send({
