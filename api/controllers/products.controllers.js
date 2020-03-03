@@ -251,6 +251,7 @@ productsController.getAll = async (req, res) => {
 
 productsController.addProduct = async (req, res) => {
 
+  console.log("Method data:",(JSON.stringify(values, null, 2)))
   try {
     var datetime = new Date();
     var date=datetime.toISOString().slice(0,10);

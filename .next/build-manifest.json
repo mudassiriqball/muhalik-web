@@ -21,11 +21,11 @@
       "static/runtime/polyfills.js",
       "static/runtime/polyfills.js.map"
     ],
-    "/index": [
+    "/admin": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],
-    "/vendor": [
+    "/index": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ]

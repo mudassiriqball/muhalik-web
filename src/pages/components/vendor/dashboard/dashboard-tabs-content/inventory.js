@@ -1,7 +1,7 @@
 import React from 'react'
 import fetch from 'isomorphic-unfetch'
 
-import { Row, Col, Card, InputGroup, Button } from 'react-bootstrap'
+import { Row, Col, Card, Tabs, Tab, Button } from 'react-bootstrap'
 // american-sign-language-interpreting
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUsers, faUserPlus } from '@fortawesome/free-solid-svg-icons';
@@ -18,102 +18,23 @@ class Inventory extends React.Component {
 
     render() {
         return (
-            <div >
-                <Row style={styles.row}>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Product In Stock</Card.Header>
-                                <Card.Body>
-                                    <Row>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                1234
-                                        </Card.Text>
-                                        </Col>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
-                                            </Card.Text>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </div>
-                    </Col>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Product Sold</Card.Header>
-                                <Card.Body>
-                                    <Row>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                1234
-                                            </Card.Text>
-                                        </Col>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                <FontAwesomeIcon icon={faUserPlus} style={styles.fontawesome} />
-                                            </Card.Text>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </div>
-                    </Col>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}> Product Categories </Card.Header>
-                                <Card.Body>
-                                    <Row>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                1234
-                                        </Card.Text>
-                                        </Col>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                <FontAwesomeIcon icon={faThumbsUp} style={styles.fontawesome} />
-                                            </Card.Text>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </div>
-                    </Col>
-                    <Col lg={3} md={3} sm={12} xs={12}  style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card}>
-                                <Card.Header style={styles.card_header}> Header </Card.Header>
-                                <Card.Body>
-                                    <Row>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                1234
-                                            </Card.Text>
-                                        </Col>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
-                                            </Card.Text>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </div>
-                    </Col>
+            <div>
+                <Row>
+                    <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
+                        <Tab eventKey="home" title="Home">
+                            <p>Fuck</p>
+                        </Tab>
+                        <Tab eventKey="profile" title="Profile">
+                            <p>Fuck</p>
+                        </Tab>
+                        <Tab eventKey="contact" title="Contact" disabled>
+                            <p>Fuck</p>
+                        </Tab>
+                    </Tabs>
                 </Row>
                 <style jsx>
                     {`
-                        .hover {
-                            margin: 5px 15px
-                        }
-                        .hover:hover {
-                            margin: 0px 10px;
-                            cursor: pointer
-                        }
+                    
                     `}
                 </style>
             </div>
@@ -124,33 +45,7 @@ class Inventory extends React.Component {
 const styles = {
     row: {
         margin: '2%',
-         padding: '0px'
-    },
-    col: {
-        padding: '0px',
-        margin: '0px'
-    },
-    card: {
-        background: 'white',
-        borderRadius: '0px',
         padding: '0px'
-    },
-    card_header: {
-        background: 'white',
-        color: 'gray',
-        border: 'none'
-    },
-    card_text: {
-        color: '#6A7074',
-        fontSize: '30px',
-    },
-    fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
-        width: '50px',
-        height: '50px',
-        maxHeight: '50px',
-        maxWidth: '50px',
-        float: 'right'
     },
 }
 

@@ -13,7 +13,7 @@ const Product = new Schema({
   },
   product_price: {
     type: Number,
-  },
+  }, 
   product_brand_name: {
     type: String
   },

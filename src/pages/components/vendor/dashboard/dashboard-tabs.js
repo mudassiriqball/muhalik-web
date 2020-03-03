@@ -1,4 +1,4 @@
-import { Image, Nav, Navbar, Dropdown, ButtonGroup, Form, FormControl, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
+import { Image, Nav, Navbar, Dropdown, ButtonGroup, Form, Container, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faBars, faChevronRight, faTachometerAlt, faUpload, faHandsHelping, faUser, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar } from '@fortawesome/free-solid-svg-icons';
@@ -22,97 +22,89 @@ const DashboardTabs = props => {
 
     return (
         <div>
-            <Tab.Container id="dashboard-tabs" defaultActiveKey="dashboard" style={styles.row}>
-                <Row style={styles.row}>
+            <Tab.Container id="dashboard-tabs" defaultActiveKey="dashboard" >
+                <Row noGutters>
                     {/* Show/Hide Tabs & Tabs-Content when screen Switches to Large/Medium,Small,Extra-Small Devices*/}
-                    <div className={drawerClasses}>
+                    <div className={drawerClasses} style={styles.body}>
                         {/* Show/Hide Tabs SIde Drawer in Lg-Devices when bar btn Clicked*/}
-                        <div className="tabs" style={styles.body}>
+                        <div className="tabs" >
                             {/* Tabs Side Drawer */}
-                            <Col lg={3} md={3} style={{ maxWidth: '350px', margin: '0px', padding: '0px' }}>
-                                <Nav className="flex-column" variant="pills">
-                                    <Nav.Item>
-                                        <Row style={styles.image_div}>
-                                            <Col>
-                                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                            </Col>
-                                            <Col>
-                                                <Nav.Link href="/index" style={styles.muhalik}>
-                                                    Vendor
-                                                </Nav.Link>
-                                            </Col>
-                                        </Row>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <div className="hover">
-                                            <Nav.Link eventKey="dashboard" style={styles.tab_link}>
-                                                <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
+                            <Nav className="flex-column" variant="pills" style={{ minWidth: '320px', maxWidth: '320px' }}>
+                                <Nav.Item style={styles.image_div}>
+                                    <p>
+                                        <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
+                                        <Nav.Link href="/index" style={styles.muhalik}> Vendor </Nav.Link>
+                                    </p>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="dashboard" style={styles.tab_link}>
+                                            <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
                                                 Dashboard
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                            </Nav.Link>
-                                        </div>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <div className="hover">
-                                            <Nav.Link eventKey="products" style={styles.tab_link}>
-                                                <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="products" style={styles.tab_link}>
+                                            <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
                                                 Products
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                            </Nav.Link>
-                                        </div>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <div className="hover">
-                                            <Nav.Link eventKey="inventory" style={styles.tab_link}>
-                                                <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="inventory" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
                                                 Inventory
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                            </Nav.Link>
-                                        </div>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <div className="hover">
-                                            <Nav.Link eventKey="bulkUpload" style={styles.tab_link}>
-                                                <FontAwesomeIcon icon={faUpload} style={styles.fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="bulkUpload" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faUpload} style={styles.fontawesome} />
                                                 Bulk Upload
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                            </Nav.Link>
-                                        </div>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <div className="hover">
-                                            <Nav.Link eventKey="discountCoupons" style={styles.tab_link}>
-                                                <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="discountCoupons" style={styles.tab_link}>
+                                            <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
                                                 Discount
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                            </Nav.Link>
-                                        </div>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <div className="hover">
-                                            <Nav.Link eventKey="orders" style={styles.tab_link}>
-                                                <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover">
+                                        <Nav.Link eventKey="orders" style={styles.tab_link}>
+                                            <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
                                                 Orders
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                            </Nav.Link>
-                                        </div>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <div className="hover" >
-                                            <Nav.Link eventKey="reports" style={styles.tab_link}>
-                                                <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <div className="hover" >
+                                        <Nav.Link eventKey="reports" style={styles.tab_link}>
+                                            <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
                                                 Reports
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                            </Nav.Link>
-                                        </div>
-                                    </Nav.Item>
-                                </Nav>
-                            </Col>
+                                        </Nav.Link>
+                                    </div>
+                                </Nav.Item>
+                            </Nav>
                             {/* End Tabs Side Drawer */}
                         </div>
                     </div>
                     {/* Toolbar & Tabs Contents */}
-                    <Col style={styles.row}>
+                    <Col>
                         {/* Toolbar */}
                         <Navbar collapseOnSelect expand="lg" style={styles.navbar} variant="dark">
                             {/* Show/Hide bar btn while screen switches to Large to Small,Medium,Extra-Small Devices */}
@@ -201,9 +193,6 @@ const DashboardTabs = props => {
             </Tab.Container>
             <style jsx>
                 {`
-                .drawer_btn {
-                    margin: 0% 1% 0% 0% ;
-                }
                 .tabs_side_drawer {
                     display: none;
                 }
@@ -214,12 +203,18 @@ const DashboardTabs = props => {
                 .hover {
                     background: ${GlobalStyleSheet.admin_primry_color};
                     color: ${GlobalStyleSheet.body_color};
+                    border-top: 0.5px solid #434556;
+                    border-bottom: 0.5px solid #434556;
                 }
                 .hover:hover {
                     background: #30313E;
                 }
                 .side_tab_toogle_btn {
                     margin: 0%
+                }
+                p {
+                    text-align: center; 
+                    margin: 0px;
                 }
                 @media (max-width: 991px) {
                     .tabs {
@@ -243,16 +238,16 @@ const DashboardTabs = props => {
 const styles = {
     image_div: {
         background: 'white',
-        marginRight: '1px',
-        padding: '10px'
+        width: '100%',
+        borderRight: '0.5px solid gray',
+        padding: '2%'
     },
     image: {
         width: '100px'
     },
     muhalik: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
-        fontSize: '20px',
-        fontWeight: 'bold',
+        fontSize: '16px',
         border: 'none',
         cursor: 'pointer',
         background: 'none'

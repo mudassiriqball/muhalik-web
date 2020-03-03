@@ -25297,7 +25297,7 @@ var GlobalStyleSheet = {
 
 /***/ }),
 
-/***/ 1:
+/***/ 2:
 /*!***********************************************************************************************************************************************!*\
   !*** multi next-client-pages-loader?page=%2F&absolutePagePath=C%3A%5CUsers%5CMudassirR%5CDesktop%5CFYP%5Cmuhalikweb%5Csrc%5Cpages%5Cindex.js ***!
   \***********************************************************************************************************************************************/
@@ -25320,5 +25320,5 @@ module.exports = dll_3a359c314b014ea1ed53;
 
 /***/ })
 
-},[[1,"static/runtime/webpack.js"]]]);
+},[[2,"static/runtime/webpack.js"]]]);
 //# sourceMappingURL=index.js.map
