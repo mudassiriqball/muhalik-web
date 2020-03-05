@@ -33,7 +33,7 @@ const DashboardTabs = props => {
                                 <Nav.Item style={styles.image_div}>
                                     <p>
                                         <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                        <Nav.Link href="/index" style={styles.muhalik}> Vendor </Nav.Link>
+                                        <Nav.Link href="/index" style={styles.muhalik}> {props.token.fullName} </Nav.Link>
                                     </p>
                                 </Nav.Item>
                                 <Nav.Item>
@@ -108,7 +108,7 @@ const DashboardTabs = props => {
                         {/* Toolbar */}
                         <Navbar collapseOnSelect expand="lg" style={styles.navbar} variant="dark">
                             {/* Show/Hide bar btn while screen switches to Large to Small,Medium,Extra-Small Devices */}
-                            <div className="side_tab_toogle_btn" style={styles.drawerBtn}>
+                            <div className="side_tab_toogle_btn mr-auto" style={styles.drawerBtn}>
                                 <Button style={styles.buttons} onClick={props.drawerClickHandler}>
                                     <FontAwesomeIcon icon={faBars} style={styles.search_fontawesome} />
                                 </Button>
@@ -120,10 +120,9 @@ const DashboardTabs = props => {
                                 </Button>
                             </div>
                             {/* Search Bar */}
-                            <Form inline className="mr-auto">
+                            <Form inline style={{width: '85%'}} className="mr-auto">
                                 <Form.Control
                                     style={styles.search_bar}
-                                    className="mr-xs-2"
                                     type="text"
                                     placeholder="Search here"
                                     aria-describedby="side_drawer_searchbar"
@@ -136,6 +135,7 @@ const DashboardTabs = props => {
                                 </InputGroup.Prepend>
                             </Form>
                             {/* Account Setting Dropdown */}
+                            <div className="account_settig_dropdown">
                             <Dropdown as={ButtonGroup} alignRight>
                                 <Dropdown.Toggle size="sm" split variant="light" id="dropdown-split" style={{ background: 'none', border: 'none' }} />
                                 <Dropdown.Menu>
@@ -158,6 +158,7 @@ const DashboardTabs = props => {
                                 </Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
+                            </div>
                         </Navbar>
                         {/* End of Toolbar */}
                         {/* Tab Content for Large Devices */}
@@ -199,6 +200,7 @@ const DashboardTabs = props => {
                 .tabs_side_drawer.open{
                     backgroung:  ${GlobalStyleSheet.admin_primry_color};
                     display: block;
+                    height: 100vh;
                 }
                 .hover {
                     background: ${GlobalStyleSheet.admin_primry_color};
@@ -222,6 +224,13 @@ const DashboardTabs = props => {
                     }
                     .tab_content {
                         display: none;
+                    }
+                    .account_settig_dropdown {
+                        display: none
+                    }
+                    .tabs_side_drawer.open {
+                        display: none;
+                        height: 0vh
                     }
                 }
                 @media (min-width: 992px) {
@@ -283,16 +292,16 @@ const styles = {
     tab_link: {
         color: 'white',
         fontSize: '14px',
-        paddingTop: '8%',
-        paddingBottom: '8%',
+        paddingTop: '7%',
+        paddingBottom: '7%',
     },
     fontawesome: {
         color: `${GlobalStyleSheet.body_color}`,
         margin: '0px 8% 0px 12%',
-        width: '17px',
-        height: '17px',
-        maxHeight: '17px',
-        maxWidth: '17px',
+        width: '18px',
+        height: '18px',
+        maxHeight: '18px',
+        maxWidth: '18px',
     },
     forword_fontawesome: {
         color: `${GlobalStyleSheet.body_color}`,

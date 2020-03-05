@@ -19,14 +19,14 @@ const Product = new Schema({
   },
   product_image_link: [
     {
-      label: { type: String},
-      value: { type: String}
+      value: { type: String},
+      label: { type: String}
     }
   ],
   product_colors: [
     {
-      label: { type: String },
-      value: { type: String }
+      value: { type: String },
+      label: { type: String }
     }
   ],
   product_in_stock: {
@@ -37,9 +37,8 @@ const Product = new Schema({
   },
   product_size: [
     {
-      
-      label: { type: String },
-      value: { type: String }
+      value: { type: String },
+      label: { type: String }
     }
   ],
   product_category: [

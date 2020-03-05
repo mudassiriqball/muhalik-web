@@ -4,6 +4,7 @@ import DashboardTabs from './components/admin/dashboard/dashboard-tabs';
 import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-drawer';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import GlobalStyleSheet from '../styleSheet';
+import { getTokenFromStorage } from '../sdk/core/authentication-service';
 
 const BackDrop = props => (
     <div>
@@ -22,10 +23,19 @@ const BackDrop = props => (
 )
 
 class AdminDashboard extends Component {
-    state = {
-        sideDrawerOpen: false,
-        fuck: true
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            sideDrawerOpen: false,
+            showSideDrawer: true,
+            jwt_token: '',
+        }
+    }
+
+    async componentDidMount() {
+        this.setState({jwt_token: await getTokenFromStorage()});
+    }
+
     drawerToggleClickHandler = () => {
         this.setState(prevState => {
             return { sideDrawerOpen: !prevState.sideDrawerOpen };
@@ -33,7 +43,7 @@ class AdminDashboard extends Component {
     };
     fuckClickHandler = () => {
         this.setState(prevState => {
-            return { fuck: !prevState.fuck };
+            return { showSideDrawer: !prevState.showSideDrawer };
         });
     };
 
@@ -50,8 +60,8 @@ class AdminDashboard extends Component {
         return (
             <div style={styles.body}>
                 {/* <AdminLayout> */}
-                    <DashboardTabs show={this.state.fuck} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.fuckClickHandler}/>
-                    <DashboardSideDrawer show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
+                    <DashboardTabs token= {this.state.jwt_token} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.fuckClickHandler}/>
+                    <DashboardSideDrawer token= {this.state.jwt_token} show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
                     {backdrop}
                 {/* </AdminLayout> */}
             </div>

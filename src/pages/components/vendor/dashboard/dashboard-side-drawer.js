@@ -27,19 +27,12 @@ const DashboardSideDrawer = props => {
                 {/* Side Drawer Components */}
                 <div className={drawerClasses}>
                     <Nav className="flex-column" variant="pills">
-                        {/* Links */}
-                        <Nav.Item>
-                            <Row style={styles.image_div}>
-                                <Col sm={5} xs={5}>
-                                    <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                </Col>
-                                <Col sm={5} xs={5}>
-                                    <Nav.Link href="/index" style={styles.muhalik}>
-                                        Vendor
-                                    </Nav.Link>
-                                </Col>
-                            </Row>
-                        </Nav.Item>
+                        <Nav.Item style={styles.image_div}>
+                                    <p>
+                                        <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
+                                        <Nav.Link href="/index" style={styles.muhalik}> {props.token.fullName} </Nav.Link>
+                                    </p>
+                                </Nav.Item>
                         <Nav.Item>
                             <div className="hover">
                                 <Nav.Link eventKey="dashboard" onClick={props.click} style={styles.tab_link}>
@@ -137,6 +130,11 @@ const DashboardSideDrawer = props => {
             </Tab.Container>
             <style jsx>
                 {`
+                    .hover {
+                        color: ${GlobalStyleSheet.body_color};
+                        border-top: 0.5px solid #434556;
+                        border-bottom: 0.5px solid #434556;
+                    }
                     .hover:hover {
                         background: #30313E;
                     }
@@ -159,8 +157,8 @@ const DashboardSideDrawer = props => {
                     }
                     p {
                         text-align: center; 
-                        padding: 5% 0px;
-                        border-bottom: 1px solid gray;
+                        margin: 0px;
+                        padding: 0px;
                     }
                     label {
                         margin-top: 4%;
@@ -184,18 +182,21 @@ const DashboardSideDrawer = props => {
 const styles = {
     image_div: {
         background: 'white',
-        marginRight: '1px',
-        padding: '5% 1% 5% 3%'
+        width: '100%',
+        borderRight: '0.5px solid gray',
+        padding: '2%'
     },
     image: {
-        width: '100%'
+        width: '80px'
     },
     muhalik: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
         fontSize: '16px',
-        fontWeight: 'bold',
+        border: 'none',
+        cursor: 'pointer',
         background: 'none',
-        border: 'none'
+        padding: '0px',
+        margin: '0px'
     },
     // tab_link: {
     //     color: '#cccccc',

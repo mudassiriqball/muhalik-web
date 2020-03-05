@@ -250,14 +250,11 @@ productsController.getAll = async (req, res) => {
 };
 
 productsController.addProduct = async (req, res) => {
-
-  console.log("Method data:",(JSON.stringify(values, null, 2)))
   try {
     var datetime = new Date();
     var date=datetime.toISOString().slice(0,10);
-    const body = req.body;
-    req.body.product_entry_date=date;
-    const product = new Products(body);
+    req.body.data.product_entry_date=date;
+    const product = new Products(req.body.data);
     const result = await product.save();
     res.status(200).send({
       code: 200,

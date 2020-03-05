@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import DashboardTabs from './components/vendor/dashboard/dashboard-tabs';
 import DashboardSideDrawer from './components/vendor/dashboard/dashboard-side-drawer';
 import GlobalStyleSheet from '../styleSheet';
+import { getTokenFromStorage } from '../sdk/core/authentication-service';
 
 const BackDrop = props => (
     <div>
@@ -21,10 +22,18 @@ const BackDrop = props => (
 )
 
 class AdminDashboard extends Component {
-    state = {
-        sideDrawerOpen: false,
-        showSideDrawer: true
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            sideDrawerOpen: false,
+            showSideDrawer: true,
+            jwt_token: '',
+        }
+    }
+    async componentDidMount() {
+        this.setState({ jwt_token: await getTokenFromStorage() });
+    }
+
     drawerToggleClickHandler = () => {
         this.setState(prevState => {
             return { sideDrawerOpen: !prevState.sideDrawerOpen };
@@ -49,9 +58,9 @@ class AdminDashboard extends Component {
         return (
             <div style={styles.body}>
                 {/* <AdminLayout> */}
-                    <DashboardTabs show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.showSideDrawerClickHandler}/>
-                    <DashboardSideDrawer show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
-                    {backdrop}
+                <DashboardTabs token={this.state.jwt_token} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.showSideDrawerClickHandler} />
+                <DashboardSideDrawer token={this.state.jwt_token} show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
+                {backdrop}
                 {/* </AdminLayout> */}
             </div>
         );

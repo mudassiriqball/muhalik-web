@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Router from 'next/router'
 import Link from 'next/link';
 import axios from 'axios';
 import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image } from 'react-bootstrap';
@@ -70,7 +71,9 @@ class VendorSignup extends Component {
         axios.post(url, {
             data
           }).then(function (response) {
-            alert(response.data.message);
+            if(response.data.message == 'Signup successful'){
+                Router.push('/login');
+            }
           }).catch(function (error) {
             alert(error);
         });

@@ -9,6 +9,8 @@ import CreatableSelect from 'react-select/creatable';
 
 import GlobalStyleSheet from '../../../../../styleSheet';
 import MuhalikConfig from '../../../../../sdk/muhalik.config';
+import { getTokenFromStorage } from '../../../../../sdk/core/authentication-service';
+
 
 // Option List for select Product Size
 const product_size_options = [
@@ -180,8 +182,8 @@ const components = {
 };
 // Model For React-Select
 const createOption = (label) => ({
-    label,
     value: label,
+    label,
 });
 
 // Yup Schema for validation fields
@@ -201,7 +203,7 @@ const schema = yup.object({
 
     product_size: yup.string(),
 
-    product_color: yup.string(),
+    product_colors: yup.string(),
 
     product_category: yup.string(),
 
@@ -303,12 +305,13 @@ class Products extends Component {
             console.error(error);
         }
     }
-
     //  Submit data to api
-    uploadData(data) {
+    async uploadData(data) {
         const url = MuhalikConfig.PATH + '/api/products/add';
-        axios.post(url, {
+        await axios.post(url, {
             data
+        }, {
+            headers: {'authorization': await getTokenFromStorage()}
         }).then(function (response) {
             alert(response.data.message);
         }).catch(function (error) {
@@ -323,7 +326,7 @@ class Products extends Component {
                 validationSchema={schema}
                 initialValues={{
                     product_name: '', product_brand_name: '', product_price: '',
-                    product_size: '', product_color: '', product_category: '',
+                    product_size: '', product_colors: '', product_category: '',
                     product_in_stock: 1, product_warranty: 0, warranty_type: 'Year', product_discount: 0,
                     product_description: '', product_shipping_cost: 40,
                     product_image_link: '',
@@ -350,7 +353,7 @@ class Products extends Component {
                         setTimeout(() => {
                             // this.uploadData(values);
                             values.product_size = this.state.size;
-                            values.product_color = this.state.color;
+                            values.product_colors = this.state.color;
                             values.product_category = this.state.category;
                             values.product_image_link = this.state.image_link;
                             console.log("Data Values:", JSON.stringify(values, null, 2))
@@ -591,6 +594,7 @@ class Products extends Component {
                                                             <CreatableSelect
                                                                 components={components}
                                                                 inputValue={inputValue}
+                                                                style={{width: '100%', maxWidth: '100%'}}
                                                                 isClearable
                                                                 isMulti
                                                                 menuIsOpen={false}
@@ -609,7 +613,7 @@ class Products extends Component {
                                                     <Form.Group as={Col}>   
                                                         <p style={styles.label}>Fields with <span> * </span> are mandatory.</p>
                                                         <p style={styles.label}>For adding new size, color, link: Enter text and hit Enter or Tab key</p>
-                                                        <Button type="submit"  onSubmit={handleSubmit} block style={styles.submit_btn}>Signup</Button>
+                                                        <Button type="submit"  onSubmit={handleSubmit} block style={styles.submit_btn}>Upload</Button>
                                                     </Form.Group>
                                                 </Form.Row>
                                             </Form>

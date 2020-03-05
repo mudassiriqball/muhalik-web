@@ -25,17 +25,16 @@ const DashboardSideDrawer = props => {
     return (
         <div>
             <Tab.Container id="dashboard-tabs" defaultActiveKey="one">
-
                 {/* Side Drawer Components */}
                 <div className={drawerClasses}>
                     <Nav className="flex-column" variant="pills">
                         {/* Links */}
                         <Nav.Item style={styles.image_div}>
-                                    <p>
-                                        <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                        <Nav.Link href="/index" style={styles.muhalik}> Vendor </Nav.Link>
-                                    </p>
-                                </Nav.Item>
+                            <p>
+                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
+                                <Nav.Link href="/index" style={styles.muhalik}> {props.token.fullName} </Nav.Link>
+                            </p>
+                        </Nav.Item>
                         <Nav.Item>
                             <div className="hover">
                                 <Nav.Link eventKey="zero" onClick={props.click} style={styles.tab_link}>
@@ -157,6 +156,11 @@ const DashboardSideDrawer = props => {
             </Tab.Container>
             <style jsx>
                 {`
+                    .hover {
+                        color: ${GlobalStyleSheet.body_color};
+                        border-top: 0.5px solid #434556;
+                        border-bottom: 0.5px solid #434556;
+                    }
                     .hover:hover {
                         background: #30313E;
                     }

@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash, faMobileAlt, faLock } from '@fortawesome/free-solid-svg-icons';
 
 import GlobalStyleSheet from '../styleSheet';
+import {saveTokenToStorage} from '../sdk/core/authentication-service';
 
 // RegEx for phone number validation
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
@@ -40,8 +41,8 @@ class Login extends Component {
         axios.post(url, {
             data
           }).then(function (response) {
-            alert(response.data.message)
-            console.log("responsefff:", response.token)
+              alert(response.data.message);
+            saveTokenToStorage(response.data.token);
           }).catch(function (error) {
             alert(error)
         });

@@ -8,7 +8,8 @@ usersController.getAll = async (req, res) => {
   let users;
   try {
     let merged = {};
-
+    const start = 0;
+    const length = 100;
     users = await Users.paginate(
       merged,
       { password: 0 },
@@ -46,17 +47,18 @@ usersController.getSingleUser = async (req, res) => {
 };
 
 usersController.registerUser = async (req, res) => {
+
   try {
     const body = req.body.data;
-    console.log("data fucking shit:",req.body.data);
+    if (req.params.mobile == req.body.mobile) {
+      console.log("Same");
+    }
     // there must be a password in body
     // we follow these 2 steps
     const password = body.password;
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
     body.password = hash;
-
-    body.date = new Date();
     const user = new Users(body);
     const result = await user.save();
     res.send({
@@ -67,7 +69,7 @@ usersController.registerUser = async (req, res) => {
     if (ex.code === 11000) {
       res
         .send({
-          message: 'This mobile number has been registered already',
+          message: 'This email has been registered already',
         })
         .status(500);
     }
@@ -82,11 +84,9 @@ usersController.registerUser = async (req, res) => {
   }
 };
 
-
 usersController.loginUser = async (req, res) => {
   try {
-    const body = req.body;
-    console.log("asdfgfdsasdfgfdsasdf:",body)
+    const body = req.body.data;
     const mobile = body.mobile;
     // lets check if email exists
     const result = await Users.findOne({ mobile: mobile });
@@ -103,13 +103,12 @@ usersController.loginUser = async (req, res) => {
         result.password = undefined;
         const token = jsonwebtoken.sign({
           data: result,
-          role: 'User'
         }, process.env.JWT_KEY, { expiresIn: '7d' });
         res.send({ message: 'Successfully Logged in', token: token });
       }
       else {
         console.log('password doesnot match');
-        res.status(401).send({ message: 'Wrong email or Password' });
+        res.status(401).send({ message: 'Wrong number or Password' });
       }
     }
   } catch (ex) {
@@ -278,3 +277,19 @@ async function runUpdateById(id, updates, res) {
 }
 
 module.exports = usersController;
+// const user = new Users ({
+  //   _id: new mongoose.Types.ObjectId(),
+  //   name: req.body.name,
+  //   number: req.body.number,
+  // });
+  // user.save().then(result => {
+  //   res.send({
+  //     message: 'Signup successful'
+  //   });
+  // }).catch(err => {
+  //   res
+  //       .send({
+  //         message: 'This email has been registered already',
+  //       })
+  //       .status(500);
+  // })
