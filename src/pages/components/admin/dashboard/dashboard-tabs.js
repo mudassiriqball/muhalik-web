@@ -34,7 +34,7 @@ const DashboardTabs = props => {
                                 <Nav.Item style={styles.image_div}>
                                     <p>
                                         <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                        <Nav.Link href="/index" style={styles.muhalik}> {props.token.fullName} </Nav.Link>
+                                        <Nav.Link href="/index" style={styles.muhalik}> {props.token} </Nav.Link>
                                     </p>
                                 </Nav.Item>
                                 <Nav.Item>

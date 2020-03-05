@@ -41,7 +41,7 @@ class Login extends Component {
         axios.post(url, {
             data
           }).then(function (response) {
-              alert(response.data.message);
+            //   alert(response.data.message);
             saveTokenToStorage(response.data.token);
           }).catch(function (error) {
             alert(error)

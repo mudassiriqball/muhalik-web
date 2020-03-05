@@ -33,7 +33,7 @@ class AdminDashboard extends Component {
     }
 
     async componentDidMount() {
-        this.setState({jwt_token: await getTokenFromStorage()});
+        this.setState({ jwt_token: await getTokenFromStorage() });
     }
 
     drawerToggleClickHandler = () => {
@@ -60,9 +60,9 @@ class AdminDashboard extends Component {
         return (
             <div style={styles.body}>
                 {/* <AdminLayout> */}
-                    <DashboardTabs token= {this.state.jwt_token} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.fuckClickHandler}/>
-                    <DashboardSideDrawer token= {this.state.jwt_token} show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
-                    {backdrop}
+                <DashboardTabs token={this.state.jwt_token.fullName} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.fuckClickHandler} />
+                <DashboardSideDrawer token={this.state.jwt_token.fullName} show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
+                {backdrop}
                 {/* </AdminLayout> */}
             </div>
         );
