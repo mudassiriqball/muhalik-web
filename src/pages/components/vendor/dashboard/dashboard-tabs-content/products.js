@@ -9,7 +9,7 @@ import CreatableSelect from 'react-select/creatable';
 
 import GlobalStyleSheet from '../../../../../styleSheet';
 import MuhalikConfig from '../../../../../sdk/muhalik.config';
-import { getTokenFromStorage } from '../../../../../sdk/core/authentication-service';
+import { getUncodededTokenFromStorage } from '../../../../../sdk/core/authentication-service';
 
 
 // Option List for select Product Size
@@ -237,6 +237,7 @@ class Products extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: false,
             categoryList: product_category_options,
             size: [],
             color: [],
@@ -311,10 +312,12 @@ class Products extends Component {
         await axios.post(url, {
             data
         }, {
-            headers: {'authorization': await getTokenFromStorage()}
+            headers: {'authorization': await getUncodededTokenFromStorage()}
         }).then(function (response) {
+            // this.setState({ isLoading: false})
             alert(response.data.message);
         }).catch(function (error) {
+            // this.setState({ isLoading: false})
             alert(error);
         });
     }
@@ -332,7 +335,6 @@ class Products extends Component {
                     product_image_link: '',
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    setSubmitting(true);
                     if (this.state.size == '' || this.state.color == '' || this.state.category == '' || this.state.image_link == '') {
                         if (this.state.size == '') {
                             this.setState({ sizeError: "error", sizeErrorDiv: 'RedBorderDiv' });
@@ -349,7 +351,8 @@ class Products extends Component {
                         setSubmitting(false);
                     } else {
                         resetForm();
-                        setSubmitting(false);
+                        setSubmitting(true);
+                        this.setState({ isLoading: true});
                         setTimeout(() => {
                             // this.uploadData(values);
                             values.product_size = this.state.size;
@@ -471,7 +474,7 @@ class Products extends Component {
                                                         <span> * </span></Form.Label>
                                                         <div className={this.state.categoryErrorDiv}>
                                                             <Select
-                                                                closeMenuOnSelect={false}
+                                                                closeMenuOnSelect={true}
                                                                 isMulti
                                                                 onChange={this.handleProductCategoryChange}
                                                                 value={this.state.category}

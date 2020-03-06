@@ -4,6 +4,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const jsonwebtoken = require('jsonwebtoken');
 const mongoose = require('mongoose');
+
 usersController.getAll = async (req, res) => {
   let users;
   try {
@@ -104,7 +105,7 @@ usersController.loginUser = async (req, res) => {
         const token = jsonwebtoken.sign({
           data: result,
         }, process.env.JWT_KEY, { expiresIn: '7d' });
-        res.send({ message: 'Successfully Logged in', token: token });
+        res.status(200).send({ message: 'Successfully Logged in', token: token });
       }
       else {
         console.log('password doesnot match');

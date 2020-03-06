@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import Router from 'next/router'
 import DashboardTabs from './components/admin/dashboard/dashboard-tabs';
 import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-drawer';
 import AdminLayout from './components/admin/layout/AdminLayout';
@@ -25,6 +25,7 @@ const BackDrop = props => (
 class AdminDashboard extends Component {
     constructor(props) {
         super(props);
+        this.abc()
         this.state = {
             sideDrawerOpen: false,
             showSideDrawer: true,
@@ -32,8 +33,11 @@ class AdminDashboard extends Component {
         }
     }
 
-    async componentDidMount() {
-        this.setState({ jwt_token: await getTokenFromStorage() });
+    async abc() {
+        let jwt_token = await getTokenFromStorage();
+        if(jwt_token.role !== 'admin'){
+            Router.push('/index')
+        }
     }
 
     drawerToggleClickHandler = () => {

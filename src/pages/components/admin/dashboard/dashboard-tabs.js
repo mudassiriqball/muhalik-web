@@ -15,6 +15,7 @@ import Commision from './dashboard-tabs-content/commision';
 import Reports from './dashboard-tabs-content/reports';
 
 import GlobalStyleSheet from '../../../../styleSheet';
+import { removeTokenFromStorage } from '../../../../sdk/core/authentication-service';
 
 const DashboardTabs = props => {
     let drawerClasses = "tabs_side_drawer";

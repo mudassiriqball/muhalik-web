@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 
-import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image } from 'react-bootstrap';
+import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner } from 'react-bootstrap';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash, faMobileAlt, faLock } from '@fortawesome/free-solid-svg-icons';
 
 import GlobalStyleSheet from '../styleSheet';
-import {saveTokenToStorage} from '../sdk/core/authentication-service';
+import { saveTokenToStorage } from '../sdk/core/authentication-service';
 
 // RegEx for phone number validation
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
@@ -26,27 +26,49 @@ const schema = yup.object({
         .max(20, "Password can't be longer than 20 characters"),
 });
 
+import * as decode from 'jwt-decode'
+import Router from 'next/router'
 class Login extends Component {
 
-    state = {
-        hide: true
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            hide: true,
+            isLoading: false,
+        }
+    }
 
     showPassword = ev => {
         this.setState({ hide: !this.state.hide })
     }
 
-    login(data) {
+    async login(data) {
         const url = MuhalikConfig.PATH + '/api/users/login';
-        axios.post(url, {
+        await axios.post(url, {
             data
-          }).then(function (response) {
-            //   alert(response.data.message);
-            saveTokenToStorage(response.data.token);
-          }).catch(function (error) {
-            alert(error)
+        }).then(function (response) {
+            console.log('respoonnnnnn:', response)
+            if(response.status == '200'){
+                saveTokenToStorage(response.data.token);
+                const decodedToken = decode(response.data.token);
+                if (decodedToken.data.role == 'customer') {
+                    Router.push('/index')
+                } else if (decodedToken.data.role == 'vendor') {
+                    Router.push('/vendor')
+                } else if (decodedToken.data.role == 'admin') {
+                    Router.push('/admin')
+                } else {
+                    Router.push('/index')
+                }
+            }
+            alert(response.data.message)
+        }).catch(function (error) {
+            console.log(error)
         });
+
     }
+
+
 
     render() {
         const { hide } = this.state;
@@ -67,15 +89,14 @@ class Login extends Component {
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     // When button submits form and form is in the process of submitting, submit button is disabled
                     setSubmitting(true);
+                    this.setState({ isLoading: true })
                     // Resets form after submission is complete
-                    resetForm();
                     // Sets setSubmitting to false after form is reset
-                    setSubmitting(false);
-
                     setTimeout(() => {
                         this.login(values);
                         resetForm();
                         setSubmitting(false);
+                        // this.setState({ isLoading: false })
                     }, 500);
                 }}
             >
@@ -175,7 +196,10 @@ class Login extends Component {
                                                 </Form.Row>
 
                                                 <Form.Row>
-                                                    <Button type="submit" onSubmit={handleSubmit} block style={styles.submit_btn}>Continue</Button>
+                                                    <Button type="submit" onSubmit={handleSubmit} disabled={this.state.isLoading} block style={styles.submit_btn}>
+                                                        {this.state.isLoading ? 'Logging' : 'Login'}
+                                                        {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
+                                                    </Button>
                                                 </Form.Row>
 
                                                 <Form.Row>
@@ -229,6 +253,7 @@ const styles = {
     },
     submit_btn: {
         background: `${GlobalStyleSheet.primry_color}`,
+        padding: 'auto'
     },
     center_column: {
         background: 'white',
