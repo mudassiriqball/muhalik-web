@@ -1,4 +1,4 @@
-import Layout from '../components/customer/layout/CustomerLayout';
+import Layout from '../components/customer/layout/Layout';
 const TermsAndConditions = () => (
     <Layout>
         <h3 className="text-center">Muhalik's Terms & Conditions</h3>
