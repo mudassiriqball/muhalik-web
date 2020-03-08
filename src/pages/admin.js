@@ -4,7 +4,7 @@ import DashboardTabs from './components/admin/dashboard/dashboard-tabs';
 import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-drawer';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import GlobalStyleSheet from '../styleSheet';
-import { getTokenFromStorage } from '../sdk/core/authentication-service';
+import { chectAuth, removeTokenFromStorage } from '../sdk/core/authentication-service';
 
 const BackDrop = props => (
     <div>
@@ -25,7 +25,7 @@ const BackDrop = props => (
 class AdminDashboard extends Component {
     constructor(props) {
         super(props);
-        this.abc()
+        this.authUser()
         this.state = {
             sideDrawerOpen: false,
             showSideDrawer: true,
@@ -33,11 +33,8 @@ class AdminDashboard extends Component {
         }
     }
 
-    async abc() {
-        let jwt_token = await getTokenFromStorage();
-        if(jwt_token.role !== 'admin'){
-            Router.push('/index')
-        }
+    async authUser() {
+        this.setState({ jwt_token: await chectAuth('admin')});
     }
 
     drawerToggleClickHandler = () => {
@@ -45,7 +42,7 @@ class AdminDashboard extends Component {
             return { sideDrawerOpen: !prevState.sideDrawerOpen };
         });
     };
-    fuckClickHandler = () => {
+    showSideDrawerClickHandler = () => {
         this.setState(prevState => {
             return { showSideDrawer: !prevState.showSideDrawer };
         });
@@ -54,6 +51,10 @@ class AdminDashboard extends Component {
     backdropClickHandler = () => {
         this.setState({ sideDrawerOpen: false });
     };
+
+    logout(){
+        removeTokenFromStorage();
+    }
 
     render() {
         let backdrop;
@@ -64,8 +65,10 @@ class AdminDashboard extends Component {
         return (
             <div style={styles.body}>
                 {/* <AdminLayout> */}
-                <DashboardTabs token={this.state.jwt_token.fullName} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.fuckClickHandler} />
-                <DashboardSideDrawer token={this.state.jwt_token.fullName} show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
+                <DashboardTabs token={this.state.jwt_token} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} 
+                ClickHandler={this.showSideDrawerClickHandler} logoutClickHandler={this.logout}/>
+                <DashboardSideDrawer token={this.state.jwt_token} show={this.state.sideDrawerOpen} 
+                click={this.backdropClickHandler} logoutClickHandler={this.logout} />
                 {backdrop}
                 {/* </AdminLayout> */}
             </div>

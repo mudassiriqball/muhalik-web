@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Col, Row, Card, InputGroup, Button } from 'react-bootstrap';
+import { Form, Col, Row, Card, InputGroup, Button, Toast, Spinner } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
@@ -7,10 +7,10 @@ import axios from 'axios';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
+import ShowToast from '../../../toast';
 import GlobalStyleSheet from '../../../../../styleSheet';
 import MuhalikConfig from '../../../../../sdk/muhalik.config';
 import { getUncodededTokenFromStorage } from '../../../../../sdk/core/authentication-service';
-
 
 // Option List for select Product Size
 const product_size_options = [
@@ -168,6 +168,7 @@ const product_color_options = [
     // Y
     { value: 'Yellow', label: 'Yellow' },
 ]
+
 // Option List for select Product Category (when offline)
 const product_category_options = [
     { value: 'Shoe', label: 'Shoe' },
@@ -175,6 +176,7 @@ const product_category_options = [
     { value: 'Shirt', label: 'Shirt' },
     { value: 'Pant', label: 'Pant' }
 ]
+
 
 // For React-Select
 const components = {
@@ -210,7 +212,7 @@ const schema = yup.object({
     product_in_stock: yup.number().required("Enter Products in Stock")
         .integer("Enter Only Numbers")
         .min(1, "Must grater than 1 digit")
-        .max(10, "Can't be longer than 20 digit"),
+        .max(1000000, "Can't be longer than 1000000"),
 
     product_warranty: yup.number().integer("Enter Only Numbers")
         .min(0, 'Enter Between 0-200')
@@ -233,11 +235,13 @@ const schema = yup.object({
     product_image_link: yup.string(),
 });
 
+
 class Products extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: false,
+            showToast: false,
             categoryList: product_category_options,
             size: [],
             color: [],
@@ -246,8 +250,6 @@ class Products extends Component {
             inputValue: '',
             image_link: [],
             // Handling errors for React-Select
-            sizeError: 'no_error',
-            sizeErrorDiv: 'BorderDiv',
             colorError: 'no_error',
             colorErrorDiv: 'BorderDiv',
             categoryError: 'no_error',
@@ -256,11 +258,10 @@ class Products extends Component {
             image_linkErrorDiv: 'BorderDiv',
         };
     }
-    
+
     // Product Size
     handleProductSizeChange = (newValue, actionMeta) => {
         console.log("actionMeta:", actionMeta);
-        this.setState({ size: newValue, sizeError: 'no_error', sizeErrorDiv: 'BorderDiv' });
     };
 
     // Product Color
@@ -283,7 +284,6 @@ class Products extends Component {
     handleImage_linkKeyDown = (event) => {
         const inputValue = this.state.inputValue;
         const image_link = this.state.image_link;
-
         if (!inputValue) return;
         switch (event.key) {
             case 'Enter':
@@ -307,23 +307,24 @@ class Products extends Component {
         }
     }
     //  Submit data to api
-    async uploadData(data) {
+    async uploadData(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/products/add';
         await axios.post(url, {
             data
         }, {
-            headers: {'authorization': await getUncodededTokenFromStorage()}
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
         }).then(function (response) {
-            // this.setState({ isLoading: false})
-            alert(response.data.message);
+            currentComponent.setState({ isLoading: false });
+            currentComponent.setState({ showToast: true });
+            return true;
         }).catch(function (error) {
-            // this.setState({ isLoading: false})
-            alert(error);
+            currentComponent.setState({ isLoading: false });
+            alert('Error: ', error.response.data.message);
+            return false;
         });
     }
 
     render() {
-        const { inputValue, image_link } = this.state;
         return (
             <Formik
                 validationSchema={schema}
@@ -335,12 +336,9 @@ class Products extends Component {
                     product_image_link: '',
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    if (this.state.size == '' || this.state.color == '' || this.state.category == '' || this.state.image_link == '') {
+                    if (this.state.color == '' || this.state.category == '' || this.state.image_link == '') {
                         if (this.state.size == '') {
                             this.setState({ sizeError: "error", sizeErrorDiv: 'RedBorderDiv' });
-                        }
-                        if (this.state.color == '') {
-                            this.setState({ colorError: "error", colorErrorDiv: 'RedBorderDiv' });
                         }
                         if (this.state.category == '') {
                             this.setState({ categoryError: "error", categoryErrorDiv: 'RedBorderDiv' });
@@ -352,18 +350,16 @@ class Products extends Component {
                     } else {
                         resetForm();
                         setSubmitting(true);
-                        this.setState({ isLoading: true});
+                        this.setState({ isLoading: true });
                         setTimeout(() => {
-                            // this.uploadData(values);
                             values.product_size = this.state.size;
                             values.product_colors = this.state.color;
                             values.product_category = this.state.category;
                             values.product_image_link = this.state.image_link;
-                            console.log("Data Values:", JSON.stringify(values, null, 2))
-                            this.uploadData(values)
-                            // alert(JSON.stringify(values, null, 2));
-                            this.setState({ size: [], color: [], category: [], image_link: [], inputValue: '' });
-                            resetForm();
+                            if (this.uploadData(values, this)) {
+                                this.setState({ size: [], color: [], category: [], image_link: [], inputValue: '' });
+                                resetForm();
+                            }
                             setSubmitting(false);
                         }, 500);
                     }
@@ -371,16 +367,11 @@ class Products extends Component {
             >
                 {
                     ({
-                        handleSubmit,
-                        handleChange,
-                        values,
-                        touched,
-                        isValid,
-                        errors,
-                        handleBlur,
-                        isSubmitting
+                        handleSubmit, handleChange, values, touched, isValid, errors, handleBlur, isSubmitting
                     }) => (
                             <div>
+                                {this.state.showToast ? <ShowToast onCloseHandler={(e) => this.setState({ showToast: false })} show={this.state.showToast}
+                                    message={'Product Uploaded Successfully'} icon={faThumbsUp} /> : null}
                                 {/* Row 1 (ProductName, BrandName, ProductPrice*/}
                                 <Row style={styles.row}>
                                     <Card style={styles.card}>
@@ -443,18 +434,14 @@ class Products extends Component {
                                                 {/* Row-2 (ProductSize, ProductColor, ProductCategory) */}
                                                 <Form.Row>
                                                     <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-                                                        <Form.Label style={styles.label}>Product Size
-                                                        <span> * </span></Form.Label>
-                                                        <div className={this.state.sizeErrorDiv}>
-                                                            <CreatableSelect
-                                                                isMulti
-                                                                onChange={this.handleProductSizeChange}
-                                                                options={product_size_options}
-                                                                value={this.state.size}
-                                                                placeholder="Select/Enter Size"
-                                                            />
-                                                        </div>
-                                                        <text className={this.state.sizeError}>Select/Enter Size </text>
+                                                        <Form.Label style={styles.label}>Product Size</Form.Label>
+                                                        <CreatableSelect
+                                                            isMulti
+                                                            onChange={this.handleProductSizeChange}
+                                                            options={product_size_options}
+                                                            value={this.state.size}
+                                                            placeholder="Select/Enter Size"
+                                                        />
                                                     </Form.Group>
                                                     <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
                                                         <Form.Label style={styles.label}>Product Color<span> * </span></Form.Label>
@@ -592,12 +579,12 @@ class Products extends Component {
                                                 {/* Row-5: (Product's Images Links) */}
                                                 <Form.Row>
                                                     <Form.Group as={Col}>
+
                                                         <Form.Label style={styles.label}>Product Images Link(s)<span>*</span></Form.Label>
                                                         <div className={this.state.image_linkErrorDiv}>
                                                             <CreatableSelect
                                                                 components={components}
-                                                                inputValue={inputValue}
-                                                                style={{width: '100%', maxWidth: '100%'}}
+                                                                inputValue={this.state.inputValue}
                                                                 isClearable
                                                                 isMulti
                                                                 menuIsOpen={false}
@@ -605,18 +592,21 @@ class Products extends Component {
                                                                 onInputChange={this.handleImageLinkInputChange}
                                                                 onKeyDown={this.handleImage_linkKeyDown}
                                                                 placeholder="Enter Image Link"
-                                                                value={image_link}
+                                                                value={this.state.image_link}
                                                             />
                                                         </div>
                                                         <text className={this.state.image_linkError}>Enter Image Link </text>
-                                                    </Form.Group>                                                    
+                                                    </Form.Group>
                                                 </Form.Row>
                                                 {/* End of Row-4 */}
                                                 <Form.Row>
-                                                    <Form.Group as={Col}>   
+                                                    <Form.Group as={Col}>
                                                         <p style={styles.label}>Fields with <span> * </span> are mandatory.</p>
                                                         <p style={styles.label}>For adding new size, color, link: Enter text and hit Enter or Tab key</p>
-                                                        <Button type="submit"  onSubmit={handleSubmit} block style={styles.submit_btn}>Upload</Button>
+                                                        <Button type="submit" onSubmit={handleSubmit} disabled={this.state.isLoading} block style={styles.submit_btn}>
+                                                            {this.state.isLoading ? 'Uploading' : 'Upload'}
+                                                            {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
+                                                        </Button>
                                                     </Form.Group>
                                                 </Form.Row>
                                             </Form>
@@ -636,9 +626,11 @@ class Products extends Component {
                                         }
                                         .RedBorderDiv{
                                             border: 0.5px solid #DC3545;
+                                            overflow: hidden
                                         }
                                         .BorderDiv{
                                             border: none;
+                                            overflow: hidden
                                         }
                                         span {
                                             color: red;

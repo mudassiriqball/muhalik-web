@@ -1,23 +1,25 @@
-import { Tabs, Tab } from 'react-bootstrap';
+import { Row, Tabs, Tab } from 'react-bootstrap';
+
+import WeeklyReports from './report-contents/weekly-reports'
+import MonthlyReports from './report-contents/monthly-reports'
+import YearlyReports from './report-contents/yearly-reports'
+import OverallReports from './report-contents/overall-reports'
 
 const Reports = () => {
     return (
-        <div style={{width: '100%', background: 'yellow'}}>
-            <Tabs defaultActiveKey="daily" transition={false} id="reports_tab" style={{padding: '0px', margin: '0px', width: '100%'}}>
-                <Tab eventKey="daily" title="Daily Reports">
-                    <p>Daily Reports</p>
+        <div style={{ width: '100%', margin: '2%'}}>
+            <Tabs defaultActiveKey="overall" transition={false} id="reports_tab" justify fill>
+                <Tab eventKey="overall" title="Overall">
+                    <OverallReports></OverallReports>
                 </Tab>
-                <Tab eventKey="weekly" title="Weekly Reports">
-                    <p>Weekly Reports</p>
+                <Tab eventKey="yearly" title="Yearly">
+                    <YearlyReports></YearlyReports>
                 </Tab>
-                <Tab eventKey="monthly" title="Monthly Reports">
-                    <p>Monthly Reports</p>
+                <Tab eventKey="monthly" title="Monthly">
+                    <MonthlyReports></MonthlyReports>
                 </Tab>
-                <Tab eventKey="yearly" title="Yearly Reports">
-                    <p>Yearly Reports</p>
-                </Tab>
-                <Tab eventKey="overall" title="Overall Reports">
-                    <p>Overall Reports</p>
+                <Tab eventKey="weekly" title="Weekly">
+                    <WeeklyReports></WeeklyReports>
                 </Tab>
             </Tabs>
         </div>

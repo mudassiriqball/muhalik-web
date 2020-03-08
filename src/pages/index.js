@@ -1,9 +1,22 @@
 import React, { Component } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
-import Layout from './components/customer/layout/CustomerLayout';
+import Layout from './components/customer/layout/Layout';
 import Router from 'next/router'
-import { getTokenFromStorage } from '../sdk/core/authentication-service';
+import { getTokenFromStorage, removeTokenFromStorage } from '../sdk/core/authentication-service';
+import GlobalStyleSheet from '../styleSheet';
+import Typical from 'react-typical'
+import { Container, Row, Carousel } from 'react-bootstrap'
+
+let animation = <h1 className="text-center" style={{ width: '100%' }}>
+    <Typical
+        steps={['This website is under development', 1000,
+            'Comming Soon...!', 500,
+            'Be Ready for Shop online...', 100]}
+        loop={Infinity}
+        wrapper="p"
+    />
+</h1>
 
 class Index extends Component {
     constructor(props) {
@@ -16,30 +29,19 @@ class Index extends Component {
     async componentDidMount() {
         const token = await getTokenFromStorage()
         if (token !== null) {
-            this.setState({ jwt_token: token });
+            this.setState({ jwt_token: token.role });
         }
     }
 
+    logout() {
+        removeTokenFromStorage();
+    }
+
+
+
     render() {
-        let vendor_dashoard = <div></div>;
-        let admin_dashoard = <div></div>;
-
-        if (this.state.jwt_token.role == 'vendor') {
-            vendor_dashoard =
-                <div>
-                    <Link href='./vendor'><a>Vendor dashboard</a></Link>
-                    <br></br>
-                </div>
-        } else if (this.state.jwt_token.role == 'admin') {
-            admin_dashoard =
-                <div>
-                    <Link href='./admin'><a>Admin dashboard</a></Link>
-                    <br></br>
-                </div>
-        }
-
         return (
-            <div>
+            <div style={styles.body}>
                 <Head>
                     <title>Muhalik</title>
                     {/* <meta name="viewport" content="width=device-width, initial-scale=1" /> */}
@@ -52,18 +54,58 @@ class Index extends Component {
                         crossorigin="anonymous"
                     />
                 </Head>
-                <Layout>
-                    {admin_dashoard}
-                    {vendor_dashoard}
-                    <Link href='./login'><a>Login</a></Link>
-                    <br />
-                    <Link href='./signup'><a>Signup</a></Link>
-                    <br />
-                    <Link href='./vendor-signup'><a>Vendor Signup</a></Link>
+                <Layout token={this.state.jwt_token} logoutClickHandler={this.logout}>
+                    {/* <Container> */}
+                    {/* <Row> */}
+                    <Carousel style={{ margin: '5%' }}>
+                        <Carousel.Item>
+                            <img
+                                style={{ width: '100%', height: `calc(100vh - 250px)` }}
+                                src="muhalik.jpg"
+                                alt="First slide"
+                            />
+                            <Carousel.Caption style={{ background: 'green', padding: '20px' }}>
+                                {animation}
+                            </Carousel.Caption>
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <img
+                                src="a.png"
+                                style={{ width: '100%', height: `calc(100vh - 250px)` }}
+                                alt="Third slide"
+                            />
+                            <Carousel.Caption style={{ background: 'gray', padding: '20px' }}>
+                                {animation}
+                            </Carousel.Caption>
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <img
+                                style={{ width: '100%', height: `calc(100vh - 250px)` }}
+                                src="muhalik.jpg"
+                                alt="Third slide"
+                            />
+                            <Carousel.Caption style={{ background: 'red', padding: '20px' }}>
+                                {animation}
+                            </Carousel.Caption>
+                        </Carousel.Item>
+                    </Carousel>
+                    {/* </Row> */}
+                    {/* </Container> */}
                 </Layout>
             </div>
         );
     }
 }
 
+const styles = {
+    body: {
+        background: `${GlobalStyleSheet.body_color}`,
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        right: '0',
+        minHeight: '100vh',
+        // bottom: '-100',
+    },
+}
 export default Index;

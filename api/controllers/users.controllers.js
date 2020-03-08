@@ -48,14 +48,11 @@ usersController.getSingleUser = async (req, res) => {
 };
 
 usersController.registerUser = async (req, res) => {
-
   try {
     const body = req.body.data;
     if (req.params.mobile == req.body.mobile) {
       console.log("Same");
     }
-    // there must be a password in body
-    // we follow these 2 steps
     const password = body.password;
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
@@ -108,8 +105,7 @@ usersController.loginUser = async (req, res) => {
         res.status(200).send({ message: 'Successfully Logged in', token: token });
       }
       else {
-        console.log('password doesnot match');
-        res.status(401).send({ message: 'Wrong number or Password' });
+        res.status(401).send({ message: 'Invalid Number or Password' });
       }
     }
   } catch (ex) {

@@ -10,8 +10,8 @@ const AuthenticationService = () => (
     <div></div>
 )
 
-export function saveTokenToStorage(token) {
-    reactLocalStorage.set('token', token);
+export async function saveTokenToStorage(token) {
+    await reactLocalStorage.set('token', token);
     // const decodedToken = decode(token);
 
     // if (decodedToken.data.role == 'customer') {
@@ -40,10 +40,26 @@ export function getUncodededTokenFromStorage() {
 }
 
 export function removeTokenFromStorage() {
+    try{
     reactLocalStorage.remove('token');
     Router.push('/index');
+    }catch(error){
+        console.log("error:", error)
+    }
 }
 
-
+export function chectAuth(rolee) {
+    try {
+        const token = reactLocalStorage.get('token');
+        const decodedToken = decode(token);
+        if (decodedToken.data.role !== rolee) {
+            Router.push('/index')
+        } else {
+            return decodedToken.data.fullName;
+        }
+    } catch (error) {
+        return null;
+    }
+}
 
 export default AuthenticationService;

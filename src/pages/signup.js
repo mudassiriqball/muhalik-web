@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import Router from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
-import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image } from 'react-bootstrap';
+import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner, DropdownDivider } from 'react-bootstrap';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 
+import ShowToast from './components/toast';
 import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config';
 // RegEx for phone number validation
@@ -20,17 +22,17 @@ const schema = yup.object({
         .matches(phoneRegExp, "Phone number is not valid"),
 
     fullName: yup.string().required("Enter Full Name")
-        .min(5, "Full Name must have at least 5 characters")
-        .max(20, "Full Name can't be longer than 20 characters"),
+        .min(5, "Must have at least 5 characters")
+        .max(25, "Can't be longer than 25 characters"),
 
     verificationCode: yup.string().required("Enter Verification Code"),
 
     email: yup.string().email("Must be a valid email address")
-        .max(100, "Email must be less than 100 characters"),
+        .max(100, "Can't be longer than 100 characters"),
 
     password: yup.string().required("Enter Password")
         .min(8, "Password must have at least 8 characters")
-        .max(20, "Password can't be longer than 20 characters"),
+        .max(20, "Can't be longer than 20 characters"),
 
     confirmPassword: yup.string().required("Enter Confirm Password").when("password", {
         is: val => (val && val.length > 0 ? true : false),
@@ -40,29 +42,43 @@ const schema = yup.object({
         )
     }),
 
-    countary: yup.string().required("Enter Countary"),
+    countary: yup.string().required("Select Countary"),
     role: yup.string(),
-    gender: yup.string().required("Enter Gender"),
+    city: yup.string().required("Enter City Name")
+        .min(3, "Must have at least 3 characters")
+        .max(30, "Can't be longer than 30 characters"),
 });
 
 class Signup extends Component {
     state = {
-        hide: true
+        hide: true,
+        isLoading: false,
+        showToast: false,
+        serverErrorMsg: ''
     };
     showPassword = ev => {
         this.setState({ hide: !this.state.hide })
     }
 
-    uploadData(data) {
+    userRegister(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/register';
         axios.post(url, {
             data
         }).then(function (response) {
-            if(response.data.message == 'Signup successful'){
+            if (response.status == '200') {
+                currentComponent.setState({ isLoading: false });
+                currentComponent.setState({ showToast: true });
                 Router.push('/login');
+                return true;
             }
         }).catch(function (error) {
-            alert(error);
+            currentComponent.setState({ isLoading: false });
+            if (error.response.status == '401') {
+                currentComponent.setState({ serverErrorMsg: 'Tis User already exists.' })
+            } else {
+                alert('ERROR:' + error.response.data.message)
+            }
+            return false;
         });
     }
 
@@ -75,26 +91,20 @@ class Signup extends Component {
             eyeBtn = <FontAwesomeIcon icon={faEyeSlash} style={styles.fontawesome} />;
         }
 
-
-
         return (
             <Formik
                 validationSchema={schema}
                 initialValues={{
                     mobile: '', fullName: '', verificationCode: '', email: '', password: '', confirmPassword: '',
-                    countary: '', gender: '', role: 'customer'
+                    countary: 'KSA', city: '', role: 'customer'
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    // When button submits form and form is in the process of submitting, submit button is disabled
+                    this.setState({ isLoading: true });
                     setSubmitting(true);
-                    // Resets form after submission is complete
-                    resetForm();
-                    // Sets setSubmitting to false after form is reset
-                    setSubmitting(false);
-
                     setTimeout(() => {
-                        this.uploadData(values);
-                        resetForm();
+                        if (this.userRegister(values, this)) {
+                            resetForm();
+                        }
                         setSubmitting(false);
                     }, 500);
                 }}
@@ -111,18 +121,22 @@ class Signup extends Component {
                         isSubmitting
                     }) => (
                             <div style={styles.body}>
+                                {this.state.showToast ? <ShowToast onCloseHandler={(e) => this.setState({ showToast: false })} show={this.state.showToast}
+                                    message={'Your Account Created Successfully'} iconName={faThumbsUp} /> : null}
+
                                 <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
                                     <Navbar.Brand href="/" className="mr-auto" > Muhalik </Navbar.Brand>
                                 </Navbar>
 
                                 <Container>
-                                    <Row>
-                                        <Col lg={1} md={1} sm={0} xs={0} style={styles.side_column}></Col>
-                                        <Col style={styles.center_column}>
-                                            <p>
-                                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
-                                            </p>
-                                            <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Create Your Acount</h6>
+                                    <Row className="justify-content-md-center" noGutters>
+                                        <Col lg="auto" md="auto" sm="auto" xs="auto" style={styles.form_col}>
+                                            <Row className="justify-content-md-center">
+                                                <Col lg="auto" md="auto" sm="auto" xs="auto" style={styles.register_as_shop_col}>
+                                                    <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
+                                                    <h6 className="text-center" >Create Your Acount </h6>
+                                                </Col>
+                                            </Row>
                                             <Form noValidate onSubmit={handleSubmit}>
                                                 <Form.Row>
                                                     <Form.Group as={Col} md="6" controlId="validationMobile">
@@ -145,13 +159,12 @@ class Signup extends Component {
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Form.Group>
-                                                    <Form.Group as={Col} md="6" controlId="validationFullName">
+                                                    <Form.Group as={Col} md="6">
                                                         <Form.Label style={styles.label}>Full Name<span>*</span></Form.Label>
                                                         <InputGroup>
                                                             <Form.Control
                                                                 type="text"
                                                                 placeholder="Full Name"
-                                                                aria-describedby="fullName"
                                                                 name="fullName"
                                                                 value={values.fullName}
                                                                 onChange={handleChange}
@@ -242,11 +255,16 @@ class Signup extends Component {
                                                         </InputGroup>
                                                     </Form.Group>
                                                 </Form.Row>
-
+                                                {/* Row for show error message */}
+                                                <Form.Row>
+                                                    <Form.Label className="text-center" style={styles.errorMsg}>
+                                                        {this.state.serverErrorMsg}
+                                                    </Form.Label>
+                                                </Form.Row>
 
                                                 {/* 4th Row */}
                                                 <Form.Row>
-                                                    <Form.Group as={Col} lg={2} md={3} controlId="countary">
+                                                    <Form.Group as={Col} lg={3} md={3}>
                                                         <Form.Label style={styles.label}>Countary
                                                         <span> * </span>
                                                         </Form.Label>
@@ -257,7 +275,6 @@ class Signup extends Component {
                                                             value={values.countary}
                                                             onChange={handleChange}
                                                             isInvalid={touched.countary && errors.countary}
-
                                                         >
                                                             <option>Select</option>
                                                             <option> KSA </option>
@@ -267,56 +284,55 @@ class Signup extends Component {
                                                             {errors.countary}
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
-                                                    <Form.Group as={Col} lg={2} md={3} controlId="gender">
-                                                        <Form.Label style={styles.label}>Gender
+                                                    <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
+                                                        <Form.Label style={styles.label}>City
                                                         <span> * </span>
                                                         </Form.Label>
-                                                        <Form.Control
-                                                            as="select"
-                                                            aria-describedby="gender"
-                                                            name="gender"
-                                                            value={values.gender}
-                                                            onChange={handleChange}
-                                                            isInvalid={touched.gender && errors.gender}
-                                                        >
-                                                            <option>Select</option>
-                                                            <option> Male </option>
-                                                            <option> Female </option>
-                                                            <option> Other </option>
-                                                        </Form.Control>
-                                                        <Form.Control.Feedback type="invalid">
-                                                            {errors.gender}
-                                                        </Form.Control.Feedback>
+                                                        <InputGroup>
+                                                            <Form.Control
+                                                                type="text"
+                                                                placeholder="Enter City Name"
+                                                                name="city"
+                                                                value={values.city}
+                                                                onChange={handleChange}
+                                                                isInvalid={touched.city && errors.city}
+                                                            />
+                                                            <Form.Control.Feedback type="invalid">
+                                                                {errors.city}
+                                                            </Form.Control.Feedback>
+                                                        </InputGroup>
                                                     </Form.Group>
-                                                    <Col>
-                                                        <Form.Group >
-                                                            <Form.Label style={{ color: 'white', fontSize: '0.1px' }}> . </Form.Label>
-                                                            <Form.Label className="text-center" style={styles.term_condition_label}>
-                                                                By creating acount, you agree to Muhalik's
+                                                    <Form.Group as={Col} lg={5} md={5} sm={12} xs={12} style={styles.term_condition_col}>
+                                                        <Form.Label className="text-center" style={styles.term_condition_label}>
+                                                            By creating acount, you agree to Muhalik's
                                                                 <span>
-                                                                    <Link href="./help/terms-and-conditions"><a>Terms & Conditions</a></Link>
-                                                                </span>
+                                                                <Link href="./help/terms-and-conditions"><a> Terms & Conditions </a></Link>
+                                                            </span>
                                                                 and
                                                                 <span>
-                                                                    <Link href="./help/privacy-statement"><a>Privacy Statement</a></Link>
-                                                                </span>
-                                                            </Form.Label>
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Form.Group as={Col} lg={4} controlId="loginGrop">
+                                                                <Link href="./help/privacy-statement"><a> Privacy Statement </a></Link>
+                                                            </span>
+                                                        </Form.Label>
+                                                    </Form.Group>
+                                                </Form.Row>
+
+                                                <Form.Row>
+                                                    <Form.Group as={Col} controlId="loginGrop">
                                                         <Form.Label className="text-center" style={styles.label}>
                                                             Already have an account...
                                                             <span>
                                                                 <Link href="login"><a>Login</a></Link>
                                                             </span>
                                                         </Form.Label>
-                                                        <Button type="submit" onSubmit={handleSubmit} block style={styles.submit_btn}>Signup</Button>
+                                                        <Button type="submit" onSubmit={handleSubmit} disabled={this.state.isLoading} block style={styles.submit_btn}>
+                                                            {this.state.isLoading ? 'Registering' : 'Register'}
+                                                            {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
+                                                        </Button>
                                                     </Form.Group>
                                                 </Form.Row>
                                                 {/* End 4th Row */}
                                             </Form>
                                         </Col>
-                                        <Col lg={1} md={1} sm={0} xs={0} style={styles.side_column}></Col>
                                     </Row>
                                 </Container>
                                 <style jsx>
@@ -344,9 +360,8 @@ const styles = {
         top: '0',
         left: '0',
         right: '0',
-        height: '100vh',
-        bottom: '0',
-
+        minHeight: '100vh',
+        // bottom: '-100',
     },
     buttons: {
         background: `${GlobalStyleSheet.primry_color}`,
@@ -355,25 +370,40 @@ const styles = {
     },
     submit_btn: {
         background: `${GlobalStyleSheet.primry_color}`,
+        marginTop: '5px'
     },
-    center_column: {
+    form_col: {
         background: 'white',
-        // border: `0.5px solid ${GlobalStyleSheet.primry_color}`,
         padding: '20px 30px',
-        margin: '3% 3%',
+        margin: '5% 0%',
     },
-    side_column: {
-        margin: '0 2%',
+    register_as_shop_col: {
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: '2%'
+    },
+    image: {
+        width: '100px',
+        marginRight: '10px'
+    },
+    errorMsg: {
+        color: 'red',
+        width: '100%',
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
     },
     label: {
         width: '100%',
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
     },
+    term_condition_col:{
+        display: 'flex',
+        alignItems: 'center',
+        margin: '0%'
+    },
     term_condition_label: {
         width: '100%',
+        margin: '0%',
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
-        paddingTop: '-10px',
-        marginTop: '-10px',
     },
     fontawesome: {
         color: `${GlobalStyleSheet.primary_text_color}`,

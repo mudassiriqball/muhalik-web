@@ -172,7 +172,7 @@ const DashboardTabs = props => {
                                         Help?
                                     </Dropdown.Item>
                                     <Dropdown.Divider />
-                                    <Dropdown.Item href="#/action-3">
+                                    <Dropdown.Item onClick={props.logoutClickHandler}>
                                         <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
                                         Logout
                                 </Dropdown.Item>

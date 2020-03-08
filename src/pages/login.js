@@ -22,8 +22,8 @@ const schema = yup.object({
         .matches(phoneRegExp, "Phone number is not valid"),
 
     password: yup.string().required("Enter Password")
-        .min(8, "Password must have at least 8 characters")
-        .max(20, "Password can't be longer than 20 characters"),
+        .min(8, "Must have at least 8 characters")
+        .max(20, "Can't be longer than 20 characters"),
 });
 
 import * as decode from 'jwt-decode'
@@ -34,7 +34,8 @@ class Login extends Component {
         super(props);
         this.state = {
             hide: true,
-            isLoading: false,
+            isLoading: '',
+            serverErrorMsg: ''
         }
     }
 
@@ -42,13 +43,14 @@ class Login extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    async login(data) {
+    async login(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/login';
+
         await axios.post(url, {
             data
         }).then(function (response) {
-            console.log('respoonnnnnn:', response)
-            if(response.status == '200'){
+            console.log("wertyuiwertyuiwertyuierty:", response)
+            if (response.status == '200') {
                 saveTokenToStorage(response.data.token);
                 const decodedToken = decode(response.data.token);
                 if (decodedToken.data.role == 'customer') {
@@ -61,14 +63,15 @@ class Login extends Component {
                     Router.push('/index')
                 }
             }
-            alert(response.data.message)
         }).catch(function (error) {
-            console.log(error)
+            currentComponent.setState({ isLoading: false })
+            if (error.response.status == '401') {
+                currentComponent.setState({ serverErrorMsg: 'Mobile Number or Pasword Incorect' })
+            } else {
+                alert('ERROR:' + error.response.data.message)
+            }
         });
-
     }
-
-
 
     render() {
         const { hide } = this.state;
@@ -82,21 +85,17 @@ class Login extends Component {
         return (
             <Formik
                 validationSchema={schema}
-                // onSubmit={console.log}
                 initialValues={{
                     mobile: '', password: ''
                 }}
-                onSubmit={(values, { setSubmitting, resetForm }) => {
-                    // When button submits form and form is in the process of submitting, submit button is disabled
+                onSubmit={(values, { setSubmitting }) => {
+                    this.setState({ serverErrorMsg: '' })
                     setSubmitting(true);
                     this.setState({ isLoading: true })
-                    // Resets form after submission is complete
-                    // Sets setSubmitting to false after form is reset
                     setTimeout(() => {
-                        this.login(values);
-                        resetForm();
+                        this.login(values, this);
+
                         setSubmitting(false);
-                        // this.setState({ isLoading: false })
                     }, 500);
                 }}
             >
@@ -115,11 +114,9 @@ class Login extends Component {
                                 <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
                                     <Navbar.Brand href="/" className="mr-auto" > Muhalik </Navbar.Brand>
                                 </Navbar>
-
                                 <Container>
-                                    <Row>
-                                        <Col lg={3} md={2} sm={1} xs={0} style={styles.side_column}></Col>
-                                        <Col style={styles.center_column}>
+                                    <Row className="justify-content-md-center" noGutters>
+                                        <Col lg={4} md="auto" sm="auto" xs="auto" style={styles.form_col}>
                                             <p>
                                                 <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
                                             </p>
@@ -194,7 +191,11 @@ class Login extends Component {
                                                         </span>
                                                     </Form.Label>
                                                 </Form.Row>
-
+                                                <Form.Row>
+                                                    <Form.Label className="text-center" style={styles.errorMsg}>
+                                                        {this.state.serverErrorMsg}
+                                                    </Form.Label>
+                                                </Form.Row>
                                                 <Form.Row>
                                                     <Button type="submit" onSubmit={handleSubmit} disabled={this.state.isLoading} block style={styles.submit_btn}>
                                                         {this.state.isLoading ? 'Logging' : 'Login'}
@@ -216,7 +217,6 @@ class Login extends Component {
                                                 </Form.Row>
                                             </Form>
                                         </Col>
-                                        <Col lg={3} md={2} sm={1} xs={0} style={styles.side_column}></Col>
                                     </Row>
                                 </Container>
                                 <style jsx>
@@ -241,10 +241,8 @@ const styles = {
     body: {
         background: `${GlobalStyleSheet.body_color}`,
         position: 'absolute',
-        top: '0',
-        left: '0',
-        right: '0',
-        bottom: '0',
+        height: '100vh',
+        width: '100%'
     },
     buttons: {
         background: `${GlobalStyleSheet.primry_color}`,
@@ -255,16 +253,21 @@ const styles = {
         background: `${GlobalStyleSheet.primry_color}`,
         padding: 'auto'
     },
-    center_column: {
+    form_col: {
         background: 'white',
         // border: `0.5px solid ${GlobalStyleSheet.primry_color}`,
         padding: '20px 30px',
-        margin: '3% 3%',
+        margin: '5% 0%',
     },
     side_column: {
         margin: '0 3%',
     },
     label: {
+        width: '100%',
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
+    },
+    errorMsg: {
+        color: 'red',
         width: '100%',
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
     },

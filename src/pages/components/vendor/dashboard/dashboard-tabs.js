@@ -12,6 +12,7 @@ import Reports from './dashboard-tabs-content/reports';
 import BulkUpload from './dashboard-tabs-content/bulk-upload';
 import Orders from './dashboard-tabs-content/orders';
 
+import { logout } from '../../../../sdk/core/authentication-service';
 import GlobalStyleSheet from '../../../../styleSheet';
 
 const DashboardTabs = props => {
@@ -152,7 +153,7 @@ const DashboardTabs = props => {
                                         Help?
                                     </Dropdown.Item>
                                     <Dropdown.Divider />
-                                    <Dropdown.Item href="#/action-3">
+                                    <Dropdown.Item onClick={props.logoutClickHandler}>
                                         <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
                                         Logout
                                 </Dropdown.Item>

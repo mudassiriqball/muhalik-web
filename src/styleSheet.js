@@ -5,7 +5,7 @@
 //     primary_text_color: 'white',
 // }
 
-const GlobalStyleSheet = {
+let GlobalStyleSheet = {
     // primry_color: '#563D7C',
     primry_color: '#28A745',
 

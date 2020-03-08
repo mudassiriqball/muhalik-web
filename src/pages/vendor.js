@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-
+import Router from 'next/router';
 import DashboardTabs from './components/vendor/dashboard/dashboard-tabs';
 import DashboardSideDrawer from './components/vendor/dashboard/dashboard-side-drawer';
 import GlobalStyleSheet from '../styleSheet';
-import { getTokenFromStorage } from '../sdk/core/authentication-service';
+import { chectAuth, removeTokenFromStorage } from '../sdk/core/authentication-service';
 
 const BackDrop = props => (
     <div>
@@ -21,17 +21,19 @@ const BackDrop = props => (
     </div>
 )
 
-class AdminDashboard extends Component {
+class VendorDashboard extends Component {
     constructor(props) {
         super(props);
+        this.authUser();
         this.state = {
             sideDrawerOpen: false,
             showSideDrawer: true,
             jwt_token: '',
         }
     }
-    async componentDidMount() {
-        this.setState({ jwt_token: await getTokenFromStorage() });
+
+    async authUser() {
+        this.setState({ jwt_token: await chectAuth('vendor')});
     }
 
     drawerToggleClickHandler = () => {
@@ -49,6 +51,10 @@ class AdminDashboard extends Component {
         this.setState({ sideDrawerOpen: false });
     };
 
+    logout(){
+        removeTokenFromStorage();
+    }
+
     render() {
         let backdrop;
         if (this.state.sideDrawerOpen) {
@@ -58,8 +64,10 @@ class AdminDashboard extends Component {
         return (
             <div style={styles.body}>
                 {/* <AdminLayout> */}
-                <DashboardTabs token={this.state.jwt_token.fullName} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} ClickHandler={this.showSideDrawerClickHandler} />
-                <DashboardSideDrawer token={this.state.jwt_token.fullName} show={this.state.sideDrawerOpen} click={this.backdropClickHandler} />
+                <DashboardTabs token={this.state.jwt_token} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} 
+                ClickHandler={this.showSideDrawerClickHandler} logoutClickHandler={this.logout}/>
+                <DashboardSideDrawer token={this.state.jwt_token} show={this.state.sideDrawerOpen} 
+                click={this.backdropClickHandler} logoutClickHandler={this.logout} />
                 {backdrop}
                 {/* </AdminLayout> */}
             </div>
@@ -78,4 +86,4 @@ const styles = {
     },
 }
 
-export default AdminDashboard;
+export default VendorDashboard;

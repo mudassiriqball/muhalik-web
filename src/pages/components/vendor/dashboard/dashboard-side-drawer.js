@@ -96,6 +96,15 @@ const DashboardSideDrawer = props => {
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
+                        <Nav.Item>
+                            <div className="hover" >
+                                <Nav.Link  onClick={props.click, props.logoutClickHandler} style={styles.tab_link}>
+                                    <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
+                                    Logout
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                </Nav.Link>
+                            </div>
+                        </Nav.Item>
                     </Nav>
                 </div>
 
