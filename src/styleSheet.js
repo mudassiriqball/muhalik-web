@@ -27,4 +27,5 @@ export default GlobalStyleSheet;
 // "46: [Admin/Vendor Dashboard Mobile View Toolbar Error Solved]"
 // "47: [Product upload connected to backend(produck modal updated)]"
 // "48: [Admin/Vendor Layout Updated]""
-// git commit -m "49: [jwt_token added and route redirect added]"
+// 49: git commit -m "49: [jwt_token added and route redirect added]"
+//  50 [header set into post request]git commit -m ""
