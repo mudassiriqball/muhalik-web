@@ -7,9 +7,11 @@ const Toolbar = props => {
     let login = null;
 
     if (props.token == 'vendor') {
-        dashboard = <Link href='./vendor'>Vendor dashboard</Link>
+        dashboard = <Nav.Link href='./vendor'>Vendor dashboard</Nav.Link>
+        login = <Nav.Link onClick={props.logout}> Logout </Nav.Link>
     } else if (props.token == 'admin') {
         dashboard = <Nav.Link href='./admin'> Admin dashboard </Nav.Link>
+        login = <Nav.Link onClick={props.logout}> Logout </Nav.Link>
     } else if (props.token == 'customer') {
         login = <Nav.Link onClick={props.logout}> Logout </Nav.Link>
     } else {

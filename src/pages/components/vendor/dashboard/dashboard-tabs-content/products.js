@@ -260,8 +260,8 @@ class Products extends Component {
     }
 
     // Product Size
-    handleProductSizeChange = (newValue, actionMeta) => {
-        console.log("actionMeta:", actionMeta);
+    handleProductSizeChange = (arr, actionMeta) => {
+        this.setState({ size: arr });
     };
 
     // Product Color
@@ -626,11 +626,9 @@ class Products extends Component {
                                         }
                                         .RedBorderDiv{
                                             border: 0.5px solid #DC3545;
-                                            overflow: hidden
                                         }
                                         .BorderDiv{
                                             border: none;
-                                            overflow: hidden
                                         }
                                         span {
                                             color: red;

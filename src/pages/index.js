@@ -6,17 +6,24 @@ import Router from 'next/router'
 import { getTokenFromStorage, removeTokenFromStorage } from '../sdk/core/authentication-service';
 import GlobalStyleSheet from '../styleSheet';
 import Typical from 'react-typical'
-import { Container, Row, Carousel } from 'react-bootstrap'
+import { Container, Row, Col, Carousel } from 'react-bootstrap'
 
-let animation = <h1 className="text-center" style={{ width: '100%' }}>
-    <Typical
-        steps={['This website is under development', 1000,
-            'Comming Soon...!', 500,
-            'Be Ready for Shop online...', 100]}
-        loop={Infinity}
-        wrapper="p"
-    />
-</h1>
+let animation =
+    <Container >
+        <Row className="justify-content-md-center" style={{ display: 'flex', alignItems: 'center', minHeight: '83vh' }}>
+            <Col lg="auto" md="auto" sm="auto" xs="auto" style={{ background: '#46d267', padding: '5%' }} >
+                <h1>
+                    <Typical
+                        steps={['This website is under development', 1000,
+                            'Comming Soon...!', 1000,
+                            'Be Ready for Shop online...', 1000]}
+                        loop={Infinity}
+                        wrapper="p"
+                    />
+                </h1>
+            </Col>
+        </Row>
+    </Container>
 
 class Index extends Component {
     constructor(props) {
@@ -55,9 +62,10 @@ class Index extends Component {
                     />
                 </Head>
                 <Layout token={this.state.jwt_token} logoutClickHandler={this.logout}>
+                    {animation}
                     {/* <Container> */}
                     {/* <Row> */}
-                    <Carousel style={{ margin: '5%' }}>
+                    {/* <Carousel style={{ margin: '5%' }}>
                         <Carousel.Item>
                             <img
                                 style={{ width: '100%', height: `calc(100vh - 250px)` }}
@@ -90,7 +98,7 @@ class Index extends Component {
                         </Carousel.Item>
                     </Carousel>
                     {/* </Row> */}
-                    {/* </Container> */}
+                    {/* </Container>  */}
                 </Layout>
             </div>
         );
@@ -99,7 +107,7 @@ class Index extends Component {
 
 const styles = {
     body: {
-        background: `${GlobalStyleSheet.body_color}`,
+        background: '#f1f3f4',
         position: 'absolute',
         top: '0',
         left: '0',
