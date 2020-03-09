@@ -1,9 +1,10 @@
 const usersController = {};
-const Users = require('../models/users.model');
-const path = require('path');
-const bcrypt = require('bcryptjs');
-const jsonwebtoken = require('jsonwebtoken');
-const mongoose = require('mongoose');
+const Users = require("../models/users.model");
+const path = require("path");
+const bcrypt = require("bcryptjs");
+const jsonwebtoken = require("jsonwebtoken");
+const mongoose = require("mongoose");
+
 
 usersController.getAll = async (req, res) => {
   let users;
@@ -22,11 +23,11 @@ usersController.getAll = async (req, res) => {
     );
     res.status(200).send({
       code: 200,
-      message: 'Successful',
+      message: "Successful",
       data: users
     });
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     return res.status(500).send(error);
   }
 };
@@ -38,49 +39,57 @@ usersController.getSingleUser = async (req, res) => {
     user = await Users.findOne({ _id: _id });
     res.status(200).send({
       code: 200,
-      message: 'Successful',
+      message: "Successful",
       data: user
     });
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     return res.status(500).send(error);
   }
 };
 
+
+
 usersController.registerUser = async (req, res) => {
   try {
     const body = req.body.data;
-    if (req.params.mobile == req.body.mobile) {
-      console.log("Same");
+    const result = await Users.findOne({ mobile: body.mobile });
+    if (result) {
+      res.status(500).send({
+        message: "This email or mobile number has been registered already",
+        code: 500
+      });
+    } else {
+      const password = body.password;
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync(password, salt);
+      body.password = hash;
+      const user = new Users(body);
+      const result = await user.save();
+      res.send({
+        code: 200,
+        message: "Signup successfully"
+      });
     }
-    const password = body.password;
-    var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(password, salt);
-    body.password = hash;
-    const user = new Users(body);
-    const result = await user.save();
-    res.send({
-      message: 'Signup successful'
-    });
   } catch (ex) {
-    console.log('ex', ex);
     if (ex.code === 11000) {
       res
         .send({
-          message: 'This email has been registered already',
+          message: "This email or mobile number has been registered already"
         })
         .status(500);
-    }
-    else {
+    } else {
       res
         .send({
-          message: 'Error',
+          message: "Error",
           detail: ex
         })
         .status(500);
     }
   }
 };
+
+
 
 usersController.loginUser = async (req, res) => {
   try {
@@ -91,7 +100,8 @@ usersController.loginUser = async (req, res) => {
     if (!result) {
       // this means result is null
       res.status(401).send({
-        message: 'This user doesnot exists. Please signup first'
+        message: "This user doesnot exists. Please signup first",
+        code: 401
       });
     } else {
       // email did exist
@@ -99,24 +109,28 @@ usersController.loginUser = async (req, res) => {
       if (bcrypt.compareSync(body.password, result.password)) {
         // great, allow this user access
         result.password = undefined;
-        const token = jsonwebtoken.sign({
-          data: result,
-        }, process.env.JWT_KEY, { expiresIn: '7d' });
-        res.status(200).send({ message: 'Successfully Logged in', token: token });
-      }
-      else {
-        res.status(401).send({ message: 'Invalid Number or Password' });
+        const token = jsonwebtoken.sign(
+          {
+            data: result,
+            role: "User"
+          },
+          process.env.JWT_KEY,
+          { expiresIn: "7d" }
+        );
+        res.send({ message: "Successfully Logged in", token: token });
+      } else {
+        res.status(401).send({ message: "my error", code: 401 });
       }
     }
   } catch (ex) {
-    console.log('ex', ex);
+    console.log("ex", ex);
   }
 };
 
 usersController.getNextId = async (req, res) => {
   try {
     const max_result = await Users.aggregate([
-      { $group: { _id: null, max: { $max: '$id' } } }
+      { $group: { _id: null, max: { $max: "$id" } } }
     ]);
     let nextId;
     if (max_result.length > 0) {
@@ -130,7 +144,7 @@ usersController.getNextId = async (req, res) => {
     };
     res.status(200).send(data);
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     return res.status(500).send(error);
   }
 };
@@ -139,7 +153,7 @@ usersController.deleteUser = async (req, res) => {
   if (!req.params._id) {
     Fu;
     res.status(500).send({
-      message: 'ID missing'
+      message: "ID missing"
     });
   }
   try {
@@ -157,13 +171,14 @@ usersController.deleteUser = async (req, res) => {
     //     });
     res.status(200).send({
       code: 200,
-      message: 'Deleted Successfully'
+      message: "Deleted Successfully"
     });
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     return res.status(500).send(error);
   }
 };
+
 usersController.uploadAvatar = async (req, res) => {
   try {
     const filePath = `images/avatar/avatar-${req.params.id}`;
@@ -174,7 +189,7 @@ usersController.uploadAvatar = async (req, res) => {
     };
     runUpdateById(req.params.id, updates, res);
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     return res.status(500).send(error);
   }
 };
@@ -182,7 +197,7 @@ usersController.uploadAvatar = async (req, res) => {
 usersController.updateUser = async (req, res) => {
   if (!req.params._id) {
     res.status(500).send({
-      message: 'ID missing'
+      message: "ID missing"
     });
   }
   try {
@@ -190,7 +205,7 @@ usersController.updateUser = async (req, res) => {
     let updates = req.body;
     runUpdate(_id, updates, res);
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     return res.status(500).send(error);
   }
 };
@@ -214,22 +229,22 @@ async function runUpdate(_id, updates, res) {
       if (result.nModified == 1) {
         res.status(200).send({
           code: 200,
-          message: 'Updated Successfully'
+          message: "Updated Successfully"
         });
       } else if (result.upserted) {
         res.status(200).send({
           code: 200,
-          message: 'Created Successfully'
+          message: "Created Successfully"
         });
       } else {
         res.status(422).send({
           code: 422,
-          message: 'Unprocessible Entity'
+          message: "Unprocessible Entity"
         });
       }
     }
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     return res.status(500).send(error);
   }
 }
@@ -252,41 +267,41 @@ async function runUpdateById(id, updates, res) {
     if (result.nModified == 1) {
       res.status(200).send({
         code: 200,
-        message: 'Updated Successfully'
+        message: "Updated Successfully"
       });
     } else if (result.upserted) {
       res.status(200).send({
         code: 200,
-        message: 'Created Successfully'
+        message: "Created Successfully"
       });
     } else {
       {
         res.status(200).send({
           code: 200,
-          message: 'Task completed successfully'
+          message: "Task completed successfully"
         });
       }
     }
   } catch (error) {
-    console.log('error', error);
+    console.log("error", error);
     return res.status(500).send(error);
   }
 }
 
 module.exports = usersController;
 // const user = new Users ({
-  //   _id: new mongoose.Types.ObjectId(),
-  //   name: req.body.name,
-  //   number: req.body.number,
-  // });
-  // user.save().then(result => {
-  //   res.send({
-  //     message: 'Signup successful'
-  //   });
-  // }).catch(err => {
-  //   res
-  //       .send({
-  //         message: 'This email has been registered already',
-  //       })
-  //       .status(500);
-  // })
+//   _id: new mongoose.Types.ObjectId(),
+//   name: req.body.name,
+//   number: req.body.number,
+// });
+// user.save().then(result => {
+//   res.send({
+//     message: 'Signup successful'
+//   });
+// }).catch(err => {
+//   res
+//       .send({
+//         message: 'This email has been registered already',
+//       })
+//       .status(500);
+// })

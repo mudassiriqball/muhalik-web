@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Router from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
-import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner, DropdownDivider } from 'react-bootstrap';
+import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner } from 'react-bootstrap';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -65,6 +65,8 @@ class Signup extends Component {
         axios.post(url, {
             data
         }).then(function (response) {
+            console.log('response:', response)
+
             if (response.status == '200') {
                 currentComponent.setState({ isLoading: false });
                 currentComponent.setState({ showToast: true });
@@ -315,7 +317,11 @@ class Signup extends Component {
                                                         </Form.Label>
                                                     </Form.Group>
                                                 </Form.Row>
-
+                                                <Form.Row>
+                                                    <Form.Label className="text-center" style={styles.errorMsg}>
+                                                        {this.state.serverErrorMsg}
+                                                    </Form.Label>
+                                                </Form.Row>
                                                 <Form.Row>
                                                     <Form.Group as={Col} controlId="loginGrop">
                                                         <Form.Label className="text-center" style={styles.label}>
@@ -361,12 +367,16 @@ const styles = {
         left: '0',
         right: '0',
         minHeight: '100vh',
-        // bottom: '-100',
     },
     buttons: {
         background: `${GlobalStyleSheet.primry_color}`,
         border: 'none',
         fontSize: '10px',
+    },
+    errorMsg: {
+        color: 'red',
+        width: '100%',
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
     },
     submit_btn: {
         background: `${GlobalStyleSheet.primry_color}`,
@@ -395,7 +405,7 @@ const styles = {
         width: '100%',
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
     },
-    term_condition_col:{
+    term_condition_col: {
         display: 'flex',
         alignItems: 'center',
         margin: '0%'

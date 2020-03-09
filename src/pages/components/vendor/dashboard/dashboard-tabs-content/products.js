@@ -250,8 +250,8 @@ class Products extends Component {
             inputValue: '',
             image_link: [],
             // Handling errors for React-Select
-            colorError: 'no_error',
-            colorErrorDiv: 'BorderDiv',
+            // colorError: 'no_error',
+            // colorErrorDiv: 'BorderDiv',
             categoryError: 'no_error',
             categoryErrorDiv: 'BorderDiv',
             image_linkError: 'no_error',
@@ -265,8 +265,9 @@ class Products extends Component {
     };
 
     // Product Color
-    handleProductColorChange = (newValue, actionMeta) => {
-        this.setState({ color: newValue, colorError: 'no_error', colorErrorDiv: 'BorderDiv' });
+    handleProductColorChange = (arr, actionMeta) => {
+        this.setState({ color: arr});
+        // this.setState({ color: newValue, colorError: 'no_error', colorErrorDiv: 'BorderDiv' });
     };
 
     // Product Category
@@ -275,8 +276,8 @@ class Products extends Component {
     }
 
     // Product Image Link
-    handleImage_linkChange = (newValue, actionMeta) => {
-        this.setState({ image_link: newValue, image_linkError: 'no_error', image_linkErrorDiv: 'BorderDiv' });
+    handleImage_linkChange = (arr, actionMeta) => {
+        this.setState({ image_link: arr, image_linkError: 'no_error', image_linkErrorDiv: 'BorderDiv' });
     };
     handleImageLinkInputChange = (aa) => {
         this.setState({ inputValue: aa });
@@ -336,10 +337,7 @@ class Products extends Component {
                     product_image_link: '',
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    if (this.state.color == '' || this.state.category == '' || this.state.image_link == '') {
-                        if (this.state.size == '') {
-                            this.setState({ sizeError: "error", sizeErrorDiv: 'RedBorderDiv' });
-                        }
+                    if (this.state.category == '' || this.state.image_link == '') {
                         if (this.state.category == '') {
                             this.setState({ categoryError: "error", categoryErrorDiv: 'RedBorderDiv' });
                         }
@@ -444,8 +442,7 @@ class Products extends Component {
                                                         />
                                                     </Form.Group>
                                                     <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-                                                        <Form.Label style={styles.label}>Product Color<span> * </span></Form.Label>
-                                                        <div className={this.state.colorErrorDiv}>
+                                                        <Form.Label style={styles.label}>Product Color</Form.Label>
                                                             <CreatableSelect
                                                                 isMulti
                                                                 onChange={this.handleProductColorChange}
@@ -453,8 +450,6 @@ class Products extends Component {
                                                                 value={this.state.color}
                                                                 placeholder="Select/Enter Color"
                                                             />
-                                                        </div>
-                                                        <text className={this.state.colorError}>Select/Enter Color </text>
                                                     </Form.Group>
                                                     <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
                                                         <Form.Label style={styles.label}>Product Category
@@ -619,7 +614,7 @@ class Products extends Component {
                                             display: none;
                                         }
                                         .error{
-                                            margin-top: 4px;
+                                            margin-top: 4px;  
                                             color: #DC3545;
                                             font-size: 14px;
                                             display: block;

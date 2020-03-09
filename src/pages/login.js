@@ -53,14 +53,15 @@ class Login extends Component {
             if (response.status == '200') {
                 saveTokenToStorage(response.data.token);
                 const decodedToken = decode(response.data.token);
+                
                 if (decodedToken.data.role == 'customer') {
-                    Router.push('/index')
+                    Router.replace('/index')
                 } else if (decodedToken.data.role == 'vendor') {
-                    Router.push('/vendor')
+                    Router.replace('/vendor')
                 } else if (decodedToken.data.role == 'admin') {
-                    Router.push('/admin')
+                    Router.replace('/admin')
                 } else {
-                    Router.push('/index')
+                    Router.replace('/index')
                 }
             }
         }).catch(function (error) {

@@ -12,17 +12,6 @@ const AuthenticationService = () => (
 
 export async function saveTokenToStorage(token) {
     await reactLocalStorage.set('token', token);
-    // const decodedToken = decode(token);
-
-    // if (decodedToken.data.role == 'customer') {
-    //     Router.push('/index')
-    // } else if (decodedToken.data.role == 'vendor') {
-    //     Router.push('/vendor')
-    // } else if (decodedToken.data.role == 'admin') {
-    //     Router.push('/admin')
-    // } else {
-    //     Router.push('/index')
-    // }
 }
 
 export function getTokenFromStorage() {
@@ -40,10 +29,10 @@ export function getUncodededTokenFromStorage() {
 }
 
 export function removeTokenFromStorage() {
-    try{
-    reactLocalStorage.remove('token');
-    Router.push('/index');
-    }catch(error){
+    try {
+        reactLocalStorage.remove('token');
+        Router.replace('/index');
+    } catch (error) {
         console.log("error:", error)
     }
 }
@@ -53,7 +42,7 @@ export function chectAuth(rolee) {
         const token = reactLocalStorage.get('token');
         const decodedToken = decode(token);
         if (decodedToken.data.role !== rolee) {
-            Router.push('/index')
+            Router.replace('/index')
         } else {
             return decodedToken.data.fullName;
         }

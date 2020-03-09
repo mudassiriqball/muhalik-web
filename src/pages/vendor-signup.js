@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 import Router from 'next/router'
 import Link from 'next/link';
 import axios from 'axios';
-import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image } from 'react-bootstrap';
+import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner } from 'react-bootstrap';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import MuhalikConfig from '../sdk/muhalik.config';
-
+import ShowToast from './components/toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 
 import GlobalStyleSheet from '../styleSheet';
 
@@ -71,11 +72,11 @@ class VendorSignup extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    uploadData(data) {
+    userRegister(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/register';
         axios.post(url, {
             data
-        }).then(function (response, currentComponent) {
+        }).then(function (response) {
             if (response.status == '200') {
                 currentComponent.setState({ isLoading: false });
                 currentComponent.setState({ showToast: true });
@@ -84,7 +85,7 @@ class VendorSignup extends Component {
             }
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
-            if (error.response.status == '401') {
+            if (error.response.status == '500') {
                 currentComponent.setState({ serverErrorMsg: 'Tis User already exists.' })
             } else {
                 alert('ERROR:' + error.response.data.message)
@@ -392,6 +393,11 @@ class VendorSignup extends Component {
                                                 </Form.Row>
                                                 {/* End 4th Row */}
                                                 <Form.Row>
+                                                    <Form.Label className="text-center" style={styles.errorMsg}>
+                                                        {this.state.serverErrorMsg}
+                                                    </Form.Label>
+                                                </Form.Row>
+                                                <Form.Row>
                                                     <Form.Group as={Col}>
                                                         <Form.Label className="text-center" style={styles.label}>
                                                             Already have an account...
@@ -444,6 +450,11 @@ const styles = {
         border: 'none',
         fontSize: '10px',
     },
+    errorMsg: {
+        color: 'red',
+        width: '100%',
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
+    },
     submit_btn: {
         background: `${GlobalStyleSheet.primry_color}`,
         marginTop: '5px'
@@ -451,7 +462,7 @@ const styles = {
     form_col: {
         background: 'white',
         padding: '20px 30px',
-        margin: '5% 0%',
+        margin: '2% 0%',
     },
     register_as_shop_col: {
         display: 'flex',
@@ -471,7 +482,7 @@ const styles = {
         width: '100%',
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
     },
-    term_condition_col:{
+    term_condition_col: {
         display: 'flex',
         alignItems: 'center',
         margin: '0%'

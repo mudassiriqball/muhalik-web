@@ -13,7 +13,7 @@ const ShowToast = props => {
                 zIndex: '100'
             }}
         >
-            <Toast onClose={props.onCloseHandler} show={props.show} delay={3000} autohide style={{
+            <Toast onClose={props.onCloseHandler} show={props.show} delay={10000} autohide style={{
                 display: 'absolute',
                 background: '#e6ffe6',
                 width: '300px',
