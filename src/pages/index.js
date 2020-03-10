@@ -8,6 +8,7 @@ import GlobalStyleSheet from '../styleSheet';
 import Typical from 'react-typical'
 import { Container, Row, Col, Carousel } from 'react-bootstrap'
 
+
 let animation =
     <Container >
         <Row className="justify-content-md-center" style={{ display: 'flex', alignItems: 'center', minHeight: '83vh' }}>
@@ -16,7 +17,7 @@ let animation =
                     <Typical
                         steps={['This website is under development', 1000,
                             'Comming Soon...!', 1000,
-                            'Be Ready for Shop online...', 1000]}
+                            'Be Ready to Shop online...', 1000]}
                         loop={Infinity}
                         wrapper="p"
                     />
@@ -44,8 +45,6 @@ class Index extends Component {
         removeTokenFromStorage();
     }
 
-
-
     render() {
         return (
             <div style={styles.body}>
@@ -63,42 +62,6 @@ class Index extends Component {
                 </Head>
                 <Layout token={this.state.jwt_token} logoutClickHandler={this.logout}>
                     {animation}
-                    {/* <Container> */}
-                    {/* <Row> */}
-                    {/* <Carousel style={{ margin: '5%' }}>
-                        <Carousel.Item>
-                            <img
-                                style={{ width: '100%', height: `calc(100vh - 250px)` }}
-                                src="muhalik.jpg"
-                                alt="First slide"
-                            />
-                            <Carousel.Caption style={{ background: 'green', padding: '20px' }}>
-                                {animation}
-                            </Carousel.Caption>
-                        </Carousel.Item>
-                        <Carousel.Item>
-                            <img
-                                src="a.png"
-                                style={{ width: '100%', height: `calc(100vh - 250px)` }}
-                                alt="Third slide"
-                            />
-                            <Carousel.Caption style={{ background: 'gray', padding: '20px' }}>
-                                {animation}
-                            </Carousel.Caption>
-                        </Carousel.Item>
-                        <Carousel.Item>
-                            <img
-                                style={{ width: '100%', height: `calc(100vh - 250px)` }}
-                                src="muhalik.jpg"
-                                alt="Third slide"
-                            />
-                            <Carousel.Caption style={{ background: 'red', padding: '20px' }}>
-                                {animation}
-                            </Carousel.Caption>
-                        </Carousel.Item>
-                    </Carousel>
-                    {/* </Row> */}
-                    {/* </Container>  */}
                 </Layout>
             </div>
         );

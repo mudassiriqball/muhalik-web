@@ -1,6 +1,8 @@
-import { Navbar, Nav, Form, FormControl, Button, Card } from 'react-bootstrap';
+import { Navbar, Nav, Form, InputGroup, FormControl,Image, Button, Card } from 'react-bootstrap';
 import GlobalStyleSheet from '../../../../styleSheet';
 import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const Toolbar = props => {
     let dashboard = null;
@@ -18,7 +20,7 @@ const Toolbar = props => {
         login =
             <>
                 <Nav.Link href='./login'> Login/Signup </Nav.Link>
-                <Nav.Link href='./vendor-signup'> Register as Shop </Nav.Link>
+                <Nav.Link href='./vendor-signup'> Register_as_Shop </Nav.Link>
             </>
     }
 
@@ -27,16 +29,26 @@ const Toolbar = props => {
             <Card>
                 <Card.Body>
                     <Navbar collapseOnSelect expand="lg">
-                        <Navbar.Brand href="#home" style={styles.brand}>Muhalik</Navbar.Brand>
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '80px', position: 'absolute' }} />
+                            <h3 style={{marginLeft: '100px'}} className="text-center">Muhalik</h3>
+                        </div>
                         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                         <Navbar.Collapse id="responsive-navbar-nav">
                             <Nav className="mr-auto"></Nav>
-                            <Form inline style={styles.form} className="mr-auto">
-                                <label className="mr-auto">Fuck</label>
-                                <FormControl type="text" placeholder="Search" className="mr-sm-2" style={{ width: '80%' }} className="mr-auto"></FormControl>
-                                <Button style={{ background: 'none', border: 'none' }}>Search</Button>
-                            </Form>
-                            <Nav className>
+                            <InputGroup style={styles.search_div}>
+                                <InputGroup.Prepend style={styles.prepend}>
+                                    <FontAwesomeIcon icon={faSearch} style={styles.fontawesome} />
+                                </InputGroup.Prepend>
+                                <FormControl style={styles.search_box} />
+                                <InputGroup.Append style={styles.append}>
+                                    <FontAwesomeIcon icon={faSearch} style={styles.search_fontawesome} />
+                                    <Form.Label style={{ color: 'white', margin: '0px 0px 0px 10px', padding: '0px', fontSize: 'large' }}>
+                                        Search
+                                    </Form.Label>
+                                </InputGroup.Append>
+                            </InputGroup>
+                            <Nav>
                                 {login}
                                 {dashboard}
                                 <Nav.Link href="#features">Orders</Nav.Link>
@@ -63,7 +75,50 @@ const styles = {
         width: '60%',
         borderRadius: '25px',
         padding: '0px 5px'
-    }
+    },
+    search_div: {
+        margin: '0% 2% 0% 4%',
+        // border: `1px solid ${GlobalStyleSheet.primry_color}`,
+    },
+    prepend: {
+        // background: `${GlobalStyleSheet.primry_color}`,
+        border: `2px solid ${GlobalStyleSheet.primry_color}`,
+        color: 'black',
+        padding: '0px 25px',
+        display: 'flex',
+        textAlign: 'center',
+        alignItems: 'center',
+        borderTopLeftRadius: '20px',
+        borderBottomLeftRadius: '20px',
+    },
+    fontawesome: {
+        color: `${GlobalStyleSheet.primry_color}`,
+        width: '18px',
+        height: '18px',
+        maxHeight: '18px',
+        maxWidth: '18x',
+    },
+
+    search_box: {
+        border: `2px solid ${GlobalStyleSheet.primry_color}`,
+    },
+
+    append: {
+        background: `${GlobalStyleSheet.primry_color}`,
+        padding: '0px 25px',
+        display: 'flex',
+        alignItems: 'center',
+        borderTopRightRadius: '20px',
+        borderBottomRightRadius: '20px',
+    },
+    search_fontawesome: {
+        color: `${GlobalStyleSheet.primary_text_color}`,
+        width: '18px',
+        height: '18px',
+        maxHeight: '18px',
+        maxWidth: '18x',
+    },
+
 }
 
 export default Toolbar;

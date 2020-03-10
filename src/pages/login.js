@@ -20,7 +20,6 @@ const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?
 const schema = yup.object({
     mobile: yup.string().required("Enter Mobile Number")
         .matches(phoneRegExp, "Phone number is not valid"),
-
     password: yup.string().required("Enter Password")
         .min(8, "Must have at least 8 characters")
         .max(20, "Can't be longer than 20 characters"),
