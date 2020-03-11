@@ -29,3 +29,5 @@ export default GlobalStyleSheet;
 // "48: [Admin/Vendor Layout Updated]""
 // 49: git commit -m "49: [jwt_token added and route redirect added]"
 //  50 [header set into post request]git commit -m ""
+// git commit -m "51: [routing-guard/toast added & login/signup/v-signup layout updated & index.js updated]"
+//  git commit -m "52: [Index.js updated, signup updated]"

@@ -33,6 +33,7 @@ class Index extends Component {
             jwt_token: '',
         }
     }
+    
 
     async componentDidMount() {
         const token = await getTokenFromStorage()

@@ -1,4 +1,4 @@
-import { Image, Nav, Navbar, Dropdown, ButtonGroup, Form, Container, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
+import { Image, Nav, Navbar, Dropdown, ButtonGroup, Form, Container,DropdownButton, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faBars, faChevronRight, faTachometerAlt, faUpload, faHandsHelping, faUser, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar } from '@fortawesome/free-solid-svg-icons';
@@ -55,6 +55,19 @@ const DashboardTabs = props => {
                                         </Nav.Link>
                                     </div>
                                 </Nav.Item>
+                                <>
+                                    <DropdownButton
+                                    as={Nav.Link}
+                                    variant="secondary"
+                                    title={'Dasshbbord'} 
+                                    >
+                                    <Dropdown.Item eventKey="1">Action</Dropdown.Item>
+                                    <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
+                                    <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
+                                    <Dropdown.Divider />
+                                    <Dropdown.Item eventKey="4">Separated link</Dropdown.Item>
+                                    </DropdownButton>{' '}
+                                </>
                                 <Nav.Item>
                                     <div className="hover">
                                         <Nav.Link eventKey="inventory" style={styles.tab_link}>
@@ -202,6 +215,7 @@ const DashboardTabs = props => {
                     backgroung:  ${GlobalStyleSheet.admin_primry_color};
                     display: block;
                     height: 100vh;
+                    overflow-y: scroll
                 }
                 .hover {
                     background: ${GlobalStyleSheet.admin_primry_color};
