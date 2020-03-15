@@ -2,7 +2,7 @@ import { Navbar, Nav, Form, InputGroup, FormControl, Image, Button, Card } from 
 import GlobalStyleSheet from '../../../../styleSheet';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faLanguage, faUser, faCartPlus, faPen, faSignOutAlt, faGlobe, faLuggageCart } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faLanguage, faPowerOff, faUser, faCartPlus, faPen, faSignOutAlt, faGlobe, faLuggageCart } from '@fortawesome/free-solid-svg-icons';
 import MuhalikConfig from '../../../../sdk/muhalik.config';
 import axios from 'axios';
 function Toolbar(props) {
@@ -11,11 +11,14 @@ function Toolbar(props) {
 
     if (props.token == 'vendor') {
         dashboard = <Nav.Link href='./vendor' style={styles.nav_link}>Vendor dashboard</Nav.Link>
-        login = <Nav.Link onClick={props.logout} style={styles.nav_link}> Logout </Nav.Link>
+        login = <Nav.Link onClick={props.logout} style={styles.nav_link}>
+                    <FontAwesomeIcon icon={faPowerOff} style={styles.nav_fontawesome} />
+                    Logout
+                </Nav.Link>
     } else if (props.token == 'admin') {
         dashboard = <Nav.Link href='./admin' style={styles.nav_link}> Admin dashboard </Nav.Link>
         login = <Nav.Link onClick={props.logout} style={styles.nav_link}>
-            <FontAwesomeIcon icon={faSignOutAlt} style={styles.nav_fontawesome} />
+                    <FontAwesomeIcon icon={faPowerOff} style={styles.nav_fontawesome} />
                     Logout
                 </Nav.Link>
     } else if (props.token == 'customer') {
