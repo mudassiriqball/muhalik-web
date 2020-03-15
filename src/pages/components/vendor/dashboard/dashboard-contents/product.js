@@ -1,6 +1,6 @@
 import { Row, Tabs, Tab, Card } from 'react-bootstrap';
-import Products from './product-contents/products';
-import AddProducts from './product-contents/add-products';
+import AllProducts from './product-contents/all-products';
+import AddNew from './product-contents/add-new';
 import GlobalStyleSheet from '../../../../../styleSheet';
 
 const Product = () => {
@@ -8,16 +8,16 @@ const Product = () => {
         <div>
             <Tabs defaultActiveKey="overall" transition={false} id="reports_tab" justify fill style={styles.tabs}>
                 <Tab eventKey="overall" title="All Products" style={{color: 'red'}}>
-                    <Products></Products>
+                    <AllProducts></AllProducts>
                 </Tab>
                 <Tab eventKey="addNew" title="Add New">
-                    <AddProducts></AddProducts>
+                    <AddNew></AddNew>
                 </Tab>
                 <Tab eventKey="categories" title="Categories">
-                    <AddProducts></AddProducts>
+                    <AddNew></AddNew>
                 </Tab>
                 <Tab eventKey="attributes" title="Attributes">
-                    <AddProducts></AddProducts>
+                    <AddNew></AddNew>
                 </Tab>
             </Tabs>
         </div>
