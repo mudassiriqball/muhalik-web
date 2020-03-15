@@ -72075,8 +72075,8 @@ function chectAuth(rolee) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 // export default class MuhalikConfig {
-// const path = 'https://muhalik.herokuapp.com';
-var path = 'http://localhost:5000'; //     static getPath() {
+var path = 'https://muhalik.herokuapp.com'; // const path = 'http://localhost:5000';
+//     static getPath() {
 //       return MySouqConfig.path;
 //     }
 //   }
@@ -72119,8 +72119,9 @@ var GlobalStyleSheet = {
 // "48: [Admin/Vendor Layout Updated]""
 // 49: git commit -m "49: [jwt_token added and route redirect added]"
 //  50 [header set into post request]git commit -m ""
-// git commit -m "51: [routing-guard/toast added & login/signup/v-signup layout updated & index.js updated]"
-//  git commit -m "52: [Index.js updated, signup updated]"
+// 51 git commit -m "51: [routing-guard/toast added & login/signup/v-signup layout updated & index.js updated]"
+// 52 git commit -m "52: [Index.js updated, signup updated]"
+// 53 git commit -m "53: [vendor dashboard layout updated]"
 
 /***/ }),
 
