@@ -1,0 +1,1 @@
+{"ast":null,"code":"import React from \"react\";\nvar __jsx = React.createElement;\n\nvar Discounts = function Discounts() {\n  return __jsx(\"div\", null, __jsx(\"p\", null, \"This is Discount page\"));\n};\n\nexport default Discounts;","map":null,"metadata":{},"sourceType":"module"}

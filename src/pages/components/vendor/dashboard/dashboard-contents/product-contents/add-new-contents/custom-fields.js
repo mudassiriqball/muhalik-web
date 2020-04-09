@@ -10,7 +10,7 @@ const CustomFields = props => {
                 </Card.Header>
             <Card.Body >
                 <div style={{ background: 'lightGray', margin: '0.5% 1%' }}>
-                    {props.customArray.map((data, index) =>
+                    {props.customFieldsArray && props.customFieldsArray.map((data, index) =>
                         <Form.Row style={{ padding: '1% 2%' }} key={index}>
                             <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
                                 <Form.Control
@@ -38,8 +38,6 @@ const CustomFields = props => {
                                         onClick={() => props.delete(index)}> delete</Button>
                                 </InputGroup>
                             </Form.Group>
-                            {/* <Button variant="outline-primary" size="sm" block style={{ width: '100px' }}
-                                    onClick={() => props.update(index, data.fieldName, data.fieldValue)}> update</Button> */}
                         </Form.Row>
                     )}
                 </div>

@@ -28,7 +28,7 @@ const DashboardTabs = props => {
             <Tab.Container id="dashboard-tabs" defaultActiveKey="zero"  >
                 <Row noGutters>
                     {/* Show/Hide Tabs & Tabs-Content when screen Switches to Large/Medium,Small,Extra-Small Devices*/}
-                    <div className={drawerClasses}  style={styles.body}>
+                    <div className={drawerClasses} style={styles.body}>
                         {/* Show/Hide Tabs SIde Drawer in Lg-Devices when bar btn Clicked*/}
                         <div className="tabs">
                             <Nav className="flex-column" variant="pills" style={{ minWidth: '320px', maxWidth: '320px' }}>
@@ -140,7 +140,7 @@ const DashboardTabs = props => {
                                 </Button>
                             </div>
                             {/* Search Bar */}
-                            <Form inline style={{width: '85%'}} className="mr-auto">
+                            <Form inline style={{ width: '85%' }} className="mr-auto">
                                 <Form.Control
                                     style={styles.search_bar}
                                     type="text"
@@ -156,28 +156,28 @@ const DashboardTabs = props => {
                             </Form>
                             {/* Account Setting Dropdown */}
                             <div className="account_settig_dropdown">
-                            <Dropdown as={ButtonGroup} alignRight>
-                                <Dropdown.Toggle size="sm" split variant="light" id="dropdown-split" style={{ background: 'none', border: 'none' }} />
-                                <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">
-                                        <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
+                                <Dropdown as={ButtonGroup} alignRight>
+                                    <Dropdown.Toggle size="sm" split variant="light" id="dropdown-split" style={{ background: 'none', border: 'none' }} />
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item href="#/action-1">
+                                            <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
                                         My Profile
                                     </Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">
-                                        <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
+                                        <Dropdown.Item href="#/action-2">
+                                            <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
                                         Feedback
                                     </Dropdown.Item>
-                                    <Dropdown.Item href="#/action-3">
-                                        <FontAwesomeIcon icon={faHandsHelping} style={styles.dropDown_fontawesome} />
+                                        <Dropdown.Item href="#/action-3">
+                                            <FontAwesomeIcon icon={faHandsHelping} style={styles.dropDown_fontawesome} />
                                         Help?
                                     </Dropdown.Item>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item onClick={props.logoutClickHandler}>
-                                        <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item onClick={props.logoutClickHandler}>
+                                            <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
                                         Logout
                                 </Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
+                                    </Dropdown.Menu>
+                                </Dropdown>
                             </div>
                         </Navbar>
                         {/* End of toolbar */}

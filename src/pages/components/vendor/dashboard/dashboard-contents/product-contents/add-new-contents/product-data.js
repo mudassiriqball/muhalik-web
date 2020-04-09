@@ -22,16 +22,6 @@ const ProductData = props => {
         variations = true;
     }
 
-    // let array = Object.assign([], props.variationsArray);
-    // let len;
-
-    // array.forEach(element => {
-    //     len = element.items.length;
-    //     element.items.splice((len - 1), 1)
-    //     element.items.splice((len - 2), 1)
-    // });
-
-
     return (
         <Card style={styles.card}>
             <Card.Header style={styles.card_header}>
@@ -43,7 +33,7 @@ const ProductData = props => {
                         <Form.Control
                             as="select"
                             name="productType"
-                            value={props.values.product_type}
+                            value={props.product_type_value}
                             onChange={props.onChange, props.productTypeHandler}
                         >
                             <option value='simple-product'> Simple Product </option>
@@ -139,12 +129,12 @@ const ProductData = props => {
                                                             size="sm"
                                                             placeholder="Enter Product Price"
                                                             name="product_price"
-                                                            value={props.values.product_price}
+                                                            value={props.product_price_values}
                                                             onChange={props.onChange}
-                                                            isInvalid={props.touched.product_price && props.errors.product_price}
+                                                            isInvalid={props.product_price_touched && props.product_price_errors}
                                                         />
                                                         <Form.Control.Feedback type="invalid">
-                                                            {props.errors.product_price}
+                                                            {props.product_price_errors}
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
@@ -153,12 +143,12 @@ const ProductData = props => {
                                                     <Form.Control type="number"
                                                         size="sm"
                                                         name="product_in_stock"
-                                                        value={props.values.product_in_stock}
+                                                        value={props.product_in_stock_values}
                                                         onChange={props.onChange}
-                                                        isInvalid={props.touched.product_in_stock && props.errors.product_in_stock}
+                                                        isInvalid={props.product_in_stock_touched && props.product_in_stock_errors}
                                                     />
                                                     <Form.Control.Feedback type="invalid">
-                                                        {props.errors.product_in_stock}
+                                                        {props.product_in_stock_errors}
                                                     </Form.Control.Feedback>
                                                 </Form.Group>
                                                 <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
@@ -169,12 +159,12 @@ const ProductData = props => {
                                                             size="sm"
                                                             placeholder="Enter Brand Name"
                                                             name="product_brand_name"
-                                                            value={props.values.product_brand_name}
+                                                            value={props.product_brand_name_values}
                                                             onChange={props.onChange}
-                                                            isInvalid={props.touched.product_brand_name && props.errors.product_brand_name}
+                                                            isInvalid={props.product_brand_name_touched && props.product_brand_name_errors}
                                                         />
                                                         <Form.Control.Feedback type="invalid">
-                                                            {props.errors.product_brand_name}
+                                                            {props.product_brand_name_errors}
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
@@ -208,12 +198,12 @@ const ProductData = props => {
                                                             size="sm"
                                                             placeholder="Enter Product Warranty"
                                                             name="product_warranty"
-                                                            value={props.values.product_warranty}
+                                                            value={props.product_warranty_values}
                                                             onChange={props.onChange}
-                                                            isInvalid={props.touched.product_warranty && props.errors.product_warranty}
+                                                            isInvalid={props.product_warranty_touched && props.product_warranty_errors}
                                                         />
                                                         <Form.Control.Feedback type="invalid">
-                                                            {props.errors.product_warranty}
+                                                            {props.product_warranty_errors}
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
@@ -225,9 +215,9 @@ const ProductData = props => {
                                                                 as="select"
                                                                 name="warranty_type"
                                                                 size="sm"
-                                                                value={props.values.warranty_type}
+                                                                value={props.warranty_type_values}
                                                                 onChange={props.onChange}
-                                                                isInvalid={props.touched.warranty_type && props.errors.warranty_type}
+                                                                isInvalid={props.warranty_type_touched && props.warranty_type_errors}
                                                             >
                                                                 <option>Waranty Type</option>
                                                                 <option> No Warranty </option>
@@ -242,7 +232,7 @@ const ProductData = props => {
                                                             </Form.Control>
                                                         </InputGroup.Prepend>
                                                         <Form.Control.Feedback type="invalid">
-                                                            {props.errors.product_warranty}
+                                                            {props.product_warranty_errors}
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
@@ -254,15 +244,15 @@ const ProductData = props => {
                                                             size="sm"
                                                             placeholder="Enter Discount on on Product(%)"
                                                             name="product_discount"
-                                                            value={props.values.product_discount}
+                                                            value={props.product_discount_values}
                                                             onChange={props.onChange}
-                                                            isInvalid={props.touched.product_discount && props.errors.product_discount}
+                                                            isInvalid={props.product_discount_touched && props.product_discount_errors}
                                                         />
                                                         <InputGroup.Prepend>
                                                             <Button variant='primary' size="sm">%</Button>
                                                         </InputGroup.Prepend>
                                                         <Form.Control.Feedback type="invalid">
-                                                            {props.errors.product_discount}
+                                                            {props.product_discount_errors}
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
@@ -284,12 +274,12 @@ const ProductData = props => {
                                                     size="sm"
                                                     placeholder="Enter Discount on on Product(%)"
                                                     name="sku"
-                                                    value={props.values.sku}
+                                                    value={props.sku_values}
                                                     onChange={props.onChange}
-                                                    isInvalid={props.touched.sku && props.errors.sku}
+                                                    isInvalid={props.sku_touched && props.sku_errors}
                                                 />
                                                 <Form.Control.Feedback type="invalid">
-                                                    {props.errors.sku}
+                                                    {props.sku_errors}
                                                 </Form.Control.Feedback>
                                             </InputGroup>
                                         </Form.Group>
@@ -305,12 +295,12 @@ const ProductData = props => {
                                         <Form.Control type="number"
                                             name="product_weight"
                                             size="sm"
-                                            value={props.values.product_weight}
+                                            value={props.product_weight_values}
                                             onChange={props.onChange}
-                                            isInvalid={props.touched.product_weight && props.errors.product_weight}
+                                            isInvalid={props.product_weight_touched && props.product_weight_errors}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {props.errors.product_weight}
+                                            {props.product_weight_errors}
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group as={Row} noGutters>
@@ -321,39 +311,39 @@ const ProductData = props => {
                                                     type="number"
                                                     name="dimension_length"
                                                     size="sm"
-                                                    value={props.values.dimension_length}
+                                                    value={props.dimension_length_values}
                                                     onChange={props.onChange}
                                                     placeholder="Length"
-                                                    isInvalid={props.touched.dimension_length && props.errors.dimension_length}
+                                                    isInvalid={props.dimension_length_touched && props.dimension_length_errors}
                                                 />
                                                 <Form.Control.Feedback type="invalid">
-                                                    {props.errors.dimension_length}
+                                                    {props.dimension_length_errors}
                                                 </Form.Control.Feedback>
                                             </InputGroup.Prepend>
                                             <Form.Control
                                                 type="number"
                                                 name="dimension_width"
                                                 size="sm"
-                                                value={props.values.dimension_width}
+                                                value={props.dimension_width_values}
                                                 placeholder="Width"
                                                 onChange={props.onChange}
-                                                isInvalid={props.touched.dimension_width && props.errors.dimension_width}
+                                                isInvalid={props.dimension_width_touched && props.dimension_width_errors}
                                             />
                                             <InputGroup.Prepend>
                                                 <Form.Control.Feedback type="invalid">
-                                                    {props.errors.dimension_width}
+                                                    {props.dimension_width_errors}
                                                 </Form.Control.Feedback>
                                                 <Form.Control
                                                     type="number"
                                                     name="dimension_height"
                                                     size="sm"
-                                                    value={props.values.dimension_height}
+                                                    value={props.dimension_height_values}
                                                     placeholder="Height"
                                                     onChange={props.onChange}
-                                                    isInvalid={props.touched.dimension_height && props.errors.dimension_height}
+                                                    isInvalid={props.dimension_height_touched && props.dimension_height_errors}
                                                 />
                                                 <Form.Control.Feedback type="invalid">
-                                                    {props.errors.dimension_height}
+                                                    {props.dimension_height_errors}
                                                 </Form.Control.Feedback>
                                             </InputGroup.Prepend>
                                         </InputGroup>
@@ -367,15 +357,15 @@ const ProductData = props => {
                                                     size="sm"
                                                     placeholder="Enter Product Shipping Charges"
                                                     name="shipping_charges"
-                                                    value={props.values.shipping_charges}
+                                                    value={props.shipping_charges_values}
                                                     onChange={props.onChange}
-                                                    isInvalid={props.touched.shipping_charges && props.errors.shipping_charges}
+                                                    isInvalid={props.shipping_charges_touched && props.shipping_charges_errors}
                                                 />
                                                 <InputGroup.Prepend>
                                                     <Button variant='primary' size="sm">Riyal</Button>
                                                 </InputGroup.Prepend>
                                                 <Form.Control.Feedback type="invalid">
-                                                    {props.errors.shipping_charges}
+                                                    {props.shipping_charges_errors}
                                                 </Form.Control.Feedback>
                                             </InputGroup>
                                         </Form.Group>
@@ -387,15 +377,15 @@ const ProductData = props => {
                                                     size="sm"
                                                     placeholder="Enter Product Handling Fee"
                                                     name="handling_fee"
-                                                    value={props.values.handling_fee}
+                                                    value={props.handling_fee_values}
                                                     onChange={props.onChange}
-                                                    isInvalid={props.touched.handling_fee && props.errors.handling_fee}
+                                                    isInvalid={props.handling_fee_touched && props.handling_fee_errors}
                                                 />
                                                 <InputGroup.Prepend>
                                                     <Button variant='primary' size="sm">Riyal</Button>
                                                 </InputGroup.Prepend>
                                                 <Form.Control.Feedback type="invalid">
-                                                    {props.errors.handling_fee}
+                                                    {props.handling_fee_errors}
                                                 </Form.Control.Feedback>
                                             </InputGroup>
                                         </Form.Group>
@@ -449,7 +439,7 @@ const ProductData = props => {
                                     <hr />
                                     {/* <Card style={{ background: 'lightGray', margin: '0.5% 1%' }}> */}
 
-                                    {props.attributesArray.map((data, index) =>
+                                    {props.attributesArray && props.attributesArray.map((data, index) =>
                                         <Form.Row style={{ padding: '0%' }} key={index}>
                                             <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
                                                 <Form.Control
@@ -500,12 +490,12 @@ const ProductData = props => {
                                                 />
                                             </Form.Label>
 
-                                            {props.variationsArray.map((data, index) =>
+                                            {props.variationsArray && props.variationsArray.map((data, index) =>
                                                 <div key={index}>
                                                     <Accordion>
 
                                                         <Row noGutters style={{ width: '100%' }}>
-                                                            {data.items.map((d, i) =>
+                                                            {data.items && data.items.map((d, i) =>
                                                                 <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i}>
                                                                     <Form.Control
                                                                         type="text"
@@ -593,12 +583,12 @@ const ProductData = props => {
                                                 size="sm"
                                                 placeholder="Enter Purchase Notes"
                                                 name="purchase_note"
-                                                value={props.values.purchase_note}
+                                                value={props.purchase_note_values}
                                                 onChange={props.onChange}
-                                                isInvalid={props.touched.purchase_note && props.errors.purchase_note}
+                                                isInvalid={props.purchase_note_touched && props.purchase_note_errors}
                                             />
                                             <Form.Control.Feedback type="invalid">
-                                                {props.errors.purchase_note}
+                                                {props.purchase_note_errors}
                                             </Form.Control.Feedback>
                                         </InputGroup>
                                     </Form.Row>

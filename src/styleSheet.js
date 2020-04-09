@@ -33,3 +33,4 @@ export default GlobalStyleSheet;
 // 51 git commit -m "51: [routing-guard/toast added & login/signup/v-signup layout updated & index.js updated]"
 // 52 git commit -m "52: [Index.js updated, signup updated]"
 // 53 git commit -m "53: [vendor dashboard layout updated]"
+// 54[add product updated(simple & variable product), layout changed]

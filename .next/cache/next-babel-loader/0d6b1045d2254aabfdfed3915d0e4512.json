@@ -1,0 +1,1 @@
+{"ast":null,"code":"// export default class MuhalikConfig {\nvar path = 'https://muhalik.herokuapp.com'; // const path = 'http://localhost:5000';git \n//     static getPath() {\n//       return MySouqConfig.path;\n//     }\n//   }\n\nvar MuhalikConfig = {\n  PATH: path\n};\nexport default MuhalikConfig;","map":null,"metadata":{},"sourceType":"module"}

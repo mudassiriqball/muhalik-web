@@ -34,7 +34,7 @@ class AdminDashboard extends Component {
     }
 
     async authUser() {
-        this.setState({ jwt_token: await chectAuth('admin')});
+        this.setState({ jwt_token: await chectAuth('admin') });
     }
 
     drawerToggleClickHandler = () => {
@@ -52,7 +52,7 @@ class AdminDashboard extends Component {
         this.setState({ sideDrawerOpen: false });
     };
 
-    logout(){
+    logout() {
         removeTokenFromStorage();
     }
 
@@ -65,10 +65,10 @@ class AdminDashboard extends Component {
         return (
             <div style={styles.body}>
                 {/* <AdminLayout> */}
-                <DashboardTabs token={this.state.jwt_token} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler} 
-                ClickHandler={this.showSideDrawerClickHandler} logoutClickHandler={this.logout}/>
-                <DashboardSideDrawer token={this.state.jwt_token} show={this.state.sideDrawerOpen} 
-                click={this.backdropClickHandler} logoutClickHandler={this.logout} />
+                <DashboardTabs token={this.state.jwt_token} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler}
+                    ClickHandler={this.showSideDrawerClickHandler} logoutClickHandler={this.logout} />
+                <DashboardSideDrawer token={this.state.jwt_token} show={this.state.sideDrawerOpen}
+                    click={this.backdropClickHandler} logoutClickHandler={this.logout} />
                 {backdrop}
                 {/* </AdminLayout> */}
             </div>

@@ -157,9 +157,6 @@ class AddNew extends Component {
             color: [],
             productTags: [],
 
-            productAttribute: [],
-            productAttributesArray: [],
-
             warrantyType: 'Year',
             inputValue: '',
             image_link: [],
@@ -231,7 +228,6 @@ class AddNew extends Component {
     handleProductTagChange = (arr) => {
         this.setState({ productTags: arr });
     };
-
 
 
     // Product Category
@@ -419,7 +415,7 @@ class AddNew extends Component {
                 initialValues={{
                     product_name: '',
                     product_category: '',
-                    product_type: '',
+                    product_type: 'simple-product',
                     product_weight: 0,
                     dimension_length: '',
                     dimension_width: '',
@@ -477,7 +473,7 @@ class AddNew extends Component {
 
                             values.product_variations = this.state.variationsArray;
                             values.custom_fields = this.state.customFieldsArray;
-
+                            console.log('values: ', values)
                             this.uploadProduct(values, this);
                             // if (this.uploadData(values)) {
                             //     this.setState({ size: [], color: [], customFieldNameArray: [], image_link: [], inputValue: '' });
@@ -528,13 +524,21 @@ class AddNew extends Component {
                                                         Product Discruption
                                                 </Card.Header>
                                                     <Card.Body>
-                                                        <Form.Group>
+                                                        {/* <Form.Group controlId="exampleForm.ControlTextarea1">
                                                             <Form.Control
                                                                 as="textarea"
                                                                 rows="7"
                                                                 placeholder="Enter description about season, style, material etc"
                                                                 value={values.product_description}
                                                                 onChange={handleChange}
+                                                            />
+                                                        </Form.Group> */}
+                                                        <Form.Group controlId="exampleForm.ControlTextarea1">
+                                                            <Form.Label>Example textarea</Form.Label>
+                                                            <Form.Control
+                                                                as="textarea"
+                                                                rows="3"
+                                                                value={values.product_description}
                                                             />
                                                         </Form.Group>
                                                     </Card.Body>
@@ -546,7 +550,60 @@ class AddNew extends Component {
                                                     productTypeHandler={this.handleProductTypeChange}
                                                     isVariableProduct={this.state.isVariableProduct}
 
-                                                    values={values}
+                                                    product_type_value={values.product_type}
+
+                                                    product_price_values={values.product_price}
+                                                    product_price_touched={touched.product_price}
+                                                    product_price_errors={errors.product_price}
+
+                                                    product_in_stock_values={values.product_in_stock}
+                                                    product_in_stock_touched={touched.product_in_stock}
+                                                    product_in_stock_errors={errors.product_in_stock}
+
+                                                    product_brand_name_values={values.product_brand_name}
+                                                    product_brand_name_touched={touched.product_brand_name}
+                                                    product_brand_name_errors={errors.product_brand_name}
+
+                                                    product_warranty_values={values.product_warranty}
+                                                    product_warranty_touched={touched.product_warranty}
+                                                    product_warranty_errors={errors.product_warranty}
+
+                                                    product_discount_values={values.product_discount}
+                                                    product_discount_touched={touched.product_discount}
+                                                    product_discount_errors={errors.product_discount}
+
+                                                    sku_values={values.sku}
+                                                    sku_touched={touched.sku}
+                                                    sku_errors={errors.sku}
+
+                                                    product_weight_values={values.product_weight}
+                                                    product_weight_touched={touched.product_weight}
+                                                    product_weight_errors={errors.product_weight}
+
+                                                    dimension_length_values={values.dimension_length}
+                                                    dimension_length_touched={touched.dimension_length}
+                                                    dimension_length_errors={errors.dimension_length}
+
+                                                    dimension_width_values={values.dimension_width}
+                                                    dimension_width_touched={touched.dimension_width}
+                                                    dimension_width_errors={errors.dimension_width}
+
+                                                    dimension_height_values={values.dimension_height}
+                                                    dimension_height_touched={touched.dimension_height}
+                                                    dimension_height_errors={errors.dimension_height}
+
+                                                    shipping_charges_values={values.shipping_charges}
+                                                    shipping_charges_touched={touched.shipping_charges}
+                                                    shipping_charges_errors={errors.shipping_charges}
+
+                                                    handling_fee_values={values.handling_fee}
+                                                    handling_fee_touched={touched.handling_fee}
+                                                    handling_fee_errors={errors.handling_fee}
+
+                                                    purchase_note_values={values.purchase_note}
+                                                    purchase_note_touched={touched.purchase_note}
+                                                    purchase_note_errors={errors.purchase_note}
+
                                                     onChange={handleChange}
                                                     touched={touched}
                                                     errors={errors}
@@ -580,7 +637,7 @@ class AddNew extends Component {
                                             {/* Custom Fields Row */}
                                             <Form.Group as={Row} style={styles.left_culmn_row}>
                                                 <CustomFields
-                                                    customArray={this.state.customFieldsArray}
+                                                    customFieldsArray={this.state.customFieldsArray}
                                                     name={this.state.customFieldName}
                                                     value={this.state.customFieldValue}
                                                     fieldNameHandler={this.customFieldNameChangeHandler.bind(this)}
@@ -633,47 +690,42 @@ class AddNew extends Component {
                                                             onChange={handleChange}
                                                             isInvalid={touched.not_specified && errors.not_specified}
                                                             feedback={errors.not_specified}
-                                                            id="not_specified"
                                                         />
                                                         <br></br>
                                                         <Form.Check
-                                                            name="Ceramic"
+                                                            name="ceramic"
                                                             label="Ceramic"
                                                             style={styles.label}
                                                             onChange={handleChange}
                                                             isInvalid={touched.Ceramic && errors.Ceramic}
                                                             feedback={errors.Ceramic}
-                                                            id="Ceramic"
                                                         />
                                                         <br></br>
                                                         <Form.Check
-                                                            name="Glass"
+                                                            name="glass"
                                                             label="Glass"
                                                             style={styles.label}
                                                             onChange={handleChange}
                                                             isInvalid={touched.Glass && errors.Glass}
                                                             feedback={errors.Glass}
-                                                            id="Glass"
                                                         />
                                                         <br></br>
                                                         <Form.Check
-                                                            name="Metal"
+                                                            name="metal"
                                                             label="Metal"
                                                             style={styles.label}
                                                             onChange={handleChange}
                                                             isInvalid={touched.Metal && errors.Metal}
                                                             feedback={errors.Metal}
-                                                            id="Metal"
                                                         />
                                                         <br></br>
                                                         <Form.Check
-                                                            name="Plastic"
+                                                            name="plastic"
                                                             label="Plastic"
                                                             style={styles.label}
                                                             onChange={handleChange}
                                                             isInvalid={touched.Plastic && errors.Plastic}
                                                             feedback={errors.Plastic}
-                                                            id="Plastic"
                                                         />
                                                     </Card.Body>
                                                 </Card>
