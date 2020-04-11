@@ -99,7 +99,7 @@ Toolbar.getInitialProps = async ctx => {
     const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
     try {
         const response = await axios.get(url);
-        this.setState({ categoryList: response.data.data });
+        // this.setState({ categoryList: response.data.data });
         return { searchCategory: response.data.data }
     } catch (error) {
         console.error(error);
