@@ -10,7 +10,8 @@
     "fuck": "next -p 5000",
     "dev": "nodemon app.js",
     "build": "next build",
-    "start": "next build && node app.js"
+    "start": "next build && node app.js",
+    "export": "npm run build && next export"
   },
   "keywords": [],
   "author": "",
