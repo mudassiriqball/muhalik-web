@@ -1,13 +1,14 @@
 
 import React, { Component } from 'react';
-import { Form, Col, Row, Card, InputGroup, Button, Toast, Tab, Nav, Tabs, Spinner } from 'react-bootstrap';
+import { Accordion, Form, Col, Row, Card, InputGroup, Button, Toast, Alert, Nav, Tabs, Spinner } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faPlus, faKey, faSlidersH, faStoreAlt, faTruck, faTools, faDollarSign, faListAlt,
+    faPlus, faKey, faSlidersH, faStoreAlt, faTruck, faTools, faDollarSign, faExclamationTriangle, faListAlt
 } from '@fortawesome/free-solid-svg-icons';
+
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons';
 
 import Select from 'react-select';
@@ -147,6 +148,7 @@ class AddNew extends Component {
         this.state = {
             isLoading: false,
             showToast: false,
+            showVariationsErrorAlert: false,
 
             product_categories_options: product_categories,
             productCategories: '',
@@ -173,6 +175,7 @@ class AddNew extends Component {
             productAttributeError: '',
 
             variationsArray: [],
+            isVariationsSaved: false,
 
             // Custom Fields
             customFieldsArray: [],
@@ -206,7 +209,7 @@ class AddNew extends Component {
         // }).then(function (response) {
         currentComponent.setState({ isLoading: false });
         currentComponent.setState({ showToast: true });
-        //     return true;
+        return true;
         // }).catch(function (error) {
         //     currentComponent.setState({ isLoading: false });
         //     alert('Error: ', error.response.data.message);
@@ -307,7 +310,7 @@ class AddNew extends Component {
             split.forEach((e, i) => {
                 item.push({ name: this.state.productAttributesArray[i].productAttributeName, value: e })
             });
-            data.push({ items: item, price: '0', stock: '1', image_link: '' })
+            data.push({ items: item, price: '', stock: '1', image_link: '', price_error: '', image_link_error: '' })
         });
         // console.log("split Array: ", data)
         this.setState({ variationsArray: data })
@@ -354,16 +357,20 @@ class AddNew extends Component {
     handleProductPriceChanged = (e, index) => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let object = copyArray[index];
-        object.price = e.target.value;
-        copyArray[index] = object;
-        this.setState({ variationsArray: copyArray });
+        if (e.target.value >= 0) {
+            object.price = e.target.value;
+            copyArray[index] = object;
+            this.setState({ variationsArray: copyArray });
+        }
     }
     handleProductInStockChanged = (e, index) => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let object = copyArray[index];
-        object.stock = e.target.value;
-        copyArray[index] = object;
-        this.setState({ variationsArray: copyArray });
+        if (e.target.value >= 0) {
+            object.stock = e.target.value;
+            copyArray[index] = object;
+            this.setState({ variationsArray: copyArray });
+        }
     }
     handleProductImageLinkChanged = (e, index) => {
         const copyArray = Object.assign([], this.state.variationsArray);
@@ -371,6 +378,36 @@ class AddNew extends Component {
         object.image_link = e.target.value;
         copyArray[index] = object;
         this.setState({ variationsArray: copyArray });
+    }
+    saveVariationsClicked = () => {
+        const copyArray = Object.assign([], this.state.variationsArray);
+        let flag = true;
+        copyArray.forEach(element => {
+            if (element.price == '' || element.image_link == '') {
+                flag = false;
+                if (element.price == '') {
+                    element.price_error = 'Enter price'
+                }
+                if (element.image_link == '') {
+                    element.image_link_error = 'Enter Image Link'
+                }
+            } else {
+                element.price_error = ''
+                element.image_link_error = ''
+            }
+        });
+        if (flag == true) {
+            this.setState({ isVariationsSaved: true })
+        }
+        this.setState({ variationsArray: copyArray });
+    }
+    variationsErrorCheck = (data) => {
+        if (data.price_error != '' || data.image_link_error != '') {
+            return '1px solid red'
+        }
+        else {
+            return 'none'
+        }
     }
 
 
@@ -458,6 +495,8 @@ class AddNew extends Component {
                         //     this.setState({ image_linkError: "error", image_linkErrorDiv: 'RedBorderDiv' });
                         // }
                         setSubmitting(false);
+                    } else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
+                        this.setState({ showVariationsErrorAlert: true });
                     } else {
                         resetForm();
                         setSubmitting(true);
@@ -474,11 +513,33 @@ class AddNew extends Component {
                             values.product_variations = this.state.variationsArray;
                             values.custom_fields = this.state.customFieldsArray;
                             console.log('values: ', values)
-                            this.uploadProduct(values, this);
-                            // if (this.uploadData(values)) {
-                            //     this.setState({ size: [], color: [], customFieldNameArray: [], image_link: [], inputValue: '' });
-                            //     resetForm();
-                            // }
+                            if (this.uploadProduct(values, this)) {
+                                this.setState({
+                                    productCategories: '',
+                                    categoryError: 'no_error',
+                                    categoryErrorDiv: 'BorderDiv',
+                                    size: [],
+                                    color: [],
+                                    productTags: [],
+                                    warrantyType: 'Year',
+                                    inputValue: '',
+                                    image_link: [],
+                                    image_linkError: 'no_error',
+                                    image_linkErrorDiv: 'BorderDiv',
+                                    isVariableProduct: false,
+                                    productAttributesArray: [],
+                                    productAttributeName: '',
+                                    productAttributeValue: '',
+                                    productAttributeError: '',
+                                    variationsArray: [],
+                                    isVariationsSaved: false,
+                                    customFieldsArray: [],
+                                    customFieldName: '',
+                                    customFieldValue: '',
+                                    customFieldError: '',
+                                });
+                                resetForm();
+                            }
                             setSubmitting(false);
                         }, 500);
                     }
@@ -494,13 +555,17 @@ class AddNew extends Component {
                                     <div className="mr-auto" style={styles.title}> Add New </div>
                                 </Row>
                                 <Form noValidate onSubmit={handleSubmit}>
+                                    {this.state.showVariationsErrorAlert ?
+                                        <ShowToast onCloseHandler={(e) => this.setState({ showVariationsErrorAlert: false })} show={this.state.showVariationsErrorAlert}
+                                            header={'Error'} message={'Please Add/Save Variations First'} iconName={faExclamationTriangle} color={"red"} />
+                                        : null
+                                    }
                                     {this.state.showToast ? <ShowToast onCloseHandler={(e) => this.setState({ showToast: false })} show={this.state.showToast}
-                                        message={'Product Uploaded Successfully'} icon={faThumbsUp} /> : null}
-
+                                        header={'Success'} message={'Product Uploaded Successfully'} iconName={faThumbsUp} color={"green"} /> : null}
                                     <Row noGutters style={{ paddingTop: '2%' }}>
                                         <Col lg={9} md={9} sm={12} xs={12}>
                                             {/* Product Name */}
-                                            <Form.Group as={Row} style={styles.left_culmn_row}>
+                                            <Form.Group as={Row} style={styles.row}>
                                                 <Form.Label style={styles.label}>Product Name<span>*</span></Form.Label>
                                                 <InputGroup>
                                                     <Form.Control
@@ -517,40 +582,39 @@ class AddNew extends Component {
                                                 </InputGroup>
                                             </Form.Group>
                                             {/* End of Product Name */}
+
                                             {/* Product Discription */}
-                                            <Form.Group as={Row} style={styles.left_culmn_row}>
-                                                <Card style={styles.card}>
-                                                    <Card.Header style={styles.card_header}>
-                                                        Product Discruption
-                                                </Card.Header>
-                                                    <Card.Body>
-                                                        {/* <Form.Group controlId="exampleForm.ControlTextarea1">
-                                                            <Form.Control
-                                                                as="textarea"
-                                                                rows="7"
-                                                                placeholder="Enter description about season, style, material etc"
-                                                                value={values.product_description}
-                                                                onChange={handleChange}
-                                                            />
-                                                        </Form.Group> */}
-                                                        <Form.Group controlId="exampleForm.ControlTextarea1">
-                                                            <Form.Label>Example textarea</Form.Label>
-                                                            <Form.Control
-                                                                as="textarea"
-                                                                rows="3"
-                                                                value={values.product_description}
-                                                            />
-                                                        </Form.Group>
-                                                    </Card.Body>
-                                                </Card>
-                                            </Form.Group>
+                                            <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                                                <Form.Group as={Row} style={styles.row}>
+                                                    <Card style={styles.card}>
+                                                        <Card.Header style={styles.card_header}>
+                                                            <Form.Label >Product Discruption</Form.Label>
+                                                            <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                                                <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
+                                                            </Accordion.Toggle>
+                                                        </Card.Header>
+                                                        <Accordion.Collapse eventKey="0">
+                                                            <Card.Body>
+                                                                <Form.Group>
+                                                                    <Form.Control
+                                                                        as="textarea"
+                                                                        rows="7"
+                                                                        placeholder="Enter description about season, style, material etc"
+                                                                        id={values.product_description}
+                                                                    />
+                                                                </Form.Group>
+                                                            </Card.Body>
+                                                        </Accordion.Collapse>
+                                                    </Card>
+                                                </Form.Group>
+                                            </Accordion>
                                             {/* Product Data Row */}
-                                            <Row style={styles.left_culmn_row}>
+                                            <Row style={styles.row}>
                                                 <ProductData
                                                     productTypeHandler={this.handleProductTypeChange}
                                                     isVariableProduct={this.state.isVariableProduct}
 
-                                                    product_type_value={values.product_type}
+                                                    product_type_values={values.product_type}
 
                                                     product_price_values={values.product_price}
                                                     product_price_touched={touched.product_price}
@@ -567,6 +631,10 @@ class AddNew extends Component {
                                                     product_warranty_values={values.product_warranty}
                                                     product_warranty_touched={touched.product_warranty}
                                                     product_warranty_errors={errors.product_warranty}
+
+                                                    warranty_type_values={values.warranty_type}
+                                                    warranty_type_touched={touched.warranty_type}
+                                                    warranty_type_errors={errors.warranty_type}
 
                                                     product_discount_values={values.product_discount}
                                                     product_discount_touched={touched.product_discount}
@@ -622,6 +690,8 @@ class AddNew extends Component {
                                                     update={this.handleUpdateProductAttributeClicked.bind(this)}
                                                     deleteAttributeHandler={this.handleDeleteProductAttributeClicked.bind(this)}
                                                     deleteVariationHandler={this.handleDeleteProductVariationClicked.bind(this)}
+                                                    saveVariationsHandler={this.saveVariationsClicked.bind(this)}
+                                                    variationsErrorHandler={this.variationsErrorCheck.bind(this)}
                                                     error={this.state.productAttributeError}
 
                                                     saveAttributesHandler={this.handleSaveProductAttributesClicked}
@@ -635,7 +705,7 @@ class AddNew extends Component {
                                             </Row>
                                             {/* End of Product Data Row */}
                                             {/* Custom Fields Row */}
-                                            <Form.Group as={Row} style={styles.left_culmn_row}>
+                                            <Form.Group as={Row} style={styles.row}>
                                                 <CustomFields
                                                     customFieldsArray={this.state.customFieldsArray}
                                                     name={this.state.customFieldName}
@@ -653,102 +723,123 @@ class AddNew extends Component {
 
                                         <Col lg={3} md={3} sm={12} xs={12}>
                                             {/* Product Category */}
-                                            <Form.Group as={Row} style={styles.right_culmn_row}>
-                                                <Card style={styles.card}>
-                                                    <Card.Header style={styles.card_header}>
-                                                        Product Categories
-                                                    </Card.Header>
-                                                    <Card.Body style={{ height: '250px' }}>
-                                                        <div className={this.state.categoryErrorDiv}>
-                                                            <CreatableSelect
-                                                                isMulti
-                                                                onChange={this.handleProductCategoryChange}
-                                                                options={this.state.product_categories_options}
-                                                                value={this.state.productCategories}
-                                                                placeholder="Select/Enter Category"
-                                                            />
-                                                        </div>
-                                                        <label className={this.state.categoryError}>
-                                                            Selet Category
+                                            <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                                                <Form.Group as={Row} style={styles.row}>
+                                                    <Card style={styles.card}>
+                                                        <Card.Header style={styles.card_header}>
+                                                            <Form.Label >Product Categories</Form.Label>
+                                                            <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                                                <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
+                                                            </Accordion.Toggle>
+                                                        </Card.Header>
+                                                        <Accordion.Collapse eventKey="0">
+                                                            <Card.Body style={{ height: '250px' }}>
+                                                                <div className={this.state.categoryErrorDiv}>
+                                                                    <CreatableSelect
+                                                                        isMulti
+                                                                        onChange={this.handleProductCategoryChange}
+                                                                        options={this.state.product_categories_options}
+                                                                        value={this.state.productCategories}
+                                                                        placeholder="Select/Enter Category"
+                                                                    />
+                                                                </div>
+                                                                <label className={this.state.categoryError}>
+                                                                    Selet Category
                                                         </label>
-                                                    </Card.Body>
-                                                </Card>
-                                            </Form.Group>
+                                                            </Card.Body>
+                                                        </Accordion.Collapse>
+                                                    </Card>
+                                                </Form.Group>
+                                            </Accordion>
                                             {/* End of Product ategory */}
 
                                             {/* Dangerous Goods */}
-                                            <Form.Group as={Row} style={styles.right_culmn_row}>
-                                                <Card style={styles.card}>
-                                                    <Card.Header style={styles.card_header}>
-                                                        Dangerous Goods
-                                                </Card.Header>
-                                                    <Card.Body>
-                                                        <Form.Check
-                                                            name="not_specified"
-                                                            label="Not Specified"
-                                                            style={styles.label}
-                                                            onChange={handleChange}
-                                                            isInvalid={touched.not_specified && errors.not_specified}
-                                                            feedback={errors.not_specified}
-                                                        />
-                                                        <br></br>
-                                                        <Form.Check
-                                                            name="ceramic"
-                                                            label="Ceramic"
-                                                            style={styles.label}
-                                                            onChange={handleChange}
-                                                            isInvalid={touched.Ceramic && errors.Ceramic}
-                                                            feedback={errors.Ceramic}
-                                                        />
-                                                        <br></br>
-                                                        <Form.Check
-                                                            name="glass"
-                                                            label="Glass"
-                                                            style={styles.label}
-                                                            onChange={handleChange}
-                                                            isInvalid={touched.Glass && errors.Glass}
-                                                            feedback={errors.Glass}
-                                                        />
-                                                        <br></br>
-                                                        <Form.Check
-                                                            name="metal"
-                                                            label="Metal"
-                                                            style={styles.label}
-                                                            onChange={handleChange}
-                                                            isInvalid={touched.Metal && errors.Metal}
-                                                            feedback={errors.Metal}
-                                                        />
-                                                        <br></br>
-                                                        <Form.Check
-                                                            name="plastic"
-                                                            label="Plastic"
-                                                            style={styles.label}
-                                                            onChange={handleChange}
-                                                            isInvalid={touched.Plastic && errors.Plastic}
-                                                            feedback={errors.Plastic}
-                                                        />
-                                                    </Card.Body>
-                                                </Card>
-                                            </Form.Group>
+                                            <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                                                <Form.Group as={Row} style={styles.row}>
+                                                    <Card style={styles.card}>
+                                                        <Card.Header style={styles.card_header}>
+                                                            <Form.Label >Dangerous Goods</Form.Label>
+                                                            <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                                                <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
+                                                            </Accordion.Toggle>
+                                                        </Card.Header>
+                                                        <Accordion.Collapse eventKey="0">
+                                                            <Card.Body>
+                                                                <Form.Check
+                                                                    name="not_specified"
+                                                                    label="Not Specified"
+                                                                    style={styles.label}
+                                                                    onChange={handleChange}
+                                                                    isInvalid={touched.not_specified && errors.not_specified}
+                                                                    feedback={errors.not_specified}
+                                                                />
+                                                                <br></br>
+                                                                <Form.Check
+                                                                    name="ceramic"
+                                                                    label="Ceramic"
+                                                                    style={styles.label}
+                                                                    onChange={handleChange}
+                                                                    isInvalid={touched.Ceramic && errors.Ceramic}
+                                                                    feedback={errors.Ceramic}
+                                                                />
+                                                                <br></br>
+                                                                <Form.Check
+                                                                    name="glass"
+                                                                    label="Glass"
+                                                                    style={styles.label}
+                                                                    onChange={handleChange}
+                                                                    isInvalid={touched.Glass && errors.Glass}
+                                                                    feedback={errors.Glass}
+                                                                />
+                                                                <br></br>
+                                                                <Form.Check
+                                                                    name="metal"
+                                                                    label="Metal"
+                                                                    style={styles.label}
+                                                                    onChange={handleChange}
+                                                                    isInvalid={touched.Metal && errors.Metal}
+                                                                    feedback={errors.Metal}
+                                                                />
+                                                                <br></br>
+                                                                <Form.Check
+                                                                    name="plastic"
+                                                                    label="Plastic"
+                                                                    style={styles.label}
+                                                                    onChange={handleChange}
+                                                                    isInvalid={touched.Plastic && errors.Plastic}
+                                                                    feedback={errors.Plastic}
+                                                                />
+                                                            </Card.Body>
+                                                        </Accordion.Collapse>
+                                                    </Card>
+                                                </Form.Group>
+                                            </Accordion>
                                             {/* End ofDangerous Goods */}
 
                                             {/* Product Tags */}
-                                            <Form.Group as={Row} style={styles.right_culmn_row}>
-                                                <Card style={styles.card}>
-                                                    <Card.Header style={styles.card_header}>
-                                                        Product Tags
-                                                </Card.Header>
-                                                    <Card.Body style={{ height: '250px' }}>
-                                                        <CreatableSelect
-                                                            isMulti
-                                                            onChange={this.handleProductTagChange}
-                                                            options={product_color_options}
-                                                            value={this.state.productTags}
-                                                            placeholder="Select/Enter Tags"
-                                                        />
-                                                    </Card.Body>
-                                                </Card>
-                                            </Form.Group>
+                                            <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                                                <Form.Group as={Row} style={styles.row}>
+                                                    <Card style={styles.card}>
+                                                        <Card.Header style={styles.card_header}>
+                                                            <Form.Label >Product Tags</Form.Label>
+                                                            <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                                                <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
+                                                            </Accordion.Toggle>
+                                                        </Card.Header>
+                                                        <Accordion.Collapse eventKey="0">
+                                                            <Card.Body style={{ height: '250px' }}>
+                                                                <CreatableSelect
+                                                                    isMulti
+                                                                    onChange={this.handleProductTagChange}
+                                                                    options={product_color_options}
+                                                                    value={this.state.productTags}
+                                                                    placeholder="Select/Enter Tags"
+                                                                />
+                                                            </Card.Body>
+                                                        </Accordion.Collapse>
+                                                    </Card>
+                                                </Form.Group>
+                                            </Accordion>
                                             {/* End of Product Tags */}
 
                                         </Col>
@@ -756,7 +847,7 @@ class AddNew extends Component {
 
 
                                     {/* Form Submit Btn Row */}
-                                    <Form.Row style={styles.left_culmn_row}>
+                                    <Form.Row style={styles.row}>
                                         <Form.Group as={Col}>
                                             <p style={styles.label}>Fields with <span> * </span> are mandatory.</p>
                                             <p style={styles.label}>For adding new size, color, link: Enter text and hit Enter or Tab key</p>
@@ -768,6 +859,7 @@ class AddNew extends Component {
                                     </Form.Row>
                                     {/* End of Form Submit Btn Row */}
                                 </Form>
+
                                 <style jsx>
                                     {`
                                         .no_error {
@@ -838,12 +930,8 @@ const styles = {
     },
 
 
-    left_culmn_row: {
-        margin: '0% 0% 3% 1.5%',
-        padding: '0%'
-    },
-    right_culmn_row: {
-        margin: '0% 2% 2% 5%',
+    row: {
+        margin: '2%',
         padding: '0%'
     },
     card: {
@@ -887,6 +975,14 @@ const styles = {
         height: '17px',
         maxHeight: '17px',
         maxWidth: '17px',
+    },
+    variations_fontawesome: {
+        color: `${GlobalStyleSheet.admin_primry_color}`,
+        marginRight: '10%',
+        width: '15px',
+        height: '15px',
+        maxHeight: '15px',
+        maxWidth: '15px',
     },
 }
 export default AddNew;

@@ -1,7 +1,5 @@
 import { Toast, Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
-
 
 const ShowToast = props => {
     return (
@@ -17,19 +15,30 @@ const ShowToast = props => {
                 display: 'absolute',
                 background: '#e6ffe6',
                 width: '300px',
-                border: '0.5px solid black'
+                border: `0.5px solid ${props.color}`
             }}>
                 <Toast.Header>
-                    <FontAwesomeIcon icon={props.iconName} style={styles.fontawesome}  className="mr-auto"></FontAwesomeIcon>
+                    <FontAwesomeIcon icon={props.iconName} style={{
+                        color: `${props.color}`,
+                        width: '35px',
+                        height: '35px',
+                        maxHeight: '35px',
+                        maxWidth: '35px',
+                    }} className="mr-auto"></FontAwesomeIcon>
+                    <span style={{ marginLeft: '20px', fontSize: '18px', color: `${props.color}`, fontWeight: 'bold' }} className="mr-auto">{props.header}</span>
                 </Toast.Header>
                 <Toast.Body style={styles.toastBody}>
-                    <p style={{textAlign: 'center' }}>
-                    <span style={styles.span} className="mr-auto">Success</span>
-                    <span className="mr-auto">{props.message}</span>
+                    <p style={{ textAlign: 'center' }}>
+                        <span className="mr-auto">{props.message}</span>
                     </p>
                 </Toast.Body>
             </Toast>
-        </div>
+            {/* <style jsx>{`
+                span {
+                    width: 100%
+                }
+            `}</style> */}
+        </div >
     )
 }
 
@@ -37,21 +46,8 @@ export default ShowToast;
 
 
 const styles = {
-    span: {
-        marginLeft: '20px',
-        fontSize: '18px',
-        color: 'green',
-        fontWeight: 'bold'
-    },
     toastBody: {
         fontSize: '16px',
         padding: '10px',
-    },
-    fontawesome: {
-        color: 'green',
-        width: '35px',
-        height: '35px',
-        maxHeight: '35px',
-        maxWidth: '35px',
     },
 }
