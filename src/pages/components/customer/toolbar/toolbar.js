@@ -12,13 +12,13 @@ function Toolbar(props) {
     if (props.token == 'vendor') {
         dashboard = <Nav.Link href='./vendor' style={styles.nav_link}>Vendor dashboard</Nav.Link>
         login = <Nav.Link onClick={props.logout} style={styles.nav_link}>
-                    <FontAwesomeIcon icon={faPowerOff} style={styles.nav_fontawesome} />
+            <FontAwesomeIcon icon={faPowerOff} style={styles.nav_fontawesome} />
                     Logout
                 </Nav.Link>
     } else if (props.token == 'admin') {
         dashboard = <Nav.Link href='./admin' style={styles.nav_link}> Admin dashboard </Nav.Link>
         login = <Nav.Link onClick={props.logout} style={styles.nav_link}>
-                    <FontAwesomeIcon icon={faPowerOff} style={styles.nav_fontawesome} />
+            <FontAwesomeIcon icon={faPowerOff} style={styles.nav_fontawesome} />
                     Logout
                 </Nav.Link>
     } else if (props.token == 'customer') {
@@ -96,7 +96,6 @@ function Toolbar(props) {
 }
 
 Toolbar.getInitialProps = async ctx => {
-    url = MuhalikConfig + '/api/products-categories/get-all'
     const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
     try {
         const response = await axios.get(url);
