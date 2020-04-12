@@ -52,93 +52,83 @@ const schema = yup.object({
     product_name: yup.string().required("Enter Product Name")
         .min(2, "Must have at least 2 characters")
         .max(40, "Can't be longer than 40 characters"),
+    product_description: yup.string()
+        .min(5, "Must have at least 5 characters")
+        .max(200, "Can't be longer than 200 characters"),
 
-    product_category: yup.string(),
-
+    // Product Data
     product_type: yup.string(),
+
+    // => Inventory
+    sku: yup.string()
+        .min(0, 'Enter Between 0-100')
+        .max(100, 'Enter Between 0-100'),
+
+    // => General(Simple-Product)
+    product_price: yup.number()
+        .integer("Enter Only Numbers")
+        .positive('Enter Between 1-1000000')
+        .max(1000000, 'Enter Between 1-1000000'),
+    product_in_stock: yup.number()
+        .integer("Enter Only Numbers")
+        .min(1, "Must grater than 1 digit")
+        .max(1000000, "Can't be longer than 1000000"),
+    product_brand_name: yup.string()
+        .min(2, "Must have at least 2 characters")
+        .max(40, "Can't be longer than 40 characters"),
+    product_image_link: yup.string(),
+    product_warranty: yup.number().integer("Enter Only Numbers")
+        .min(0, 'Enter Between 0-200')
+        .max(200, 'Enter Between 0-200'),
+    warranty_type: yup.string(),
+    product_discount: yup.number().integer("Enter Only Numbers")
+        .min(0, 'Enter Between 0-100')
+        .max(100, 'Enter Between 0-100'),
+
+    // => Attributes (Variable Product)
+    purchase_note: yup.string(),
+
+    // => Variations (Variable Product)
+    product_variations: yup.string(),
+
+    // => Shipping
     product_weight: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
         .max(100, "Can't be longer than 100"),
-
     dimension_length: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
         .max(100, "Can't be longer than 100"),
-
     dimension_width: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
         .max(100, "Can't be longer than 100"),
-
     dimension_height: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
         .max(100, "Can't be longer than 100"),
-
+    shipping_charges: yup.number().integer("Enter Only Numbers")
+        .min(0, 'Enter Between 0-100')
+        .max(100, 'Enter Between 0-100'),
     handling_fee: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
         .max(100, "Can't be longer than 100"),
 
-    product_description: yup.string()
-        .min(5, "Must have at least 5 characters")
-        .max(200, "Can't be longer than 200 characters"),
+    // => Advanve
+    purchase_note: yup.string(),
 
-    not_specified: yup.string(),
-    Plastic: yup.string(),
-    Ceramic: yup.string(),
-    Metal: yup.string(),
-    Glass: yup.string(),
-    Plastic: yup.string(),
+    // Custom Fields
+    custom_fields: yup.string(),
 
-    product_brand_name: yup.string()
-        .min(2, "Must have at least 2 characters")
-        .max(40, "Can't be longer than 40 characters"),
+    product_category: yup.string(),
 
-    product_price: yup.number()
-        .integer("Enter Only Numbers")
-        .positive('Enter Between 1-1000000')
-        .max(1000000, 'Enter Between 1-1000000'),
-
-    product_size: yup.string(),
-
-    product_colors: yup.string(),
+    dangerous_goods: yup.string(),
 
     product_tags: yup.string(),
 
-    purchase_note: yup.string(),
 
-    product_in_stock: yup.number()
-        .integer("Enter Only Numbers")
-        .min(1, "Must grater than 1 digit")
-        .max(1000000, "Can't be longer than 1000000"),
-
-    product_warranty: yup.number().integer("Enter Only Numbers")
-        .min(0, 'Enter Between 0-200')
-        .max(200, 'Enter Between 0-200'),
-
-    warranty_type: yup.string(),
-
-    product_discount: yup.number().integer("Enter Only Numbers")
-        .min(0, 'Enter Between 0-100')
-        .max(100, 'Enter Between 0-100'),
-
-    sku: yup.string()
-        .min(0, 'Enter Between 0-100')
-        .max(100, 'Enter Between 0-100'),
-
-
-    shipping_charges: yup.number().integer("Enter Only Numbers")
-        .min(0, 'Enter Between 0-100')
-        .max(100, 'Enter Between 0-100'),
-
-    product_image_link: yup.string(),
-
-    product_attributes: yup.string(),
-    product_variations: yup.string(),
-
-    custom_fields: yup.string(),
 });
 
 
@@ -149,39 +139,45 @@ class AddNew extends Component {
             isLoading: false,
             showToast: false,
             showVariationsErrorAlert: false,
+            showSimpleProductPriceImgLinkErrorrAlert: false,
+            isVariableProduct: false,
 
             product_categories_options: product_categories,
             productCategories: '',
             categoryError: 'no_error',
             categoryErrorDiv: 'BorderDiv',
 
-            size: [],
-            color: [],
             productTags: [],
 
             warrantyType: 'Year',
             inputValue: '',
-            image_link: [],
+            simple_product_image_link: [],
+            simple_product_image_link: [],
 
 
             image_linkError: 'no_error',
             image_linkErrorDiv: 'BorderDiv',
-            isVariableProduct: false,
 
             // Product Attributes
             productAttributesArray: [],
             productAttributeName: '',
             productAttributeValue: '',
             productAttributeError: '',
+            productAttributeNameSelected: '',
 
             variationsArray: [],
             isVariationsSaved: false,
+            samePriceInput: '',
 
             // Custom Fields
             customFieldsArray: [],
             customFieldName: '',
             customFieldValue: '',
             customFieldError: '',
+            customFieldNameSelected: '',
+
+            // Dangerous Goods
+            dangerousGoodsArray: [],
         };
         this.handleProductTypeChange = this.handleProductTypeChange.bind(this);
         this.addCustomFieldBtnClicked = this.addCustomFieldBtnClicked.bind(this);
@@ -217,17 +213,6 @@ class AddNew extends Component {
         // });
     }
 
-    // Product Size
-    handleProductSizeChange = (arr, actionMeta) => {
-        this.setState({ size: arr });
-    };
-
-    // Product Color
-    handleProductColorChange = (arr, actionMeta) => {
-        this.setState({ color: arr });
-        // this.setState({ color: newValue, colorError: 'no_error', colorErrorDiv: 'BorderDiv' });
-    };
-
     handleProductTagChange = (arr) => {
         this.setState({ productTags: arr });
     };
@@ -238,23 +223,23 @@ class AddNew extends Component {
         this.setState({ productCategories: arr, categoryError: 'no_error', categoryErrorDiv: 'BorderDiv' });
     }
 
-    // Product Image Link
-    handleImage_linkChange = (arr, actionMeta) => {
-        this.setState({ image_link: arr, image_linkError: 'no_error', image_linkErrorDiv: 'BorderDiv' });
+    // Simple Product Image Link
+    handleSimpleProductImageLinkChange = (arr, actionMeta) => {
+        this.setState({ simple_product_image_link: arr, image_linkError: 'no_error', image_linkErrorDiv: 'BorderDiv' });
     };
-    handleImageLinkInputChange = (aa) => {
+    handleSimpleProductImageLinkInputChange = (aa) => {
         this.setState({ inputValue: aa });
     };
-    handleImage_linkKeyDown = (event) => {
+    handleSimpleProductImage_linkKeyDown = (event) => {
         const inputValue = this.state.inputValue;
-        const image_link = this.state.image_link;
+        const simple_product_image_link = this.state.simple_product_image_link;
         if (!inputValue) return;
         switch (event.key) {
             case 'Enter':
             case 'Tab':
                 this.setState({
                     inputValue: '',
-                    image_link: [...image_link, createOption(inputValue)],
+                    simple_product_image_link: [...simple_product_image_link, createOption(inputValue)],
                 });
                 event.preventDefault();
         }
@@ -272,8 +257,9 @@ class AddNew extends Component {
     }
 
     // Product Attributes
-    handleProductAttributeNameChange = (e) => {
-        this.setState({ productAttributeName: e.target.value })
+    handleProductAttributeNameChange(e) {
+        this.setState({ productAttributeName: e.value })
+        this.setState({ productAttributeNameSelected: e })
     }
     handleProductAttributeValueChange = (e) => {
         this.setState({ productAttributeValue: e.target.value })
@@ -288,6 +274,7 @@ class AddNew extends Component {
             })
             this.setState({ productAttributeName: '' })
             this.setState({ productAttributeValue: '' })
+            this.setState({ productAttributeNameSelected: '' })
             this.setState({ productAttributesArray: copyArray })
         } else {
             this.setState({ productAttributeError: 'Enter Field Name and Value' });
@@ -345,16 +332,21 @@ class AddNew extends Component {
         copyArray.splice(index, 1);
         this.setState({ variationsArray: copyArray });
     }
-    handlePriceCheckboxChanged = (e) => {
+    // 
+    handleSamePriceForAllVariationsChanged = (e) => {
+        this.setState({ samePriceInput: e.target.value })
+    }
+    handleVariationSamePriceCheckboxChanged = (e) => {
         if (e.target.checked) {
             const copyArray = Object.assign([], this.state.variationsArray);
 
             copyArray.forEach(element => {
-                element.price = copyArray[0].items.price
+                element.price = this.state.samePrice
             });
         }
     }
-    handleProductPriceChanged = (e, index) => {
+    // 
+    handleVariationPriceChanged = (e, index) => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let object = copyArray[index];
         if (e.target.value >= 0) {
@@ -363,7 +355,7 @@ class AddNew extends Component {
             this.setState({ variationsArray: copyArray });
         }
     }
-    handleProductInStockChanged = (e, index) => {
+    handleVariationProductInStockChanged = (e, index) => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let object = copyArray[index];
         if (e.target.value >= 0) {
@@ -372,7 +364,7 @@ class AddNew extends Component {
             this.setState({ variationsArray: copyArray });
         }
     }
-    handleProductImageLinkChanged = (e, index) => {
+    handleVariationImageLinkChanged = (e, index) => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let object = copyArray[index];
         object.image_link = e.target.value;
@@ -413,8 +405,9 @@ class AddNew extends Component {
 
 
     // Custom Fields
-    customFieldNameChangeHandler = (e) => {
-        this.setState({ customFieldName: e.target.value })
+    customFieldNameChangeHandler(e) {
+        this.setState({ customFieldName: e.value })
+        this.setState({ customFieldNameSelected: e })
     }
     customFieldValueChangeHandler = (e) => {
         this.setState({ customFieldValue: e.target.value })
@@ -429,6 +422,7 @@ class AddNew extends Component {
             })
             this.setState({ customFieldName: '' })
             this.setState({ customFieldValue: '' })
+            this.setState({ customFieldNameSelected: '' })
             this.setState({ customFieldsArray: copyArray })
         } else {
             this.setState({ customFieldError: 'Enter Field Name and Value' });
@@ -445,55 +439,63 @@ class AddNew extends Component {
         this.setState({ customFieldsArray: copyArray });
     }
 
+
+    // Dangerous Goods
+    handleDangerousGoodsChange = (e, name) => {
+        const copyArray = Object.assign([], this.state.dangerousGoodsArray);
+        if (e.target.checked) {
+            copyArray.push(name);
+        } else {
+            copyArray.forEach((element, index) => {
+                if (element == name) {
+                    copyArray.splice(index, 1)
+                }
+            });
+        }
+        this.setState({ dangerousGoodsArray: copyArray });
+    }
+
     render() {
         return (
             <Formik
                 validationSchema={schema}
                 initialValues={{
-                    product_name: '',
-                    product_category: '',
+                    // product_name: '',
+                    // product_description: '',
+                    // // Product Data
                     product_type: 'simple-product',
-                    product_weight: 0,
-                    dimension_length: '',
-                    dimension_width: '',
-                    dimension_height: '',
-                    handling_fee: '',
-                    product_description: '',
-                    not_specified: '',
-                    Plastic: '',
-                    Ceramic: '',
-                    Metal: '',
-                    Glass: '',
-                    Plastic: '',
-                    product_brand_name: '',
-                    product_price: '',
-                    product_size: '',
-                    product_colors: '',
-                    product_tags: '',
-                    purchase_note: '',
-                    product_in_stock: 1,
-                    product_warranty: 0,
-                    warranty_type: '',
-                    product_discount: 0,
-                    sku: '',
-                    shipping_charges: 40,
-                    product_image_link: '',
-                    product_attributes: '',
-                    product_variations: '',
-                    custom_fields: '',
+                    // // => Inventory
+                    // sku: '',
+                    // // => General(Simple-Product)
+                    // product_price: '', product_in_stock: '', product_brand_name: '', product_image_link: '',
+                    // product_warranty: '', warranty_type: '', product_discount: '',
+                    // // => Attributes (Variable Product)
+                    // purchase_note: '',
+                    // // => Variations (Variable Product)
+                    // product_variations: '',
+                    // // => Shipping
+                    // product_weight: '', dimension_length: '', dimension_width: '',
+                    // dimension_height: '', shipping_charges: '', handling_fee: '',
+                    // // => Advanve
+                    // purchase_note: '',
+                    // // Custom Fields
+                    // custom_fields: '',
 
+                    // product_category: '',
+                    // dangerous_goods: '',
+                    // product_tags: '',
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    if (this.state.productCategories == '') {
+                    if (this.state.productCategories == '' || (this.state.simple_product_image_link == '' && values.product_type == 'simple-product')) {
                         // if (this.state.customFieldNameArray == '') {
                         //     this.setState({ categoryError: "error", categoryErrorDiv: 'RedBorderDiv' });
                         // }
                         if (this.state.productCategories == '') {
                             this.setState({ categoryError: "error", categoryErrorDiv: 'RedBorderDiv' });
                         }
-                        // if (this.state.image_link == '') {
-                        //     this.setState({ image_linkError: "error", image_linkErrorDiv: 'RedBorderDiv' });
-                        // }
+                        if (this.state.simple_product_image_link == '' && values.product_type == 'simple-product') {
+                            this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true, image_linkError: "error", image_linkErrorDiv: 'RedBorderDiv' });
+                        }
                         setSubmitting(false);
                     } else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
                         this.setState({ showVariationsErrorAlert: true });
@@ -502,28 +504,59 @@ class AddNew extends Component {
                         setSubmitting(true);
                         this.setState({ isLoading: true });
                         setTimeout(() => {
-                            values.product_category = this.state.productCategories;
+                            let array = [];
+                            this.state.productCategories.forEach(element => {
+                                array.push(element.value)
+                            })
+                            values.product_category = array;
+                            array = [];
+                            this.state.productTags.forEach(element => {
+                                array.push(element.value)
+                            })
+                            values.product_tags = array;
 
-                            values.product_size = this.state.size;
-                            values.product_colors = this.state.color;
-                            values.product_tags = this.state.productTags;
+                            values.dangerous_goods = this.state.dangerousGoodsArray;
 
-                            values.product_image_link = this.state.image_link;
+                            if (values.product_type == 'simple-product') {
+                                array = [];
+                                this.state.simple_product_image_link.forEach(element => {
+                                    array.push(element.value)
+                                })
+                                values.product_image_link = array;
+                            } else {
 
-                            values.product_variations = this.state.variationsArray;
-                            values.custom_fields = this.state.customFieldsArray;
+                                array = [];
+                                this.state.variationsArray.forEach(element => {
+                                    let item = []
+                                    element.items.forEach(e => {
+                                        var obj = {};
+                                        obj[e.name] = e.value;
+                                        item.push(obj)
+                                    });
+                                    item.push({ price: element.price })
+                                    item.push({ stock: element.stock })
+                                    item.push({ image_link: element.image_link })
+                                    console.log('item:', item)
+                                    array.push(item)
+                                })
+                                values.product_variations = array;
+
+
+                                values.custom_fields = this.state.customFieldsArray;
+                            }
+
                             console.log('values: ', values)
+                            resetForm();
+
                             if (this.uploadProduct(values, this)) {
                                 this.setState({
                                     productCategories: '',
                                     categoryError: 'no_error',
                                     categoryErrorDiv: 'BorderDiv',
-                                    size: [],
-                                    color: [],
                                     productTags: [],
                                     warrantyType: 'Year',
                                     inputValue: '',
-                                    image_link: [],
+                                    simple_product_image_link: [],
                                     image_linkError: 'no_error',
                                     image_linkErrorDiv: 'BorderDiv',
                                     isVariableProduct: false,
@@ -538,7 +571,7 @@ class AddNew extends Component {
                                     customFieldValue: '',
                                     customFieldError: '',
                                 });
-                                resetForm();
+
                             }
                             setSubmitting(false);
                         }, 500);
@@ -552,16 +585,26 @@ class AddNew extends Component {
                             <div>
                                 <Row style={styles.title_row} noGutters>
                                     <FontAwesomeIcon icon={faPlus} style={styles.title_fontawesome} />
-                                    <div className="mr-auto" style={styles.title}> Add New </div>
+                                    <div className="mr-auto" style={styles.title}> Add New Product</div>
                                 </Row>
                                 <Form noValidate onSubmit={handleSubmit}>
+
+                                    {this.state.showToast ? <ShowToast onCloseHandler={(e) => this.setState({ showToast: false })} show={this.state.showToast}
+                                        header={'Success'} message={'Product Uploaded Successfully'} iconName={faThumbsUp} color={"green"} />
+                                        : null
+                                    }
                                     {this.state.showVariationsErrorAlert ?
                                         <ShowToast onCloseHandler={(e) => this.setState({ showVariationsErrorAlert: false })} show={this.state.showVariationsErrorAlert}
                                             header={'Error'} message={'Please Add/Save Variations First'} iconName={faExclamationTriangle} color={"red"} />
                                         : null
                                     }
-                                    {this.state.showToast ? <ShowToast onCloseHandler={(e) => this.setState({ showToast: false })} show={this.state.showToast}
-                                        header={'Success'} message={'Product Uploaded Successfully'} iconName={faThumbsUp} color={"green"} /> : null}
+                                    {this.state.showSimpleProductPriceImgLinkErrorrAlert ?
+                                        <ShowToast onCloseHandler={(e) => this.setState({ showSimpleProductPriceImgLinkErrorrAlert: false })} show={this.state.showSimpleProductPriceImgLinkErrorrAlert}
+                                            header={'Error'} message={'Enter Price/Image Link in General Tab First'} iconName={faExclamationTriangle} color={"red"} />
+                                        : null
+                                    }
+
+
                                     <Row noGutters style={{ paddingTop: '2%' }}>
                                         <Col lg={9} md={9} sm={12} xs={12}>
                                             {/* Product Name */}
@@ -572,7 +615,7 @@ class AddNew extends Component {
                                                         type="text"
                                                         placeholder="Enter Product Name"
                                                         name="product_name"
-                                                        value={values.product_name}
+                                                        value={values.product_name || ''}
                                                         onChange={handleChange}
                                                         isInvalid={touched.product_name && errors.product_name}
                                                     />
@@ -598,10 +641,16 @@ class AddNew extends Component {
                                                                 <Form.Group>
                                                                     <Form.Control
                                                                         as="textarea"
+                                                                        placeholder="Enter Product Description"
+                                                                        name="product_description"
+                                                                        value={values.product_description || ''}
                                                                         rows="7"
-                                                                        placeholder="Enter description about season, style, material etc"
-                                                                        id={values.product_description}
+                                                                        onChange={handleChange}
+                                                                        isInvalid={touched.product_description && errors.product_description}
                                                                     />
+                                                                    <Form.Control.Feedback type="invalid">
+                                                                        {errors.product_description}
+                                                                    </Form.Control.Feedback>
                                                                 </Form.Group>
                                                             </Card.Body>
                                                         </Accordion.Collapse>
@@ -614,61 +663,68 @@ class AddNew extends Component {
                                                     productTypeHandler={this.handleProductTypeChange}
                                                     isVariableProduct={this.state.isVariableProduct}
 
-                                                    product_type_values={values.product_type}
+                                                    product_type_values={values.product_type || ''}
 
-                                                    product_price_values={values.product_price}
+                                                    product_price_values={values.product_price || ''}
                                                     product_price_touched={touched.product_price}
                                                     product_price_errors={errors.product_price}
 
-                                                    product_in_stock_values={values.product_in_stock}
+                                                    product_in_stock_values={values.product_in_stock || ''}
                                                     product_in_stock_touched={touched.product_in_stock}
                                                     product_in_stock_errors={errors.product_in_stock}
 
-                                                    product_brand_name_values={values.product_brand_name}
+                                                    product_brand_name_values={values.product_brand_name || ''}
                                                     product_brand_name_touched={touched.product_brand_name}
                                                     product_brand_name_errors={errors.product_brand_name}
 
-                                                    product_warranty_values={values.product_warranty}
+                                                    imageLink={this.state.simple_product_image_link}
+                                                    simpleProductImageLinkHandler={this.handleSimpleProductImageLinkChange.bind(this)}
+                                                    inputValue={this.state.inputValue}
+                                                    simpleProductImageLinkInputChangeHandler={this.handleSimpleProductImageLinkInputChange.bind(this)}
+                                                    simpleProductImageLinkhandleKeyDownHandler={this.handleSimpleProductImage_linkKeyDown.bind(this)}
+                                                    simpleProductError={this.state.showSimpleProductPriceImgLinkErrorrAlert}
+
+                                                    product_warranty_values={values.product_warranty || ''}
                                                     product_warranty_touched={touched.product_warranty}
                                                     product_warranty_errors={errors.product_warranty}
 
-                                                    warranty_type_values={values.warranty_type}
+                                                    warranty_type_values={values.warranty_type || ''}
                                                     warranty_type_touched={touched.warranty_type}
                                                     warranty_type_errors={errors.warranty_type}
 
-                                                    product_discount_values={values.product_discount}
+                                                    product_discount_values={values.product_discount || ''}
                                                     product_discount_touched={touched.product_discount}
                                                     product_discount_errors={errors.product_discount}
 
-                                                    sku_values={values.sku}
+                                                    sku_values={values.sku || ''}
                                                     sku_touched={touched.sku}
                                                     sku_errors={errors.sku}
 
-                                                    product_weight_values={values.product_weight}
+                                                    product_weight_values={values.product_weight || ''}
                                                     product_weight_touched={touched.product_weight}
                                                     product_weight_errors={errors.product_weight}
 
-                                                    dimension_length_values={values.dimension_length}
+                                                    dimension_length_values={values.dimension_length || ''}
                                                     dimension_length_touched={touched.dimension_length}
                                                     dimension_length_errors={errors.dimension_length}
 
-                                                    dimension_width_values={values.dimension_width}
+                                                    dimension_width_values={values.dimension_width || ''}
                                                     dimension_width_touched={touched.dimension_width}
                                                     dimension_width_errors={errors.dimension_width}
 
-                                                    dimension_height_values={values.dimension_height}
+                                                    dimension_height_values={values.dimension_height || ''}
                                                     dimension_height_touched={touched.dimension_height}
                                                     dimension_height_errors={errors.dimension_height}
 
-                                                    shipping_charges_values={values.shipping_charges}
+                                                    shipping_charges_values={values.shipping_charges || ''}
                                                     shipping_charges_touched={touched.shipping_charges}
                                                     shipping_charges_errors={errors.shipping_charges}
 
-                                                    handling_fee_values={values.handling_fee}
+                                                    handling_fee_values={values.handling_fee || ''}
                                                     handling_fee_touched={touched.handling_fee}
                                                     handling_fee_errors={errors.handling_fee}
 
-                                                    purchase_note_values={values.purchase_note}
+                                                    purchase_note_values={values.purchase_note || ''}
                                                     purchase_note_touched={touched.purchase_note}
                                                     purchase_note_errors={errors.purchase_note}
 
@@ -676,14 +732,14 @@ class AddNew extends Component {
                                                     touched={touched}
                                                     errors={errors}
 
-                                                    color={this.state.color}
                                                     productColorChangeHandler={this.handleProductColorChange}
-                                                    size={this.state.size}
+                                                    // size={this.state.size}
                                                     productSizeChangeHandler={this.handleProductSizeChange}
 
                                                     attributesArray={this.state.productAttributesArray}
                                                     name={this.state.productAttributeName}
                                                     value={this.state.productAttributeValue}
+                                                    productAttributeNameSelected={this.state.productAttributeNameSelected}
                                                     attributeNameHandler={this.handleProductAttributeNameChange.bind(this)}
                                                     attributeValueHandler={this.handleProductAttributeValueChange.bind(this)}
                                                     addAttributeHandler={this.handleAddProductAttributeClicked.bind(this)}
@@ -696,20 +752,23 @@ class AddNew extends Component {
 
                                                     saveAttributesHandler={this.handleSaveProductAttributesClicked}
                                                     variationsArray={this.state.variationsArray}
-                                                    productPriceHandler={this.handleProductPriceChanged.bind(this)}
-                                                    productStockHandler={this.handleProductInStockChanged.bind(this)}
-                                                    productImageLinkHandler={this.handleProductImageLinkChanged.bind(this)}
-                                                    priceCheckboxHandler={this.handlePriceCheckboxChanged.bind(this)}
-
+                                                    variationPriceHandler={this.handleVariationPriceChanged.bind(this)}
+                                                    variationStockHandler={this.handleVariationProductInStockChanged.bind(this)}
+                                                    variationImageLinkHandler={this.handleVariationImageLinkChanged.bind(this)}
+                                                    priceCheckboxHandler={this.handleVariationSamePriceCheckboxChanged.bind(this)}
+                                                    samePrice={this.state.samePriceInput}
+                                                    samePriceForAllVariationsHandler={this.handleSamePriceForAllVariationsChanged.bind(this)}
                                                 />
                                             </Row>
                                             {/* End of Product Data Row */}
                                             {/* Custom Fields Row */}
-                                            <Form.Group as={Row} style={styles.row}>
+                                            <Form.Group as={Row} style={styles.row} >
                                                 <CustomFields
                                                     customFieldsArray={this.state.customFieldsArray}
+                                                    isVariableProduct={this.state.isVariableProduct}
                                                     name={this.state.customFieldName}
                                                     value={this.state.customFieldValue}
+                                                    customFieldNameSelected={this.state.customFieldNameSelected}
                                                     fieldNameHandler={this.customFieldNameChangeHandler.bind(this)}
                                                     fieldValueHandler={this.customFieldValueChangeHandler.bind(this)}
                                                     addFieldHandler={this.addCustomFieldBtnClicked.bind(this)}
@@ -769,45 +828,35 @@ class AddNew extends Component {
                                                                     name="not_specified"
                                                                     label="Not Specified"
                                                                     style={styles.label}
-                                                                    onChange={handleChange}
-                                                                    isInvalid={touched.not_specified && errors.not_specified}
-                                                                    feedback={errors.not_specified}
+                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Not Specified')}
                                                                 />
                                                                 <br></br>
                                                                 <Form.Check
                                                                     name="ceramic"
                                                                     label="Ceramic"
                                                                     style={styles.label}
-                                                                    onChange={handleChange}
-                                                                    isInvalid={touched.Ceramic && errors.Ceramic}
-                                                                    feedback={errors.Ceramic}
+                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Ceramic')}
                                                                 />
                                                                 <br></br>
                                                                 <Form.Check
                                                                     name="glass"
                                                                     label="Glass"
                                                                     style={styles.label}
-                                                                    onChange={handleChange}
-                                                                    isInvalid={touched.Glass && errors.Glass}
-                                                                    feedback={errors.Glass}
+                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Glass')}
                                                                 />
                                                                 <br></br>
                                                                 <Form.Check
                                                                     name="metal"
                                                                     label="Metal"
                                                                     style={styles.label}
-                                                                    onChange={handleChange}
-                                                                    isInvalid={touched.Metal && errors.Metal}
-                                                                    feedback={errors.Metal}
+                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Metal')}
                                                                 />
                                                                 <br></br>
                                                                 <Form.Check
                                                                     name="plastic"
                                                                     label="Plastic"
                                                                     style={styles.label}
-                                                                    onChange={handleChange}
-                                                                    isInvalid={touched.Plastic && errors.Plastic}
-                                                                    feedback={errors.Plastic}
+                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Plastic')}
                                                                 />
                                                             </Card.Body>
                                                         </Accordion.Collapse>
@@ -949,7 +998,7 @@ const styles = {
         fontSize: '10px',
     },
     submit_btn: {
-        background: `${GlobalStyleSheet.primry_color}`,
+        // background: `${GlobalStyleSheet.admin_primry_color}`,
         marginTop: '1%',
     },
     label: {

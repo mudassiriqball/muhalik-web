@@ -8,11 +8,29 @@ import {
     faPlus, faKey, faSlidersH, faStoreAlt, faTruck, faTools, faDollarSign, faListAlt, faArrowAltCircleDown,
 } from '@fortawesome/free-solid-svg-icons';
 
-import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import ReactSelectMaterialUi from "react-select-material-ui";
 import GlobalStyleSheet from '../../../../../../../styleSheet';
 import MuhalikConfig from '../../../../../../../sdk/muhalik.config';
+
+import Select, { components } from 'react-select';
+import { colourOptions, groupedOptions } from '../../../../../../../sdk/consts/fields-data';
+
+const groupStyles = {
+    border: '2px dotted green',
+    borderRadius: '5px',
+    background: '#f2fcff',
+};
+const coomponents = {
+    DropdownIndicator: null,
+};
+const Group = props => (
+    <div style={groupStyles}>
+        <components.Group {...props} />
+    </div>
+);
+
+
 
 const ProductData = props => {
     let variations = true;
@@ -131,7 +149,7 @@ const ProductData = props => {
                                                 <>
                                                     <Form.Row>
                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-                                                            <Form.Label style={styles.label}>Product Price<span>*</span></Form.Label>
+                                                            <Form.Label style={styles.label}>Product Price <span> * </span></Form.Label>
                                                             <InputGroup>
                                                                 <Form.Control
                                                                     type="number"
@@ -178,17 +196,30 @@ const ProductData = props => {
                                                             </InputGroup>
                                                         </Form.Group>
                                                     </Form.Row>
-                                                    {/* <Form.Row>
-                                                <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
-                                                    <Form.Label style={styles.label}>Product Size</Form.Label>
-                                                    <CreatableSelect
-                                                        onChange={props.productSizeChangeHandler}
-                                                        options={product_size_options}
-                                                        value={props.size}
-                                                        placeholder="Select/Enter Size"
-                                                    />
-                                                </Form.Group>
-                                                <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
+                                                    <Form.Row>
+                                                        <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                            <Form.Label style={styles.label}>Image Link <span> * </span></Form.Label>
+                                                            {/* <CreatableSelect
+                                                                isMulti
+                                                                onChange={props.simpleProductImageLinkHandler}
+                                                                value={props.imageLink}
+                                                                placeholder="Select/Enter Size"
+                                                            /> */}
+                                                            <CreatableSelect
+                                                                components={coomponents}
+                                                                inputValue={props.inputValue}
+                                                                isClearable
+                                                                isMulti
+                                                                menuIsOpen={false}
+                                                                onChange={props.simpleProductImageLinkHandler}
+                                                                onInputChange={props.simpleProductImageLinkInputChangeHandler}
+                                                                onKeyDown={props.simpleProductImageLinkhandleKeyDownHandler}
+                                                                placeholder="Type something and press enter..."
+                                                                value={props.imageLink}
+                                                            />
+                                                        </Form.Group>
+                                                    </Form.Row>
+                                                    {/*<Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
                                                     <Form.Label style={styles.label}>Product Color</Form.Label>
                                                     <CreatableSelect
                                                         onChange={props.productColorChangeHandler}
@@ -407,7 +438,7 @@ const ProductData = props => {
                                             <Form.Row >
                                                 <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
                                                     <Form.Label style={styles.label}>Field Name</Form.Label>
-                                                    <Form.Control
+                                                    {/* <Form.Control
                                                         as="select"
                                                         size="sm"
                                                         value={props.name}
@@ -417,20 +448,25 @@ const ProductData = props => {
                                                         <option>Aaaa</option>
                                                         <option>Bbb</option>
                                                         <option>Ccc</option>
-                                                    </Form.Control>
+                                                    </Form.Control> */}
+                                                    <Select
+                                                        options={groupedOptions}
+                                                        components={{ Group }}
+                                                        value={props.productAttributeNameSelected}
+                                                        onChange={props.attributeNameHandler}
+                                                    />
                                                 </Form.Group>
                                                 <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
                                                     <Form.Label style={styles.label}>Field Value </Form.Label>
                                                     <InputGroup>
                                                         <Form.Control
                                                             type="text"
-                                                            size="sm"
                                                             placeholder="Enter Value"
                                                             name="sku"
                                                             value={props.value}
                                                             onChange={props.attributeValueHandler}
                                                         />
-                                                        <Button variant="outline-primary" size="sm" style={{ marginLeft: '1%' }}
+                                                        <Button variant="outline-primary" style={{ marginLeft: '1%' }}
                                                             onClick={props.addAttributeHandler}>Add</Button>
                                                     </InputGroup>
                                                 </Form.Group>
@@ -455,9 +491,7 @@ const ProductData = props => {
                                                             value={data.productAttributeName}
                                                             onChange={() => data.productAttributeName}
                                                         >
-                                                            <option>Aaaa</option>
-                                                            <option>Bbb</option>
-                                                            <option>Ccc</option>
+                                                            <option>{data.productAttributeName}</option>
                                                         </Form.Control>
                                                     </Form.Group>
                                                     <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
@@ -487,16 +521,27 @@ const ProductData = props => {
                                         <Tab.Pane eventKey="Variations">
                                             {variations ?
                                                 <>
-                                                    <Form.Label>
-                                                        <Form.Check
-                                                            name="not_specified"
-                                                            label="Same Price for all"
-                                                            style={styles.label}
-                                                            onChange={props.priceCheckboxHandler}
-                                                            id="not_specified"
-                                                        />
-                                                    </Form.Label>
 
+                                                    {/* <Form.Group as={Row} >
+                                                        <Form.Label>
+                                                            <Form.Check
+                                                                name="not_specified"
+                                                                label="Same Price for all"
+                                                                style={styles.label}
+                                                                onChange={props.priceCheckboxHandler}
+                                                                id="not_specified"
+                                                            />
+                                                        </Form.Label>
+                                                        <Form.Control
+                                                            type="text"
+                                                            size="sm"
+                                                            placeholder="Enter Price"
+                                                            name="samePrice"
+                                                            value={props.samePrice}
+                                                            onChange={props.samePriceForAllVariationsHandler}
+                                                        />
+                                                    </Form.Group>
+                                                    <hr /> */}
                                                     {props.variationsArray && props.variationsArray.map((data, index) =>
                                                         <div key={index} >
                                                             <Accordion>
@@ -537,7 +582,7 @@ const ProductData = props => {
                                                                                     placeholder="Enter Product Price"
                                                                                     name="product_price"
                                                                                     value={data.price}
-                                                                                    onChange={(e) => props.productPriceHandler(e, index)}
+                                                                                    onChange={(e) => props.variationPriceHandler(e, index)}
                                                                                     isInvalid={data.price_error}
                                                                                 />
                                                                                 <Form.Control.Feedback type="invalid">
@@ -552,7 +597,7 @@ const ProductData = props => {
                                                                                 name="product_in_stock"
                                                                                 placeholder="Enter Product In Stock"
                                                                                 value={data.stock}
-                                                                                onChange={(e) => props.productStockHandler(e, index)}
+                                                                                onChange={(e) => props.variationStockHandler(e, index)}
                                                                             />
                                                                             <Form.Control.Feedback type="invalid">
                                                                             </Form.Control.Feedback>
@@ -564,7 +609,7 @@ const ProductData = props => {
                                                                                 name="image_link"
                                                                                 placeholder="Enter Image Link"
                                                                                 value={data.image_link}
-                                                                                onChange={(e) => props.productImageLinkHandler(e, index)}
+                                                                                onChange={(e) => props.variationImageLinkHandler(e, index)}
                                                                                 isInvalid={data.image_link_error}
                                                                             />
                                                                             <Form.Control.Feedback type="invalid">
