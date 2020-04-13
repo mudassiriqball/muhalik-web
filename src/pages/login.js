@@ -52,7 +52,7 @@ class Login extends Component {
             if (response.status == '200') {
                 saveTokenToStorage(response.data.token);
                 const decodedToken = decode(response.data.token);
-                
+
                 if (decodedToken.data.role == 'customer') {
                     Router.replace('/index')
                 } else if (decodedToken.data.role == 'vendor') {
@@ -187,7 +187,12 @@ class Login extends Component {
                                                     <Form.Label className="text-center" style={styles.label}>
                                                         Don't have an account..??
                                                         <span>
-                                                            <Link href="signup"><a>Signup</a></Link>
+                                                            <Link href="signup"><a> Signup</a></Link>
+                                                        </span>
+                                                    </Form.Label>
+                                                    <Form.Label className="text-center" style={styles.label}>
+                                                        <span>
+                                                            <Link href="vendor-signup"><a> Sell on Muhalik? Signup</a></Link>
                                                         </span>
                                                     </Form.Label>
                                                 </Form.Row>

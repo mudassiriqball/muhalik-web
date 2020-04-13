@@ -13,25 +13,24 @@ function Toolbar(props) {
         dashboard = <Nav.Link href='./vendor' style={styles.nav_link}>Vendor dashboard</Nav.Link>
         login = <Nav.Link onClick={props.logout} style={styles.nav_link}>
             <FontAwesomeIcon icon={faPowerOff} style={styles.nav_fontawesome} />
-                    Logout
-                </Nav.Link>
+            <div style={styles.link_text}>Logout</div>
+        </Nav.Link>
     } else if (props.token == 'admin') {
         dashboard = <Nav.Link href='./admin' style={styles.nav_link}> Admin dashboard </Nav.Link>
         login = <Nav.Link onClick={props.logout} style={styles.nav_link}>
             <FontAwesomeIcon icon={faPowerOff} style={styles.nav_fontawesome} />
-                    Logout
-                </Nav.Link>
+            <div style={styles.link_text}>Logout</div>
+        </Nav.Link>
     } else if (props.token == 'customer') {
         login = <Nav.Link onClick={props.logout} style={styles.nav_link}> Logout </Nav.Link>
     } else {
-        login =
-            <>
-                <Nav.Link href='./login' style={styles.nav_link}>
-                    <FontAwesomeIcon icon={faUser} style={styles.nav_fontawesome} />
-                    Login/Signup
-                </Nav.Link>
-                {/* <Nav.Link href='./vendor-signup'> Register_as_Shop </Nav.Link> */}
-            </>
+        login = <>
+            <Nav.Link href='./login' style={styles.nav_link}>
+                <FontAwesomeIcon icon={faUser} style={styles.nav_fontawesome} />
+                <div style={styles.link_text}>Login/Signup</div>
+            </Nav.Link>
+            {/* <Nav.Link href='./vendor-signup'> Register_as_Shop </Nav.Link> */}
+        </>
     }
 
     const all = React.useState('');
@@ -74,17 +73,21 @@ function Toolbar(props) {
                             <Nav>
                                 <Nav.Link href='./login' style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faGlobe} style={styles.nav_fontawesome} />
-                                    ENG
+                                    <div style={styles.link_text}>ENG</div>
                                 </Nav.Link>
                                 {login}
                                 {dashboard}
                                 <Nav.Link href="#" style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faPen} style={styles.nav_fontawesome} />
-                                    Orders
+                                    <div style={styles.link_text}>Orders</div>
+                                </Nav.Link>
+                                <Nav.Link href="./login" style={styles.nav_link}>
+                                    <FontAwesomeIcon icon={faPen} style={styles.nav_fontawesome} />
+                                    <div style={styles.link_text}>Sell On Muhalik</div>
                                 </Nav.Link>
                                 <Nav.Link href="#" style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faLuggageCart} style={styles.nav_cart_fontawesome} />
-                                    Cart
+                                    <div style={styles.link_text}></div>Cart
                                     </Nav.Link>
                             </Nav>
                         </Navbar.Collapse>
@@ -184,8 +187,16 @@ const styles = {
     },
     nav_link: {
         textAlign: 'center',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
         fontSize: '14px'
     },
+    link_text: {
+        textAlign: 'center',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        fontSize: '14px'
+    }
 
 }
 

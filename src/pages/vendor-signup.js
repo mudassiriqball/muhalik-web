@@ -77,6 +77,7 @@ class VendorSignup extends Component {
         axios.post(url, {
             data
         }).then(function (response) {
+            console.log('response:', response)
             if (response.status == '200') {
                 currentComponent.setState({ isLoading: false });
                 currentComponent.setState({ showToast: true });
@@ -86,7 +87,7 @@ class VendorSignup extends Component {
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
             if (error.response.status == '500') {
-                currentComponent.setState({ serverErrorMsg: 'Tis User already exists.' })
+                currentComponent.setState({ serverErrorMsg: 'This User already exists.' })
             } else {
                 alert('ERROR:' + error.response.data.message)
             }

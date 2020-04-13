@@ -168,6 +168,8 @@ class AddNew extends Component {
             variationsArray: [],
             isVariationsSaved: false,
             samePriceInput: '',
+            sameStockInput: '',
+            sameImgLinkInput: '',
 
             // Custom Fields
             customFieldsArray: [],
@@ -180,7 +182,7 @@ class AddNew extends Component {
             dangerousGoodsArray: [],
         };
         this.handleProductTypeChange = this.handleProductTypeChange.bind(this);
-        this.addCustomFieldBtnClicked = this.addCustomFieldBtnClicked.bind(this);
+        this.handleAddCustomFieldBtnClick = this.handleAddCustomFieldBtnClick.bind(this);
         // this.uploadProduct = this.uploadProduct.bind(this);
     }
 
@@ -194,6 +196,7 @@ class AddNew extends Component {
             console.error(error);
         }
     }
+
     //  Submit data to api
     async uploadProduct(data, currentComponent) {
         console.log('data: ', data)
@@ -213,22 +216,24 @@ class AddNew extends Component {
         // });
     }
 
-    handleProductTagChange = (arr) => {
-        this.setState({ productTags: arr });
-    };
 
 
-    // Product Category
-    handleProductCategoryChange = (arr) => {
-        this.setState({ productCategories: arr, categoryError: 'no_error', categoryErrorDiv: 'BorderDiv' });
+    handleProductTypeChange(e) {
+        if (e.target.value == 'variable-prouct') {
+            this.setState({ isVariableProduct: true });
+        }
+        else {
+            this.setState({ isVariableProduct: false });
+        }
     }
 
-    // Simple Product Image Link
+    // Product Data
+    // => Simple Product Image Link
     handleSimpleProductImageLinkChange = (arr, actionMeta) => {
         this.setState({ simple_product_image_link: arr, image_linkError: 'no_error', image_linkErrorDiv: 'BorderDiv' });
     };
-    handleSimpleProductImageLinkInputChange = (aa) => {
-        this.setState({ inputValue: aa });
+    handleSimpleProductImageLinkInputChange = (arr) => {
+        this.setState({ inputValue: arr });
     };
     handleSimpleProductImage_linkKeyDown = (event) => {
         const inputValue = this.state.inputValue;
@@ -244,19 +249,9 @@ class AddNew extends Component {
                 event.preventDefault();
         }
     };
+    // => End Of Simple Product Image Link
 
-
-
-    handleProductTypeChange(e) {
-        if (e.target.value == 'variable-prouct') {
-            this.setState({ isVariableProduct: true });
-        }
-        else {
-            this.setState({ isVariableProduct: false });
-        }
-    }
-
-    // Product Attributes
+    // => Product Attributes (Variable Product)
     handleProductAttributeNameChange(e) {
         this.setState({ productAttributeName: e.value })
         this.setState({ productAttributeNameSelected: e })
@@ -264,7 +259,7 @@ class AddNew extends Component {
     handleProductAttributeValueChange = (e) => {
         this.setState({ productAttributeValue: e.target.value })
     }
-    handleAddProductAttributeClicked = () => {
+    handleAddProductAttributeClick = () => {
         if (this.state.productAttributeName != '' && this.state.productAttributeValue != '') {
             this.setState({ productAttributeError: '' })
             const copyArray = Object.assign([], this.state.productAttributesArray);
@@ -280,7 +275,7 @@ class AddNew extends Component {
             this.setState({ productAttributeError: 'Enter Field Name and Value' });
         }
     }
-    handleSaveProductAttributesClicked = () => {
+    handleSaveProductAttributesClick = () => {
         var allArrays = [];
         this.state.productAttributesArray.forEach(element => {
             var trim = element.productAttributeValue.split(' ').join('');
@@ -316,37 +311,61 @@ class AddNew extends Component {
             return result;
         }
     }
-
-    handleUpdateProductAttributeClicked = (index, name, value) => {
+    handleUpdateProductAttributeClick = (index, name, value) => {
         const copyArray = Object.assign([], this.state.productAttributesArray);
         copyArray[index] = { productAttributeName: name, productAttributeValue: value };
         this.setState({ productAttributesArray: copyArray });
     }
-    handleDeleteProductAttributeClicked = (index) => {
+    handleDeleteProductAttributeClick = (index) => {
         const copyArray = Object.assign([], this.state.productAttributesArray);
         copyArray.splice(index, 1);
         this.setState({ productAttributesArray: copyArray });
     }
-    handleDeleteProductVariationClicked = (index) => {
-        const copyArray = Object.assign([], this.state.variationsArray);
-        copyArray.splice(index, 1);
-        this.setState({ variationsArray: copyArray });
-    }
-    // 
-    handleSamePriceForAllVariationsChanged = (e) => {
+    // => End Of Product Attributes
+
+    // => Product Variations (Variable Product)
+    //  // =>Same Price For All Variations
+    handleVariationsSamePriceChanged = (e) => {
         this.setState({ samePriceInput: e.target.value })
     }
-    handleVariationSamePriceCheckboxChanged = (e) => {
+    handleVariationsSamePriceCheckbox = (e) => {
         if (e.target.checked) {
             const copyArray = Object.assign([], this.state.variationsArray);
-
             copyArray.forEach(element => {
-                element.price = this.state.samePrice
+                element.price = this.state.samePriceInput;
+
             });
+            this.setState({ variationsArray: copyArray })
         }
     }
-    // 
-    handleVariationPriceChanged = (e, index) => {
+    // // => Same Stock For All Variations
+    handleVariationsSameStockChanged = (e) => {
+        this.setState({ sameStockInput: e.target.value })
+    }
+    handleVariationsSameStockCheckbox = (e) => {
+        if (e.target.checked) {
+            const copyArray = Object.assign([], this.state.variationsArray);
+            copyArray.forEach(element => {
+                element.stock = this.state.sameStockInput;
+            });
+            this.setState({ variationsArray: copyArray })
+        }
+    }
+    // // => Same Image link For All Variations
+    handleVariationsSameImgLinkChanged = (e) => {
+        this.setState({ sameImgLinkInput: e.target.value })
+    }
+    handleVariationsSameImgLinkCheckbox = (e) => {
+        if (e.target.checked) {
+            const copyArray = Object.assign([], this.state.variationsArray);
+            copyArray.forEach(element => {
+                element.image_link = this.state.sameImgLinkInput;
+            });
+            this.setState({ variationsArray: copyArray })
+        }
+    }
+
+    handleVariationPriceChange = (e, index) => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let object = copyArray[index];
         if (e.target.value >= 0) {
@@ -355,7 +374,7 @@ class AddNew extends Component {
             this.setState({ variationsArray: copyArray });
         }
     }
-    handleVariationProductInStockChanged = (e, index) => {
+    handleVariationProductInStockChang = (e, index) => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let object = copyArray[index];
         if (e.target.value >= 0) {
@@ -364,14 +383,19 @@ class AddNew extends Component {
             this.setState({ variationsArray: copyArray });
         }
     }
-    handleVariationImageLinkChanged = (e, index) => {
+    handleVariationImageLinkChange = (e, index) => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let object = copyArray[index];
         object.image_link = e.target.value;
         copyArray[index] = object;
         this.setState({ variationsArray: copyArray });
     }
-    saveVariationsClicked = () => {
+    handleDeleteProductVariationClick = (index) => {
+        const copyArray = Object.assign([], this.state.variationsArray);
+        copyArray.splice(index, 1);
+        this.setState({ variationsArray: copyArray });
+    }
+    handleSaveVariationsClick = () => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let flag = true;
         copyArray.forEach(element => {
@@ -393,7 +417,7 @@ class AddNew extends Component {
         }
         this.setState({ variationsArray: copyArray });
     }
-    variationsErrorCheck = (data) => {
+    handleVariationsErrorCheck = (data) => {
         if (data.price_error != '' || data.image_link_error != '') {
             return '1px solid red'
         }
@@ -401,18 +425,20 @@ class AddNew extends Component {
             return 'none'
         }
     }
+    // => End Of Product Variations
+    // End of Product Data
 
 
 
     // Custom Fields
-    customFieldNameChangeHandler(e) {
+    handleCustomFieldNameChange(e) {
         this.setState({ customFieldName: e.value })
         this.setState({ customFieldNameSelected: e })
     }
-    customFieldValueChangeHandler = (e) => {
+    handleCustomFieldValueChange = (e) => {
         this.setState({ customFieldValue: e.target.value })
     }
-    addCustomFieldBtnClicked = () => {
+    handleAddCustomFieldBtnClick = () => {
         if (this.state.customFieldName != '' && this.state.customFieldValue != '') {
             this.setState({ customFieldError: '' })
             const copyArray = Object.assign([], this.state.customFieldsArray);
@@ -428,17 +454,24 @@ class AddNew extends Component {
             this.setState({ customFieldError: 'Enter Field Name and Value' });
         }
     }
-    updateCustomFieldsEvent = (index, name, value) => {
+    updateCustomFieldsClick = (index, name, value) => {
         const copyArray = Object.assign([], this.state.customFieldsArray);
         copyArray[index] = { customFieldName: name, customFieldValue: value };
         this.setState({ customFieldsArray: copyArray });
     }
-    deleteCustomFieldsEvent = (index) => {
+    deleteCustomFieldsClick = (index) => {
         const copyArray = Object.assign([], this.state.customFieldsArray);
         copyArray.splice(index, 1);
         this.setState({ customFieldsArray: copyArray });
     }
 
+
+
+
+    // Product Category
+    handleProductCategoryChange = (arr) => {
+        this.setState({ productCategories: arr, categoryError: 'no_error', categoryErrorDiv: 'BorderDiv' });
+    }
 
     // Dangerous Goods
     handleDangerousGoodsChange = (e, name) => {
@@ -454,6 +487,11 @@ class AddNew extends Component {
         }
         this.setState({ dangerousGoodsArray: copyArray });
     }
+
+    // Product Tags
+    handleProductTagChange = (arr) => {
+        this.setState({ productTags: arr });
+    };
 
     render() {
         return (
@@ -523,10 +561,18 @@ class AddNew extends Component {
                                     array.push(element.value)
                                 })
                                 values.product_image_link = array;
+                                if (this.state.customFieldsArray != []) {
+                                    array = []
+                                    this.state.customFieldsArray.forEach(custom => {
+                                        var obj = {};
+                                        obj[custom.customFieldName] = custom.customFieldValue;
+                                        array.push(obj)
+                                    });
+                                    values.custom_fields = array;
+                                }
                             } else {
-
                                 array = [];
-                                this.state.variationsArray.forEach(element => {
+                                this.state.variationsArray.forEach((element, index) => {
                                     let item = []
                                     element.items.forEach(e => {
                                         var obj = {};
@@ -536,13 +582,15 @@ class AddNew extends Component {
                                     item.push({ price: element.price })
                                     item.push({ stock: element.stock })
                                     item.push({ image_link: element.image_link })
-                                    console.log('item:', item)
+
+                                    this.state.customFieldsArray.forEach(custom => {
+                                        var obj = {};
+                                        obj[custom.customFieldName] = custom.customFieldValue;
+                                        item.push(obj)
+                                    });
                                     array.push(item)
                                 })
                                 values.product_variations = array;
-
-
-                                values.custom_fields = this.state.customFieldsArray;
                             }
 
                             console.log('values: ', values)
@@ -742,22 +790,31 @@ class AddNew extends Component {
                                                     productAttributeNameSelected={this.state.productAttributeNameSelected}
                                                     attributeNameHandler={this.handleProductAttributeNameChange.bind(this)}
                                                     attributeValueHandler={this.handleProductAttributeValueChange.bind(this)}
-                                                    addAttributeHandler={this.handleAddProductAttributeClicked.bind(this)}
-                                                    update={this.handleUpdateProductAttributeClicked.bind(this)}
-                                                    deleteAttributeHandler={this.handleDeleteProductAttributeClicked.bind(this)}
-                                                    deleteVariationHandler={this.handleDeleteProductVariationClicked.bind(this)}
-                                                    saveVariationsHandler={this.saveVariationsClicked.bind(this)}
-                                                    variationsErrorHandler={this.variationsErrorCheck.bind(this)}
+                                                    addAttributeHandler={this.handleAddProductAttributeClick.bind(this)}
+                                                    update={this.handleUpdateProductAttributeClick.bind(this)}
+                                                    deleteAttributeHandler={this.handleDeleteProductAttributeClick.bind(this)}
+                                                    deleteVariationHandler={this.handleDeleteProductVariationClick.bind(this)}
+                                                    saveVariationsHandler={this.handleSaveVariationsClick.bind(this)}
+                                                    variationsErrorHandler={this.handleVariationsErrorCheck.bind(this)}
                                                     error={this.state.productAttributeError}
 
-                                                    saveAttributesHandler={this.handleSaveProductAttributesClicked}
+                                                    saveAttributesHandler={this.handleSaveProductAttributesClick}
                                                     variationsArray={this.state.variationsArray}
-                                                    variationPriceHandler={this.handleVariationPriceChanged.bind(this)}
-                                                    variationStockHandler={this.handleVariationProductInStockChanged.bind(this)}
-                                                    variationImageLinkHandler={this.handleVariationImageLinkChanged.bind(this)}
-                                                    priceCheckboxHandler={this.handleVariationSamePriceCheckboxChanged.bind(this)}
-                                                    samePrice={this.state.samePriceInput}
-                                                    samePriceForAllVariationsHandler={this.handleSamePriceForAllVariationsChanged.bind(this)}
+                                                    variationPriceHandler={this.handleVariationPriceChange.bind(this)}
+                                                    variationStockHandler={this.handleVariationProductInStockChang.bind(this)}
+                                                    variationImageLinkHandler={this.handleVariationImageLinkChange.bind(this)}
+
+                                                    samePriceInput={this.state.samePriceInput}
+                                                    variationsSamePriceChanged={this.handleVariationsSamePriceChanged.bind(this)}
+                                                    variationsSamePriceCheckboxHandler={this.handleVariationsSamePriceCheckbox.bind(this)}
+
+                                                    sameStockInput={this.state.sameStockInput}
+                                                    variationsSameStockChanged={this.handleVariationsSameStockChanged.bind(this)}
+                                                    variationsSameStockCheckboxHandler={this.handleVariationsSameStockCheckbox.bind(this)}
+
+                                                    sameImgLinkInput={this.state.sameImgLinkInput}
+                                                    variationsSameImgLinkChanged={this.handleVariationsSameImgLinkChanged.bind(this)}
+                                                    variationsSameImgLinkCheckboxHandler={this.handleVariationsSameImgLinkCheckbox.bind(this)}
                                                 />
                                             </Row>
                                             {/* End of Product Data Row */}
@@ -769,11 +826,11 @@ class AddNew extends Component {
                                                     name={this.state.customFieldName}
                                                     value={this.state.customFieldValue}
                                                     customFieldNameSelected={this.state.customFieldNameSelected}
-                                                    fieldNameHandler={this.customFieldNameChangeHandler.bind(this)}
-                                                    fieldValueHandler={this.customFieldValueChangeHandler.bind(this)}
-                                                    addFieldHandler={this.addCustomFieldBtnClicked.bind(this)}
-                                                    update={this.updateCustomFieldsEvent.bind(this)}
-                                                    delete={this.deleteCustomFieldsEvent.bind(this)}
+                                                    fieldNameHandler={this.handleCustomFieldNameChange.bind(this)}
+                                                    fieldValueHandler={this.handleCustomFieldValueChange.bind(this)}
+                                                    addFieldHandler={this.handleAddCustomFieldBtnClick.bind(this)}
+                                                    update={this.updateCustomFieldsClick.bind(this)}
+                                                    delete={this.deleteCustomFieldsClick.bind(this)}
                                                     error={this.state.customFieldError}
                                                 />
                                             </Form.Group>

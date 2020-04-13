@@ -143,7 +143,7 @@ const DashboardSideDrawer = props => {
                 <div className="tabs_side_drawer_tab_content" >
                     <Col sm={"auto"} style={{ padding: '0px' }}>
                         <Tab.Content>
-                            <Tab.Pane eventKey="VendorDashboard">
+                            <Tab.Pane eventKey="Dashboard">
                                 <VendorDashboard />
                             </Tab.Pane>
                             <Tab.Pane eventKey="AllProducts">

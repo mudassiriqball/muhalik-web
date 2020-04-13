@@ -14,12 +14,14 @@ import GlobalStyleSheet from '../../../../../../../styleSheet';
 import MuhalikConfig from '../../../../../../../sdk/muhalik.config';
 
 import Select, { components } from 'react-select';
-import { colourOptions, groupedOptions } from '../../../../../../../sdk/consts/fields-data';
+import { groupedOptions } from '../../../../../../../sdk/consts/fields-data';
+import AddNewFieldNameModal from './add-new-field-name-model'
 
 const groupStyles = {
-    border: '2px dotted green',
+    border: `1px solid ${GlobalStyleSheet.admin_primry_color}`,
     borderRadius: '5px',
-    background: '#f2fcff',
+    background: 'white',
+    color: `${GlobalStyleSheet.admin_primry_color}`,
 };
 const coomponents = {
     DropdownIndicator: null,
@@ -30,9 +32,8 @@ const Group = props => (
     </div>
 );
 
-
-
 const ProductData = props => {
+    const [modalShow, setModalShow] = React.useState(false);
     let variations = true;
     if (props.attributesArray == '') {
         variations = false;
@@ -455,6 +456,13 @@ const ProductData = props => {
                                                         value={props.productAttributeNameSelected}
                                                         onChange={props.attributeNameHandler}
                                                     />
+                                                    <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={() => setModalShow(true)}>
+                                                        Add New
+                                                    </Nav.Link>
+                                                    <AddNewFieldNameModal
+                                                        show={modalShow}
+                                                        onHide={() => setModalShow(false)}
+                                                    />
                                                 </Form.Group>
                                                 <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
                                                     <Form.Label style={styles.label}>Field Value </Form.Label>
@@ -521,27 +529,71 @@ const ProductData = props => {
                                         <Tab.Pane eventKey="Variations">
                                             {variations ?
                                                 <>
-
-                                                    {/* <Form.Group as={Row} >
-                                                        <Form.Label>
-                                                            <Form.Check
-                                                                name="not_specified"
-                                                                label="Same Price for all"
-                                                                style={styles.label}
-                                                                onChange={props.priceCheckboxHandler}
-                                                                id="not_specified"
+                                                    <Form.Row>
+                                                        {/* Same Price */}
+                                                        <Form.Group as={Col} >
+                                                            <Form.Label>
+                                                                <Form.Check
+                                                                    name="samePrice"
+                                                                    label="Same Price for all"
+                                                                    style={styles.label}
+                                                                    onChange={props.variationsSamePriceCheckboxHandler}
+                                                                    id="samePrice"
+                                                                />
+                                                            </Form.Label>
+                                                            <Form.Control
+                                                                type="text"
+                                                                size="sm"
+                                                                placeholder="Enter Price"
+                                                                name="samePrice"
+                                                                value={props.samePriceInput}
+                                                                onChange={props.variationsSamePriceChanged}
                                                             />
-                                                        </Form.Label>
-                                                        <Form.Control
-                                                            type="text"
-                                                            size="sm"
-                                                            placeholder="Enter Price"
-                                                            name="samePrice"
-                                                            value={props.samePrice}
-                                                            onChange={props.samePriceForAllVariationsHandler}
-                                                        />
-                                                    </Form.Group>
-                                                    <hr /> */}
+                                                        </Form.Group>
+
+                                                        {/* Same Stock */}
+                                                        <Form.Group as={Col} >
+                                                            <Form.Label>
+                                                                <Form.Check
+                                                                    name="sameStock"
+                                                                    label="Same Stock for all"
+                                                                    style={styles.label}
+                                                                    onChange={props.variationsSameStockCheckboxHandler}
+                                                                    id="sameStock"
+                                                                />
+                                                            </Form.Label>
+                                                            <Form.Control
+                                                                type="text"
+                                                                size="sm"
+                                                                placeholder="Enter Product In Stock"
+                                                                name="sameStock"
+                                                                value={props.sameStockInput}
+                                                                onChange={props.sameStockForAllVariationsChangeHandler}
+                                                            />
+                                                        </Form.Group>
+
+                                                        {/* Same Image Link */}
+                                                        <Form.Group as={Col} >
+                                                            <Form.Label>
+                                                                <Form.Check
+                                                                    name="sameImageLink"
+                                                                    label="Same Image Link for all"
+                                                                    style={styles.label}
+                                                                    onChange={props.variationsSameImgLinkCheckboxHandler}
+                                                                    id="sameImageLink"
+                                                                />
+                                                            </Form.Label>
+                                                            <Form.Control
+                                                                type="text"
+                                                                size="sm"
+                                                                placeholder="Enter Image Link"
+                                                                name="sameImgLinkInput"
+                                                                value={props.sameImgLinkInput}
+                                                                onChange={props.variationsSameImgLinkChanged}
+                                                            />
+                                                        </Form.Group>
+                                                    </Form.Row>
+                                                    <hr />
                                                     {props.variationsArray && props.variationsArray.map((data, index) =>
                                                         <div key={index} >
                                                             <Accordion>

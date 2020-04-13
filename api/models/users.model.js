@@ -89,7 +89,6 @@ const User = new Schema({
     },
     fullName: {
         type: String,
-        required:true
     },
     email: {
         type: String,
@@ -98,39 +97,30 @@ const User = new Schema({
     },
     password: {
         type: String,
-        required:true
     },
     country: {
         type: String,
-        required:true
     },
     gender: {
         type: String,
-        required:true
     },
     role: {
         type: String,
-        required:true
     },
     address: {
         type: String,
-        required:true
     },
     shop_name: {
         type: String,
-        required:true
     },
     category: {
         type: String,
-        required:true
     },
     shopAddress: {
         type: String,
-        required:true
     },
     city: {
         type: String,
-        required:true
     },
     avatar: {
         type: String
