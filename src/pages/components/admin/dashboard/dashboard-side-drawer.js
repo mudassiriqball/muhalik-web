@@ -1,18 +1,25 @@
 import { Nav, Tab, Row, Col, Image } from "react-bootstrap";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPersonBooth, faTachometerAlt, faChevronRight, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import {
+    faPersonBooth, faTachometerAlt, faChevronRight, faUsers, faChevronUp, faChevronDown,
+    faListAlt, faWarehouse, faTags, faPercent, faChartBar, faPlusCircle
+} from '@fortawesome/free-solid-svg-icons';
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
-import Dashboard from './dashboard-tabs-content/dashboard';
-import Vendors from './dashboard-tabs-content/vendors';
-import Customers from './dashboard-tabs-content/customers';
-import Products from './dashboard-tabs-content/products';
-import Categories from './dashboard-tabs-content/categories';
-import Inventory from './dashboard-tabs-content/inventory';
-import Discounts from './dashboard-tabs-content/discount';
-import Commision from './dashboard-tabs-content/commision';
-import Reports from './dashboard-tabs-content/reports';
+import AdminDashboard from './dashboard-contents/admin-dashboard';
+import Vendors from './dashboard-contents/vendors';
+import Customers from './dashboard-contents/customers';
+import AddNew from '../../vendor/dashboard/dashboard-contents/product-contents/add-new';
+// Products 
+import ProducCategories from './dashboard-contents/product-contents/product-categories'
+import ProductTags from './dashboard-contents/product-contents/product-tags'
+import ProductFields from './dashboard-contents/product-contents/product-fields'
+// 
+import Inventory from './dashboard-contents/inventory';
+import Discounts from './dashboard-contents/discount';
+import Commision from './dashboard-contents/commision';
+import Reports from './dashboard-contents/reports';
 
 import GlobalStyleSheet from '../../../../styleSheet';
 
@@ -22,9 +29,12 @@ const DashboardSideDrawer = props => {
     if (props.show) {
         drawerClasses = "tabs_side_drawer open";
     }
+
+    const [show_product, setShow_product] = React.useState(false);
+
     return (
         <div>
-            <Tab.Container id="dashboard-tabs" defaultActiveKey="one">
+            <Tab.Container id="dashboard-tabs" defaultActiveKey="Dashboard">
                 {/* Side Drawer Components */}
                 <div className={drawerClasses}>
                     <Nav className="flex-column" variant="pills">
@@ -36,92 +46,122 @@ const DashboardSideDrawer = props => {
                             </p>
                         </Nav.Item>
                         <Nav.Item>
-                            <div className="hover">
-                                <Nav.Link eventKey="zero" onClick={props.click} style={styles.tab_link}>
+                            <div className="nav_link">
+                                <Nav.Link eventKey="Dashboard" onClick={props.click} style={styles.nav_link}>
                                     <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
-                                    Dashboard
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="hover">
-                                <Nav.Link eventKey="one" onClick={props.click} style={styles.tab_link}>
-                                    <FontAwesomeIcon size="xs" icon={faPersonBooth} style={styles.fontawesome} />
-                                    Vendors
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="hover">
-                                <Nav.Link eventKey="two" onClick={props.click} style={styles.tab_link}>
-                                    <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
-                                        Customers
+                                    <div className="mr-auto">Dashboard</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
-                        {/* <Nav.Item>
-                                    <div className="hover">
-                                        <Nav.Link eventKey="three" onClick={props.click} style={styles.tab_link}>
-                                            <FontAwesomeIcon icon={faProductHunt} style={styles.fontawesome} />
-                                            Products
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                        </Nav.Link>
-                                    </div>
-                                </Nav.Item> */}
                         <Nav.Item>
-                            <div className="hover">
-                                <Nav.Link eventKey="four" onClick={props.click} style={styles.tab_link}>
-                                    <FontAwesomeIcon icon={faListAlt} style={styles.fontawesome} />
-                                    Categories
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                            <div className="nav_link">
+                                <Nav.Link eventKey="Vendors" onClick={props.click} style={styles.nav_link}>
+                                    <FontAwesomeIcon size="xs" icon={faPersonBooth} style={styles.fontawesome} />
+                                    <div className="mr-auto">Vendors</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
                         <Nav.Item>
-                            <div className="hover">
-                                <Nav.Link eventKey="five" onClick={props.click} style={styles.tab_link}>
+                            <div className="nav_link">
+                                <Nav.Link eventKey="Customers" onClick={props.click} style={styles.nav_link}>
+                                    <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
+                                    <div className="mr-auto">Customers</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                </Nav.Link>
+                            </div>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <div className="nav_link">
+                                <Nav.Link style={styles.nav_link} onClick={() => setShow_product(!show_product)}>
+                                    <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                    <div className="mr-auto"> Products </div>
+                                    <FontAwesomeIcon icon={show_product ? faChevronUp : faChevronDown} style={styles.forword_fontawesome} />
+                                </Nav.Link>
+                            </div>
+                        </Nav.Item>
+                        {show_product ?
+                            <div>
+                                <div className="product_submenu">
+                                    <Nav.Link eventKey="AllProducts" onClick={props.click} style={styles.product_submenu_link} >
+                                        <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                        <div className="mr-auto"> All Products </div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                                <div className="product_submenu">
+                                    <Nav.Link eventKey="AddProduct" onClick={props.click} style={styles.product_submenu_link} >
+                                        <FontAwesomeIcon size="xs" icon={faPlusCircle} style={styles.fontawesome} />
+                                        <div className="mr-auto"> Add Product</div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                                <div className="product_submenu">
+                                    <Nav.Link eventKey="ProducCategories" onClick={props.click} style={styles.product_submenu_link}>
+                                        <FontAwesomeIcon size="xs" icon={faListAlt} style={styles.fontawesome} />
+                                        <div className="mr-auto"> Product Categories </div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                                <div className="product_submenu">
+                                    <Nav.Link eventKey="ProductTags" onClick={props.click} style={styles.product_submenu_link}>
+                                        <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
+                                        <div className="mr-auto"> Product Tags </div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                                <div className="product_submenu">
+                                    <Nav.Link eventKey="ProductFields" onClick={props.click} style={styles.product_submenu_link}>
+                                        <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                        <div className="mr-auto"> Product Fields </div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </div>
+                            : null}
+                        <Nav.Item>
+                            <div className="nav_link">
+                                <Nav.Link eventKey="Inventory" onClick={props.click} style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
-                                    Inventory
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    <div className="mr-auto">Inventory</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
                         <Nav.Item>
-                            <div className="hover">
-                                <Nav.Link eventKey="six" onClick={props.click} style={styles.tab_link}>
+                            <div className="nav_link">
+                                <Nav.Link eventKey="Discounts" onClick={props.click} style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
-                                    Discounts
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    <div className="mr-auto">Discounts</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
                         <Nav.Item>
-                            <div className="hover" >
-                                <Nav.Link eventKey="seven" onClick={props.click} style={styles.tab_link}>
+                            <div className="nav_link" >
+                                <Nav.Link eventKey="Commission" onClick={props.click} style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
-                                    Commission
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    <div className="mr-auto">Commission</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
                         <Nav.Item>
-                            <div className="hover" >
-                                <Nav.Link eventKey="eight" onClick={props.click} style={styles.tab_link}>
+                            <div className="nav_link" >
+                                <Nav.Link eventKey="Reports" onClick={props.click} style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
-                                    Reports
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    <div className="mr-auto">Reports</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
                         <Nav.Item>
-                            <div className="hover" >
-                                <Nav.Link  onClick={props.click, props.logoutClickHandler} style={styles.tab_link}>
+                            <div className="nav_link" >
+                                <Nav.Link onClick={props.click, props.logoutClickHandler} style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
-                                    Logout
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    <div className="mr-auto">Logout</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
@@ -131,31 +171,42 @@ const DashboardSideDrawer = props => {
                 <div className="tabs_side_drawer_tab_content" >
                     <Col sm={"auto"} style={{ padding: '0px' }}>
                         <Tab.Content>
-                            <Tab.Pane eventKey="zero">
-                                <Dashboard />
+                            <Tab.Pane eventKey="Dashboard">
+                                <AdminDashboard />
                             </Tab.Pane>
-                            <Tab.Pane eventKey="one">
+                            <Tab.Pane eventKey="Vendors">
                                 <Vendors />
                             </Tab.Pane>
-                            <Tab.Pane eventKey="two">
+                            <Tab.Pane eventKey="Customers">
                                 <Customers />
                             </Tab.Pane>
-                            {/* <Tab.Pane eventKey="three">
-                                <Products />
-                            </Tab.Pane> */}
-                            <Tab.Pane eventKey="four">
-                                <Categories />
+                            {/* Product */}
+                            <Tab.Pane eventKey="AllProducts">
+                                All Products
                             </Tab.Pane>
-                            <Tab.Pane eventKey="five">
+                            <Tab.Pane eventKey="AddProduct">
+                                <AddNew />
+                            </Tab.Pane>
+                            <Tab.Pane eventKey="ProducCategories">
+                                <ProducCategories />
+                            </Tab.Pane>
+                            <Tab.Pane eventKey="ProductTags">
+                                <ProductTags />
+                            </Tab.Pane>
+                            <Tab.Pane eventKey="ProductFields">
+                                <ProductFields />
+                            </Tab.Pane>
+                            {/*  */}
+                            <Tab.Pane eventKey="Inventory">
                                 <Inventory />
                             </Tab.Pane>
-                            <Tab.Pane eventKey="six">
+                            <Tab.Pane eventKey="Discounts">
                                 <Discounts />
                             </Tab.Pane>
-                            <Tab.Pane eventKey="seven">
+                            <Tab.Pane eventKey="Commision">
                                 <Commision />
                             </Tab.Pane>
-                            <Tab.Pane eventKey="eight">
+                            <Tab.Pane eventKey="Reports">
                                 <Reports />
                             </Tab.Pane>
                         </Tab.Content>
@@ -165,12 +216,12 @@ const DashboardSideDrawer = props => {
             </Tab.Container>
             <style jsx>
                 {`
-                    .hover {
+                    .nav_link {
                         color: ${GlobalStyleSheet.body_color};
                         border-top: 0.5px solid #434556;
                         border-bottom: 0.5px solid #434556;
                     }
-                    .hover:hover {
+                    .nav_link:hover {
                         background: #30313E;
                     }
                     .tabs_side_drawer {
@@ -181,6 +232,7 @@ const DashboardSideDrawer = props => {
                         top: 0;
                         bottom: 1px;
                         left: 0;
+                        overflow-y: auto;                        
                         width: 80%;
                         max-width: 400px;
                         z-index: 200;
@@ -189,6 +241,12 @@ const DashboardSideDrawer = props => {
                     }
                     .tabs_side_drawer.open{
                         transform: translateX(0);
+                    }
+                    .product_submenu {
+                        background: ${GlobalStyleSheet.admin_primry_color};
+                        border-top: 0.5px solid #434556;
+                        border-bottom: 0.5px solid #434556;
+                        margin: 0% 5% 0% 10%;
                     }
                     p {
                         text-align: center; 
@@ -233,21 +291,23 @@ const styles = {
         padding: '0px',
         margin: '0px'
     },
-    // tab_link: {
-    //     color: '#cccccc',
-    //     fontSize: '14px',
-    //     paddingTop: '2%',
-    //     paddingBottom: '2%',
-    // },
-    tab_link: {
+    nav_link: {
         color: 'white',
-        fontSize: '14px',
-        paddingTop: '5%',
-        paddingBottom: '5%',
+        fontSize: '13px',
+        display: 'flex',
+        alignItems: 'center',
+        height: '45px'
+    },
+    product_submenu_link: {
+        color: 'white',
+        fontSize: '11px',
+        display: 'flex',
+        alignItems: 'center',
+        height: '40px'
     },
     fontawesome: {
         color: `${GlobalStyleSheet.body_color}`,
-        margin: '0px 8% 0px 5%',
+        marginRight: '8%',
         width: '17px',
         height: '17px',
         maxHeight: '17px',
@@ -255,7 +315,6 @@ const styles = {
     },
     forword_fontawesome: {
         color: `${GlobalStyleSheet.body_color}`,
-        margin: '8px 5% 0px 0px',
         float: 'right',
         width: '8px',
         height: '8px',

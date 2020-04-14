@@ -32,6 +32,7 @@ export function removeTokenFromStorage() {
     try {
         reactLocalStorage.remove('token');
         Router.replace('/index');
+        Router.reload('/index');
     } catch (error) {
         console.log("error:", error)
     }
@@ -41,7 +42,9 @@ export function chectAuth(rolee) {
     try {
         const token = reactLocalStorage.get('token');
         const decodedToken = decode(token);
-        if (decodedToken.data.role !== rolee) {
+        if (decodedToken.data.role == 'admin') {
+            return decodedToken.data.fullName;
+        } else if (decodedToken.data.role !== rolee) {
             Router.replace('/index')
         } else {
             return decodedToken.data.fullName;

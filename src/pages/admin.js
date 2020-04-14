@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Router from 'next/router'
-import DashboardTabs from './components/admin/dashboard/dashboard-tabs';
+import Dashboard from './components/admin/dashboard/dashboard';
 import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-drawer';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import GlobalStyleSheet from '../styleSheet';
@@ -22,13 +22,13 @@ const BackDrop = props => (
     </div>
 )
 
-class AdminDashboard extends Component {
+class Admin extends Component {
     constructor(props) {
         super(props);
         this.authUser()
         this.state = {
             sideDrawerOpen: false,
-            showSideDrawer: true,
+            showWrapper: true,
             jwt_token: '',
         }
     }
@@ -42,9 +42,9 @@ class AdminDashboard extends Component {
             return { sideDrawerOpen: !prevState.sideDrawerOpen };
         });
     };
-    showSideDrawerClickHandler = () => {
+    ShowWrapperClickHandler = () => {
         this.setState(prevState => {
-            return { showSideDrawer: !prevState.showSideDrawer };
+            return { showWrapper: !prevState.showWrapper };
         });
     };
 
@@ -65,8 +65,8 @@ class AdminDashboard extends Component {
         return (
             <div style={styles.body}>
                 {/* <AdminLayout> */}
-                <DashboardTabs token={this.state.jwt_token} show={this.state.showSideDrawer} drawerClickHandler={this.drawerToggleClickHandler}
-                    ClickHandler={this.showSideDrawerClickHandler} logoutClickHandler={this.logout} />
+                <Dashboard token={this.state.jwt_token} show={this.state.showWrapper} drawerClickHandler={this.drawerToggleClickHandler}
+                    ClickHandler={this.ShowWrapperClickHandler} logoutClickHandler={this.logout} />
                 <DashboardSideDrawer token={this.state.jwt_token} show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler} logoutClickHandler={this.logout} />
                 {backdrop}
@@ -83,8 +83,8 @@ const styles = {
         top: '0',
         left: '0',
         right: '0',
-        bottom: '0',
+        minHeight: '100vh',
     },
 }
 
-export default AdminDashboard;
+export default Admin;

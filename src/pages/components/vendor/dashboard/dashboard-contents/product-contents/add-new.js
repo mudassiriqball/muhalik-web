@@ -193,7 +193,7 @@ class AddNew extends Component {
             const response = await axios.get(url);
             this.setState({ product_categories_options: response.data.data });
         } catch (error) {
-            console.error(error);
+            console.log(error);
         }
     }
 
@@ -292,7 +292,7 @@ class AddNew extends Component {
             split.forEach((e, i) => {
                 item.push({ name: this.state.productAttributesArray[i].productAttributeName, value: e })
             });
-            data.push({ items: item, price: '', stock: '1', image_link: '', price_error: '', image_link_error: '' })
+            data.push({ items: item, price: '', stock: '1', image_link: '', price_error: '', image_link_error: '', customField: [] })
         });
         // console.log("split Array: ", data)
         this.setState({ variationsArray: data })
@@ -440,16 +440,28 @@ class AddNew extends Component {
     }
     handleAddCustomFieldBtnClick = () => {
         if (this.state.customFieldName != '' && this.state.customFieldValue != '') {
+            const copyArray = Object.assign([], this.state.variationsArray);
+
+            if (this.state.isVariableProduct == true) {
+                copyArray.forEach(element => {
+                    element.customField.push({
+                        name: this.state.customFieldName,
+                        value: this.state.customFieldValue
+                    });
+                    console.log("element.customField: ", element.customField);
+                });
+                this.setState({ variationsArray: copyArray })
+            } else {
+                this.state.customFieldsArray.push({
+                    name: this.state.customFieldName,
+                    value: this.state.customFieldValue,
+                })
+            }
+
             this.setState({ customFieldError: '' })
-            const copyArray = Object.assign([], this.state.customFieldsArray);
-            copyArray.push({
-                customFieldName: this.state.customFieldName,
-                customFieldValue: this.state.customFieldValue,
-            })
             this.setState({ customFieldName: '' })
             this.setState({ customFieldValue: '' })
             this.setState({ customFieldNameSelected: '' })
-            this.setState({ customFieldsArray: copyArray })
         } else {
             this.setState({ customFieldError: 'Enter Field Name and Value' });
         }
@@ -477,10 +489,10 @@ class AddNew extends Component {
     handleDangerousGoodsChange = (e, name) => {
         const copyArray = Object.assign([], this.state.dangerousGoodsArray);
         if (e.target.checked) {
-            copyArray.push(name);
+            copyArray.push({ value: name });
         } else {
             copyArray.forEach((element, index) => {
-                if (element == name) {
+                if (element.value == name) {
                     copyArray.splice(index, 1)
                 }
             });
@@ -498,30 +510,7 @@ class AddNew extends Component {
             <Formik
                 validationSchema={schema}
                 initialValues={{
-                    // product_name: '',
-                    // product_description: '',
-                    // // Product Data
                     product_type: 'simple-product',
-                    // // => Inventory
-                    // sku: '',
-                    // // => General(Simple-Product)
-                    // product_price: '', product_in_stock: '', product_brand_name: '', product_image_link: '',
-                    // product_warranty: '', warranty_type: '', product_discount: '',
-                    // // => Attributes (Variable Product)
-                    // purchase_note: '',
-                    // // => Variations (Variable Product)
-                    // product_variations: '',
-                    // // => Shipping
-                    // product_weight: '', dimension_length: '', dimension_width: '',
-                    // dimension_height: '', shipping_charges: '', handling_fee: '',
-                    // // => Advanve
-                    // purchase_note: '',
-                    // // Custom Fields
-                    // custom_fields: '',
-
-                    // product_category: '',
-                    // dangerous_goods: '',
-                    // product_tags: '',
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     if (this.state.productCategories == '' || (this.state.simple_product_image_link == '' && values.product_type == 'simple-product')) {
@@ -543,57 +532,52 @@ class AddNew extends Component {
                         this.setState({ isLoading: true });
                         setTimeout(() => {
                             let array = [];
-                            this.state.productCategories.forEach(element => {
-                                array.push(element.value)
-                            })
-                            values.product_category = array;
-                            array = [];
-                            this.state.productTags.forEach(element => {
-                                array.push(element.value)
-                            })
-                            values.product_tags = array;
+                            // this.state.productCategories.forEach(element => {
+                            //     array.push(element.value)
+                            // })
+                            values.product_category = this.state.productCategories;
+                            // array = [];
+                            // this.state.productTags.forEach(element => {
+                            //     array.push(element.value)
+                            // })
+                            values.product_tags = this.state.productTags;
 
                             values.dangerous_goods = this.state.dangerousGoodsArray;
 
                             if (values.product_type == 'simple-product') {
-                                array = [];
-                                this.state.simple_product_image_link.forEach(element => {
-                                    array.push(element.value)
-                                })
-                                values.product_image_link = array;
+                                // array = [];
+                                // this.state.simple_product_image_link.forEach(element => {
+                                //     array.push(element.value)
+                                // })
+                                values.product_image_link = this.state.simple_product_image_link;
                                 if (this.state.customFieldsArray != []) {
-                                    array = []
-                                    this.state.customFieldsArray.forEach(custom => {
-                                        var obj = {};
-                                        obj[custom.customFieldName] = custom.customFieldValue;
-                                        array.push(obj)
-                                    });
-                                    values.custom_fields = array;
+                                    // array = []
+                                    // this.state.customFieldsArray.forEach(custom => {
+                                    //     var obj = {};
+                                    //     obj[custom.customFieldName] = custom.customFieldValue;
+                                    //     array.push(obj)
+                                    // });
+                                    values.custom_fields = this.state.customFieldsArray;
                                 }
                             } else {
                                 array = [];
                                 this.state.variationsArray.forEach((element, index) => {
                                     let item = []
                                     element.items.forEach(e => {
-                                        var obj = {};
-                                        obj[e.name] = e.value;
-                                        item.push(obj)
+                                        item.push({ name: e.name, value: e.value })
                                     });
-                                    item.push({ price: element.price })
-                                    item.push({ stock: element.stock })
-                                    item.push({ image_link: element.image_link })
-
-                                    this.state.customFieldsArray.forEach(custom => {
-                                        var obj = {};
-                                        obj[custom.customFieldName] = custom.customFieldValue;
-                                        item.push(obj)
+                                    element.customField.forEach(e => {
+                                        item.push({ name: e.name, value: e.value })
                                     });
-                                    array.push(item)
+                                    item.push({ name: 'price', value: element.price })
+                                    item.push({ name: 'stock', value: element.stock })
+                                    item.push({ name: 'image_link', value: element.image_link })
+                                    array.push({ item: item })
                                 })
+
                                 values.product_variations = array;
                             }
 
-                            console.log('values: ', values)
                             resetForm();
 
                             if (this.uploadProduct(values, this)) {

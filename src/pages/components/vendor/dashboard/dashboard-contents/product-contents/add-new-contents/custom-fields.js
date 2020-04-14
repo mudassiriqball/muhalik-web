@@ -84,10 +84,10 @@ const CustomFields = props => {
                                         <Form.Control
                                             as="select"
                                             size="sm"
-                                            value={data.customFieldName}
-                                            onChange={() => data.customFieldName}
+                                            value={data.name}
+                                            onChange={() => data.name}
                                         >
-                                            <option>{data.customFieldName}</option>
+                                            <option>{data.name}</option>
                                         </Form.Control>
                                         {/* <Select
                                             options={groupedOptions}
@@ -101,8 +101,8 @@ const CustomFields = props => {
                                                 size="sm"
                                                 placeholder="Enter Value"
                                                 name="sku"
-                                                value={data.customFieldValue}
-                                                onChange={() => data.fieldValue}
+                                                value={data.value}
+                                                onChange={() => data.value}
                                             />
                                             <Button variant="outline-primary" size="sm" style={{ marginLeft: '1%' }}
                                                 onClick={() => props.delete(index)}> delete</Button>

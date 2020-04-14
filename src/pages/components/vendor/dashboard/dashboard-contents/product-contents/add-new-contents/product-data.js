@@ -624,51 +624,68 @@ const ProductData = props => {
                                                                 </Row>
 
                                                                 <Accordion.Collapse eventKey="0">
-                                                                    <Form.Row>
-                                                                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-                                                                            <Form.Label style={styles.label}>Product Price<span>*</span></Form.Label>
-                                                                            <InputGroup>
-                                                                                <Form.Control
-                                                                                    type="number"
+                                                                    <div>
+                                                                        <Form.Row>
+                                                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
+                                                                                <Form.Label style={styles.label}>Product Price<span>*</span></Form.Label>
+                                                                                <InputGroup>
+                                                                                    <Form.Control
+                                                                                        type="number"
+                                                                                        size="sm"
+                                                                                        placeholder="Enter Product Price"
+                                                                                        name="product_price"
+                                                                                        value={data.price}
+                                                                                        onChange={(e) => props.variationPriceHandler(e, index)}
+                                                                                        isInvalid={data.price_error}
+                                                                                    />
+                                                                                    <Form.Control.Feedback type="invalid">
+                                                                                        {data.price_error}
+                                                                                    </Form.Control.Feedback>
+                                                                                </InputGroup>
+                                                                            </Form.Group>
+                                                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
+                                                                                <Form.Label style={styles.label}>Product in Stock</Form.Label>
+                                                                                <Form.Control type="number"
                                                                                     size="sm"
-                                                                                    placeholder="Enter Product Price"
-                                                                                    name="product_price"
-                                                                                    value={data.price}
-                                                                                    onChange={(e) => props.variationPriceHandler(e, index)}
-                                                                                    isInvalid={data.price_error}
+                                                                                    name="product_in_stock"
+                                                                                    placeholder="Enter Product In Stock"
+                                                                                    value={data.stock}
+                                                                                    onChange={(e) => props.variationStockHandler(e, index)}
                                                                                 />
                                                                                 <Form.Control.Feedback type="invalid">
-                                                                                    {data.price_error}
                                                                                 </Form.Control.Feedback>
-                                                                            </InputGroup>
-                                                                        </Form.Group>
-                                                                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-                                                                            <Form.Label style={styles.label}>Product in Stock</Form.Label>
-                                                                            <Form.Control type="number"
-                                                                                size="sm"
-                                                                                name="product_in_stock"
-                                                                                placeholder="Enter Product In Stock"
-                                                                                value={data.stock}
-                                                                                onChange={(e) => props.variationStockHandler(e, index)}
-                                                                            />
-                                                                            <Form.Control.Feedback type="invalid">
-                                                                            </Form.Control.Feedback>
-                                                                        </Form.Group>
-                                                                        <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-                                                                            <Form.Label style={styles.label}>Image Link</Form.Label>
-                                                                            <Form.Control type="text"
-                                                                                size="sm"
-                                                                                name="image_link"
-                                                                                placeholder="Enter Image Link"
-                                                                                value={data.image_link}
-                                                                                onChange={(e) => props.variationImageLinkHandler(e, index)}
-                                                                                isInvalid={data.image_link_error}
-                                                                            />
-                                                                            <Form.Control.Feedback type="invalid">
-                                                                                {data.image_link_error}
-                                                                            </Form.Control.Feedback>
-                                                                        </Form.Group>
-                                                                    </Form.Row>
+                                                                            </Form.Group>
+                                                                            <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
+                                                                                <Form.Label style={styles.label}>Image Link</Form.Label>
+                                                                                <Form.Control type="text"
+                                                                                    size="sm"
+                                                                                    name="image_link"
+                                                                                    placeholder="Enter Image Link"
+                                                                                    value={data.image_link}
+                                                                                    onChange={(e) => props.variationImageLinkHandler(e, index)}
+                                                                                    isInvalid={data.image_link_error}
+                                                                                />
+                                                                                <Form.Control.Feedback type="invalid">
+                                                                                    {data.image_link_error}
+                                                                                </Form.Control.Feedback>
+                                                                            </Form.Group>
+                                                                        </Form.Row>
+                                                                        <Form.Row>
+                                                                            {data.customField && data.customField.map((d, i) =>
+                                                                                <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
+                                                                                    <Form.Label style={styles.label}>{d.name}</Form.Label>
+                                                                                    <Form.Control
+                                                                                        type="text"
+                                                                                        size="sm"
+                                                                                        placeholder="Enter Value"
+                                                                                        name="sku"
+                                                                                        value={d.value}
+                                                                                        onChange={() => data.productAttributeValue}
+                                                                                    />
+                                                                                </Form.Group>
+                                                                            )}
+                                                                        </Form.Row>
+                                                                    </div>
                                                                 </Accordion.Collapse>
                                                                 {/* <Button variant="outline-primary" size="sm" block style={{ width: '100px' }}
                                                     onClick={() => props.update(index, data.fieldName, data.fieldValue)}> update</Button> */}

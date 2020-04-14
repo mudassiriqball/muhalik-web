@@ -67,7 +67,7 @@
 //   //     data: Buffer,
 //   //     contentType: String
 //   // },
-  
+
 //   // is_deleted: {
 //   //     type: Boolean,
 //   //     default: false
@@ -89,8 +89,8 @@ const Product = new Schema({
     unique: true,
     sparse: true
   },
-  vendor_id:{
-    type:String,
+  vendor_id: {
+    type: String,
     unique: true,
     sparse: true
   },
@@ -105,8 +105,8 @@ const Product = new Schema({
   },
   product_image_link: [
     {
-      label: { type: String},
-      value: { type: String}
+      label: { type: String },
+      value: { type: String }
     }
   ],
   product_colors: [

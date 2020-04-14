@@ -16,7 +16,10 @@ function Toolbar(props) {
             <div style={styles.link_text}>Logout</div>
         </Nav.Link>
     } else if (props.token == 'admin') {
-        dashboard = <Nav.Link href='./admin' style={styles.nav_link}> Admin dashboard </Nav.Link>
+        dashboard = <>
+            <Nav.Link href='./admin' style={styles.nav_link}> Admin dashboard </Nav.Link>
+            <Nav.Link href='./vendor' style={styles.nav_link}>Vendor dashboard</Nav.Link>
+        </>
         login = <Nav.Link onClick={props.logout} style={styles.nav_link}>
             <FontAwesomeIcon icon={faPowerOff} style={styles.nav_fontawesome} />
             <div style={styles.link_text}>Logout</div>
@@ -33,7 +36,7 @@ function Toolbar(props) {
         </>
     }
 
-    const all = React.useState('');
+    const [all, setAll] = React.useState('');
 
     return (
         <div>
@@ -53,7 +56,7 @@ function Toolbar(props) {
                                         as="select"
                                         name="countary"
                                         value={all}
-                                        onChange={all}
+                                        onChange={e => setAll(e.target.value)}
                                     >
                                         <option>All</option>
                                         <option>Cloths</option>
