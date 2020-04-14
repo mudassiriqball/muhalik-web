@@ -485,7 +485,7 @@ const ProductData = props => {
                                             <Form.Row>
                                                 <Form.Label style={styles.label} className="mr-auto">For Multiple Values add | between values</Form.Label>
                                                 <Button variant="outline-primary" size="sm"
-                                                    onClick={props.saveAttributesHandler}>Save Attributes</Button>
+                                                    onClick={props.createVariationsHandler}>Create Variations</Button>
                                             </Form.Row>
                                             <hr />
                                             {/* <Card style={{ background: 'lightGray', margin: '0.5% 1%' }}> */}
@@ -613,12 +613,12 @@ const ProductData = props => {
 
                                                                     <div className="mr-auto"></div>
                                                                     <Accordion.Toggle as={Form.Group} eventKey="0">
-                                                                        <Button variant="outline-primary" size="sm">
+                                                                        <Button variant="outline-primary" size="sm" style={{ marginRight: '10px' }}>
                                                                             <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
                                                                         </Button>
                                                                     </Accordion.Toggle>
                                                                     <Form.Group style={{ float: 'right' }}>
-                                                                        <Button variant="outline-primary" size="sm" style={{ marginLeft: '1%' }}
+                                                                        <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
                                                                             onClick={() => props.deleteVariationHandler(index)}> delete</Button>
                                                                     </Form.Group>
                                                                 </Row>
@@ -674,22 +674,27 @@ const ProductData = props => {
                                                                             {data.customField && data.customField.map((d, i) =>
                                                                                 <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
                                                                                     <Form.Label style={styles.label}>{d.name}</Form.Label>
-                                                                                    <Form.Control
-                                                                                        type="text"
-                                                                                        size="sm"
-                                                                                        placeholder="Enter Value"
-                                                                                        name="sku"
-                                                                                        value={d.value}
-                                                                                        onChange={() => data.productAttributeValue}
-                                                                                    />
+                                                                                    <InputGroup>
+                                                                                        <Form.Control
+                                                                                            type="text"
+                                                                                            size="sm"
+                                                                                            placeholder="Enter Value"
+                                                                                            name="sku"
+                                                                                            value={d.value}
+                                                                                            onChange={() => data.productAttributeValue}
+                                                                                        />
+                                                                                        <InputGroup.Prepend>
+                                                                                            <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
+                                                                                                onClick={() => props.deleteVariationCustomFieldHandler(index, i)}> delete</Button>
+                                                                                        </InputGroup.Prepend>
+                                                                                    </InputGroup>
                                                                                 </Form.Group>
                                                                             )}
                                                                         </Form.Row>
                                                                     </div>
                                                                 </Accordion.Collapse>
-                                                                {/* <Button variant="outline-primary" size="sm" block style={{ width: '100px' }}
-                                                    onClick={() => props.update(index, data.fieldName, data.fieldValue)}> update</Button> */}
                                                             </Accordion>
+                                                            <hr />
                                                         </div>
                                                     )}
                                                     <Button variant="outline-primary" size="sm" block onClick={props.saveVariationsHandler}> Save Variations</Button>

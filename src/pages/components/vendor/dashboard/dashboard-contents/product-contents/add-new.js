@@ -275,7 +275,7 @@ class AddNew extends Component {
             this.setState({ productAttributeError: 'Enter Field Name and Value' });
         }
     }
-    handleSaveProductAttributesClick = () => {
+    handleCreateVariationsClick = () => {
         var allArrays = [];
         this.state.productAttributesArray.forEach(element => {
             var trim = element.productAttributeValue.split(' ').join('');
@@ -395,6 +395,11 @@ class AddNew extends Component {
         copyArray.splice(index, 1);
         this.setState({ variationsArray: copyArray });
     }
+    handleDeleteVariationCustomFieldClick = (index, i) => {
+        const copyArray = Object.assign([], this.state.variationsArray);
+        copyArray[index].customField.splice(i, 1);
+        this.setState({ variationsArray: copyArray });
+    }
     handleSaveVariationsClick = () => {
         const copyArray = Object.assign([], this.state.variationsArray);
         let flag = true;
@@ -506,6 +511,14 @@ class AddNew extends Component {
     };
 
     render() {
+        var showCustomFields = false;
+        if (this.state.variationsArray.length == 0 && this.state.isVariableProduct == true) {
+            showCustomFields = true;
+        }
+        else {
+            showCustomFields = false;
+        }
+
         return (
             <Formik
                 validationSchema={schema}
@@ -778,11 +791,12 @@ class AddNew extends Component {
                                                     update={this.handleUpdateProductAttributeClick.bind(this)}
                                                     deleteAttributeHandler={this.handleDeleteProductAttributeClick.bind(this)}
                                                     deleteVariationHandler={this.handleDeleteProductVariationClick.bind(this)}
+                                                    deleteVariationCustomFieldHandler={this.handleDeleteVariationCustomFieldClick.bind(this)}
                                                     saveVariationsHandler={this.handleSaveVariationsClick.bind(this)}
                                                     variationsErrorHandler={this.handleVariationsErrorCheck.bind(this)}
                                                     error={this.state.productAttributeError}
 
-                                                    saveAttributesHandler={this.handleSaveProductAttributesClick}
+                                                    createVariationsHandler={this.handleCreateVariationsClick}
                                                     variationsArray={this.state.variationsArray}
                                                     variationPriceHandler={this.handleVariationPriceChange.bind(this)}
                                                     variationStockHandler={this.handleVariationProductInStockChang.bind(this)}
@@ -816,6 +830,7 @@ class AddNew extends Component {
                                                     update={this.updateCustomFieldsClick.bind(this)}
                                                     delete={this.deleteCustomFieldsClick.bind(this)}
                                                     error={this.state.customFieldError}
+                                                    showCustomFields={showCustomFields}
                                                 />
                                             </Form.Group>
                                             {/* End of Custom Fields Row */}
