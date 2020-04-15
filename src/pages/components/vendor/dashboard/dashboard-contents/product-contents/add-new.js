@@ -168,8 +168,11 @@ class AddNew extends Component {
             variationsArray: [],
             isVariationsSaved: false,
             samePriceInput: '',
+            samePriceError: '',
             sameStockInput: '',
+            sameStockError: '',
             sameImgLinkInput: '',
+            sameImgLinkError: '',
 
             // Custom Fields
             customFieldsArray: [],
@@ -200,20 +203,20 @@ class AddNew extends Component {
     //  Submit data to api
     async uploadProduct(data, currentComponent) {
         console.log('data: ', data)
-        // const url = MuhalikConfig.PATH + '/api/products/add';
-        // await axios.post(url, {
-        //     data
-        // }, {
-        //     headers: { 'authorization': await getUncodededTokenFromStorage() }
-        // }).then(function (response) {
-        currentComponent.setState({ isLoading: false });
-        currentComponent.setState({ showToast: true });
-        return true;
-        // }).catch(function (error) {
-        //     currentComponent.setState({ isLoading: false });
-        //     alert('Error: ', error.response.data.message);
-        //     return false;
-        // });
+        const url = MuhalikConfig.PATH + '/api/products/add';
+        await axios.post(url, {
+            data
+        }, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then(function (response) {
+            currentComponent.setState({ isLoading: false });
+            currentComponent.setState({ showToast: true });
+            return true;
+        }).catch(function (error) {
+            currentComponent.setState({ isLoading: false });
+            alert('Error: ', error.response.data.message);
+            return false;
+        });
     }
 
 
@@ -328,40 +331,46 @@ class AddNew extends Component {
     handleVariationsSamePriceChanged = (e) => {
         this.setState({ samePriceInput: e.target.value })
     }
-    handleVariationsSamePriceCheckbox = (e) => {
-        if (e.target.checked) {
+    handleVariationsSamePriceClick = (e) => {
+        if (this.state.samePriceInput != '') {
             const copyArray = Object.assign([], this.state.variationsArray);
             copyArray.forEach(element => {
                 element.price = this.state.samePriceInput;
 
             });
             this.setState({ variationsArray: copyArray })
+        } else {
+            this.setState({ samePriceError: 'Enter Value' })
         }
     }
     // // => Same Stock For All Variations
     handleVariationsSameStockChanged = (e) => {
         this.setState({ sameStockInput: e.target.value })
     }
-    handleVariationsSameStockCheckbox = (e) => {
-        if (e.target.checked) {
+    handleVariationsSameStockClick = () => {
+        if (this.state.sameStockInput != '') {
             const copyArray = Object.assign([], this.state.variationsArray);
             copyArray.forEach(element => {
                 element.stock = this.state.sameStockInput;
             });
             this.setState({ variationsArray: copyArray })
+        } else {
+            this.setState({ sameStockError: 'Enter Value' })
         }
     }
     // // => Same Image link For All Variations
     handleVariationsSameImgLinkChanged = (e) => {
         this.setState({ sameImgLinkInput: e.target.value })
     }
-    handleVariationsSameImgLinkCheckbox = (e) => {
-        if (e.target.checked) {
+    handleVariationsSameImgLinkClick = () => {
+        if (this.state.sameImgLinkInput != '') {
             const copyArray = Object.assign([], this.state.variationsArray);
             copyArray.forEach(element => {
                 element.image_link = this.state.sameImgLinkInput;
             });
             this.setState({ variationsArray: copyArray })
+        } else {
+            this.setState({ sameImgLinkError: 'Enter Value' })
         }
     }
 
@@ -803,16 +812,21 @@ class AddNew extends Component {
                                                     variationImageLinkHandler={this.handleVariationImageLinkChange.bind(this)}
 
                                                     samePriceInput={this.state.samePriceInput}
+                                                    samePriceError={this.state.samePriceError}
                                                     variationsSamePriceChanged={this.handleVariationsSamePriceChanged.bind(this)}
-                                                    variationsSamePriceCheckboxHandler={this.handleVariationsSamePriceCheckbox.bind(this)}
+                                                    variationsSamePriceHandler={this.handleVariationsSamePriceClick.bind(this)}
+
+
 
                                                     sameStockInput={this.state.sameStockInput}
+                                                    sameStockError={this.state.sameStockError}
                                                     variationsSameStockChanged={this.handleVariationsSameStockChanged.bind(this)}
-                                                    variationsSameStockCheckboxHandler={this.handleVariationsSameStockCheckbox.bind(this)}
+                                                    variationsSameStockHandler={this.handleVariationsSameStockClick.bind(this)}
 
                                                     sameImgLinkInput={this.state.sameImgLinkInput}
+                                                    sameImgLinkError={this.state.sameImgLinkError}
                                                     variationsSameImgLinkChanged={this.handleVariationsSameImgLinkChanged.bind(this)}
-                                                    variationsSameImgLinkCheckboxHandler={this.handleVariationsSameImgLinkCheckbox.bind(this)}
+                                                    variationsSameImgLinkHandler={this.handleVariationsSameImgLinkClick.bind(this)}
                                                 />
                                             </Row>
                                             {/* End of Product Data Row */}

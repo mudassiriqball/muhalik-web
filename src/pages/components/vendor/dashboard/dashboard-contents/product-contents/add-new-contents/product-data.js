@@ -439,17 +439,6 @@ const ProductData = props => {
                                             <Form.Row >
                                                 <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
                                                     <Form.Label style={styles.label}>Field Name</Form.Label>
-                                                    {/* <Form.Control
-                                                        as="select"
-                                                        size="sm"
-                                                        value={props.name}
-                                                        onChange={props.attributeNameHandler}
-                                                    >
-                                                        <option>Select</option>
-                                                        <option>Aaaa</option>
-                                                        <option>Bbb</option>
-                                                        <option>Ccc</option>
-                                                    </Form.Control> */}
                                                     <Select
                                                         options={groupedOptions}
                                                         components={{ Group }}
@@ -525,72 +514,69 @@ const ProductData = props => {
                                         </Tab.Pane>
 
 
-
                                         <Tab.Pane eventKey="Variations">
                                             {variations ?
                                                 <>
                                                     <Form.Row>
                                                         {/* Same Price */}
                                                         <Form.Group as={Col} >
-                                                            <Form.Label>
-                                                                <Form.Check
+                                                            <InputGroup>
+                                                                <Form.Control
+                                                                    type="text"
+                                                                    size="sm"
+                                                                    placeholder="Enter Price"
                                                                     name="samePrice"
-                                                                    label="Same Price for all"
-                                                                    style={styles.label}
-                                                                    onChange={props.variationsSamePriceCheckboxHandler}
-                                                                    id="samePrice"
+                                                                    value={props.samePriceInput}
+                                                                    onChange={props.variationsSamePriceChanged}
+                                                                    isInvalid={props.samePriceError}
                                                                 />
-                                                            </Form.Label>
-                                                            <Form.Control
-                                                                type="text"
-                                                                size="sm"
-                                                                placeholder="Enter Price"
-                                                                name="samePrice"
-                                                                value={props.samePriceInput}
-                                                                onChange={props.variationsSamePriceChanged}
-                                                            />
+                                                                <InputGroup.Prepend>
+                                                                    <Button variant='primary' onClick={props.variationsSamePriceHandler} size="sm">Same Price</Button>
+                                                                </InputGroup.Prepend>
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {props.samePriceError}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
                                                         </Form.Group>
-
                                                         {/* Same Stock */}
                                                         <Form.Group as={Col} >
-                                                            <Form.Label>
-                                                                <Form.Check
+                                                            <InputGroup>
+                                                                <Form.Control
+                                                                    type="text"
+                                                                    size="sm"
+                                                                    placeholder="Enter Product In Stock"
                                                                     name="sameStock"
-                                                                    label="Same Stock for all"
-                                                                    style={styles.label}
-                                                                    onChange={props.variationsSameStockCheckboxHandler}
-                                                                    id="sameStock"
+                                                                    value={props.sameStockInput}
+                                                                    onChange={props.variationsSameStockChanged}
+                                                                    isInvalid={props.sameStockError}
                                                                 />
-                                                            </Form.Label>
-                                                            <Form.Control
-                                                                type="text"
-                                                                size="sm"
-                                                                placeholder="Enter Product In Stock"
-                                                                name="sameStock"
-                                                                value={props.sameStockInput}
-                                                                onChange={props.sameStockForAllVariationsChangeHandler}
-                                                            />
+                                                                <InputGroup.Prepend>
+                                                                    <Button variant='primary' onClick={props.variationsSameStockHandler} size="sm">Same Stock</Button>
+                                                                </InputGroup.Prepend>
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {props.sameStockError}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
                                                         </Form.Group>
-
                                                         {/* Same Image Link */}
                                                         <Form.Group as={Col} >
-                                                            <Form.Label>
-                                                                <Form.Check
-                                                                    name="sameImageLink"
-                                                                    label="Same Image Link for all"
-                                                                    style={styles.label}
-                                                                    onChange={props.variationsSameImgLinkCheckboxHandler}
-                                                                    id="sameImageLink"
+                                                            <InputGroup>
+                                                                <Form.Control
+                                                                    type="text"
+                                                                    size="sm"
+                                                                    placeholder="Enter Image Link"
+                                                                    name="sameImgLinkInput"
+                                                                    value={props.sameImgLinkInput}
+                                                                    onChange={props.variationsSameImgLinkChanged}
+                                                                    isInvalid={props.sameImgLinkError}
                                                                 />
-                                                            </Form.Label>
-                                                            <Form.Control
-                                                                type="text"
-                                                                size="sm"
-                                                                placeholder="Enter Image Link"
-                                                                name="sameImgLinkInput"
-                                                                value={props.sameImgLinkInput}
-                                                                onChange={props.variationsSameImgLinkChanged}
-                                                            />
+                                                                <InputGroup.Prepend>
+                                                                    <Button variant='primary' onClick={props.variationsSameImgLinkHandler} size="sm">Same Image Link</Button>
+                                                                </InputGroup.Prepend>
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {props.sameImgLinkError}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
                                                         </Form.Group>
                                                     </Form.Row>
                                                     <hr />

@@ -28,7 +28,7 @@ const CustomFields = props => {
                 <Card.Header style={styles.card_header}>
                     <Form.Label >Custome Fields</Form.Label>
                     <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                        <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
+                        <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.accordin_fontawesome} />
                     </Accordion.Toggle>
                 </Card.Header>
                 <Accordion.Collapse eventKey="0">
@@ -142,7 +142,7 @@ const styles = {
     label: {
         fontSize: '13px',
     },
-    variations_fontawesome: {
+    accordin_fontawesome: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
         marginRight: '10%',
         width: '15px',
