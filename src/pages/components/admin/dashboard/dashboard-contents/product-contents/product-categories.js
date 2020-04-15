@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import MuhalikConfig from '../../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../.././../styleSheet'
 import axios from 'axios';
+import AlertModal from '../../../../alert-modal';
 
 class ProducCategories extends Component {
     constructor(props) {
@@ -16,6 +17,11 @@ class ProducCategories extends Component {
             categoryValue: '',
             error: '',
             categoryList: [],
+            categoryRequestList: [],
+
+            editRequestedCategory: '',
+            showModalMessage: '',
+            showModal: false,
         }
     }
 
@@ -24,10 +30,14 @@ class ProducCategories extends Component {
         const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
         try {
             const response = await axios.get(url);
-            this.setState({ categoryList: response.data.data });
-            console.log('list:', response)
+            let copyArray = response.data.data;
+            copyArray.forEach((data, index) => {
+                data.label = true;
+            })
+            this.setState({ categoryList: copyArray });
+            this.setState({ categoryRequestList: this.state.categoryList });
         } catch (error) {
-            console.log(error);
+            console.log('feror:', error);
         }
     }
 
@@ -39,7 +49,8 @@ class ProducCategories extends Component {
         //     headers: { 'authorization': await getUncodededTokenFromStorage() }
         // }).then(function (response) {
         this.setState({ isLoading: true })
-        this.setState({ showToast: true })
+        this.setState({ showModalMessage: 'Product Category Added Successfully' })
+        this.setState({ showModal: true })
         return true;
         // }).catch(function (error) {
         //     currentComponent.setState({ isLoading: false });
@@ -58,87 +69,127 @@ class ProducCategories extends Component {
         }
     }
 
-    handleEditCategoryRequest() {
 
+    // Category Request 
+    // => Field Value 
+    handleCategoryRequestChange = (e, index) => {
+        const copyArray = Object.assign([], this.state.categoryRequestList);
+        copyArray[index].value = e.target.value;
+
+        if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
+            copyArray[index].error = ''
+        } else {
+            copyArray[index].error = 'Value must be 3-20 characters'
+        }
+        this.setState({ categoryRequestList: copyArray })
     }
-    handleAddCategoryRequest(index) {
-        const copyArray = Object.assign([], this.state.categoryList);
+    //  => Edit
+    async handleEditCategoryRequestClick(index) {
+        const copyArray = Object.assign([], this.state.categoryRequestList);
+        var obj = {};
+        obj['value'] = copyArray[index].value;
+        obj['label'] = false;
+        obj['prevVal'] = copyArray[index].value;
+        obj['error'] = '';
+        copyArray[index] = obj
+        await this.setState({ categoryRequestList: copyArray })
+    }
+    //  => Cancle
+    handleCancelCategoryRequestClick(index) {
+        const copyArray = Object.assign([], this.state.categoryRequestList);
+        copyArray[index].value = copyArray[index].prevVal;
+        copyArray[index].label = true;
+        this.setState({ categoryRequestList: copyArray })
+    }
+    // Update
+    handleUpdateCategoryRequestClick(index) {
+        const copyArray = Object.assign([], this.state.categoryRequestList);
+        if (copyArray[index].error == '') {
+            copyArray[index].label = true;
+            this.setState({ categoryRequestList: copyArray, showModalMessage: 'Product Category Updated Successfully', showModal: true });
+        }
+    }
+    //  => Add
+    handleAddCategoryRequestClick(index) {
+        const copyArray = Object.assign([], this.state.categoryRequestList);
         copyArray.splice(index, 1);
+        this.setState({ categoryRequestList: copyArray, showModalMessage: 'Product Category Added Successfully', showModal: true })
+    }
+    //  => Delete
+    handleDeleteCategoryRequestClick(index) {
+        const copyArray = Object.assign([], this.state.categoryRequestList);
+        copyArray.splice(index, 1);
+        this.setState({ categoryRequestList: copyArray, showModalMessage: 'Product Category Deleted', showModal: true })
+    }
+
+
+
+
+
+
+    // All categories
+    //  => Chane
+    handleCategoryChange = (e, index) => {
+        const copyArray = Object.assign([], this.state.categoryList);
+        copyArray[index].value = e.target.value;
+
+        if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
+            copyArray[index].error = ''
+        } else {
+            copyArray[index].error = 'Value must be 3-20 characters'
+        }
         this.setState({ categoryList: copyArray })
     }
-    handleDeleteCategoryRequest(index) {
+
+    //  => Edit
+    async handleEditCategoryClick(index) {
+        const copyArray = Object.assign([], this.state.categoryList);
+        var obj = {};
+        obj['value'] = copyArray[index].value;
+        obj['label'] = false;
+        obj['prevVal'] = copyArray[index].value;
+        obj['error'] = '';
+        copyArray[index] = obj
+        await this.setState({ categoryList: copyArray })
+    }
+    //  => Cancle
+    handleCancelCategoryClick(index) {
+        const copyArray = Object.assign([], this.state.categoryList);
+        copyArray[index].value = copyArray[index].prevVal;
+        copyArray[index].label = true;
+        this.setState({ categoryList: copyArray })
+    }
+    //  => Update
+    handleUpdateCategoryClick(index) {
+        const copyArray = Object.assign([], this.state.categoryList);
+        copyArray[index].label = true;
+        this.setState({ categoryList: copyArray, showModalMessage: 'Product Category Updated Successfully', showModal: true });
+    }
+    //  => Delete
+    handleDeleteCategoryClick(index) {
         const copyArray = Object.assign([], this.state.categoryList);
         copyArray.splice(index, 1);
-        this.setState({ categoryList: copyArray })
+        this.setState({ categoryList: copyArray, showModalMessage: 'Product Category Deleted', showModal: true })
     }
 
     render() {
         return (
             <>
+                <AlertModal
+                    onHide={(e) => this.setState({ showModal: false })}
+                    show={this.state.showModal}
+                    header={'Success'}
+                    message={this.state.showModalMessage}
+                    iconName={faThumbsUp}
+                    color={"#00b300"}
+                />
                 <Row style={styles.title_row} noGutters>
                     <FontAwesomeIcon icon={faListAlt} style={styles.title_fontawesome} />
                     <div className="mr-auto" style={styles.title}> Product Categories </div>
                 </Row>
-                <Row noGutters>
-                    <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-                        <Card style={styles.card}>
-                            <Card.Header>
-                                <Form.Label>Add Category Requests</Form.Label>
-                                <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                                    <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.accordin_fontawesome} />
-                                </Accordion.Toggle>
-                            </Card.Header>
-                            <Accordion.Collapse eventKey="0">
-                                <Card.Body style={styles.card_body}>
-                                    {this.state.categoryList.map((data, index) =>
-                                        <Form.Row>
-                                            <Form.Group as={Col}>
-                                                <InputGroup>
-                                                    <Form.Control
-                                                        type="text"
-                                                        size="sm"
-                                                        placeholder="Enter Category Value"
-                                                        name="sku"
-                                                        value={data.label}
-                                                        onChange={(e) => { this.setState({ categoryValue: e.target.value }) }}
-                                                        isInvalid={this.state.error}
-                                                    />
-                                                    <Form.Control.Feedback type="invalid">
-                                                        {this.state.error}
-                                                    </Form.Control.Feedback>
-                                                </InputGroup>
-                                            </Form.Group>
-                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs={3}>
-                                                <Button type="submit" variant="outline-success" size="sm" onClick={() => this.handleEditCategoryRequest(index)} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                                                    <div>Edit</div>
-                                                </Button>
-                                            </Form.Group>
-                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs={3}>
-                                                <Button type="submit" variant="outline-primary" size="sm" onClick={() => this.handleAddCategoryRequest(index)} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                                                    <div>Add</div>
-                                                </Button>
-                                            </Form.Group>
-                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs={3}>
-                                            </Form.Group>
-                                            {/* <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs={0}>
-                                            </Form.Group>
-                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs={0}>
-                                            </Form.Group> */}
-                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs={3}>
-                                                <Button type="submit" variant="outline-danger" size="sm" onClick={() => this.handleDeleteCategoryRequest(index)} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                                                    <div>Discard</div>
-                                                </Button>
-                                            </Form.Group>
 
-                                        </Form.Row>
-                                    )}
-                                </Card.Body>
-                            </Accordion.Collapse>
-                        </Card>
-                    </Accordion>
-                </Row>
 
-                {/* Add Categories */}
+                {/* Add New Category */}
                 <Row noGutters>
                     <Accordion style={{ width: '100%' }} defaultActiveKey="0">
                         <Card style={styles.card}>
@@ -167,13 +218,129 @@ class ProducCategories extends Component {
                                         </InputGroup>
                                     </Form.Group>
                                     <Form.Group>
-                                        {/* <p style={styles.label}>Fields with <span> * </span> are mandatory.</p>
-                                <p style={styles.label}>For adding new size, color, link: Enter text and hit Enter or Tab key</p> */}
                                         <Button type="submit" size="sm" onClick={this.handleSubmit.bind(this)} disabled={this.state.isLoading} block style={styles.submit_btn}>
                                             {this.state.isLoading ? 'Uploading' : 'Add Category'}
                                             {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
                                         </Button>
                                     </Form.Group>
+                                </Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+                    </Accordion>
+                </Row>
+
+
+
+                {/* Add Category Requests */}
+                <Row noGutters>
+                    <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                        <Card style={styles.card}>
+                            <Card.Header>
+                                <Form.Label>Add Category Requests</Form.Label>
+                                <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                    <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.accordin_fontawesome} />
+                                </Accordion.Toggle>
+                            </Card.Header>
+                            <Accordion.Collapse eventKey="0">
+                                <Card.Body style={styles.card_body}>
+                                    {this.state.categoryRequestList.map((data, index) =>
+                                        <Form.Row>
+                                            <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
+                                                <InputGroup>
+                                                    <Form.Control
+                                                        type="text"
+                                                        size="sm"
+                                                        placeholder="Enter Category Value"
+                                                        name="sku"
+                                                        value={data.value}
+                                                        onChange={(e) => this.handleCategoryRequestChange(e, index)}
+                                                        isInvalid={data.error}
+                                                        disabled={data.label}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {data.error}
+                                                    </Form.Control.Feedback>
+                                                </InputGroup>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                                                <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
+                                                    onClick={() => data.label ? this.handleEditCategoryRequestClick(index) : this.handleUpdateCategoryRequestClick(index)} >
+                                                    <div>{data.label ? 'Edit' : 'Update'}</div>
+                                                </Button>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                                                <Button type="submit" variant="outline-primary" size="sm" block style={styles.submit_btn}
+                                                    onClick={() => { data.label ? this.handleAddCategoryRequestClick(index) : this.handleCancelCategoryRequestClick(index) }}>
+                                                    <div>{data.label ? 'Add' : 'Cancel'}</div>
+                                                </Button>
+                                            </Form.Group>
+                                            <div className="mr-auto"></div>
+                                            <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
+                                                <Button type="submit" variant="outline-danger" size="sm" block style={styles.submit_btn}
+                                                    onClick={() => this.handleDeleteCategoryRequestClick(index)}>
+                                                    <div>Discard</div>
+                                                </Button>
+                                            </Form.Group>
+
+                                        </Form.Row>
+                                    )}
+                                </Card.Body>
+                            </Accordion.Collapse>
+                        </Card>
+                    </Accordion>
+                </Row>
+
+
+
+
+
+                {/* All Categories */}
+                <Row noGutters>
+                    <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                        <Card style={styles.card}>
+                            <Card.Header>
+                                <Form.Label>All Categories</Form.Label>
+                                <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                    <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.accordin_fontawesome} />
+                                </Accordion.Toggle>
+                            </Card.Header>
+                            <Accordion.Collapse eventKey="0">
+                                <Card.Body style={styles.card_body}>
+                                    {this.state.categoryList.map((data, index) =>
+                                        <Form.Row>
+                                            <Form.Group as={Col} lg={8} md={8} sm={12} xs={12}>
+                                                <InputGroup>
+                                                    <Form.Control
+                                                        type="text"
+                                                        size="sm"
+                                                        placeholder="Enter Category Value"
+                                                        name="sku"
+                                                        value={data.value}
+                                                        onChange={(e) => this.handleCategoryChange(e, index)}
+                                                        disabled={data.label}
+                                                        isInvalid={data.error}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {this.state.error}
+                                                    </Form.Control.Feedback>
+                                                </InputGroup>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                                                <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
+                                                    onClick={data.label ? () => this.handleEditCategoryClick(index) : () => this.handleUpdateCategoryClick(index)} >
+                                                    <div>{data.label ? 'Edit' : 'Update'}</div>
+                                                </Button>
+                                            </Form.Group>
+                                            <div className="mr-auto"></div>
+                                            <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
+                                                <Button type="submit" variant={data.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
+                                                    onClick={() => { data.laebl ? this.handleDeleteCategoryClick(index) : this.handleCancelCategoryClick(index) }}>
+                                                    <div>{data.label ? 'Delete' : 'Cancel'}</div>
+                                                </Button>
+                                            </Form.Group>
+
+                                        </Form.Row>
+                                    )}
                                 </Card.Body>
                             </Accordion.Collapse>
                         </Card>

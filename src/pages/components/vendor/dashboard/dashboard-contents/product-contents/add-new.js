@@ -8,13 +8,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faPlus, faKey, faSlidersH, faStoreAlt, faTruck, faTools, faDollarSign, faExclamationTriangle, faListAlt
 } from '@fortawesome/free-solid-svg-icons';
-
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons';
 
-import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import ReactSelectMaterialUi from "react-select-material-ui";
-import ShowToast from '../../../../toast';
+import AlertModal from '../../../../alert-modal';
+
 import GlobalStyleSheet from '../../../../../../styleSheet';
 import MuhalikConfig from '../../../../../../sdk/muhalik.config';
 import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service';
@@ -22,12 +20,6 @@ import CustomFields from './add-new-contents/custom-fields';
 import ProductData from './add-new-contents/product-data';
 import product_size_options from '../../../../../../sdk/consts/product-size-options'
 import product_color_options from '../../../../../../sdk/consts/product-color-options'
-
-const product_attributes_list = [
-    { value: 'Size', label: 'Size' },
-    { value: 'Color', label: 'Color' },
-    { value: 'Price', label: 'Price' },
-]
 
 // Option List for select Product Category (when offline)
 const product_categories = [
@@ -55,15 +47,12 @@ const schema = yup.object({
     product_description: yup.string()
         .min(5, "Must have at least 5 characters")
         .max(200, "Can't be longer than 200 characters"),
-
     // Product Data
     product_type: yup.string(),
-
     // => Inventory
     sku: yup.string()
         .min(0, 'Enter Between 0-100')
         .max(100, 'Enter Between 0-100'),
-
     // => General(Simple-Product)
     product_price: yup.number()
         .integer("Enter Only Numbers")
@@ -84,13 +73,10 @@ const schema = yup.object({
     product_discount: yup.number().integer("Enter Only Numbers")
         .min(0, 'Enter Between 0-100')
         .max(100, 'Enter Between 0-100'),
-
     // => Attributes (Variable Product)
     purchase_note: yup.string(),
-
     // => Variations (Variable Product)
     product_variations: yup.string(),
-
     // => Shipping
     product_weight: yup.number()
         .integer("Enter Only Numbers")
@@ -115,20 +101,14 @@ const schema = yup.object({
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
         .max(100, "Can't be longer than 100"),
-
     // => Advanve
     purchase_note: yup.string(),
-
     // Custom Fields
     custom_fields: yup.string(),
 
     product_category: yup.string(),
-
     dangerous_goods: yup.string(),
-
     product_tags: yup.string(),
-
-
 });
 
 
@@ -329,7 +309,9 @@ class AddNew extends Component {
     // => Product Variations (Variable Product)
     //  // =>Same Price For All Variations
     handleVariationsSamePriceChanged = (e) => {
-        this.setState({ samePriceInput: e.target.value })
+        if (e.target.value >= 0) {
+            this.setState({ samePriceInput: e.target.value })
+        }
     }
     handleVariationsSamePriceClick = (e) => {
         if (this.state.samePriceInput != '') {
@@ -345,7 +327,9 @@ class AddNew extends Component {
     }
     // // => Same Stock For All Variations
     handleVariationsSameStockChanged = (e) => {
-        this.setState({ sameStockInput: e.target.value })
+        if (e.target.value >= 0) {
+            this.setState({ sameStockInput: e.target.value })
+        }
     }
     handleVariationsSameStockClick = () => {
         if (this.state.sameStockInput != '') {
@@ -643,20 +627,39 @@ class AddNew extends Component {
                                 </Row>
                                 <Form noValidate onSubmit={handleSubmit}>
 
-                                    {this.state.showToast ? <ShowToast onCloseHandler={(e) => this.setState({ showToast: false })} show={this.state.showToast}
-                                        header={'Success'} message={'Product Uploaded Successfully'} iconName={faThumbsUp} color={"green"} />
+                                    {/* {this.state.showToast ? */}
+                                    <AlertModal
+                                        onHide={(e) => this.setState({ showToast: false })}
+                                        show={this.state.showToast}
+                                        header={'Success'}
+                                        message={'Product Uploaded Successfully'}
+                                        iconName={faThumbsUp}
+                                        color={"#00b300"}
+                                    />
                                         : null
-                                    }
-                                    {this.state.showVariationsErrorAlert ?
-                                        <ShowToast onCloseHandler={(e) => this.setState({ showVariationsErrorAlert: false })} show={this.state.showVariationsErrorAlert}
-                                            header={'Error'} message={'Please Add/Save Variations First'} iconName={faExclamationTriangle} color={"red"} />
+                                    {/* } */}
+                                    {/* {this.state.showVariationsErrorAlert ? */}
+                                    <AlertModal
+                                        onHide={(e) => this.setState({ showVariationsErrorAlert: false })}
+                                        show={this.state.showVariationsErrorAlert}
+                                        header={'Error'}
+                                        message={'Please Add/Save Variations First'}
+                                        iconName={faExclamationTriangle}
+                                        color={"#ff3333"}
+                                    />
                                         : null
-                                    }
-                                    {this.state.showSimpleProductPriceImgLinkErrorrAlert ?
-                                        <ShowToast onCloseHandler={(e) => this.setState({ showSimpleProductPriceImgLinkErrorrAlert: false })} show={this.state.showSimpleProductPriceImgLinkErrorrAlert}
-                                            header={'Error'} message={'Enter Price/Image Link in General Tab First'} iconName={faExclamationTriangle} color={"red"} />
+                                    {/* } */}
+                                    {/* {this.state.showSimpleProductPriceImgLinkErrorrAlert ? */}
+                                    <AlertModal
+                                        onHide={(e) => this.setState({ showSimpleProductPriceImgLinkErrorrAlert: false })}
+                                        show={this.state.showSimpleProductPriceImgLinkErrorrAlert}
+                                        header={'Error'}
+                                        message={'Enter Price/Image Link in General Tab First'}
+                                        iconName={faExclamationTriangle}
+                                        color={"#ff3333"}
+                                    />
                                         : null
-                                    }
+                                    {/* } */}
 
 
                                     <Row noGutters style={{ paddingTop: '2%' }}>

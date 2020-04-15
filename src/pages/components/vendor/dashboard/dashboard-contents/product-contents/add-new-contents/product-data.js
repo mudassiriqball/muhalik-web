@@ -520,9 +520,10 @@ const ProductData = props => {
                                                     <Form.Row>
                                                         {/* Same Price */}
                                                         <Form.Group as={Col} >
+                                                            <Form.Label style={styles.label}> Same Price</Form.Label>
                                                             <InputGroup>
                                                                 <Form.Control
-                                                                    type="text"
+                                                                    type="number"
                                                                     size="sm"
                                                                     placeholder="Enter Price"
                                                                     name="samePrice"
@@ -531,7 +532,7 @@ const ProductData = props => {
                                                                     isInvalid={props.samePriceError}
                                                                 />
                                                                 <InputGroup.Prepend>
-                                                                    <Button variant='primary' onClick={props.variationsSamePriceHandler} size="sm">Same Price</Button>
+                                                                    <Button variant='primary' style={styles.label} onClick={props.variationsSamePriceHandler} size="sm">Apply</Button>
                                                                 </InputGroup.Prepend>
                                                                 <Form.Control.Feedback type="invalid">
                                                                     {props.samePriceError}
@@ -540,18 +541,19 @@ const ProductData = props => {
                                                         </Form.Group>
                                                         {/* Same Stock */}
                                                         <Form.Group as={Col} >
+                                                            <Form.Label style={styles.label}> Same Stock</Form.Label>
                                                             <InputGroup>
                                                                 <Form.Control
-                                                                    type="text"
+                                                                    type="number"
                                                                     size="sm"
-                                                                    placeholder="Enter Product In Stock"
+                                                                    placeholder="Enter Stock"
                                                                     name="sameStock"
                                                                     value={props.sameStockInput}
                                                                     onChange={props.variationsSameStockChanged}
                                                                     isInvalid={props.sameStockError}
                                                                 />
                                                                 <InputGroup.Prepend>
-                                                                    <Button variant='primary' onClick={props.variationsSameStockHandler} size="sm">Same Stock</Button>
+                                                                    <Button variant='primary' style={styles.label} onClick={props.variationsSameStockHandler} size="sm">Apply</Button>
                                                                 </InputGroup.Prepend>
                                                                 <Form.Control.Feedback type="invalid">
                                                                     {props.sameStockError}
@@ -560,6 +562,7 @@ const ProductData = props => {
                                                         </Form.Group>
                                                         {/* Same Image Link */}
                                                         <Form.Group as={Col} >
+                                                            <Form.Label style={styles.label}> Same Image</Form.Label>
                                                             <InputGroup>
                                                                 <Form.Control
                                                                     type="text"
@@ -571,7 +574,7 @@ const ProductData = props => {
                                                                     isInvalid={props.sameImgLinkError}
                                                                 />
                                                                 <InputGroup.Prepend>
-                                                                    <Button variant='primary' onClick={props.variationsSameImgLinkHandler} size="sm">Same Image Link</Button>
+                                                                    <Button variant='primary' style={styles.label} onClick={props.variationsSameImgLinkHandler} size="sm">Apply</Button>
                                                                 </InputGroup.Prepend>
                                                                 <Form.Control.Feedback type="invalid">
                                                                     {props.sameImgLinkError}
