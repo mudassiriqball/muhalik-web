@@ -1,15 +1,14 @@
 const Custom_field_category_Controller = {};
 const Custom_field_category = require("../models/custom_field_categories.model");
 
-Custom_field_category_Controller.add_custom_field_category = async (
-    req,
-    res
-) => {
+Custom_field_category_Controller.add_custom_field_category = async (req, res) => {
     try {
+        const body = req.body.data;
         var datetime = new Date();
         var date = datetime.toISOString().slice(0, 10);
-        req.body.custom_field_category_entry_date = date;
-        const custom_field_category = new Custom_field_category(req.body);
+        body.custom_field_category_entry_date = date;
+
+        const custom_field_category = new Custom_field_category(body);
         const result = await custom_field_category.save();
         res.status(200).send({
             code: 200,

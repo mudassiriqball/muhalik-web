@@ -6,8 +6,8 @@ products_categoriesController.addProduct_Category = async (req, res) => {
   try {
     var datetime = new Date();
     var date = datetime.toISOString().slice(0, 10);
-    const body = req.body;
-    req.body.product_entry_date = date;
+    const body = req.body.data;
+    body.product_entry_date = date;
     const product_category = new Products_Categories(body);
     const result = await product_category.save();
     res.status(200).send({
