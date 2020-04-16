@@ -33,7 +33,7 @@ class Index extends Component {
             jwt_token: '',
         }
     }
-    
+
 
     async componentDidMount() {
         const token = await getTokenFromStorage()
@@ -60,6 +60,7 @@ class Index extends Component {
                         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
                         crossorigin="anonymous"
                     />
+                    <link rel="shortcut icon" href=""></link>
                 </Head>
                 <Layout token={this.state.jwt_token} logoutClickHandler={this.logout}>
                     {animation}
