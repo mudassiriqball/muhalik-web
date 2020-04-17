@@ -8,6 +8,7 @@ import GlobalStyleSheet from '../../../../.././../styleSheet'
 import axios from 'axios';
 import AlertModal from '../../../../alert-modal';
 
+let fieldsArray = [];
 class ProducFields extends Component {
     constructor(props) {
         super(props);
@@ -22,6 +23,8 @@ class ProducFields extends Component {
             editRequestedField: '',
             showModalMessage: '',
             showModal: false,
+
+            filterStr: '',
         }
     }
 
@@ -30,14 +33,16 @@ class ProducFields extends Component {
         const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
         try {
             const response = await axios.get(url);
-            let copyArray = response.data.data;
+            let copyArray = [];
+            copyArray = response.data.data;
             copyArray.forEach((data, index) => {
                 data.label = true;
             })
             this.setState({ fieldList: copyArray });
             this.setState({ fieldRequestList: this.state.fieldList });
+            fieldsArray = copyArray;
         } catch (error) {
-            console.log(error);
+            console.log('feror:', error);
         }
     }
 
@@ -59,6 +64,22 @@ class ProducFields extends Component {
         // });
     }
 
+    handleFilterStrChange(e) {
+        this.setState({ filterStr: e.target.value });
+        if (e.target.value == '') {
+            this.setState({ fieldList: fieldsArray });
+        } else {
+            let array = [];
+            this.state.fieldList.filter(function (data) {
+                // var value = data.value.toLowerCase;
+                if (data.value.includes(e.target.value)) {
+                    array.push(data);
+                }
+            })
+            this.setState({ fieldList: array });
+        }
+    }
+
     handleSubmit() {
         if (fieldValue == '') {
             this.setState({ error: 'Enter Value First' })
@@ -70,10 +91,12 @@ class ProducFields extends Component {
     }
 
 
+
     // Field Request 
     // => Field Value 
     handleFieldRequestChange = (e, index) => {
-        const copyArray = Object.assign([], this.state.fieldRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldRequestList);
         copyArray[index].value = e.target.value;
 
         if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
@@ -85,7 +108,8 @@ class ProducFields extends Component {
     }
     //  => Edit
     async handleEditFieldRequestClick(index) {
-        const copyArray = Object.assign([], this.state.fieldRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldRequestList);
         var obj = {};
         obj['value'] = copyArray[index].value;
         obj['label'] = false;
@@ -96,28 +120,38 @@ class ProducFields extends Component {
     }
     //  => Cancle
     handleCancelFieldRequestClick(index) {
-        const copyArray = Object.assign([], this.state.fieldRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldRequestList);
         copyArray[index].value = copyArray[index].prevVal;
         copyArray[index].label = true;
+        copyArray[index].error = '';
         this.setState({ fieldRequestList: copyArray })
     }
     // Update
     handleUpdateFieldRequestClick(index) {
-        const copyArray = Object.assign([], this.state.fieldRequestList);
-        if (copyArray[index].error == '') {
-            copyArray[index].label = true;
-            this.setState({ fieldRequestList: copyArray, showModalMessage: 'Product Field Updated Successfully', showModal: true });
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldRequestList);
+        if (copyArray[index].value == copyArray[index].prevVal) {
+            copyArray[index].error = 'Enter Different Value';
+            this.setState({ fieldRequestList: copyArray });
+        } else {
+            if (copyArray[index].error == '') {
+                copyArray[index].label = true;
+                this.setState({ fieldRequestList: copyArray, showModalMessage: 'Product Field Updated Successfully', showModal: true });
+            }
         }
     }
     //  => Add
     handleAddFieldRequestClick(index) {
-        const copyArray = Object.assign([], this.state.fieldRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldRequestList);
         copyArray.splice(index, 1);
         this.setState({ fieldRequestList: copyArray, showModalMessage: 'Product Field Added Successfully', showModal: true })
     }
     //  => Delete
     handleDeleteFieldRequestClick(index) {
-        const copyArray = Object.assign([], this.state.fieldRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldRequestList);
         copyArray.splice(index, 1);
         this.setState({ fieldRequestList: copyArray, showModalMessage: 'Product Field Deleted', showModal: true })
     }
@@ -127,10 +161,11 @@ class ProducFields extends Component {
 
 
 
-    // All categories
+    // All fields
     //  => Chane
     handleFieldChange = (e, index) => {
-        const copyArray = Object.assign([], this.state.fieldList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldList);
         copyArray[index].value = e.target.value;
 
         if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
@@ -143,7 +178,8 @@ class ProducFields extends Component {
 
     //  => Edit
     async handleEditFieldClick(index) {
-        const copyArray = Object.assign([], this.state.fieldList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldList);
         var obj = {};
         obj['value'] = copyArray[index].value;
         obj['label'] = false;
@@ -154,20 +190,41 @@ class ProducFields extends Component {
     }
     //  => Cancle
     handleCancelFieldClick(index) {
-        const copyArray = Object.assign([], this.state.fieldList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldList);
         copyArray[index].value = copyArray[index].prevVal;
+        copyArray[index].error = '';
         copyArray[index].label = true;
         this.setState({ fieldList: copyArray })
     }
     //  => Update
     handleUpdateFieldClick(index) {
-        const copyArray = Object.assign([], this.state.fieldList);
-        copyArray[index].label = true;
-        this.setState({ fieldList: copyArray, showModalMessage: 'Product Field Updated Successfully', showModal: true });
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldList);
+        if (copyArray[index].value == copyArray[index].prevVal) {
+            copyArray[index].error = 'Enter Different Value';
+            this.setState({ fieldRequestList: copyArray });
+        } else {
+            if (copyArray[index].error == '') {
+                copyArray[index].label = true;
+                fieldsArray.forEach((element, i) => {
+                    if (copyArray[index].prevVal == element.value) {
+                        element.value = copyArray[index].value;
+                    }
+                });
+                this.setState({ fieldList: copyArray, showModalMessage: 'Product Field Updated Successfully', showModal: true });
+            }
+        }
     }
     //  => Delete
-    handleDeleteFieldClick(index) {
-        const copyArray = Object.assign([], this.state.fieldList);
+    handleDeleteFieldClick = (index) => {
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.fieldList);
+        fieldsArray.forEach((element, i) => {
+            if (copyArray[index].value == element.value) {
+                fieldsArray.splice(index, 1);
+            }
+        });
         copyArray.splice(index, 1);
         this.setState({ fieldList: copyArray, showModalMessage: 'Product Field Deleted', showModal: true })
     }
@@ -183,9 +240,13 @@ class ProducFields extends Component {
                     iconName={faThumbsUp}
                     color={"#00b300"}
                 />
+                <Row style={styles.title_row} noGutters>
+                    <FontAwesomeIcon icon={faListAlt} style={styles.title_fontawesome} />
+                    <div className="mr-auto" style={styles.title}> Product Fields </div>
+                </Row>
 
 
-                {/* Add New Fields */}
+                {/* Add New Field */}
                 <Row noGutters>
                     <Accordion style={{ width: '100%' }} defaultActiveKey="0">
                         <Card style={styles.card}>
@@ -226,11 +287,8 @@ class ProducFields extends Component {
                 </Row>
 
 
-                {/* Add Field Request */}
-                <Row style={styles.title_row} noGutters>
-                    <FontAwesomeIcon icon={faListAlt} style={styles.title_fontawesome} />
-                    <div className="mr-auto" style={styles.title}> Product Fields </div>
-                </Row>
+
+                {/* Add Field Requests */}
                 <Row noGutters>
                     <Accordion style={{ width: '100%' }} defaultActiveKey="0">
                         <Card style={styles.card}>
@@ -244,7 +302,28 @@ class ProducFields extends Component {
                                 <Card.Body style={styles.card_body}>
                                     {this.state.fieldRequestList.map((data, index) =>
                                         <Form.Row>
-                                            <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
+                                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Field Value"
+                                                    name="sku"
+                                                    value={data.value}
+                                                    disabled={true}
+                                                />
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Field Value"
+                                                    name="sku"
+                                                    value={data.value}
+                                                    disabled={true}
+                                                />
+                                            </Form.Group>
+                                            <div className="mr-auto"></div>
+                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                                 <InputGroup>
                                                     <Form.Control
                                                         type="text"
@@ -261,20 +340,21 @@ class ProducFields extends Component {
                                                     </Form.Control.Feedback>
                                                 </InputGroup>
                                             </Form.Group>
-                                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                                            <div className="mr-auto"></div>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
                                                     onClick={() => data.label ? this.handleEditFieldRequestClick(index) : this.handleUpdateFieldRequestClick(index)} >
                                                     <div>{data.label ? 'Edit' : 'Update'}</div>
                                                 </Button>
                                             </Form.Group>
-                                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                                 <Button type="submit" variant="outline-primary" size="sm" block style={styles.submit_btn}
                                                     onClick={() => { data.label ? this.handleAddFieldRequestClick(index) : this.handleCancelFieldRequestClick(index) }}>
                                                     <div>{data.label ? 'Add' : 'Cancel'}</div>
                                                 </Button>
                                             </Form.Group>
                                             <div className="mr-auto"></div>
-                                            <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                                 <Button type="submit" variant="outline-danger" size="sm" block style={styles.submit_btn}
                                                     onClick={() => this.handleDeleteFieldRequestClick(index)}>
                                                     <div>Discard</div>
@@ -293,7 +373,6 @@ class ProducFields extends Component {
 
 
 
-
                 {/* All Fields */}
                 <Row noGutters>
                     <Accordion style={{ width: '100%' }} defaultActiveKey="0">
@@ -306,6 +385,21 @@ class ProducFields extends Component {
                             </Card.Header>
                             <Accordion.Collapse eventKey="0">
                                 <Card.Body style={styles.card_body}>
+                                    <Form.Row style={{ margin: '0% 5%' }}>
+                                        <Form.Group as={Col}>
+                                            <InputGroup>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Field Value"
+                                                    name="sku"
+                                                    value={this.state.filterStr}
+                                                    onChange={(e) => this.handleFilterStrChange(e)}
+                                                />
+                                            </InputGroup>
+                                        </Form.Group>
+                                    </Form.Row>
+                                    <hr />
                                     {this.state.fieldList.map((data, index) =>
                                         <Form.Row>
                                             <Form.Group as={Col} lg={8} md={8} sm={12} xs={12}>
@@ -321,7 +415,7 @@ class ProducFields extends Component {
                                                         isInvalid={data.error}
                                                     />
                                                     <Form.Control.Feedback type="invalid">
-                                                        {this.state.error}
+                                                        {data.error}
                                                     </Form.Control.Feedback>
                                                 </InputGroup>
                                             </Form.Group>
@@ -334,7 +428,7 @@ class ProducFields extends Component {
                                             <div className="mr-auto"></div>
                                             <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
                                                 <Button type="submit" variant={data.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
-                                                    onClick={() => { data.laebl ? this.handleDeleteFieldClick(index) : this.handleCancelFieldClick(index) }}>
+                                                    onClick={data.label ? () => this.handleDeleteFieldClick(index) : () => this.handleCancelFieldClick(index)}>
                                                     <div>{data.label ? 'Delete' : 'Cancel'}</div>
                                                 </Button>
                                             </Form.Group>
@@ -374,6 +468,9 @@ const styles = {
     },
     card_body: {
         // padding: '5%'
+    },
+    label: {
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`
     },
     error: {
         width: '100%',

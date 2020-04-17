@@ -8,6 +8,7 @@ import GlobalStyleSheet from '../../../../.././../styleSheet'
 import axios from 'axios';
 import AlertModal from '../../../../alert-modal';
 
+let tagArray = [];
 class ProducTags extends Component {
     constructor(props) {
         super(props);
@@ -22,6 +23,8 @@ class ProducTags extends Component {
             editRequestedTag: '',
             showModalMessage: '',
             showModal: false,
+
+            filterStr: '',
         }
     }
 
@@ -30,14 +33,16 @@ class ProducTags extends Component {
         const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
         try {
             const response = await axios.get(url);
-            let copyArray = response.data.data;
+            let copyArray = [];
+            copyArray = response.data.data;
             copyArray.forEach((data, index) => {
                 data.label = true;
             })
             this.setState({ tagList: copyArray });
             this.setState({ tagRequestList: this.state.tagList });
+            tagArray = copyArray;
         } catch (error) {
-            console.log(error);
+            console.log('feror:', error);
         }
     }
 
@@ -59,6 +64,22 @@ class ProducTags extends Component {
         // });
     }
 
+    handleFilterStrChange(e) {
+        this.setState({ filterStr: e.target.value });
+        if (e.target.value == '') {
+            this.setState({ tagList: tagArray });
+        } else {
+            let array = [];
+            this.state.tagList.filter(function (data) {
+                // var value = data.value.toLowerCase;
+                if (data.value.includes(e.target.value)) {
+                    array.push(data);
+                }
+            })
+            this.setState({ tagList: array });
+        }
+    }
+
     handleSubmit() {
         if (tagValue == '') {
             this.setState({ error: 'Enter Value First' })
@@ -70,10 +91,12 @@ class ProducTags extends Component {
     }
 
 
+
     // Tag Request 
     // => Field Value 
     handleTagRequestChange = (e, index) => {
-        const copyArray = Object.assign([], this.state.tagRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagRequestList);
         copyArray[index].value = e.target.value;
 
         if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
@@ -85,7 +108,8 @@ class ProducTags extends Component {
     }
     //  => Edit
     async handleEditTagRequestClick(index) {
-        const copyArray = Object.assign([], this.state.tagRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagRequestList);
         var obj = {};
         obj['value'] = copyArray[index].value;
         obj['label'] = false;
@@ -96,28 +120,38 @@ class ProducTags extends Component {
     }
     //  => Cancle
     handleCancelTagRequestClick(index) {
-        const copyArray = Object.assign([], this.state.tagRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagRequestList);
         copyArray[index].value = copyArray[index].prevVal;
         copyArray[index].label = true;
+        copyArray[index].error = '';
         this.setState({ tagRequestList: copyArray })
     }
     // Update
     handleUpdateTagRequestClick(index) {
-        const copyArray = Object.assign([], this.state.tagRequestList);
-        if (copyArray[index].error == '') {
-            copyArray[index].label = true;
-            this.setState({ tagRequestList: copyArray, showModalMessage: 'Product Tag Updated Successfully', showModal: true });
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagRequestList);
+        if (copyArray[index].value == copyArray[index].prevVal) {
+            copyArray[index].error = 'Enter Different Value';
+            this.setState({ tagRequestList: copyArray });
+        } else {
+            if (copyArray[index].error == '') {
+                copyArray[index].label = true;
+                this.setState({ tagRequestList: copyArray, showModalMessage: 'Product Tag Updated Successfully', showModal: true });
+            }
         }
     }
     //  => Add
     handleAddTagRequestClick(index) {
-        const copyArray = Object.assign([], this.state.tagRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagRequestList);
         copyArray.splice(index, 1);
         this.setState({ tagRequestList: copyArray, showModalMessage: 'Product Tag Added Successfully', showModal: true })
     }
     //  => Delete
     handleDeleteTagRequestClick(index) {
-        const copyArray = Object.assign([], this.state.tagRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagRequestList);
         copyArray.splice(index, 1);
         this.setState({ tagRequestList: copyArray, showModalMessage: 'Product Tag Deleted', showModal: true })
     }
@@ -127,10 +161,11 @@ class ProducTags extends Component {
 
 
 
-    // All categories
+    // All tags
     //  => Chane
     handleTagChange = (e, index) => {
-        const copyArray = Object.assign([], this.state.tagList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagList);
         copyArray[index].value = e.target.value;
 
         if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
@@ -143,7 +178,8 @@ class ProducTags extends Component {
 
     //  => Edit
     async handleEditTagClick(index) {
-        const copyArray = Object.assign([], this.state.tagList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagList);
         var obj = {};
         obj['value'] = copyArray[index].value;
         obj['label'] = false;
@@ -154,20 +190,41 @@ class ProducTags extends Component {
     }
     //  => Cancle
     handleCancelTagClick(index) {
-        const copyArray = Object.assign([], this.state.tagList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagList);
         copyArray[index].value = copyArray[index].prevVal;
+        copyArray[index].error = '';
         copyArray[index].label = true;
         this.setState({ tagList: copyArray })
     }
     //  => Update
     handleUpdateTagClick(index) {
-        const copyArray = Object.assign([], this.state.tagList);
-        copyArray[index].label = true;
-        this.setState({ tagList: copyArray, showModalMessage: 'Product Tag Updated Successfully', showModal: true });
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagList);
+        if (copyArray[index].value == copyArray[index].prevVal) {
+            copyArray[index].error = 'Enter Different Value';
+            this.setState({ tagRequestList: copyArray });
+        } else {
+            if (copyArray[index].error == '') {
+                copyArray[index].label = true;
+                tagArray.forEach((element, i) => {
+                    if (copyArray[index].prevVal == element.value) {
+                        element.value = copyArray[index].value;
+                    }
+                });
+                this.setState({ tagList: copyArray, showModalMessage: 'Product Tag Updated Successfully', showModal: true });
+            }
+        }
     }
     //  => Delete
-    handleDeleteTagClick(index) {
-        const copyArray = Object.assign([], this.state.tagList);
+    handleDeleteTagClick = (index) => {
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.tagList);
+        tagArray.forEach((element, i) => {
+            if (copyArray[index].value == element.value) {
+                tagArray.splice(index, 1);
+            }
+        });
         copyArray.splice(index, 1);
         this.setState({ tagList: copyArray, showModalMessage: 'Product Tag Deleted', showModal: true })
     }
@@ -187,6 +244,7 @@ class ProducTags extends Component {
                     <FontAwesomeIcon icon={faListAlt} style={styles.title_fontawesome} />
                     <div className="mr-auto" style={styles.title}> Product Tags </div>
                 </Row>
+
 
                 {/* Add New Tag */}
                 <Row noGutters>
@@ -229,6 +287,7 @@ class ProducTags extends Component {
                 </Row>
 
 
+
                 {/* Add Tag Requests */}
                 <Row noGutters>
                     <Accordion style={{ width: '100%' }} defaultActiveKey="0">
@@ -243,7 +302,28 @@ class ProducTags extends Component {
                                 <Card.Body style={styles.card_body}>
                                     {this.state.tagRequestList.map((data, index) =>
                                         <Form.Row>
-                                            <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
+                                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Tag Value"
+                                                    name="sku"
+                                                    value={data.value}
+                                                    disabled={true}
+                                                />
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Tag Value"
+                                                    name="sku"
+                                                    value={data.value}
+                                                    disabled={true}
+                                                />
+                                            </Form.Group>
+                                            <div className="mr-auto"></div>
+                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                                 <InputGroup>
                                                     <Form.Control
                                                         type="text"
@@ -260,20 +340,21 @@ class ProducTags extends Component {
                                                     </Form.Control.Feedback>
                                                 </InputGroup>
                                             </Form.Group>
-                                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                                            <div className="mr-auto"></div>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
                                                     onClick={() => data.label ? this.handleEditTagRequestClick(index) : this.handleUpdateTagRequestClick(index)} >
                                                     <div>{data.label ? 'Edit' : 'Update'}</div>
                                                 </Button>
                                             </Form.Group>
-                                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                                 <Button type="submit" variant="outline-primary" size="sm" block style={styles.submit_btn}
                                                     onClick={() => { data.label ? this.handleAddTagRequestClick(index) : this.handleCancelTagRequestClick(index) }}>
                                                     <div>{data.label ? 'Add' : 'Cancel'}</div>
                                                 </Button>
                                             </Form.Group>
                                             <div className="mr-auto"></div>
-                                            <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                                 <Button type="submit" variant="outline-danger" size="sm" block style={styles.submit_btn}
                                                     onClick={() => this.handleDeleteTagRequestClick(index)}>
                                                     <div>Discard</div>
@@ -292,7 +373,6 @@ class ProducTags extends Component {
 
 
 
-
                 {/* All Tags */}
                 <Row noGutters>
                     <Accordion style={{ width: '100%' }} defaultActiveKey="0">
@@ -305,6 +385,21 @@ class ProducTags extends Component {
                             </Card.Header>
                             <Accordion.Collapse eventKey="0">
                                 <Card.Body style={styles.card_body}>
+                                    <Form.Row style={{ margin: '0% 5%' }}>
+                                        <Form.Group as={Col}>
+                                            <InputGroup>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Tag Value"
+                                                    name="sku"
+                                                    value={this.state.filterStr}
+                                                    onChange={(e) => this.handleFilterStrChange(e)}
+                                                />
+                                            </InputGroup>
+                                        </Form.Group>
+                                    </Form.Row>
+                                    <hr />
                                     {this.state.tagList.map((data, index) =>
                                         <Form.Row>
                                             <Form.Group as={Col} lg={8} md={8} sm={12} xs={12}>
@@ -320,7 +415,7 @@ class ProducTags extends Component {
                                                         isInvalid={data.error}
                                                     />
                                                     <Form.Control.Feedback type="invalid">
-                                                        {this.state.error}
+                                                        {data.error}
                                                     </Form.Control.Feedback>
                                                 </InputGroup>
                                             </Form.Group>
@@ -333,7 +428,7 @@ class ProducTags extends Component {
                                             <div className="mr-auto"></div>
                                             <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
                                                 <Button type="submit" variant={data.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
-                                                    onClick={() => { data.laebl ? this.handleDeleteTagClick(index) : this.handleCancelTagClick(index) }}>
+                                                    onClick={data.label ? () => this.handleDeleteTagClick(index) : () => this.handleCancelTagClick(index)}>
                                                     <div>{data.label ? 'Delete' : 'Cancel'}</div>
                                                 </Button>
                                             </Form.Group>
@@ -373,6 +468,9 @@ const styles = {
     },
     card_body: {
         // padding: '5%'
+    },
+    label: {
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`
     },
     error: {
         width: '100%',

@@ -8,6 +8,7 @@ import GlobalStyleSheet from '../../../../.././../styleSheet'
 import axios from 'axios';
 import AlertModal from '../../../../alert-modal';
 
+let categoryArray = [];
 class ProducCategories extends Component {
     constructor(props) {
         super(props);
@@ -22,6 +23,8 @@ class ProducCategories extends Component {
             editRequestedCategory: '',
             showModalMessage: '',
             showModal: false,
+
+            filterStr: '',
         }
     }
 
@@ -30,12 +33,14 @@ class ProducCategories extends Component {
         const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
         try {
             const response = await axios.get(url);
-            let copyArray = response.data.data;
+            let copyArray = [];
+            copyArray = response.data.data;
             copyArray.forEach((data, index) => {
                 data.label = true;
             })
             this.setState({ categoryList: copyArray });
             this.setState({ categoryRequestList: this.state.categoryList });
+            categoryArray = copyArray;
         } catch (error) {
             console.log('feror:', error);
         }
@@ -59,6 +64,22 @@ class ProducCategories extends Component {
         // });
     }
 
+    handleFilterStrChange(e) {
+        this.setState({ filterStr: e.target.value });
+        if (e.target.value == '') {
+            this.setState({ categoryList: categoryArray });
+        } else {
+            let array = [];
+            this.state.categoryList.filter(function (data) {
+                // var value = data.value.toLowerCase;
+                if (data.value.includes(e.target.value)) {
+                    array.push(data);
+                }
+            })
+            this.setState({ categoryList: array });
+        }
+    }
+
     handleSubmit() {
         if (categoryValue == '') {
             this.setState({ error: 'Enter Value First' })
@@ -70,10 +91,12 @@ class ProducCategories extends Component {
     }
 
 
+
     // Category Request 
     // => Field Value 
     handleCategoryRequestChange = (e, index) => {
-        const copyArray = Object.assign([], this.state.categoryRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryRequestList);
         copyArray[index].value = e.target.value;
 
         if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
@@ -85,7 +108,8 @@ class ProducCategories extends Component {
     }
     //  => Edit
     async handleEditCategoryRequestClick(index) {
-        const copyArray = Object.assign([], this.state.categoryRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryRequestList);
         var obj = {};
         obj['value'] = copyArray[index].value;
         obj['label'] = false;
@@ -96,28 +120,38 @@ class ProducCategories extends Component {
     }
     //  => Cancle
     handleCancelCategoryRequestClick(index) {
-        const copyArray = Object.assign([], this.state.categoryRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryRequestList);
         copyArray[index].value = copyArray[index].prevVal;
         copyArray[index].label = true;
+        copyArray[index].error = '';
         this.setState({ categoryRequestList: copyArray })
     }
     // Update
     handleUpdateCategoryRequestClick(index) {
-        const copyArray = Object.assign([], this.state.categoryRequestList);
-        if (copyArray[index].error == '') {
-            copyArray[index].label = true;
-            this.setState({ categoryRequestList: copyArray, showModalMessage: 'Product Category Updated Successfully', showModal: true });
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryRequestList);
+        if (copyArray[index].value == copyArray[index].prevVal) {
+            copyArray[index].error = 'Enter Different Value';
+            this.setState({ categoryRequestList: copyArray });
+        } else {
+            if (copyArray[index].error == '') {
+                copyArray[index].label = true;
+                this.setState({ categoryRequestList: copyArray, showModalMessage: 'Product Category Updated Successfully', showModal: true });
+            }
         }
     }
     //  => Add
     handleAddCategoryRequestClick(index) {
-        const copyArray = Object.assign([], this.state.categoryRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryRequestList);
         copyArray.splice(index, 1);
         this.setState({ categoryRequestList: copyArray, showModalMessage: 'Product Category Added Successfully', showModal: true })
     }
     //  => Delete
     handleDeleteCategoryRequestClick(index) {
-        const copyArray = Object.assign([], this.state.categoryRequestList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryRequestList);
         copyArray.splice(index, 1);
         this.setState({ categoryRequestList: copyArray, showModalMessage: 'Product Category Deleted', showModal: true })
     }
@@ -130,7 +164,8 @@ class ProducCategories extends Component {
     // All categories
     //  => Chane
     handleCategoryChange = (e, index) => {
-        const copyArray = Object.assign([], this.state.categoryList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryList);
         copyArray[index].value = e.target.value;
 
         if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
@@ -143,7 +178,8 @@ class ProducCategories extends Component {
 
     //  => Edit
     async handleEditCategoryClick(index) {
-        const copyArray = Object.assign([], this.state.categoryList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryList);
         var obj = {};
         obj['value'] = copyArray[index].value;
         obj['label'] = false;
@@ -154,20 +190,41 @@ class ProducCategories extends Component {
     }
     //  => Cancle
     handleCancelCategoryClick(index) {
-        const copyArray = Object.assign([], this.state.categoryList);
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryList);
         copyArray[index].value = copyArray[index].prevVal;
+        copyArray[index].error = '';
         copyArray[index].label = true;
         this.setState({ categoryList: copyArray })
     }
     //  => Update
     handleUpdateCategoryClick(index) {
-        const copyArray = Object.assign([], this.state.categoryList);
-        copyArray[index].label = true;
-        this.setState({ categoryList: copyArray, showModalMessage: 'Product Category Updated Successfully', showModal: true });
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryList);
+        if (copyArray[index].value == copyArray[index].prevVal) {
+            copyArray[index].error = 'Enter Different Value';
+            this.setState({ categoryRequestList: copyArray });
+        } else {
+            if (copyArray[index].error == '') {
+                copyArray[index].label = true;
+                categoryArray.forEach((element, i) => {
+                    if (copyArray[index].prevVal == element.value) {
+                        element.value = copyArray[index].value;
+                    }
+                });
+                this.setState({ categoryList: copyArray, showModalMessage: 'Product Category Updated Successfully', showModal: true });
+            }
+        }
     }
     //  => Delete
-    handleDeleteCategoryClick(index) {
-        const copyArray = Object.assign([], this.state.categoryList);
+    handleDeleteCategoryClick = (index) => {
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.categoryList);
+        categoryArray.forEach((element, i) => {
+            if (copyArray[index].value == element.value) {
+                categoryArray.splice(index, 1);
+            }
+        });
         copyArray.splice(index, 1);
         this.setState({ categoryList: copyArray, showModalMessage: 'Product Category Deleted', showModal: true })
     }
@@ -245,7 +302,28 @@ class ProducCategories extends Component {
                                 <Card.Body style={styles.card_body}>
                                     {this.state.categoryRequestList.map((data, index) =>
                                         <Form.Row>
-                                            <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
+                                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Category Value"
+                                                    name="sku"
+                                                    value={data.value}
+                                                    disabled={true}
+                                                />
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Category Value"
+                                                    name="sku"
+                                                    value={data.value}
+                                                    disabled={true}
+                                                />
+                                            </Form.Group>
+                                            <div className="mr-auto"></div>
+                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                                 <InputGroup>
                                                     <Form.Control
                                                         type="text"
@@ -262,20 +340,21 @@ class ProducCategories extends Component {
                                                     </Form.Control.Feedback>
                                                 </InputGroup>
                                             </Form.Group>
-                                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                                            <div className="mr-auto"></div>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
                                                     onClick={() => data.label ? this.handleEditCategoryRequestClick(index) : this.handleUpdateCategoryRequestClick(index)} >
                                                     <div>{data.label ? 'Edit' : 'Update'}</div>
                                                 </Button>
                                             </Form.Group>
-                                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                                 <Button type="submit" variant="outline-primary" size="sm" block style={styles.submit_btn}
                                                     onClick={() => { data.label ? this.handleAddCategoryRequestClick(index) : this.handleCancelCategoryRequestClick(index) }}>
                                                     <div>{data.label ? 'Add' : 'Cancel'}</div>
                                                 </Button>
                                             </Form.Group>
                                             <div className="mr-auto"></div>
-                                            <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                                 <Button type="submit" variant="outline-danger" size="sm" block style={styles.submit_btn}
                                                     onClick={() => this.handleDeleteCategoryRequestClick(index)}>
                                                     <div>Discard</div>
@@ -306,6 +385,21 @@ class ProducCategories extends Component {
                             </Card.Header>
                             <Accordion.Collapse eventKey="0">
                                 <Card.Body style={styles.card_body}>
+                                    <Form.Row style={{ margin: '0% 5%' }}>
+                                        <Form.Group as={Col}>
+                                            <InputGroup>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Category Value"
+                                                    name="sku"
+                                                    value={this.state.filterStr}
+                                                    onChange={(e) => this.handleFilterStrChange(e)}
+                                                />
+                                            </InputGroup>
+                                        </Form.Group>
+                                    </Form.Row>
+                                    <hr />
                                     {this.state.categoryList.map((data, index) =>
                                         <Form.Row>
                                             <Form.Group as={Col} lg={8} md={8} sm={12} xs={12}>
@@ -321,7 +415,7 @@ class ProducCategories extends Component {
                                                         isInvalid={data.error}
                                                     />
                                                     <Form.Control.Feedback type="invalid">
-                                                        {this.state.error}
+                                                        {data.error}
                                                     </Form.Control.Feedback>
                                                 </InputGroup>
                                             </Form.Group>
@@ -334,7 +428,7 @@ class ProducCategories extends Component {
                                             <div className="mr-auto"></div>
                                             <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
                                                 <Button type="submit" variant={data.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
-                                                    onClick={() => { data.laebl ? this.handleDeleteCategoryClick(index) : this.handleCancelCategoryClick(index) }}>
+                                                    onClick={data.label ? () => this.handleDeleteCategoryClick(index) : () => this.handleCancelCategoryClick(index)}>
                                                     <div>{data.label ? 'Delete' : 'Cancel'}</div>
                                                 </Button>
                                             </Form.Group>
@@ -374,6 +468,9 @@ const styles = {
     },
     card_body: {
         // padding: '5%'
+    },
+    label: {
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`
     },
     error: {
         width: '100%',
