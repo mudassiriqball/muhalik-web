@@ -48,7 +48,7 @@ const ViewProduct = props => {
                     <Row style={styles.img_row}>
                         {/* <Form.Label style={styles.general_info_label}>General Info</Form.Label> */}
                         <label><span>General Info</span></label>
-                        <label>Data</label>
+                        <label>fata</label>
                     </Row>
                 </>
             }
