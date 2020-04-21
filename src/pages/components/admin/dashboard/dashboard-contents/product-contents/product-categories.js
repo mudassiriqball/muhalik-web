@@ -15,8 +15,15 @@ class ProducCategories extends Component {
         this.state = {
             isLoading: false,
             showToast: false,
+
             categoryValue: '',
-            error: '',
+            subCategoryValue: '',
+            subSubCategoryValue: '',
+
+            categoryError: '',
+            subCategoryError: '',
+            subSubCategoryError: '',
+
             categoryList: [],
             categoryRequestList: [],
 
@@ -47,13 +54,15 @@ class ProducCategories extends Component {
     }
 
     async addCategory() {
+        let data = [];
+        data = { category: this.state.categoryValue, sub_category: this.state.subCategoryValue, sub_sub_Category: this.state.subSubCategoryValue }
         // const url = MuhalikConfig.PATH + '/api/products/add';
         // await axios.post(url, {
-        // this.state.categoryValue
+        //      data
         // }, {
         //     headers: { 'authorization': await getUncodededTokenFromStorage() }
         // }).then(function (response) {
-        this.setState({ isLoading: true })
+        this.setState({ isLoading: false })
         this.setState({ showModalMessage: 'Product Category Added Successfully' })
         this.setState({ showModal: true })
         return true;
@@ -81,11 +90,18 @@ class ProducCategories extends Component {
     }
 
     handleSubmit() {
-        if (categoryValue == '') {
-            this.setState({ error: 'Enter Value First' })
+        if (this.state.categoryValue == '' || this.state.subCategoryValue == '' || this.state.subSubCategoryValue == '') {
+            if (this.state.categoryValue == '') {
+                this.setState({ categoryError: 'Enter Value First' });
+            }
+            if (this.state.subCategoryValue == '') {
+                this.setState({ subCategoryError: 'Enter Value First' });
+            }
+            if (this.state.subSubCategoryValue == '') {
+                this.setState({ subSubCategoryError: 'Enter Value First' });
+            }
         } else {
             this.setState({ isLoading: true })
-            this.setState({ error: '' })
             this.addCategory(this);
         }
     }
@@ -258,22 +274,59 @@ class ProducCategories extends Component {
                             </Card.Header>
                             <Accordion.Collapse eventKey="0">
                                 <Card.Body style={styles.card_body}>
-                                    <Form.Group>
-                                        <InputGroup>
-                                            <Form.Control
-                                                type="text"
-                                                size="sm"
-                                                placeholder="Enter Category Value"
-                                                name="sku"
-                                                value={this.state.categoryValue}
-                                                onChange={(e) => this.setState({ categoryValue: e.target.value })}
-                                                isInvalid={this.state.error}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                                {this.state.error}
-                                            </Form.Control.Feedback>
-                                        </InputGroup>
-                                    </Form.Group>
+                                    <Form.Row>
+                                        <Form.Group as={Col} lg={4} md={4} sm={4} xs={12}>
+                                            <Form.Label style={styles.label}>Category</Form.Label>
+                                            <InputGroup>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Category Value"
+                                                    name="sku"
+                                                    value={this.state.categoryValue}
+                                                    onChange={(e) => this.setState({ categoryValue: e.target.value, categoryError: '' })}
+                                                    isInvalid={this.state.categoryError}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {this.state.categoryError}
+                                                </Form.Control.Feedback>
+                                            </InputGroup>
+                                        </Form.Group>
+                                        <Form.Group as={Col} lg={4} md={4} sm={4} xs={12}>
+                                            <Form.Label style={styles.label}>Sub Category</Form.Label>
+                                            <InputGroup>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Category Value"
+                                                    name="sku"
+                                                    value={this.state.subCategoryValue}
+                                                    onChange={(e) => this.setState({ subCategoryValue: e.target.value, subCategoryError: '' })}
+                                                    isInvalid={this.state.subCategoryError}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {this.state.subCategoryError}
+                                                </Form.Control.Feedback>
+                                            </InputGroup>
+                                        </Form.Group>
+                                        <Form.Group as={Col} lg={4} md={4} sm={4} xs={12}>
+                                            <Form.Label style={styles.label}>Sub Sub Category</Form.Label>
+                                            <InputGroup>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Category Value"
+                                                    name="sku"
+                                                    value={this.state.subSubCategoryValue}
+                                                    onChange={(e) => this.setState({ subSubCategoryValue: e.target.value, subSubCategoryError: '' })}
+                                                    isInvalid={this.state.subSubCategoryError}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {this.state.subSubCategoryError}
+                                                </Form.Control.Feedback>
+                                            </InputGroup>
+                                        </Form.Group>
+                                    </Form.Row>
                                     <Form.Group>
                                         <Button type="submit" size="sm" onClick={this.handleSubmit.bind(this)} disabled={this.state.isLoading} block style={styles.submit_btn}>
                                             {this.state.isLoading ? 'Uploading' : 'Add Category'}

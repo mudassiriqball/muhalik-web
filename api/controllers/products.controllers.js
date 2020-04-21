@@ -325,13 +325,15 @@ productsController.getAll = async (req, res) => {
 
 productsController.addProduct = async (req, res) => {
   try {
+    const body = req.body.data
+
     var datetime = new Date();
     var date = datetime.toISOString().slice(0, 10);
 
-    req.body.product_entry_date = date;
+    body.product_entry_date = date;
     const header = jwt.decode(req.headers.authorization);
-    req.body.vendor_id = header.data._id;
-    const product = new Products(req.body.data);
+    body.vendor_id = header.data._id;
+    const product = new Products(body);
 
     const result = await product.save();
     res.status(200).send({

@@ -37,7 +37,7 @@ class VendorDashboard extends React.Component {
                     <FontAwesomeIcon icon={faTachometerAlt} style={styles.title_fontawesome} />
                     <div className="mr-auto" style={styles.title}> Dashboard </div>
                 </Row>
-                <Row noGutters style={{padding: '0% 1%'}}>
+                <Row noGutters style={{ padding: '0% 1%' }}>
                     <Col lg={4} md={4} sm={12} xs={12} style={styles.product_card_col}>
                         <Card>
                             <Card.Header style={styles.card_header}>
@@ -369,15 +369,15 @@ const styles = {
         background: '#ac7339',
     },
     // 
-    total_errning_row:{
+    total_errning_row: {
         // margin: '3% 0%',
         background: '#0088cc',
     },
-    year_errning_row:{
+    year_errning_row: {
         // margin: '3% 0%',
         background: '#9900cc',
     },
-    month_errning_row:{
+    month_errning_row: {
         // margin: '3% 0%',
         background: '#996633',
     },

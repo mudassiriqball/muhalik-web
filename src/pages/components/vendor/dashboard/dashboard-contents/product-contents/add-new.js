@@ -11,6 +11,8 @@ import {
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons';
 
 import CreatableSelect from 'react-select/creatable';
+import Select from 'react-select';
+
 import AlertModal from '../../../../alert-modal';
 
 import GlobalStyleSheet from '../../../../../../styleSheet';
@@ -22,11 +24,21 @@ import product_size_options from '../../../../../../sdk/consts/product-size-opti
 import product_color_options from '../../../../../../sdk/consts/product-color-options'
 
 // Option List for select Product Category (when offline)
-const product_categories = [
+let product_categories_options = [
     { value: 'Shoe', label: 'Shoe' },
     { value: 'Cloth', label: 'Cloth' },
     { value: 'Shirt', label: 'Shirt' },
     { value: 'Pant', label: 'Pant' }
+]
+const product_sub_categories_options = [
+    { value: 'Sub Shoe', label: 'Sub Shoe' },
+    { value: 'Sub Cloth', label: 'Sub Cloth' },
+    { value: 'Sub Shirt', label: 'Sub Shirt' },
+]
+const product_sub_sub_categories_options = [
+    { value: 'Foo', label: 'Foo' },
+    { value: 'Loo', label: 'Loo' },
+    { value: 'Khoo', label: 'Khoo' },
 ]
 
 // For React-Select
@@ -39,12 +51,36 @@ const createOption = (label) => ({
     label,
 });
 
+const react_select_styles = {
+    control: (base) => ({
+        ...base,
+        fontSize: '13px',
+    }),
+    dropdownIndicator: (base) => ({
+        ...base,
+        paddingTop: 0,
+        paddingBottom: 0,
+        fontSize: '13px',
+    }),
+    clearIndicator: (base) => ({
+        ...base,
+        paddingTop: 0,
+        paddingBottom: 0,
+        fontSize: '13px',
+    }),
+    option: provided => ({
+        ...provided,
+        fontSize: '13px',
+    }),
+};
+
 // Yup Schema for validation fields
 const schema = yup.object({
     product_name: yup.string().required("Enter Product Name")
         .min(2, "Must have at least 2 characters")
         .max(40, "Can't be longer than 40 characters"),
-    product_description: yup.string()
+
+    product_description: yup.string().required("Enter Product Name")
         .min(5, "Must have at least 5 characters")
         .max(200, "Can't be longer than 200 characters"),
     // Product Data
@@ -107,6 +143,9 @@ const schema = yup.object({
     custom_fields: yup.string(),
 
     product_category: yup.string(),
+    product_sub_category: yup.string(),
+    product_sub_sub_category: yup.string(),
+
     dangerous_goods: yup.string(),
     product_tags: yup.string(),
 });
@@ -122,10 +161,20 @@ class AddNew extends Component {
             showSimpleProductPriceImgLinkErrorrAlert: false,
             isVariableProduct: false,
 
-            product_categories_options: product_categories,
             productCategories: '',
-            categoryError: 'no_error',
+            productSubCategories: '',
+            productSubSubCategories: '',
+
+            subCategoryDisabled: true,
+            subSubCategoryDisabled: true,
+
+            subCategoryError: 'no_error',
+            subSubCategoryError: 'no_error',
+
             categoryErrorDiv: 'BorderDiv',
+            subCategoryErrorDiv: 'BorderDiv',
+            subSubategoryErrorDiv: 'BorderDiv',
+
 
             productTags: [],
 
@@ -174,7 +223,7 @@ class AddNew extends Component {
         const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
         try {
             const response = await axios.get(url);
-            this.setState({ product_categories_options: response.data.data });
+            product_categories_options = response.data.data;
         } catch (error) {
             console.log(error);
         }
@@ -479,8 +528,18 @@ class AddNew extends Component {
 
 
     // Product Category
-    handleProductCategoryChange = (arr) => {
-        this.setState({ productCategories: arr, categoryError: 'no_error', categoryErrorDiv: 'BorderDiv' });
+    handleProductCategoryChange = (value) => {
+        this.setState({ productCategories: value, subCategoryDisabled: false, categoryErrorDiv: 'BorderDiv' });
+    }
+    handleProductSubCategoryChange = (value) => {
+
+        this.setState({
+            productSubCategories: value, subSubCategoryDisabled: false,
+            subCategoryError: 'no_error', subCategoryErrorDiv: 'BorderDiv'
+        });
+    }
+    handleProductSubSubCategoryChange = (value) => {
+        this.setState({ productSubSubCategories: value, subSubCategoryError: 'no_error', subSubCategoryErrorDiv: 'BorderDiv' });
     }
 
     // Dangerous Goods
@@ -519,12 +578,17 @@ class AddNew extends Component {
                     product_type: 'simple-product',
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    if (this.state.productCategories == '' || (this.state.simple_product_image_link == '' && values.product_type == 'simple-product')) {
-                        // if (this.state.customFieldNameArray == '') {
-                        //     this.setState({ categoryError: "error", categoryErrorDiv: 'RedBorderDiv' });
-                        // }
+                    if (this.state.productCategories == '' || this.state.productSubCategories == '' || this.state.productSubSubCategories == '' ||
+                        (this.state.simple_product_image_link == '' && values.product_type == 'simple-product')) {
+
                         if (this.state.productCategories == '') {
-                            this.setState({ categoryError: "error", categoryErrorDiv: 'RedBorderDiv' });
+                            this.setState({ categoryErrorDiv: 'RedBorderDiv' });
+                        }
+                        if (this.state.productSubCategories == '') {
+                            this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
+                        }
+                        if (this.state.productSubSubCategories == '') {
+                            this.setState({ subSubCategoryErrorDiv: 'RedBorderDiv' });
                         }
                         if (this.state.simple_product_image_link == '' && values.product_type == 'simple-product') {
                             this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true, image_linkError: "error", image_linkErrorDiv: 'RedBorderDiv' });
@@ -542,6 +606,8 @@ class AddNew extends Component {
                             //     array.push(element.value)
                             // })
                             values.product_category = this.state.productCategories;
+                            values.product_sub_category = this.state.productSubCategories;
+                            values.product_sub_sub_category = this.state.productSubSubCategories;
                             // array = [];
                             // this.state.productTags.forEach(element => {
                             //     array.push(element.value)
@@ -580,422 +646,435 @@ class AddNew extends Component {
                                     item.push({ name: 'image_link', value: element.image_link })
                                     array.push({ item: item })
                                 })
-
                                 values.product_variations = array;
                             }
-
                             resetForm();
-
                             if (this.uploadProduct(values, this)) {
                                 this.setState({
-                                    productCategories: '',
-                                    categoryError: 'no_error',
-                                    categoryErrorDiv: 'BorderDiv',
+                                    showSimpleProductPriceImgLinkErrorrAlert: false, isVariableProduct: false,
+                                    productCategories: '', productSubCategories: '', productSubSubCategories: '',
+                                    subCategoryDisabled: true, subSubCategoryDisabled: true,
+                                    categoryErrorDiv: 'BorderDiv', subCategoryErrorDiv: 'BorderDiv', subSubategoryErrorDiv: 'BorderDiv',
                                     productTags: [],
-                                    warrantyType: 'Year',
-                                    inputValue: '',
-                                    simple_product_image_link: [],
-                                    image_linkError: 'no_error',
-                                    image_linkErrorDiv: 'BorderDiv',
-                                    isVariableProduct: false,
-                                    productAttributesArray: [],
-                                    productAttributeName: '',
-                                    productAttributeValue: '',
-                                    productAttributeError: '',
-                                    variationsArray: [],
-                                    isVariationsSaved: false,
-                                    customFieldsArray: [],
-                                    customFieldName: '',
-                                    customFieldValue: '',
-                                    customFieldError: '',
+                                    warrantyType: 'Year', inputValue: '', simple_product_image_link: [], simple_product_image_link: [],
+                                    image_linkError: 'no_error', image_linkErrorDiv: 'BorderDiv',
+                                    // Product Attributes
+                                    productAttributesArray: [], productAttributeName: '', productAttributeValue: '', productAttributeError: '', productAttributeNameSelected: '',
+                                    variationsArray: [], isVariationsSaved: false, samePriceInput: '', samePriceError: '', sameStockInput: '', sameStockError: '', sameImgLinkInput: '', sameImgLinkError: '',
+                                    // Custom Fields
+                                    customFieldsArray: [], customFieldName: '', customFieldValue: '', customFieldError: '', customFieldNameSelected: '',
+                                    // Dangerous Goods
+                                    dangerousGoodsArray: [],
                                 });
 
                             }
                             setSubmitting(false);
                         }, 500);
                     }
-                }}
-            >
-                {
-                    ({
-                        handleSubmit, handleChange, values, touched, isValid, errors, handleBlur, isSubmitting
-                    }) => (
-                            <div>
-                                <Row style={styles.title_row} noGutters>
-                                    <FontAwesomeIcon icon={faPlus} style={styles.title_fontawesome} />
-                                    <div className="mr-auto" style={styles.title}> Add New Product</div>
-                                </Row>
-                                <Form noValidate onSubmit={handleSubmit}>
+                }}>
+                {({
+                    handleSubmit, handleChange, values, touched, isValid, errors, handleBlur, isSubmitting
+                }) => (
+                        <div>
+                            <Row style={styles.title_row} noGutters>
+                                <FontAwesomeIcon icon={faPlus} style={styles.title_fontawesome} />
+                                <div className="mr-auto" style={styles.title}> Add New Product</div>
+                            </Row>
+                            <Form noValidate onSubmit={handleSubmit}>
 
-                                    {/* {this.state.showToast ? */}
-                                    <AlertModal
-                                        onHide={(e) => this.setState({ showToast: false })}
-                                        show={this.state.showToast}
-                                        header={'Success'}
-                                        message={'Product Uploaded Successfully'}
-                                        iconName={faThumbsUp}
-                                        color={"#00b300"}
-                                    />
-                                        : null
-                                    {/* } */}
-                                    {/* {this.state.showVariationsErrorAlert ? */}
-                                    <AlertModal
-                                        onHide={(e) => this.setState({ showVariationsErrorAlert: false })}
-                                        show={this.state.showVariationsErrorAlert}
-                                        header={'Error'}
-                                        message={'Please Add/Save Variations First'}
-                                        iconName={faExclamationTriangle}
-                                        color={"#ff3333"}
-                                    />
-                                        : null
-                                    {/* } */}
-                                    {/* {this.state.showSimpleProductPriceImgLinkErrorrAlert ? */}
-                                    <AlertModal
-                                        onHide={(e) => this.setState({ showSimpleProductPriceImgLinkErrorrAlert: false })}
-                                        show={this.state.showSimpleProductPriceImgLinkErrorrAlert}
-                                        header={'Error'}
-                                        message={'Enter Price/Image Link in General Tab First'}
-                                        iconName={faExclamationTriangle}
-                                        color={"#ff3333"}
-                                    />
-                                        : null
-                                    {/* } */}
+                                {/* {this.state.showToast ? */}
+                                <AlertModal
+                                    onHide={(e) => this.setState({ showToast: false })}
+                                    show={this.state.showToast}
+                                    header={'Success'}
+                                    message={'Product Uploaded Successfully'}
+                                    iconName={faThumbsUp}
+                                    color={"#00b300"}
+                                />
+                                {/* : null */}
+                                {/* } */}
+                                {/* {this.state.showVariationsErrorAlert ? */}
+                                <AlertModal
+                                    onHide={(e) => this.setState({ showVariationsErrorAlert: false })}
+                                    show={this.state.showVariationsErrorAlert}
+                                    header={'Error'}
+                                    message={'Please Add/Save Variations First'}
+                                    iconName={faExclamationTriangle}
+                                    color={"#ff3333"}
+                                />
+                                {/* : null */}
+                                {/* } */}
+                                {/* {this.state.showSimpleProductPriceImgLinkErrorrAlert ? */}
+                                <AlertModal
+                                    onHide={(e) => this.setState({ showSimpleProductPriceImgLinkErrorrAlert: false })}
+                                    show={this.state.showSimpleProductPriceImgLinkErrorrAlert}
+                                    header={'Error'}
+                                    message={'Enter Price/Image Link in General Tab First'}
+                                    iconName={faExclamationTriangle}
+                                    color={"#ff3333"}
+                                />
+                                {/* : null */}
+                                {/* } */}
 
 
-                                    <Row noGutters style={{ paddingTop: '2%' }}>
-                                        <Col lg={9} md={9} sm={12} xs={12}>
-                                            {/* Product Name */}
-                                            <Form.Group as={Row} style={styles.row}>
-                                                <Form.Label style={styles.label}>Product Name<span>*</span></Form.Label>
-                                                <InputGroup>
-                                                    <Form.Control
-                                                        type="text"
-                                                        placeholder="Enter Product Name"
-                                                        name="product_name"
-                                                        value={values.product_name || ''}
-                                                        onChange={handleChange}
-                                                        isInvalid={touched.product_name && errors.product_name}
-                                                    />
-                                                    <Form.Control.Feedback type="invalid">
-                                                        {errors.product_name}
-                                                    </Form.Control.Feedback>
-                                                </InputGroup>
-                                            </Form.Group>
-                                            {/* End of Product Name */}
-
-                                            {/* Product Discription */}
-                                            <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-                                                <Form.Group as={Row} style={styles.row}>
-                                                    <Card style={styles.card}>
-                                                        <Card.Header style={styles.card_header}>
-                                                            <Form.Label >Product Discruption</Form.Label>
-                                                            <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                                                                <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                                                            </Accordion.Toggle>
-                                                        </Card.Header>
-                                                        <Accordion.Collapse eventKey="0">
-                                                            <Card.Body>
-                                                                <Form.Group>
-                                                                    <Form.Control
-                                                                        as="textarea"
-                                                                        placeholder="Enter Product Description"
-                                                                        name="product_description"
-                                                                        value={values.product_description || ''}
-                                                                        rows="7"
-                                                                        onChange={handleChange}
-                                                                        isInvalid={touched.product_description && errors.product_description}
-                                                                    />
-                                                                    <Form.Control.Feedback type="invalid">
-                                                                        {errors.product_description}
-                                                                    </Form.Control.Feedback>
-                                                                </Form.Group>
-                                                            </Card.Body>
-                                                        </Accordion.Collapse>
-                                                    </Card>
-                                                </Form.Group>
-                                            </Accordion>
-                                            {/* Product Data Row */}
-                                            <Row style={styles.row}>
-                                                <ProductData
-                                                    productTypeHandler={this.handleProductTypeChange}
-                                                    isVariableProduct={this.state.isVariableProduct}
-
-                                                    product_type_values={values.product_type || ''}
-
-                                                    product_price_values={values.product_price || ''}
-                                                    product_price_touched={touched.product_price}
-                                                    product_price_errors={errors.product_price}
-
-                                                    product_in_stock_values={values.product_in_stock || ''}
-                                                    product_in_stock_touched={touched.product_in_stock}
-                                                    product_in_stock_errors={errors.product_in_stock}
-
-                                                    product_brand_name_values={values.product_brand_name || ''}
-                                                    product_brand_name_touched={touched.product_brand_name}
-                                                    product_brand_name_errors={errors.product_brand_name}
-
-                                                    imageLink={this.state.simple_product_image_link}
-                                                    simpleProductImageLinkHandler={this.handleSimpleProductImageLinkChange.bind(this)}
-                                                    inputValue={this.state.inputValue}
-                                                    simpleProductImageLinkInputChangeHandler={this.handleSimpleProductImageLinkInputChange.bind(this)}
-                                                    simpleProductImageLinkhandleKeyDownHandler={this.handleSimpleProductImage_linkKeyDown.bind(this)}
-                                                    simpleProductError={this.state.showSimpleProductPriceImgLinkErrorrAlert}
-
-                                                    product_warranty_values={values.product_warranty || ''}
-                                                    product_warranty_touched={touched.product_warranty}
-                                                    product_warranty_errors={errors.product_warranty}
-
-                                                    warranty_type_values={values.warranty_type || ''}
-                                                    warranty_type_touched={touched.warranty_type}
-                                                    warranty_type_errors={errors.warranty_type}
-
-                                                    product_discount_values={values.product_discount || ''}
-                                                    product_discount_touched={touched.product_discount}
-                                                    product_discount_errors={errors.product_discount}
-
-                                                    sku_values={values.sku || ''}
-                                                    sku_touched={touched.sku}
-                                                    sku_errors={errors.sku}
-
-                                                    product_weight_values={values.product_weight || ''}
-                                                    product_weight_touched={touched.product_weight}
-                                                    product_weight_errors={errors.product_weight}
-
-                                                    dimension_length_values={values.dimension_length || ''}
-                                                    dimension_length_touched={touched.dimension_length}
-                                                    dimension_length_errors={errors.dimension_length}
-
-                                                    dimension_width_values={values.dimension_width || ''}
-                                                    dimension_width_touched={touched.dimension_width}
-                                                    dimension_width_errors={errors.dimension_width}
-
-                                                    dimension_height_values={values.dimension_height || ''}
-                                                    dimension_height_touched={touched.dimension_height}
-                                                    dimension_height_errors={errors.dimension_height}
-
-                                                    shipping_charges_values={values.shipping_charges || ''}
-                                                    shipping_charges_touched={touched.shipping_charges}
-                                                    shipping_charges_errors={errors.shipping_charges}
-
-                                                    handling_fee_values={values.handling_fee || ''}
-                                                    handling_fee_touched={touched.handling_fee}
-                                                    handling_fee_errors={errors.handling_fee}
-
-                                                    purchase_note_values={values.purchase_note || ''}
-                                                    purchase_note_touched={touched.purchase_note}
-                                                    purchase_note_errors={errors.purchase_note}
-
+                                <Row noGutters style={{ paddingTop: '2%' }}>
+                                    <Col lg={9} md={9} sm={12} xs={12}>
+                                        {/* Product Name */}
+                                        <Form.Group as={Row} style={styles.row}>
+                                            <Form.Label style={styles.label}>Product Name<span>*</span></Form.Label>
+                                            <InputGroup>
+                                                <Form.Control
+                                                    type="text"
+                                                    placeholder="Enter Product Name"
+                                                    name="product_name"
+                                                    value={values.product_name || ''}
                                                     onChange={handleChange}
-                                                    touched={touched}
-                                                    errors={errors}
-
-                                                    productColorChangeHandler={this.handleProductColorChange}
-                                                    // size={this.state.size}
-                                                    productSizeChangeHandler={this.handleProductSizeChange}
-
-                                                    attributesArray={this.state.productAttributesArray}
-                                                    name={this.state.productAttributeName}
-                                                    value={this.state.productAttributeValue}
-                                                    productAttributeNameSelected={this.state.productAttributeNameSelected}
-                                                    attributeNameHandler={this.handleProductAttributeNameChange.bind(this)}
-                                                    attributeValueHandler={this.handleProductAttributeValueChange.bind(this)}
-                                                    addAttributeHandler={this.handleAddProductAttributeClick.bind(this)}
-                                                    update={this.handleUpdateProductAttributeClick.bind(this)}
-                                                    deleteAttributeHandler={this.handleDeleteProductAttributeClick.bind(this)}
-                                                    deleteVariationHandler={this.handleDeleteProductVariationClick.bind(this)}
-                                                    deleteVariationCustomFieldHandler={this.handleDeleteVariationCustomFieldClick.bind(this)}
-                                                    saveVariationsHandler={this.handleSaveVariationsClick.bind(this)}
-                                                    variationsErrorHandler={this.handleVariationsErrorCheck.bind(this)}
-                                                    error={this.state.productAttributeError}
-
-                                                    createVariationsHandler={this.handleCreateVariationsClick}
-                                                    variationsArray={this.state.variationsArray}
-                                                    variationPriceHandler={this.handleVariationPriceChange.bind(this)}
-                                                    variationStockHandler={this.handleVariationProductInStockChang.bind(this)}
-                                                    variationImageLinkHandler={this.handleVariationImageLinkChange.bind(this)}
-
-                                                    samePriceInput={this.state.samePriceInput}
-                                                    samePriceError={this.state.samePriceError}
-                                                    variationsSamePriceChanged={this.handleVariationsSamePriceChanged.bind(this)}
-                                                    variationsSamePriceHandler={this.handleVariationsSamePriceClick.bind(this)}
-
-
-
-                                                    sameStockInput={this.state.sameStockInput}
-                                                    sameStockError={this.state.sameStockError}
-                                                    variationsSameStockChanged={this.handleVariationsSameStockChanged.bind(this)}
-                                                    variationsSameStockHandler={this.handleVariationsSameStockClick.bind(this)}
-
-                                                    sameImgLinkInput={this.state.sameImgLinkInput}
-                                                    sameImgLinkError={this.state.sameImgLinkError}
-                                                    variationsSameImgLinkChanged={this.handleVariationsSameImgLinkChanged.bind(this)}
-                                                    variationsSameImgLinkHandler={this.handleVariationsSameImgLinkClick.bind(this)}
+                                                    isInvalid={errors.product_name}
                                                 />
-                                            </Row>
-                                            {/* End of Product Data Row */}
-                                            {/* Custom Fields Row */}
-                                            <Form.Group as={Row} style={styles.row} >
-                                                <CustomFields
-                                                    customFieldsArray={this.state.customFieldsArray}
-                                                    isVariableProduct={this.state.isVariableProduct}
-                                                    name={this.state.customFieldName}
-                                                    value={this.state.customFieldValue}
-                                                    customFieldNameSelected={this.state.customFieldNameSelected}
-                                                    fieldNameHandler={this.handleCustomFieldNameChange.bind(this)}
-                                                    fieldValueHandler={this.handleCustomFieldValueChange.bind(this)}
-                                                    addFieldHandler={this.handleAddCustomFieldBtnClick.bind(this)}
-                                                    update={this.updateCustomFieldsClick.bind(this)}
-                                                    delete={this.deleteCustomFieldsClick.bind(this)}
-                                                    error={this.state.customFieldError}
-                                                    showCustomFields={showCustomFields}
-                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {errors.product_name}
+                                                </Form.Control.Feedback>
+                                            </InputGroup>
+                                        </Form.Group>
+                                        {/* End of Product Name */}
+
+                                        {/* Product Discription */}
+                                        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                                            <Form.Group as={Row} style={styles.row}>
+                                                <Card style={styles.card}>
+                                                    <Card.Header style={styles.card_header}>
+                                                        <Form.Label >Product Discruption</Form.Label>
+                                                        <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
+                                                        </Accordion.Toggle>
+                                                    </Card.Header>
+                                                    <Accordion.Collapse eventKey="0">
+                                                        <Card.Body>
+                                                            <Form.Group>
+                                                                <Form.Control
+                                                                    as="textarea"
+                                                                    placeholder="Enter Product Description"
+                                                                    name="product_description"
+                                                                    value={values.product_description || ''}
+                                                                    rows="7"
+                                                                    onChange={handleChange}
+                                                                    isInvalid={errors.product_description}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.product_description}
+                                                                </Form.Control.Feedback>
+                                                            </Form.Group>
+                                                        </Card.Body>
+                                                    </Accordion.Collapse>
+                                                </Card>
                                             </Form.Group>
-                                            {/* End of Custom Fields Row */}
-                                        </Col>
+                                        </Accordion>
+                                        {/* Product Data Row */}
+                                        <Row style={styles.row}>
+                                            <ProductData
+                                                productTypeHandler={this.handleProductTypeChange}
+                                                isVariableProduct={this.state.isVariableProduct}
 
-                                        <Col lg={3} md={3} sm={12} xs={12}>
-                                            {/* Product Category */}
-                                            <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-                                                <Form.Group as={Row} style={styles.row}>
-                                                    <Card style={styles.card}>
-                                                        <Card.Header style={styles.card_header}>
-                                                            <Form.Label >Product Categories</Form.Label>
-                                                            <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                                                                <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                                                            </Accordion.Toggle>
-                                                        </Card.Header>
-                                                        <Accordion.Collapse eventKey="0">
-                                                            <Card.Body style={{ height: '250px' }}>
+                                                product_type_values={values.product_type || ''}
+
+                                                product_price_values={values.product_price || ''}
+                                                // product_price_touched={touched.product_price}
+                                                product_price_errors={errors.product_price}
+
+                                                product_in_stock_values={values.product_in_stock || ''}
+                                                // product_in_stock_touched={touched.product_in_stock}
+                                                product_in_stock_errors={errors.product_in_stock}
+
+                                                product_brand_name_values={values.product_brand_name || ''}
+                                                // product_brand_name_touched={touched.product_brand_name}
+                                                product_brand_name_errors={errors.product_brand_name}
+
+                                                imageLink={this.state.simple_product_image_link}
+                                                simpleProductImageLinkHandler={this.handleSimpleProductImageLinkChange.bind(this)}
+                                                inputValue={this.state.inputValue}
+                                                simpleProductImageLinkInputChangeHandler={this.handleSimpleProductImageLinkInputChange.bind(this)}
+                                                simpleProductImageLinkhandleKeyDownHandler={this.handleSimpleProductImage_linkKeyDown.bind(this)}
+                                                simpleProductError={this.state.showSimpleProductPriceImgLinkErrorrAlert}
+
+                                                product_warranty_values={values.product_warranty || ''}
+                                                // product_warranty_touched={touched.product_warranty}
+                                                product_warranty_errors={errors.product_warranty}
+
+                                                warranty_type_values={values.warranty_type || ''}
+                                                // warranty_type_touched={touched.warranty_type}
+                                                warranty_type_errors={errors.warranty_type}
+
+                                                product_discount_values={values.product_discount || ''}
+                                                // product_discount_touched={touched.product_discount}
+                                                product_discount_errors={errors.product_discount}
+
+                                                sku_values={values.sku || ''}
+                                                // sku_touched={touched.sku}
+                                                sku_errors={errors.sku}
+
+                                                product_weight_values={values.product_weight || ''}
+                                                // product_weight_touched={touched.product_weight}
+                                                product_weight_errors={errors.product_weight}
+
+                                                dimension_length_values={values.dimension_length || ''}
+                                                // dimension_length_touched={touched.dimension_length}
+                                                dimension_length_errors={errors.dimension_length}
+
+                                                dimension_width_values={values.dimension_width || ''}
+                                                // dimension_width_touched={touched.dimension_width}
+                                                dimension_width_errors={errors.dimension_width}
+
+                                                dimension_height_values={values.dimension_height || ''}
+                                                // dimension_height_touched={touched.dimension_height}
+                                                dimension_height_errors={errors.dimension_height}
+
+                                                shipping_charges_values={values.shipping_charges || ''}
+                                                // shipping_charges_touched={touched.shipping_charges}
+                                                shipping_charges_errors={errors.shipping_charges}
+
+                                                handling_fee_values={values.handling_fee || ''}
+                                                // handling_fee_touched={touched.handling_fee}
+                                                handling_fee_errors={errors.handling_fee}
+
+                                                purchase_note_values={values.purchase_note || ''}
+                                                // purchase_note_touched={touched.purchase_note}
+                                                purchase_note_errors={errors.purchase_note}
+
+                                                onChange={handleChange}
+                                                // touched={touched}
+                                                errors={errors}
+
+                                                productColorChangeHandler={this.handleProductColorChange}
+                                                // size={this.state.size}
+                                                productSizeChangeHandler={this.handleProductSizeChange}
+
+                                                attributesArray={this.state.productAttributesArray}
+                                                name={this.state.productAttributeName}
+                                                value={this.state.productAttributeValue}
+                                                productAttributeNameSelected={this.state.productAttributeNameSelected}
+                                                attributeNameHandler={this.handleProductAttributeNameChange.bind(this)}
+                                                attributeValueHandler={this.handleProductAttributeValueChange.bind(this)}
+                                                addAttributeHandler={this.handleAddProductAttributeClick.bind(this)}
+                                                update={this.handleUpdateProductAttributeClick.bind(this)}
+                                                deleteAttributeHandler={this.handleDeleteProductAttributeClick.bind(this)}
+                                                deleteVariationHandler={this.handleDeleteProductVariationClick.bind(this)}
+                                                deleteVariationCustomFieldHandler={this.handleDeleteVariationCustomFieldClick.bind(this)}
+                                                saveVariationsHandler={this.handleSaveVariationsClick.bind(this)}
+                                                variationsErrorHandler={this.handleVariationsErrorCheck.bind(this)}
+                                                error={this.state.productAttributeError}
+
+                                                createVariationsHandler={this.handleCreateVariationsClick}
+                                                variationsArray={this.state.variationsArray}
+                                                variationPriceHandler={this.handleVariationPriceChange.bind(this)}
+                                                variationStockHandler={this.handleVariationProductInStockChang.bind(this)}
+                                                variationImageLinkHandler={this.handleVariationImageLinkChange.bind(this)}
+
+                                                samePriceInput={this.state.samePriceInput}
+                                                samePriceError={this.state.samePriceError}
+                                                variationsSamePriceChanged={this.handleVariationsSamePriceChanged.bind(this)}
+                                                variationsSamePriceHandler={this.handleVariationsSamePriceClick.bind(this)}
+
+
+
+                                                sameStockInput={this.state.sameStockInput}
+                                                sameStockError={this.state.sameStockError}
+                                                variationsSameStockChanged={this.handleVariationsSameStockChanged.bind(this)}
+                                                variationsSameStockHandler={this.handleVariationsSameStockClick.bind(this)}
+
+                                                sameImgLinkInput={this.state.sameImgLinkInput}
+                                                sameImgLinkError={this.state.sameImgLinkError}
+                                                variationsSameImgLinkChanged={this.handleVariationsSameImgLinkChanged.bind(this)}
+                                                variationsSameImgLinkHandler={this.handleVariationsSameImgLinkClick.bind(this)}
+                                            />
+                                        </Row>
+                                        {/* End of Product Data Row */}
+                                        {/* Custom Fields Row */}
+                                        <Form.Group as={Row} style={styles.row} >
+                                            <CustomFields
+                                                customFieldsArray={this.state.customFieldsArray}
+                                                isVariableProduct={this.state.isVariableProduct}
+                                                name={this.state.customFieldName}
+                                                value={this.state.customFieldValue}
+                                                customFieldNameSelected={this.state.customFieldNameSelected}
+                                                fieldNameHandler={this.handleCustomFieldNameChange.bind(this)}
+                                                fieldValueHandler={this.handleCustomFieldValueChange.bind(this)}
+                                                addFieldHandler={this.handleAddCustomFieldBtnClick.bind(this)}
+                                                update={this.updateCustomFieldsClick.bind(this)}
+                                                delete={this.deleteCustomFieldsClick.bind(this)}
+                                                error={this.state.customFieldError}
+                                                showCustomFields={showCustomFields}
+                                            />
+                                        </Form.Group>
+                                        {/* End of Custom Fields Row */}
+                                    </Col>
+
+                                    <Col lg={3} md={3} sm={12} xs={12}>
+                                        {/* Product Category */}
+                                        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                                            <Form.Group as={Row} style={styles.row}>
+                                                <Card style={styles.card}>
+                                                    <Card.Header style={styles.card_header}>
+                                                        <Form.Label >Product Categories</Form.Label>
+                                                        <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
+                                                        </Accordion.Toggle>
+                                                    </Card.Header>
+                                                    <Accordion.Collapse eventKey="0">
+                                                        <Card.Body >
+                                                            <Form.Group>
+                                                                <Form.Label style={styles.label}>Category</Form.Label>
                                                                 <div className={this.state.categoryErrorDiv}>
-                                                                    <CreatableSelect
-                                                                        isMulti
+                                                                    <Select
+                                                                        styles={react_select_styles}
                                                                         onChange={this.handleProductCategoryChange}
-                                                                        options={this.state.product_categories_options}
+                                                                        options={product_categories_options}
                                                                         value={this.state.productCategories}
-                                                                        placeholder="Select/Enter Category"
+                                                                        isSearchable={true}
+                                                                        isClearable={true}
+                                                                        placeholder="Select Category"
                                                                     />
                                                                 </div>
-                                                                <label className={this.state.categoryError}>
-                                                                    Selet Category
-                                                        </label>
-                                                            </Card.Body>
-                                                        </Accordion.Collapse>
-                                                    </Card>
-                                                </Form.Group>
-                                            </Accordion>
-                                            {/* End of Product ategory */}
+                                                            </Form.Group>
+                                                            <Form.Group>
+                                                                <Form.Label style={styles.label}>Sub Category</Form.Label>
+                                                                <div className={this.state.subCategoryErrorDiv}>
+                                                                    <Select
+                                                                        styles={react_select_styles}
+                                                                        onChange={this.handleProductSubCategoryChange}
+                                                                        options={product_sub_categories_options}
+                                                                        value={this.state.productSubCategories}
+                                                                        isSearchable={true}
+                                                                        isClearable={true}
+                                                                        placeholder="Select Sub Category"
+                                                                        isDisabled={this.state.subCategoryDisabled}
+                                                                    />
+                                                                </div>
+                                                            </Form.Group>
+                                                            <Form.Group>
+                                                                <Form.Label style={styles.label}>Sub Sub Category</Form.Label>
+                                                                <div className={this.state.subSubCategoryErrorDiv}>
+                                                                    <Select
+                                                                        styles={react_select_styles}
+                                                                        onChange={this.handleProductSubSubCategoryChange}
+                                                                        options={product_sub_sub_categories_options}
+                                                                        value={this.state.productSubSubCategories}
+                                                                        isSearchable={true}
+                                                                        isClearable={true}
+                                                                        placeholder="Select Sub Sub Category"
+                                                                        isDisabled={this.state.subSubCategoryDisabled}
+                                                                    />
+                                                                </div>
+                                                            </Form.Group>
+                                                        </Card.Body>
+                                                    </Accordion.Collapse>
+                                                </Card>
+                                            </Form.Group>
+                                        </Accordion>
+                                        {/* End of Product ategory */}
 
-                                            {/* Dangerous Goods */}
-                                            <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-                                                <Form.Group as={Row} style={styles.row}>
-                                                    <Card style={styles.card}>
-                                                        <Card.Header style={styles.card_header}>
-                                                            <Form.Label >Dangerous Goods</Form.Label>
-                                                            <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                                                                <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                                                            </Accordion.Toggle>
-                                                        </Card.Header>
-                                                        <Accordion.Collapse eventKey="0">
-                                                            <Card.Body>
-                                                                <Form.Check
-                                                                    name="not_specified"
-                                                                    label="Not Specified"
-                                                                    style={styles.label}
-                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Not Specified')}
-                                                                />
-                                                                <br></br>
-                                                                <Form.Check
-                                                                    name="ceramic"
-                                                                    label="Ceramic"
-                                                                    style={styles.label}
-                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Ceramic')}
-                                                                />
-                                                                <br></br>
-                                                                <Form.Check
-                                                                    name="glass"
-                                                                    label="Glass"
-                                                                    style={styles.label}
-                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Glass')}
-                                                                />
-                                                                <br></br>
-                                                                <Form.Check
-                                                                    name="metal"
-                                                                    label="Metal"
-                                                                    style={styles.label}
-                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Metal')}
-                                                                />
-                                                                <br></br>
-                                                                <Form.Check
-                                                                    name="plastic"
-                                                                    label="Plastic"
-                                                                    style={styles.label}
-                                                                    onChange={(e) => this.handleDangerousGoodsChange(e, 'Plastic')}
-                                                                />
-                                                            </Card.Body>
-                                                        </Accordion.Collapse>
-                                                    </Card>
-                                                </Form.Group>
-                                            </Accordion>
-                                            {/* End ofDangerous Goods */}
+                                        {/* Dangerous Goods */}
+                                        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                                            <Form.Group as={Row} style={styles.row}>
+                                                <Card style={styles.card}>
+                                                    <Card.Header style={styles.card_header}>
+                                                        <Form.Label >Dangerous Goods</Form.Label>
+                                                        <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
+                                                        </Accordion.Toggle>
+                                                    </Card.Header>
+                                                    <Accordion.Collapse eventKey="0">
+                                                        <Card.Body>
+                                                            <Form.Check
+                                                                name="not_specified"
+                                                                label="Not Specified"
+                                                                style={styles.label}
+                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Not Specified')}
+                                                            />
+                                                            <br></br>
+                                                            <Form.Check
+                                                                name="ceramic"
+                                                                label="Ceramic"
+                                                                style={styles.label}
+                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Ceramic')}
+                                                            />
+                                                            <br></br>
+                                                            <Form.Check
+                                                                name="glass"
+                                                                label="Glass"
+                                                                style={styles.label}
+                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Glass')}
+                                                            />
+                                                            <br></br>
+                                                            <Form.Check
+                                                                name="metal"
+                                                                label="Metal"
+                                                                style={styles.label}
+                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Metal')}
+                                                            />
+                                                            <br></br>
+                                                            <Form.Check
+                                                                name="plastic"
+                                                                label="Plastic"
+                                                                style={styles.label}
+                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Plastic')}
+                                                            />
+                                                        </Card.Body>
+                                                    </Accordion.Collapse>
+                                                </Card>
+                                            </Form.Group>
+                                        </Accordion>
+                                        {/* End ofDangerous Goods */}
 
-                                            {/* Product Tags */}
-                                            <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-                                                <Form.Group as={Row} style={styles.row}>
-                                                    <Card style={styles.card}>
-                                                        <Card.Header style={styles.card_header}>
-                                                            <Form.Label >Product Tags</Form.Label>
-                                                            <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                                                                <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                                                            </Accordion.Toggle>
-                                                        </Card.Header>
-                                                        <Accordion.Collapse eventKey="0">
-                                                            <Card.Body style={{ height: '250px' }}>
-                                                                <CreatableSelect
-                                                                    isMulti
-                                                                    onChange={this.handleProductTagChange}
-                                                                    options={product_color_options}
-                                                                    value={this.state.productTags}
-                                                                    placeholder="Select/Enter Tags"
-                                                                />
-                                                            </Card.Body>
-                                                        </Accordion.Collapse>
-                                                    </Card>
-                                                </Form.Group>
-                                            </Accordion>
-                                            {/* End of Product Tags */}
+                                        {/* Product Tags */}
+                                        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
+                                            <Form.Group as={Row} style={styles.row}>
+                                                <Card style={styles.card}>
+                                                    <Card.Header style={styles.card_header}>
+                                                        <Form.Label >Product Tags</Form.Label>
+                                                        <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
+                                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
+                                                        </Accordion.Toggle>
+                                                    </Card.Header>
+                                                    <Accordion.Collapse eventKey="0">
+                                                        <Card.Body style={{ height: '250px' }}>
+                                                            <CreatableSelect
+                                                                isMulti
+                                                                onChange={this.handleProductTagChange}
+                                                                options={product_color_options}
+                                                                value={this.state.productTags}
+                                                                placeholder="Select/Enter Tags"
+                                                            />
+                                                        </Card.Body>
+                                                    </Accordion.Collapse>
+                                                </Card>
+                                            </Form.Group>
+                                        </Accordion>
+                                        {/* End of Product Tags */}
 
-                                        </Col>
-                                    </Row>
+                                    </Col>
+                                </Row>
 
 
-                                    {/* Form Submit Btn Row */}
-                                    <Form.Row style={styles.row}>
-                                        <Form.Group as={Col}>
-                                            <p style={styles.label}>Fields with <span> * </span> are mandatory.</p>
-                                            <p style={styles.label}>For adding new size, color, link: Enter text and hit Enter or Tab key</p>
-                                            <Button type="submit" onSubmit={handleSubmit} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                                                {this.state.isLoading ? 'Uploading' : 'Upload'}
-                                                {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
-                                            </Button>
-                                        </Form.Group>
-                                    </Form.Row>
-                                    {/* End of Form Submit Btn Row */}
-                                </Form>
+                                {/* Form Submit Btn Row */}
+                                <Form.Row style={styles.row}>
+                                    <Form.Group as={Col}>
+                                        <p style={styles.label}>Fields with <span> * </span> are mandatory.</p>
+                                        <p style={styles.label}>For adding new size, color, link: Enter text and hit Enter or Tab key</p>
+                                        <Button type="submit" onSubmit={handleSubmit} disabled={this.state.isLoading} block style={styles.submit_btn}>
+                                            {this.state.isLoading ? 'Uploading' : 'Upload'}
+                                            {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
+                                        </Button>
+                                    </Form.Group>
+                                </Form.Row>
+                                {/* End of Form Submit Btn Row */}
+                            </Form>
 
-                                <style jsx>
-                                    {`
-                                        .no_error {
-                                            display: none;
-                                        }
-                                        .error{
-                                            margin-top: 4px;  
-                                            color: #DC3545;
-                                            font-size: 14px;
-                                            display: block;
-                                        }
+                            <style jsx>
+                                {`
                                         .RedBorderDiv{
                                             border: 0.5px solid #DC3545;
-                                            padding: 0.5px 0px 0.2px 0.5px;
+                                            padding: 1px;
+                                            border-radius: 2px;
                                             width: 100%;
                                         }
                                         .BorderDiv{
@@ -1017,9 +1096,9 @@ class AddNew extends Component {
                                             margin: 0px;
                                         }
                                     `}
-                                </style>
-                            </div>
-                        )
+                            </style>
+                        </div>
+                    )
                 }
             </Formik>
         );
@@ -1029,15 +1108,17 @@ class AddNew extends Component {
 const styles = {
     title_row: {
         borderBottom: '1px solid gray',
-        padding: '1.5% 4%'
+        padding: '0.7% 4%',
+        display: 'flex',
+        alignItems: 'center'
     },
     title_fontawesome: {
         color: 'gray',
         marginRight: '3%',
-        width: '26px',
-        height: '26px',
-        maxHeight: '26px',
-        maxWidth: '26px',
+        width: '20px',
+        height: '20px',
+        maxHeight: '20px',
+        maxWidth: '20px',
     },
     title: {
         color: 'gray'
