@@ -17,7 +17,7 @@ class AllProducts extends Component {
         this.state = {
             productsArray: [],
             viewProduct: false,
-            data: [],
+            data: {},
         }
     }
     // Getting Product Categories from DB
@@ -32,16 +32,17 @@ class AllProducts extends Component {
         }
     }
 
-    handleViewProduct(index, i) {
+    handleViewProduct(index) {
         // let dataa;
         // Simple Product
-        if (i == -1) {
-            this.setState({ data: this.state.productsArray[index], viewProduct: true })
-        } else { // Variable Product
-            // dataa = Object.assign([], this.state.productsArray[index])
-            // dataa.product_variations = dataa.product_variations[i];
-            this.setState({ data: this.state.productsArray[index], viewProduct: true })
-        }
+        // if (i == -1) {
+        this.setState({ data: this.state.productsArray[index], viewProduct: true })
+
+        // } else { // Variable Product
+        // dataa = Object.assign([], this.state.productsArray[index])
+        // dataa.product_variations = dataa.product_variations[i];
+        //     this.setState({ data: this.state.productsArray[index], viewProduct: true })
+        // }
         // console.log('datadata:', data)
         // Router.push({
         //     pathname: '/view-product',
@@ -55,7 +56,7 @@ class AllProducts extends Component {
                 {this.state.viewProduct ?
                     <ViewProduct
                         data={this.state.data}
-                        back={() => this.setState({ viewProduct: false, data: [] })}
+                        back={() => this.setState({ viewProduct: false, data: {} })}
                     />
                     :
                     <>
@@ -87,7 +88,7 @@ class AllProducts extends Component {
                                                 <td className="td">
                                                     {element.product_name}
                                                     <div className="mr-auto"></div>
-                                                    <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index, -1)}> View </Nav.Link>
+                                                    <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}> View </Nav.Link>
                                                     <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
                                                     <Nav.Link style={styles.nav_link}>Delete</Nav.Link>
                                                 </td>

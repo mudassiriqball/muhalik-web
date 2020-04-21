@@ -8,33 +8,40 @@ import React, { Component } from 'react';
 // https://drive.google.com/uc?export=view&id=1F7ylPEh_UmvimCgPAOM7rf6gJ_yG8TK9
 
 
-const ViewProduct = props => {
+const ViewProduct = (props) => {
     const [imgPreview, setImgPreview] = React.useState(false);
+    const [isSimpleProduct, setIsSimpleProduct] = React.useState(false);
     const [index, setIndex] = React.useState('')
+    console.log('1111111:', props.data)
 
-    const len = props.data.product_image_link.length;
+    // if (props.data.product_type == 'simple-product') {
+    //     setIsSimpleProduct(true);
+    // } else {
+    //     setIsSimpleProduct(false);
+    // }
+    // // const len = props.data.product_image_link.length;
 
-    function prevImage() {
-        if (index > 0) {
-            setIndex(index - 1)
-        }
-    }
+    // function prevImage() {
+    //     if (index > 0) {
+    //         setIndex(index - 1)
+    //     }
+    // }
 
-    function nextImage() {
-        if (index < (len - 1)) {
-            setIndex(index + 1)
-        }
-    }
+    // function nextImage() {
+    //     if (index < (len - 1)) {
+    //         setIndex(index + 1)
+    //     }
+    // }
 
     return (
         <>
             <Row style={styles.title_row} noGutters>
                 <FontAwesomeIcon className="fontawesome" icon={faArrowLeft} style={styles.title_fontawesome} onClick={props.back} className="mr-auto" />
-                <div className="mr-auto" style={styles.title}> {props.data.product_name}</div>
+                {/* <div className="mr-auto" style={styles.title}> {props.data.product_name}</div>
                 <div style={styles.title}> Prev </div>
-                <div style={styles.title}> Next </div>
+                <div style={styles.title}> Next </div> */}
             </Row>
-            {_.isEqual(props.data.product_type, "simple-product") ?
+            {/* {isSimpleProduct ?
                 <Row style={styles.img_row} noGutters>
                     {props.data.product_image_link && props.data.product_image_link.map((element, index) =>
                         <div style={{ margin: '0%' }}>
@@ -45,16 +52,24 @@ const ViewProduct = props => {
                 </Row>
                 :
                 <>
-                    <Row style={styles.img_row}>
-                        {/* <Form.Label style={styles.general_info_label}>General Info</Form.Label> */}
+                    <Row style={styles.img_row} noGutters>
                         <label><span>General Info</span></label>
-                        <label>fata</label>
+                        <Row noGutters style={{ background: 'white' }}>
+                            <Form.Group as={Col}>
+                                <Form.Label style={styles.label}>
+                                    Product Name:
+                                </Form.Label>
+                                <Form.Label style={styles.label}>
+                                    {props.data.product_name}
+                                </Form.Label>
+                            </Form.Group>
+                        </Row>
                     </Row>
                 </>
-            }
+            } */}
             {/* Image Preview */}
-            <div>
-                {imgPreview ?
+            {/* <div> */}
+            {/* {imgPreview ?
                     <div className="modal-overlay">
                         <div className="modal-body">
                             <div className="close-modal">
@@ -77,8 +92,8 @@ const ViewProduct = props => {
                         </div>
                     </div>
                     : null
-                }
-            </div>
+                } */}
+            {/* </div> */}
             <style jsx>
                 {`
                     label {
@@ -87,7 +102,7 @@ const ViewProduct = props => {
                         border-bottom: 1px solid gray; 
                         line-height: 0.1em;
                         font-size: ${GlobalStyleSheet.form_label_fontsize};
-                        margin: 0%; 
+                        margin: 10px 0%; 
                     } 
                     label span { 
                             background: ${GlobalStyleSheet.admin_primry_color};
@@ -159,7 +174,6 @@ const styles = {
         margin: '2%',
         display: 'flex',
         justifyContent: 'center',
-        backgroung: 'white',
         zIndex: '999'
     },
     img_preview_fontawesome: {

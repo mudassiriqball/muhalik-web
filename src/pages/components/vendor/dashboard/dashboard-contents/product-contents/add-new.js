@@ -181,7 +181,6 @@ class AddNew extends Component {
             warrantyType: 'Year',
             inputValue: '',
             simple_product_image_link: [],
-            simple_product_image_link: [],
 
 
             image_linkError: 'no_error',
@@ -656,7 +655,7 @@ class AddNew extends Component {
                                     subCategoryDisabled: true, subSubCategoryDisabled: true,
                                     categoryErrorDiv: 'BorderDiv', subCategoryErrorDiv: 'BorderDiv', subSubategoryErrorDiv: 'BorderDiv',
                                     productTags: [],
-                                    warrantyType: 'Year', inputValue: '', simple_product_image_link: [], simple_product_image_link: [],
+                                    warrantyType: 'Year', inputValue: '', simple_product_image_link: [],
                                     image_linkError: 'no_error', image_linkErrorDiv: 'BorderDiv',
                                     // Product Attributes
                                     productAttributesArray: [], productAttributeName: '', productAttributeValue: '', productAttributeError: '', productAttributeNameSelected: '',
