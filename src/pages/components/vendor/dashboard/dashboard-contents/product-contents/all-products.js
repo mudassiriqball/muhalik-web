@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Table, Button, Nav, Col, Image, Card, Form, InputGroup, Accordion } from 'react-bootstrap'
 import axios from 'axios'
-
+import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
 // import ViewProduct from './all-products-contents/view-product'
 import Link from 'next/link'
 import Router from 'next/router'
@@ -12,6 +12,9 @@ import CardAccordion from '../../../../card_accordion';
 import MuhalikConfig from '../../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../../styleSheet'
 import TitleRow from '../../../../title-row';
+
+
+
 class AllProducts extends Component {
     constructor(props) {
         super(props);
@@ -49,6 +52,23 @@ class AllProducts extends Component {
         //     pathname: '/view-product',
         //     query: { data: data },
         // }, '/vendor/view-product?' + data.product_name);
+    }
+
+    async handleDeleteProduct(index) {
+        const copyArray = Object.assign([], this.state.productsArray)
+        const _id = copyArray[index]._id;
+        const url = MuhalikConfig.PATH + `/api/products/${_id}`;
+
+        copyArray.splice(index, 1)
+        this.setState({ productsArray: copyArray })
+        await axios.delete(url, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then(function (response) {
+            return true;
+        }).catch(function (error) {
+            alert('Error: ', error.response.data.message);
+            return false;
+        });
     }
 
     isVariableProduct(element) {
@@ -99,7 +119,7 @@ class AllProducts extends Component {
                                                         <div className="mr-auto"></div>
                                                         <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}> View </Nav.Link>
                                                         <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
-                                                        <Nav.Link style={styles.nav_link}>Delete</Nav.Link>
+                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
                                                     </td>
                                                     <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
                                                     <td align="center" style={styles.label}>{element.product_in_stock}</td>
@@ -129,7 +149,7 @@ class AllProducts extends Component {
                                                             <div className="mr-auto"></div>
                                                             <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}>View</Nav.Link>
                                                             <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
-                                                            <Nav.Link style={styles.nav_link}>Delete</Nav.Link>
+                                                            <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
                                                         </td>
                                                         <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
                                                         <td align="center" style={styles.label}>
@@ -185,7 +205,6 @@ const ViewProduct = props => {
     const [imgPreview, setImgPreview] = React.useState(false);
     const [index, setIndex] = React.useState('')
     const [imgData, setImgData] = React.useState('')
-    console.log('1111111:', props.data)
 
     const len = props.data.product_image_link.length;
 
@@ -221,47 +240,65 @@ const ViewProduct = props => {
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Brand Name:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_brand_name} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>SKU:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.sku} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
+                    {props.isVariableProduct ?
+                        null :
+                        <>
+                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
+                                <Form.Label style={styles.label}>Price:</Form.Label>
+                                <InputGroup>
+                                    <Form.Control type="text" size="sm" value={props.data.product_price} disabled={true} />
+                                </InputGroup>
+                            </Form.Group>
+                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
+                                <Form.Label style={styles.label}>Product In Stock:</Form.Label>
+                                <InputGroup>
+                                    <Form.Control type="text" size="sm" value={props.data.product_in_stock} disabled={true} />
+                                </InputGroup>
+                            </Form.Group>
+                        </>
+                    }
+
 
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Warranty:</Form.Label>
+                        <Form.Label style={styles.label}>Warranty (month):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_warranty} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Warranty Type:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.warranty_type} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Discount:</Form.Label>
+                        <Form.Label style={styles.label}>Discount (%):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_discount} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
-                    <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
+                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Purchase Note(s):</Form.Label>
                         <InputGroup>
-                            <Form.Control as="textarea" row="5" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.purchase_note} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
-                    <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Discruption:</Form.Label>
+                    <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                        <Form.Label style={styles.label}>Description:</Form.Label>
                         <InputGroup>
-                            <Form.Control as="textarea" row="5" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control as="textarea" row="5" size="sm" value={props.data.product_description} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                 </Row>
@@ -272,6 +309,18 @@ const ViewProduct = props => {
                     {props.data.product_variations && props.data.product_variations.map(element =>
                         <>
                             <Row >
+                                <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
+                                    <Form.Label style={styles.label}>Price</Form.Label>
+                                    <InputGroup>
+                                        <Form.Control type="text" size="sm" value={element.item.price} disabled={true} />
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
+                                    <Form.Label style={styles.label}>Stock</Form.Label>
+                                    <InputGroup>
+                                        <Form.Control type="text" size="sm" value={element.item.stock} disabled={true} />
+                                    </InputGroup>
+                                </Form.Group>
                                 {element.item.map(e =>
                                     <>
                                         <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
@@ -280,13 +329,13 @@ const ViewProduct = props => {
                                                 <Form.Control type="text" size="sm" value={e.value} disabled={true} />
                                             </InputGroup>
                                         </Form.Group>
-                                        {e.img_link && e.img_link.map((img, i) =>
-                                            <Row>
-                                                <Image thumbnail fluid style={{ minWidth: '100px', maxWidth: '100px' }} src={img.value} alt="Product Image"
-                                                    onClick={() => { setImgPreview(true), setIndex(i), setImgData(e.img_link) }} />
-                                            </Row>
-                                        )}
                                     </>
+                                )}
+                                {element.item.img_link && element.item.img_link.map((img, i) =>
+                                    <Row>
+                                        <Image thumbnail fluid style={{ minWidth: '100px', maxWidth: '100px' }} src={img.value} alt="Product Image"
+                                            onClick={() => { setImgPreview(true), setIndex(i), setImgData(e.img_link) }} />
+                                    </Row>
                                 )}
                             </Row>
                             <hr />
@@ -306,54 +355,54 @@ const ViewProduct = props => {
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Length (cm):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.dimension_length} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Width (cm):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.dimension_width} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Height (cm):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.dimension_height} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Weight (kg):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_weight} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Shipping Charges:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.shipping_charges} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Handlink Fee:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.handling_fee} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                 </Row>
             </CardAccordion>
             <CardAccordion title={'Product Categories'}>
                 <Form.Group>
-                    <Form.Label size="sm">Product Categories</Form.Label>
+                    <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Product Categories</Form.Label>
                     <InputGroup>
                         {props.data.product_category && props.data.product_category.map(element =>
                             <Form.Label style={styles.label}>{element.value}</Form.Label>
                         )}
                     </InputGroup>
                 </Form.Group>
-                <hr />
+                <hr />product_weight
                 <Form.Group>
-                    <Form.Label size="sm">Product Tags</Form.Label>
+                    <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Product Tags</Form.Label>
                     <InputGroup>
                         {props.data.product_tags && props.data.product_tags.map(element =>
                             <Form.Label style={styles.label}>{element.value}</Form.Label>
@@ -362,7 +411,7 @@ const ViewProduct = props => {
                 </Form.Group>
                 <hr />
                 <Form.Group>
-                    <Form.Label>Dangerous Goods</Form.Label>
+                    <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Dangerous Goods</Form.Label>
                     <InputGroup>
                         {props.data.dangerous_goods && props.data.dangerous_goods.map(element =>
                             <Form.Label style={styles.label}>{element.value}</Form.Label>
