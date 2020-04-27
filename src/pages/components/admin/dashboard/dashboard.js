@@ -9,7 +9,7 @@ import Vendors from './dashboard-contents/vendors';
 import Customers from './dashboard-contents/customers';
 // Products 
 import AllProducts from './dashboard-contents/product-contents/all-products';
-import AddNew from '../../vendor/dashboard/dashboard-contents/product-contents/add-new';
+// import AddNew from '../../vendor/dashboard/dashboard-contents/product-contents/add-new';
 import ProducCategories from './dashboard-contents/product-contents/product-categories'
 import ProductTags from './dashboard-contents/product-contents/product-tags'
 import ProductFields from './dashboard-contents/product-contents/product-fields'
@@ -234,7 +234,8 @@ const Dashboard = props => {
                                     <AllProducts />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddProduct">
-                                    <AddNew />
+                                    Add
+                                    {/* <AddNew /> */}
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="ProductCategories">
                                     <ProducCategories />

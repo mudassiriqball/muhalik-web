@@ -200,6 +200,7 @@ const Dashboard = props => {
                                     <AllProducts />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddNew">
+                                    add
                                     {/* <AddNew /> */}
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddCategory">
