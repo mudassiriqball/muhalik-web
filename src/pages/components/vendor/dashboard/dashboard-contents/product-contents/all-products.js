@@ -51,6 +51,14 @@ class AllProducts extends Component {
         // }, '/vendor/view-product?' + data.product_name);
     }
 
+    isVariableProduct(element) {
+        if (element.product_type != "simple-product") {
+            return true
+        } else {
+            return false
+        }
+    }
+
     render() {
         return (
             <>
@@ -82,75 +90,75 @@ class AllProducts extends Component {
                                 </thead>
                                 <tbody>
                                     {this.state.productsArray && this.state.productsArray.map((element, index) =>
-                                        _.isEqual(element.product_type, "simple-product") ?
-                                            <tr key={index}>
-                                                <td align="center" style={styles.label}><Form.Check type="checkbox" /></td>
-                                                <td className="td">
-                                                    {element.product_name}
-                                                    <div className="mr-auto"></div>
-                                                    <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}> View </Nav.Link>
-                                                    <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
-                                                    <Nav.Link style={styles.nav_link}>Delete</Nav.Link>
-                                                </td>
-                                                <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
-                                                <td align="center" style={styles.label}>{element.product_in_stock}</td>
-                                                <td align="center" style={styles.label}>{element.product_price}</td>
-                                                <td align="center" style={styles.label}>
-                                                    {element.product_category && element.product_category.map(e =>
-                                                        e.value + ','
-                                                    )}
-                                                </td>
-                                                <td align="center" style={styles.label}>
-                                                    {_.isEmpty(element.product_tags) ? '-' :
-                                                        element.product_tags.map(e =>
-                                                            e.value + ','
-                                                        )
-                                                    }
-                                                </td>
-                                                <td align="center" style={styles.label}>
-                                                    {_.isEmpty(element.product_entry_date) ? '-' : element.product_entry_date}
-                                                </td>
-                                            </tr>
-                                            :
-                                            <>
-                                                <tr>
-                                                    <td align="center" style={styles.label}>
-                                                        <Form.Check type="checkbox" />
-                                                    </td>
+                                        <>
+                                            {this.isVariableProduct(element) ?
+                                                <tr key={index}>
+                                                    <td align="center" style={styles.label}><Form.Check type="checkbox" /></td>
                                                     <td className="td">
                                                         {element.product_name}
                                                         <div className="mr-auto"></div>
-                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}>View</Nav.Link>
+                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}> View </Nav.Link>
                                                         <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
                                                         <Nav.Link style={styles.nav_link}>Delete</Nav.Link>
                                                     </td>
                                                     <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
-                                                    <td align="center" style={styles.label}>
-                                                        {element.product_variations.map(e =>
-                                                            e.item[e.item.length - 2].value + ','
-                                                        )}
-                                                    </td>
-                                                    <td align="center" style={styles.label}>
-                                                        {element.product_variations.map(e =>
-                                                            e.item[e.item.length - 3].value + ','
-                                                        )}
-                                                    </td>
+                                                    <td align="center" style={styles.label}>{element.product_in_stock}</td>
+                                                    <td align="center" style={styles.label}>{element.product_price}</td>
                                                     <td align="center" style={styles.label}>
                                                         {element.product_category && element.product_category.map(e =>
                                                             e.value + ','
                                                         )}
                                                     </td>
                                                     <td align="center" style={styles.label}>
-                                                        {_.isEmpty(element.product_tags) ? '-' :
-                                                            element.product_tags.map(e =>
-                                                                e.value + ','
-                                                            )
-                                                        }</td>
+                                                        {element.product_tags && element.product_tags.map(e =>
+                                                            e.value + ','
+                                                        )}
+                                                    </td>
                                                     <td align="center" style={styles.label}>
-                                                        {_.isEmpty(element.product_entry_date) ? '-' : element.product_entry_date}
+                                                        {element.product_entry_date}
                                                     </td>
                                                 </tr>
-                                            </>
+                                                :
+                                                <>
+                                                    <tr>
+                                                        <td align="center" style={styles.label}>
+                                                            <Form.Check type="checkbox" />
+                                                        </td>
+                                                        <td className="td">
+                                                            {element.product_name}
+                                                            <div className="mr-auto"></div>
+                                                            <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}>View</Nav.Link>
+                                                            <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
+                                                            <Nav.Link style={styles.nav_link}>Delete</Nav.Link>
+                                                        </td>
+                                                        <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
+                                                        <td align="center" style={styles.label}>
+                                                            {element.product_variations.map(e =>
+                                                                e.item[e.item.length - 2].value + ','
+                                                            )}
+                                                        </td>
+                                                        <td align="center" style={styles.label}>
+                                                            {element.product_variations.map(e =>
+                                                                e.item[e.item.length - 3].value + ','
+                                                            )}
+                                                        </td>
+                                                        <td align="center" style={styles.label}>
+                                                            {element.product_category && element.product_category.map(e =>
+                                                                e.value + ','
+                                                            )}
+                                                        </td>
+                                                        <td align="center" style={styles.label}>
+                                                            {element.product_tags && element.product_tags.map(e =>
+                                                                e.value + ','
+                                                            )}
+                                                        </td>
+                                                        <td align="center" style={styles.label}>
+                                                            {element.product_entry_date}
+                                                        </td>
+                                                    </tr>
+                                                </>
+                                            }
+                                        </>
                                     )}
                                 </tbody>
                             </Table>
