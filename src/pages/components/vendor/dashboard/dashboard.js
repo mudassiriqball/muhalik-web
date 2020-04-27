@@ -9,7 +9,7 @@ import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 import VendorDashboard from './dashboard-contents/vendor-dashboard';
 import AllProducts from './dashboard-contents/product-contents/all-products';
-import AddNew from './dashboard-contents/product-contents/add-new';
+// import AddNew from './dashboard-contents/product-contents/add-new';
 import AddCategory from './dashboard-contents/product-contents/add-category';
 import Inventory from './dashboard-contents/inventory';
 import Discounts from './dashboard-contents/discounts';
@@ -200,7 +200,7 @@ const Dashboard = props => {
                                     <AllProducts />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddNew">
-                                    <AddNew />
+                                    {/* <AddNew /> */}
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddCategory">
                                     <AddCategory />
