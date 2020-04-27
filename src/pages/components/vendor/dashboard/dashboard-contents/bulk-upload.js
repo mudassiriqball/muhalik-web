@@ -7,6 +7,8 @@ import { faUpload, faDownload } from '@fortawesome/free-solid-svg-icons';
 import axios, { post } from 'axios';
 import GlobalStyleSheet from '../../../../../styleSheet'
 import MuhalikConfig from '../../../../../sdk/muhalik.config';
+import TitleRow from '../../../title-row';
+
 class BulkUpload extends React.Component {
 
     constructor(props) {
@@ -102,14 +104,11 @@ class BulkUpload extends React.Component {
     render() {
         return (
             <div >
-                <Row style={styles.row}>
-                    <h6 className="mr-auto">Products Bulk Upload</h6>
-                    <Link href="/index"><a>Home</a></Link>
-                </Row>
+                <TitleRow icon={faUpload} title={' Vendor Dashboard / All Products'} />
 
                 <Row style={styles.row}>
                     <Card style={styles.card}>
-                        <Card.Header style={{ background: 'skyblue' }}>Download Templete</Card.Header>
+                        <Card.Header style={styles.card_header}>Download Templete</Card.Header>
                         <Card.Body>
                             <Button variant="primary" size="md" active onClick={this.downloadBulkUploadTemplete}>
                                 <FontAwesomeIcon icon={faDownload} style={styles.fontawesome} />
@@ -120,7 +119,7 @@ class BulkUpload extends React.Component {
                 </Row>
                 <Row style={styles.row}>
                     <Card style={styles.card}>
-                        <Card.Header style={{ background: 'skyblue' }}>Upload File</Card.Header>
+                        <Card.Header style={styles.card_header}>Upload File</Card.Header>
                         <Card.Body>
                             <form onSubmit={this.onFormSubmit}>
                                 <div style={styles.browseBtnDiv}>
@@ -148,6 +147,10 @@ const styles = {
     },
     card: {
         width: '100%'
+    },
+    card_header: {
+        fontSize: `${GlobalStyleSheet.card_header_fontsize}`,
+        background: `${GlobalStyleSheet.card_header_background}`,
     },
     browseBtnDiv: {
         width: '100%',

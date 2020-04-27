@@ -19,18 +19,31 @@ let GlobalStyleSheet = {
 
     // Fontsize for all the labels of any form control (input, textbox etc):
     form_label_fontsize: '13px',
+    card_header_fontsize: '14px',
+    card_header_background: 'lightgray',
+
+    react_select_styles: {
+        control: (base) => ({
+            ...base,
+            fontSize: '13px',
+        }),
+        dropdownIndicator: (base) => ({
+            ...base,
+            paddingTop: 0,
+            paddingBottom: 0,
+            fontSize: '13px',
+        }),
+        clearIndicator: (base) => ({
+            ...base,
+            paddingTop: 0,
+            paddingBottom: 0,
+            fontSize: '13px',
+        }),
+        option: provided => ({
+            ...provided,
+            fontSize: '13px',
+        }),
+    },
 }
 
 export default GlobalStyleSheet;
-
-
-// "45: [Product upload page added]"
-// "46: [Admin/Vendor Dashboard Mobile View Toolbar Error Solved]"
-// "47: [Product upload connected to backend(produck modal updated)]"
-// "48: [Admin/Vendor Layout Updated]""
-// 49: git commit -m "49: [jwt_token added and route redirect added]"
-//  50 [header set into post request]git commit -m ""
-// 51 git commit -m "51: [routing-guard/toast added & login/signup/v-signup layout updated & index.js updated]"
-// 52 git commit -m "52: [Index.js updated, signup updated]"
-// 53 git commit -m "53: [vendor dashboard layout updated]"
-// 54[add product updated(simple & variable product), layout changed]

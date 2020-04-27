@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons';
 import ShowToast from '../../../../toast';
-
+import GlobalStyleSheet from '../../../../../../styleSheet'
+import TitleRow from '../../../../title-row'
 class AddCategory extends Component {
     constructor(props) {
         super(props);
@@ -52,13 +53,11 @@ class AddCategory extends Component {
                     header={'Success'} message={'Category Added Successfully'} iconName={faThumbsUp} color={"green"} />
                     : null
                 }
-                <Row style={styles.title_row} noGutters>
-                    <FontAwesomeIcon icon={faPlus} style={styles.title_fontawesome} />
-                    <div className="mr-auto" style={styles.title}> Add New Category </div>
-                </Row>
+                <TitleRow icon={faPlus} title={'Vendor Dashboard / Add New Category'} />
+
                 <Row noGutters>
                     <Card style={styles.card}>
-                        <Card.Header>
+                        <Card.Header style={styles.card_header}>
                             Product Category
                         </Card.Header>
                         <Card.Body style={styles.card_body}>
@@ -114,6 +113,10 @@ const styles = {
     card: {
         width: '100%',
         margin: '5%'
+    },
+    card_header: {
+        fontSize: `${GlobalStyleSheet.card_header_fontsize}`,
+        background: `${GlobalStyleSheet.card_header_background}`,
     },
     card_body: {
         padding: '5%'

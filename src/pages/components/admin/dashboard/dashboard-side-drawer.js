@@ -10,8 +10,9 @@ import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 import AdminDashboard from './dashboard-contents/admin-dashboard';
 import Vendors from './dashboard-contents/vendors';
 import Customers from './dashboard-contents/customers';
-import AddNew from '../../vendor/dashboard/dashboard-contents/product-contents/add-new';
 // Products 
+import AllProducts from './dashboard-contents/product-contents/all-products';
+import AddNew from '../../vendor/dashboard/dashboard-contents/product-contents/add-new';
 import ProducCategories from './dashboard-contents/product-contents/product-categories'
 import ProductTags from './dashboard-contents/product-contents/product-tags'
 import ProductFields from './dashboard-contents/product-contents/product-fields'
@@ -182,7 +183,7 @@ const DashboardSideDrawer = props => {
                             </Tab.Pane>
                             {/* Product */}
                             <Tab.Pane eventKey="AllProducts">
-                                All Products
+                                <AllProducts />
                             </Tab.Pane>
                             <Tab.Pane eventKey="AddProduct">
                                 <AddNew />

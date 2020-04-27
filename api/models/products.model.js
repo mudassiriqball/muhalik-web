@@ -259,6 +259,7 @@ const Product = new Schema({
         {
           name: { type: String },
           value: { type: String },
+
         },
       ],
     },

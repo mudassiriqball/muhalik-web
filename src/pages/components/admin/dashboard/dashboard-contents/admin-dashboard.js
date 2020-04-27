@@ -4,15 +4,18 @@ import fetch from 'isomorphic-unfetch'
 import { Row, Col, Card, InputGroup, Button } from 'react-bootstrap'
 // american-sign-language-interpreting
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUsers, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faUserPlus, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 
 import GlobalStyleSheet from '../../../../../styleSheet'
+import TitleRow from '../../../title-row';
 
 class AdminDashboard extends React.Component {
     render() {
         return (
             <div >
+                <TitleRow icon={faTachometerAlt} title={' Admin Dashboard'} />
+
                 <Row style={styles.row}>
                     <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
                         <div className="hover">

@@ -4,9 +4,9 @@ import { Accordion, Form, Col, Row, Card, InputGroup, Button, Toast, Alert, Nav,
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faPlus, faKey, faSlidersH, faStoreAlt, faTruck, faTools, faDollarSign, faExclamationTriangle, faListAlt
+    faPlus, faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons';
 
@@ -16,6 +16,9 @@ import Select from 'react-select';
 import AlertModal from '../../../../alert-modal';
 
 import GlobalStyleSheet from '../../../../../../styleSheet';
+import TitleRow from '../../../../title-row';
+import CardAccordion from '../../../../card_accordion';
+
 import MuhalikConfig from '../../../../../../sdk/muhalik.config';
 import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service';
 import CustomFields from './add-new-contents/custom-fields';
@@ -51,28 +54,7 @@ const createOption = (label) => ({
     label,
 });
 
-const react_select_styles = {
-    control: (base) => ({
-        ...base,
-        fontSize: '13px',
-    }),
-    dropdownIndicator: (base) => ({
-        ...base,
-        paddingTop: 0,
-        paddingBottom: 0,
-        fontSize: '13px',
-    }),
-    clearIndicator: (base) => ({
-        ...base,
-        paddingTop: 0,
-        paddingBottom: 0,
-        fontSize: '13px',
-    }),
-    option: provided => ({
-        ...provided,
-        fontSize: '13px',
-    }),
-};
+
 
 // Yup Schema for validation fields
 const schema = yup.object({
@@ -80,7 +62,7 @@ const schema = yup.object({
         .min(2, "Must have at least 2 characters")
         .max(40, "Can't be longer than 40 characters"),
 
-    product_description: yup.string().required("Enter Product Name")
+    product_description: yup.string()
         .min(5, "Must have at least 5 characters")
         .max(200, "Can't be longer than 200 characters"),
     // Product Data
@@ -175,46 +157,25 @@ class AddNew extends Component {
             subCategoryErrorDiv: 'BorderDiv',
             subSubategoryErrorDiv: 'BorderDiv',
 
-
             productTags: [],
 
             warrantyType: 'Year',
             inputValue: '',
             simple_product_image_link: [],
 
-
             image_linkError: 'no_error',
             image_linkErrorDiv: 'BorderDiv',
 
-            // Product Attributes
-            productAttributesArray: [],
-            productAttributeName: '',
-            productAttributeValue: '',
-            productAttributeError: '',
-            productAttributeNameSelected: '',
-
             variationsArray: [],
             isVariationsSaved: false,
-            samePriceInput: '',
-            samePriceError: '',
-            sameStockInput: '',
-            sameStockError: '',
-            sameImgLinkInput: '',
-            sameImgLinkError: '',
 
             // Custom Fields
             customFieldsArray: [],
-            customFieldName: '',
-            customFieldValue: '',
-            customFieldError: '',
-            customFieldNameSelected: '',
 
             // Dangerous Goods
             dangerousGoodsArray: [],
         };
         this.handleProductTypeChange = this.handleProductTypeChange.bind(this);
-        this.handleAddCustomFieldBtnClick = this.handleAddCustomFieldBtnClick.bind(this);
-        // this.uploadProduct = this.uploadProduct.bind(this);
     }
 
     // Getting Product Categories from DB
@@ -247,283 +208,53 @@ class AddNew extends Component {
         });
     }
 
-
-
     handleProductTypeChange(e) {
         if (e.target.value == 'variable-prouct') {
-            this.setState({ isVariableProduct: true });
+            this.setState({ isVariableProduct: true, customFieldsArray: [] });
         }
         else {
-            this.setState({ isVariableProduct: false });
+            this.setState({ isVariableProduct: false, variationsArray: [] });
         }
     }
 
     // Product Data
     // => Simple Product Image Link
-    handleSimpleProductImageLinkChange = (arr, actionMeta) => {
-        this.setState({ simple_product_image_link: arr, image_linkError: 'no_error', image_linkErrorDiv: 'BorderDiv' });
-    };
-    handleSimpleProductImageLinkInputChange = (arr) => {
-        this.setState({ inputValue: arr });
-    };
-    handleSimpleProductImage_linkKeyDown = (event) => {
-        const inputValue = this.state.inputValue;
+    simpleProductImgLinkChange(value) {
+        this.setState({ simple_product_image_link: value });
+    }
+    handleSimpleProductImage_linkKeyDown = (event, inputValue) => {
         const simple_product_image_link = this.state.simple_product_image_link;
         if (!inputValue) return;
         switch (event.key) {
             case 'Enter':
             case 'Tab':
                 this.setState({
-                    inputValue: '',
                     simple_product_image_link: [...simple_product_image_link, createOption(inputValue)],
                 });
                 event.preventDefault();
+                return true;
         }
     };
     // => End Of Simple Product Image Link
 
-    // => Product Attributes (Variable Product)
-    handleProductAttributeNameChange(e) {
-        this.setState({ productAttributeName: e.value })
-        this.setState({ productAttributeNameSelected: e })
-    }
-    handleProductAttributeValueChange = (e) => {
-        this.setState({ productAttributeValue: e.target.value })
-    }
-    handleAddProductAttributeClick = () => {
-        if (this.state.productAttributeName != '' && this.state.productAttributeValue != '') {
-            this.setState({ productAttributeError: '' })
-            const copyArray = Object.assign([], this.state.productAttributesArray);
-            copyArray.push({
-                productAttributeName: this.state.productAttributeName,
-                productAttributeValue: this.state.productAttributeValue,
-            })
-            this.setState({ productAttributeName: '' })
-            this.setState({ productAttributeValue: '' })
-            this.setState({ productAttributeNameSelected: '' })
-            this.setState({ productAttributesArray: copyArray })
-        } else {
-            this.setState({ productAttributeError: 'Enter Field Name and Value' });
-        }
-    }
-    handleCreateVariationsClick = () => {
-        var allArrays = [];
-        this.state.productAttributesArray.forEach(element => {
-            var trim = element.productAttributeValue.split(' ').join('');
-            var splitArray = trim.split('|');
-            allArrays.push(splitArray)
-        });
-
-        const array = this.allPossibleCases(allArrays)
-        var data = [];
-        array.forEach(element => {
-            const split = element.split('-');
-            let item = [];
-
-            split.forEach((e, i) => {
-                item.push({ name: this.state.productAttributesArray[i].productAttributeName, value: e })
-            });
-            data.push({ items: item, price: '', stock: '1', image_link: '', price_error: '', image_link_error: '', customField: [] })
-        });
-        // console.log("split Array: ", data)
-        this.setState({ variationsArray: data })
-    }
-    allPossibleCases(arr) {
-        if (arr.length == 1) {
-            return arr[0];
-        } else {
-            var result = [];
-            var allCasesOfRest = this.allPossibleCases(arr.slice(1));  // recur with the rest of array
-            for (var i = 0; i < allCasesOfRest.length; i++) {
-                for (var j = 0; j < arr[0].length; j++) {
-                    result.push(arr[0][j] + "-" + allCasesOfRest[i]);
-                }
-            }
-            return result;
-        }
-    }
-    handleUpdateProductAttributeClick = (index, name, value) => {
-        const copyArray = Object.assign([], this.state.productAttributesArray);
-        copyArray[index] = { productAttributeName: name, productAttributeValue: value };
-        this.setState({ productAttributesArray: copyArray });
-    }
-    handleDeleteProductAttributeClick = (index) => {
-        const copyArray = Object.assign([], this.state.productAttributesArray);
-        copyArray.splice(index, 1);
-        this.setState({ productAttributesArray: copyArray });
-    }
-    // => End Of Product Attributes
-
-    // => Product Variations (Variable Product)
-    //  // =>Same Price For All Variations
-    handleVariationsSamePriceChanged = (e) => {
-        if (e.target.value >= 0) {
-            this.setState({ samePriceInput: e.target.value })
-        }
-    }
-    handleVariationsSamePriceClick = (e) => {
-        if (this.state.samePriceInput != '') {
-            const copyArray = Object.assign([], this.state.variationsArray);
-            copyArray.forEach(element => {
-                element.price = this.state.samePriceInput;
-
-            });
-            this.setState({ variationsArray: copyArray })
-        } else {
-            this.setState({ samePriceError: 'Enter Value' })
-        }
-    }
-    // // => Same Stock For All Variations
-    handleVariationsSameStockChanged = (e) => {
-        if (e.target.value >= 0) {
-            this.setState({ sameStockInput: e.target.value })
-        }
-    }
-    handleVariationsSameStockClick = () => {
-        if (this.state.sameStockInput != '') {
-            const copyArray = Object.assign([], this.state.variationsArray);
-            copyArray.forEach(element => {
-                element.stock = this.state.sameStockInput;
-            });
-            this.setState({ variationsArray: copyArray })
-        } else {
-            this.setState({ sameStockError: 'Enter Value' })
-        }
-    }
-    // // => Same Image link For All Variations
-    handleVariationsSameImgLinkChanged = (e) => {
-        this.setState({ sameImgLinkInput: e.target.value })
-    }
-    handleVariationsSameImgLinkClick = () => {
-        if (this.state.sameImgLinkInput != '') {
-            const copyArray = Object.assign([], this.state.variationsArray);
-            copyArray.forEach(element => {
-                element.image_link = this.state.sameImgLinkInput;
-            });
-            this.setState({ variationsArray: copyArray })
-        } else {
-            this.setState({ sameImgLinkError: 'Enter Value' })
-        }
-    }
-
-    handleVariationPriceChange = (e, index) => {
-        const copyArray = Object.assign([], this.state.variationsArray);
-        let object = copyArray[index];
-        if (e.target.value >= 0) {
-            object.price = e.target.value;
-            copyArray[index] = object;
-            this.setState({ variationsArray: copyArray });
-        }
-    }
-    handleVariationProductInStockChang = (e, index) => {
-        const copyArray = Object.assign([], this.state.variationsArray);
-        let object = copyArray[index];
-        if (e.target.value >= 0) {
-            object.stock = e.target.value;
-            copyArray[index] = object;
-            this.setState({ variationsArray: copyArray });
-        }
-    }
-    handleVariationImageLinkChange = (e, index) => {
-        const copyArray = Object.assign([], this.state.variationsArray);
-        let object = copyArray[index];
-        object.image_link = e.target.value;
-        copyArray[index] = object;
-        this.setState({ variationsArray: copyArray });
-    }
-    handleDeleteProductVariationClick = (index) => {
-        const copyArray = Object.assign([], this.state.variationsArray);
-        copyArray.splice(index, 1);
-        this.setState({ variationsArray: copyArray });
-    }
-    handleDeleteVariationCustomFieldClick = (index, i) => {
-        const copyArray = Object.assign([], this.state.variationsArray);
-        copyArray[index].customField.splice(i, 1);
-        this.setState({ variationsArray: copyArray });
-    }
-    handleSaveVariationsClick = () => {
-        const copyArray = Object.assign([], this.state.variationsArray);
-        let flag = true;
-        copyArray.forEach(element => {
-            if (element.price == '' || element.image_link == '') {
-                flag = false;
-                if (element.price == '') {
-                    element.price_error = 'Enter price'
-                }
-                if (element.image_link == '') {
-                    element.image_link_error = 'Enter Image Link'
-                }
-            } else {
-                element.price_error = ''
-                element.image_link_error = ''
-            }
-        });
-        if (flag == true) {
-            this.setState({ isVariationsSaved: true })
-        }
-        this.setState({ variationsArray: copyArray });
-    }
-    handleVariationsErrorCheck = (data) => {
-        if (data.price_error != '' || data.image_link_error != '') {
-            return '1px solid red'
-        }
-        else {
-            return 'none'
-        }
-    }
-    // => End Of Product Variations
-    // End of Product Data
-
-
-
     // Custom Fields
-    handleCustomFieldNameChange(e) {
-        this.setState({ customFieldName: e.value })
-        this.setState({ customFieldNameSelected: e })
-    }
-    handleCustomFieldValueChange = (e) => {
-        this.setState({ customFieldValue: e.target.value })
-    }
-    handleAddCustomFieldBtnClick = () => {
-        if (this.state.customFieldName != '' && this.state.customFieldValue != '') {
-            const copyArray = Object.assign([], this.state.variationsArray);
-
-            if (this.state.isVariableProduct == true) {
-                copyArray.forEach(element => {
+    handleSaveCustomFieldsBtnClick() {
+        if (this.state.isVariableProduct == true) {
+            const copyArray = Object.assign([], this.state.variationsArray)
+            copyArray.forEach(element => {
+                this.state.customFieldsArray.forEach(e => {
                     element.customField.push({
-                        name: this.state.customFieldName,
-                        value: this.state.customFieldValue
+                        name: e.name,
+                        value: e.value
                     });
-                    console.log("element.customField: ", element.customField);
-                });
-                this.setState({ variationsArray: copyArray })
-            } else {
-                this.state.customFieldsArray.push({
-                    name: this.state.customFieldName,
-                    value: this.state.customFieldValue,
                 })
-            }
-
-            this.setState({ customFieldError: '' })
-            this.setState({ customFieldName: '' })
-            this.setState({ customFieldValue: '' })
-            this.setState({ customFieldNameSelected: '' })
+                console.log("element.customField: ", element.customField);
+            });
+            this.setState({ variationsArray: copyArray, customFieldsArray: [] })
         } else {
-            this.setState({ customFieldError: 'Enter Field Name and Value' });
+            this.setState({ customFieldsArray: [] });
         }
     }
-    updateCustomFieldsClick = (index, name, value) => {
-        const copyArray = Object.assign([], this.state.customFieldsArray);
-        copyArray[index] = { customFieldName: name, customFieldValue: value };
-        this.setState({ customFieldsArray: copyArray });
-    }
-    deleteCustomFieldsClick = (index) => {
-        const copyArray = Object.assign([], this.state.customFieldsArray);
-        copyArray.splice(index, 1);
-        this.setState({ customFieldsArray: copyArray });
-    }
-
-
 
 
     // Product Category
@@ -601,33 +332,16 @@ class AddNew extends Component {
                         this.setState({ isLoading: true });
                         setTimeout(() => {
                             let array = [];
-                            // this.state.productCategories.forEach(element => {
-                            //     array.push(element.value)
-                            // })
                             values.product_category = this.state.productCategories;
                             values.product_sub_category = this.state.productSubCategories;
                             values.product_sub_sub_category = this.state.productSubSubCategories;
-                            // array = [];
-                            // this.state.productTags.forEach(element => {
-                            //     array.push(element.value)
-                            // })
                             values.product_tags = this.state.productTags;
 
                             values.dangerous_goods = this.state.dangerousGoodsArray;
 
                             if (values.product_type == 'simple-product') {
-                                // array = [];
-                                // this.state.simple_product_image_link.forEach(element => {
-                                //     array.push(element.value)
-                                // })
                                 values.product_image_link = this.state.simple_product_image_link;
                                 if (this.state.customFieldsArray != []) {
-                                    // array = []
-                                    // this.state.customFieldsArray.forEach(custom => {
-                                    //     var obj = {};
-                                    //     obj[custom.customFieldName] = custom.customFieldValue;
-                                    //     array.push(obj)
-                                    // });
                                     values.custom_fields = this.state.customFieldsArray;
                                 }
                             } else {
@@ -640,9 +354,16 @@ class AddNew extends Component {
                                     element.customField.forEach(e => {
                                         item.push({ name: e.name, value: e.value })
                                     });
-                                    item.push({ name: 'price', value: element.price })
-                                    item.push({ name: 'stock', value: element.stock })
-                                    item.push({ name: 'image_link', value: element.image_link })
+                                    var obj = {};
+                                    obj['price'] = element.price;
+                                    item.push(obj)
+                                    var obj = {};
+                                    obj['stock'] = element.stock;
+                                    item.push(obj)
+                                    var obj = {};
+                                    obj['image_link'] = element.image_link;
+                                    item.push(obj)
+
                                     array.push({ item: item })
                                 })
                                 values.product_variations = array;
@@ -650,22 +371,42 @@ class AddNew extends Component {
                             resetForm();
                             if (this.uploadProduct(values, this)) {
                                 this.setState({
-                                    showSimpleProductPriceImgLinkErrorrAlert: false, isVariableProduct: false,
-                                    productCategories: '', productSubCategories: '', productSubSubCategories: '',
-                                    subCategoryDisabled: true, subSubCategoryDisabled: true,
-                                    categoryErrorDiv: 'BorderDiv', subCategoryErrorDiv: 'BorderDiv', subSubategoryErrorDiv: 'BorderDiv',
+                                    showVariationsErrorAlert: false,
+                                    showSimpleProductPriceImgLinkErrorrAlert: false,
+                                    isVariableProduct: false,
+
+                                    productCategories: '',
+                                    productSubCategories: '',
+                                    productSubSubCategories: '',
+
+                                    subCategoryDisabled: true,
+                                    subSubCategoryDisabled: true,
+
+                                    subCategoryError: 'no_error',
+                                    subSubCategoryError: 'no_error',
+
+                                    categoryErrorDiv: 'BorderDiv',
+                                    subCategoryErrorDiv: 'BorderDiv',
+                                    subSubategoryErrorDiv: 'BorderDiv',
+
                                     productTags: [],
-                                    warrantyType: 'Year', inputValue: '', simple_product_image_link: [],
-                                    image_linkError: 'no_error', image_linkErrorDiv: 'BorderDiv',
-                                    // Product Attributes
-                                    productAttributesArray: [], productAttributeName: '', productAttributeValue: '', productAttributeError: '', productAttributeNameSelected: '',
-                                    variationsArray: [], isVariationsSaved: false, samePriceInput: '', samePriceError: '', sameStockInput: '', sameStockError: '', sameImgLinkInput: '', sameImgLinkError: '',
+
+                                    warrantyType: 'Year',
+                                    inputValue: '',
+                                    simple_product_image_link: [],
+
+                                    image_linkError: 'no_error',
+                                    image_linkErrorDiv: 'BorderDiv',
+
+                                    variationsArray: [],
+                                    isVariationsSaved: false,
+
                                     // Custom Fields
-                                    customFieldsArray: [], customFieldName: '', customFieldValue: '', customFieldError: '', customFieldNameSelected: '',
+                                    customFieldsArray: [],
+
                                     // Dangerous Goods
                                     dangerousGoodsArray: [],
                                 });
-
                             }
                             setSubmitting(false);
                         }, 500);
@@ -675,13 +416,8 @@ class AddNew extends Component {
                     handleSubmit, handleChange, values, touched, isValid, errors, handleBlur, isSubmitting
                 }) => (
                         <div>
-                            <Row style={styles.title_row} noGutters>
-                                <FontAwesomeIcon icon={faPlus} style={styles.title_fontawesome} />
-                                <div className="mr-auto" style={styles.title}> Add New Product</div>
-                            </Row>
+                            <TitleRow icon={faPlus} title={'Vendor Dashboard / Add New Product'} />
                             <Form noValidate onSubmit={handleSubmit}>
-
-                                {/* {this.state.showToast ? */}
                                 <AlertModal
                                     onHide={(e) => this.setState({ showToast: false })}
                                     show={this.state.showToast}
@@ -690,9 +426,6 @@ class AddNew extends Component {
                                     iconName={faThumbsUp}
                                     color={"#00b300"}
                                 />
-                                {/* : null */}
-                                {/* } */}
-                                {/* {this.state.showVariationsErrorAlert ? */}
                                 <AlertModal
                                     onHide={(e) => this.setState({ showVariationsErrorAlert: false })}
                                     show={this.state.showVariationsErrorAlert}
@@ -701,9 +434,6 @@ class AddNew extends Component {
                                     iconName={faExclamationTriangle}
                                     color={"#ff3333"}
                                 />
-                                {/* : null */}
-                                {/* } */}
-                                {/* {this.state.showSimpleProductPriceImgLinkErrorrAlert ? */}
                                 <AlertModal
                                     onHide={(e) => this.setState({ showSimpleProductPriceImgLinkErrorrAlert: false })}
                                     show={this.state.showSimpleProductPriceImgLinkErrorrAlert}
@@ -712,10 +442,6 @@ class AddNew extends Component {
                                     iconName={faExclamationTriangle}
                                     color={"#ff3333"}
                                 />
-                                {/* : null */}
-                                {/* } */}
-
-
                                 <Row noGutters style={{ paddingTop: '2%' }}>
                                     <Col lg={9} md={9} sm={12} xs={12}>
                                         {/* Product Name */}
@@ -738,336 +464,213 @@ class AddNew extends Component {
                                         {/* End of Product Name */}
 
                                         {/* Product Discription */}
-                                        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-                                            <Form.Group as={Row} style={styles.row}>
-                                                <Card style={styles.card}>
-                                                    <Card.Header style={styles.card_header}>
-                                                        <Form.Label >Product Discruption</Form.Label>
-                                                        <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                                                        </Accordion.Toggle>
-                                                    </Card.Header>
-                                                    <Accordion.Collapse eventKey="0">
-                                                        <Card.Body>
-                                                            <Form.Group>
-                                                                <Form.Control
-                                                                    as="textarea"
-                                                                    placeholder="Enter Product Description"
-                                                                    name="product_description"
-                                                                    value={values.product_description || ''}
-                                                                    rows="7"
-                                                                    onChange={handleChange}
-                                                                    isInvalid={errors.product_description}
-                                                                />
-                                                                <Form.Control.Feedback type="invalid">
-                                                                    {errors.product_description}
-                                                                </Form.Control.Feedback>
-                                                            </Form.Group>
-                                                        </Card.Body>
-                                                    </Accordion.Collapse>
-                                                </Card>
+                                        <CardAccordion title={'Product Discruption'}>
+                                            <Form.Group>
+                                                <Form.Control
+                                                    as="textarea"
+                                                    placeholder="Enter Product Description"
+                                                    name="product_description"
+                                                    value={values.product_description || ''}
+                                                    rows="7"
+                                                    onChange={handleChange}
+                                                    isInvalid={errors.product_description}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {errors.product_description}
+                                                </Form.Control.Feedback>
                                             </Form.Group>
-                                        </Accordion>
+                                        </CardAccordion>
                                         {/* Product Data Row */}
-                                        <Row style={styles.row}>
-                                            <ProductData
-                                                productTypeHandler={this.handleProductTypeChange}
-                                                isVariableProduct={this.state.isVariableProduct}
+                                        <ProductData
+                                            productTypeHandler={this.handleProductTypeChange}
+                                            isVariableProduct={this.state.isVariableProduct}
 
-                                                product_type_values={values.product_type || ''}
+                                            product_type_values={values.product_type || ''}
 
-                                                product_price_values={values.product_price || ''}
-                                                // product_price_touched={touched.product_price}
-                                                product_price_errors={errors.product_price}
+                                            product_price_values={values.product_price || ''}
+                                            product_price_errors={errors.product_price}
+                                            product_price_touched={touched.product_price}
 
-                                                product_in_stock_values={values.product_in_stock || ''}
-                                                // product_in_stock_touched={touched.product_in_stock}
-                                                product_in_stock_errors={errors.product_in_stock}
+                                            product_in_stock_values={values.product_in_stock || ''}
+                                            product_in_stock_errors={errors.product_in_stock}
 
-                                                product_brand_name_values={values.product_brand_name || ''}
-                                                // product_brand_name_touched={touched.product_brand_name}
-                                                product_brand_name_errors={errors.product_brand_name}
+                                            product_brand_name_values={values.product_brand_name || ''}
+                                            product_brand_name_errors={errors.product_brand_name}
 
-                                                imageLink={this.state.simple_product_image_link}
-                                                simpleProductImageLinkHandler={this.handleSimpleProductImageLinkChange.bind(this)}
-                                                inputValue={this.state.inputValue}
-                                                simpleProductImageLinkInputChangeHandler={this.handleSimpleProductImageLinkInputChange.bind(this)}
-                                                simpleProductImageLinkhandleKeyDownHandler={this.handleSimpleProductImage_linkKeyDown.bind(this)}
-                                                simpleProductError={this.state.showSimpleProductPriceImgLinkErrorrAlert}
+                                            imageLink={this.state.simple_product_image_link}
+                                            simpleProductImgLinkChange={this.simpleProductImgLinkChange.bind(this)}
+                                            simpleProductImgLinkKeyDownHandler={this.handleSimpleProductImage_linkKeyDown.bind(this)}
+                                            simpleProductError={this.state.showSimpleProductPriceImgLinkErrorrAlert}
 
-                                                product_warranty_values={values.product_warranty || ''}
-                                                // product_warranty_touched={touched.product_warranty}
-                                                product_warranty_errors={errors.product_warranty}
+                                            product_warranty_values={values.product_warranty || ''}
+                                            product_warranty_errors={errors.product_warranty}
 
-                                                warranty_type_values={values.warranty_type || ''}
-                                                // warranty_type_touched={touched.warranty_type}
-                                                warranty_type_errors={errors.warranty_type}
+                                            warranty_type_values={values.warranty_type || ''}
+                                            warranty_type_errors={errors.warranty_type}
 
-                                                product_discount_values={values.product_discount || ''}
-                                                // product_discount_touched={touched.product_discount}
-                                                product_discount_errors={errors.product_discount}
+                                            product_discount_values={values.product_discount || ''}
+                                            product_discount_errors={errors.product_discount}
 
-                                                sku_values={values.sku || ''}
-                                                // sku_touched={touched.sku}
-                                                sku_errors={errors.sku}
+                                            sku_values={values.sku || ''}
+                                            sku_errors={errors.sku}
 
-                                                product_weight_values={values.product_weight || ''}
-                                                // product_weight_touched={touched.product_weight}
-                                                product_weight_errors={errors.product_weight}
+                                            product_weight_values={values.product_weight || ''}
+                                            product_weight_errors={errors.product_weight}
 
-                                                dimension_length_values={values.dimension_length || ''}
-                                                // dimension_length_touched={touched.dimension_length}
-                                                dimension_length_errors={errors.dimension_length}
+                                            dimension_length_values={values.dimension_length || ''}
+                                            dimension_length_errors={errors.dimension_length}
 
-                                                dimension_width_values={values.dimension_width || ''}
-                                                // dimension_width_touched={touched.dimension_width}
-                                                dimension_width_errors={errors.dimension_width}
+                                            dimension_width_values={values.dimension_width || ''}
+                                            dimension_width_errors={errors.dimension_width}
 
-                                                dimension_height_values={values.dimension_height || ''}
-                                                // dimension_height_touched={touched.dimension_height}
-                                                dimension_height_errors={errors.dimension_height}
+                                            dimension_height_values={values.dimension_height || ''}
+                                            dimension_height_errors={errors.dimension_height}
 
-                                                shipping_charges_values={values.shipping_charges || ''}
-                                                // shipping_charges_touched={touched.shipping_charges}
-                                                shipping_charges_errors={errors.shipping_charges}
+                                            shipping_charges_values={values.shipping_charges || ''}
+                                            shipping_charges_errors={errors.shipping_charges}
 
-                                                handling_fee_values={values.handling_fee || ''}
-                                                // handling_fee_touched={touched.handling_fee}
-                                                handling_fee_errors={errors.handling_fee}
+                                            handling_fee_values={values.handling_fee || ''}
+                                            handling_fee_errors={errors.handling_fee}
 
-                                                purchase_note_values={values.purchase_note || ''}
-                                                // purchase_note_touched={touched.purchase_note}
-                                                purchase_note_errors={errors.purchase_note}
+                                            purchase_note_values={values.purchase_note || ''}
+                                            purchase_note_errors={errors.purchase_note}
 
-                                                onChange={handleChange}
-                                                // touched={touched}
-                                                errors={errors}
+                                            onChange={handleChange}
+                                            errors={errors}
 
-                                                productColorChangeHandler={this.handleProductColorChange}
-                                                // size={this.state.size}
-                                                productSizeChangeHandler={this.handleProductSizeChange}
+                                            productColorChangeHandler={this.handleProductColorChange}
+                                            productSizeChangeHandler={this.handleProductSizeChange}
 
-                                                attributesArray={this.state.productAttributesArray}
-                                                name={this.state.productAttributeName}
-                                                value={this.state.productAttributeValue}
-                                                productAttributeNameSelected={this.state.productAttributeNameSelected}
-                                                attributeNameHandler={this.handleProductAttributeNameChange.bind(this)}
-                                                attributeValueHandler={this.handleProductAttributeValueChange.bind(this)}
-                                                addAttributeHandler={this.handleAddProductAttributeClick.bind(this)}
-                                                update={this.handleUpdateProductAttributeClick.bind(this)}
-                                                deleteAttributeHandler={this.handleDeleteProductAttributeClick.bind(this)}
-                                                deleteVariationHandler={this.handleDeleteProductVariationClick.bind(this)}
-                                                deleteVariationCustomFieldHandler={this.handleDeleteVariationCustomFieldClick.bind(this)}
-                                                saveVariationsHandler={this.handleSaveVariationsClick.bind(this)}
-                                                variationsErrorHandler={this.handleVariationsErrorCheck.bind(this)}
-                                                error={this.state.productAttributeError}
-
-                                                createVariationsHandler={this.handleCreateVariationsClick}
-                                                variationsArray={this.state.variationsArray}
-                                                variationPriceHandler={this.handleVariationPriceChange.bind(this)}
-                                                variationStockHandler={this.handleVariationProductInStockChang.bind(this)}
-                                                variationImageLinkHandler={this.handleVariationImageLinkChange.bind(this)}
-
-                                                samePriceInput={this.state.samePriceInput}
-                                                samePriceError={this.state.samePriceError}
-                                                variationsSamePriceChanged={this.handleVariationsSamePriceChanged.bind(this)}
-                                                variationsSamePriceHandler={this.handleVariationsSamePriceClick.bind(this)}
-
-
-
-                                                sameStockInput={this.state.sameStockInput}
-                                                sameStockError={this.state.sameStockError}
-                                                variationsSameStockChanged={this.handleVariationsSameStockChanged.bind(this)}
-                                                variationsSameStockHandler={this.handleVariationsSameStockClick.bind(this)}
-
-                                                sameImgLinkInput={this.state.sameImgLinkInput}
-                                                sameImgLinkError={this.state.sameImgLinkError}
-                                                variationsSameImgLinkChanged={this.handleVariationsSameImgLinkChanged.bind(this)}
-                                                variationsSameImgLinkHandler={this.handleVariationsSameImgLinkClick.bind(this)}
-                                            />
-                                        </Row>
+                                            variationsArray={this.state.variationsArray}
+                                            setVariationsArray={(arr) => this.setState({ variationsArray: arr })}
+                                            setVariationsSaved={() => this.setState({ isVariationsSaved: true })}
+                                        />
                                         {/* End of Product Data Row */}
                                         {/* Custom Fields Row */}
-                                        <Form.Group as={Row} style={styles.row} >
+                                        <CardAccordion title={'Custom Fields'}>
                                             <CustomFields
                                                 customFieldsArray={this.state.customFieldsArray}
+                                                setFieldsArrayHandler={(arr) => this.setState({ customFieldsArray: arr })}
                                                 isVariableProduct={this.state.isVariableProduct}
-                                                name={this.state.customFieldName}
-                                                value={this.state.customFieldValue}
-                                                customFieldNameSelected={this.state.customFieldNameSelected}
-                                                fieldNameHandler={this.handleCustomFieldNameChange.bind(this)}
-                                                fieldValueHandler={this.handleCustomFieldValueChange.bind(this)}
-                                                addFieldHandler={this.handleAddCustomFieldBtnClick.bind(this)}
-                                                update={this.updateCustomFieldsClick.bind(this)}
-                                                delete={this.deleteCustomFieldsClick.bind(this)}
-                                                error={this.state.customFieldError}
                                                 showCustomFields={showCustomFields}
+                                                saveCustomFieldsHandler={this.handleSaveCustomFieldsBtnClick.bind(this)}
                                             />
-                                        </Form.Group>
+                                        </CardAccordion>
                                         {/* End of Custom Fields Row */}
                                     </Col>
 
                                     <Col lg={3} md={3} sm={12} xs={12}>
                                         {/* Product Category */}
-                                        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-                                            <Form.Group as={Row} style={styles.row}>
-                                                <Card style={styles.card}>
-                                                    <Card.Header style={styles.card_header}>
-                                                        <Form.Label >Product Categories</Form.Label>
-                                                        <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                                                        </Accordion.Toggle>
-                                                    </Card.Header>
-                                                    <Accordion.Collapse eventKey="0">
-                                                        <Card.Body >
-                                                            <Form.Group>
-                                                                <Form.Label style={styles.label}>Category</Form.Label>
-                                                                <div className={this.state.categoryErrorDiv}>
-                                                                    <Select
-                                                                        styles={react_select_styles}
-                                                                        onChange={this.handleProductCategoryChange}
-                                                                        options={product_categories_options}
-                                                                        value={this.state.productCategories}
-                                                                        isSearchable={true}
-                                                                        isClearable={true}
-                                                                        placeholder="Select Category"
-                                                                    />
-                                                                </div>
-                                                            </Form.Group>
-                                                            <Form.Group>
-                                                                <Form.Label style={styles.label}>Sub Category</Form.Label>
-                                                                <div className={this.state.subCategoryErrorDiv}>
-                                                                    <Select
-                                                                        styles={react_select_styles}
-                                                                        onChange={this.handleProductSubCategoryChange}
-                                                                        options={product_sub_categories_options}
-                                                                        value={this.state.productSubCategories}
-                                                                        isSearchable={true}
-                                                                        isClearable={true}
-                                                                        placeholder="Select Sub Category"
-                                                                        isDisabled={this.state.subCategoryDisabled}
-                                                                    />
-                                                                </div>
-                                                            </Form.Group>
-                                                            <Form.Group>
-                                                                <Form.Label style={styles.label}>Sub Sub Category</Form.Label>
-                                                                <div className={this.state.subSubCategoryErrorDiv}>
-                                                                    <Select
-                                                                        styles={react_select_styles}
-                                                                        onChange={this.handleProductSubSubCategoryChange}
-                                                                        options={product_sub_sub_categories_options}
-                                                                        value={this.state.productSubSubCategories}
-                                                                        isSearchable={true}
-                                                                        isClearable={true}
-                                                                        placeholder="Select Sub Sub Category"
-                                                                        isDisabled={this.state.subSubCategoryDisabled}
-                                                                    />
-                                                                </div>
-                                                            </Form.Group>
-                                                        </Card.Body>
-                                                    </Accordion.Collapse>
-                                                </Card>
+                                        <CardAccordion title={'Product Categories'}>
+                                            <Form.Group>
+                                                <Form.Label style={styles.label}>Category</Form.Label>
+                                                <div className={this.state.categoryErrorDiv}>
+                                                    <Select
+                                                        styles={GlobalStyleSheet.react_select_styles}
+                                                        onChange={this.handleProductCategoryChange}
+                                                        options={product_categories_options}
+                                                        value={this.state.productCategories}
+                                                        isSearchable={true}
+                                                        isClearable={true}
+                                                        placeholder="Select Category"
+                                                    />
+                                                </div>
                                             </Form.Group>
-                                        </Accordion>
+                                            <Form.Group>
+                                                <Form.Label style={styles.label}>Sub Category</Form.Label>
+                                                <div className={this.state.subCategoryErrorDiv}>
+                                                    <Select
+                                                        styles={GlobalStyleSheet.react_select_styles}
+                                                        onChange={this.handleProductSubCategoryChange}
+                                                        options={product_sub_categories_options}
+                                                        value={this.state.productSubCategories}
+                                                        isSearchable={true}
+                                                        isClearable={true}
+                                                        placeholder="Select Sub Category"
+                                                        isDisabled={this.state.subCategoryDisabled}
+                                                    />
+                                                </div>
+                                            </Form.Group>
+                                            <Form.Group>
+                                                <Form.Label style={styles.label}>Sub Sub Category</Form.Label>
+                                                <div className={this.state.subSubCategoryErrorDiv}>
+                                                    <Select
+                                                        styles={GlobalStyleSheet.react_select_styles}
+                                                        onChange={this.handleProductSubSubCategoryChange}
+                                                        options={product_sub_sub_categories_options}
+                                                        value={this.state.productSubSubCategories}
+                                                        isSearchable={true}
+                                                        isClearable={true}
+                                                        placeholder="Select Sub Sub Category"
+                                                        isDisabled={this.state.subSubCategoryDisabled}
+                                                    />
+                                                </div>
+                                            </Form.Group>
+                                        </CardAccordion>
                                         {/* End of Product ategory */}
 
                                         {/* Dangerous Goods */}
-                                        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-                                            <Form.Group as={Row} style={styles.row}>
-                                                <Card style={styles.card}>
-                                                    <Card.Header style={styles.card_header}>
-                                                        <Form.Label >Dangerous Goods</Form.Label>
-                                                        <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                                                        </Accordion.Toggle>
-                                                    </Card.Header>
-                                                    <Accordion.Collapse eventKey="0">
-                                                        <Card.Body>
-                                                            <Form.Check
-                                                                name="not_specified"
-                                                                label="Not Specified"
-                                                                style={styles.label}
-                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Not Specified')}
-                                                            />
-                                                            <br></br>
-                                                            <Form.Check
-                                                                name="ceramic"
-                                                                label="Ceramic"
-                                                                style={styles.label}
-                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Ceramic')}
-                                                            />
-                                                            <br></br>
-                                                            <Form.Check
-                                                                name="glass"
-                                                                label="Glass"
-                                                                style={styles.label}
-                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Glass')}
-                                                            />
-                                                            <br></br>
-                                                            <Form.Check
-                                                                name="metal"
-                                                                label="Metal"
-                                                                style={styles.label}
-                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Metal')}
-                                                            />
-                                                            <br></br>
-                                                            <Form.Check
-                                                                name="plastic"
-                                                                label="Plastic"
-                                                                style={styles.label}
-                                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Plastic')}
-                                                            />
-                                                        </Card.Body>
-                                                    </Accordion.Collapse>
-                                                </Card>
-                                            </Form.Group>
-                                        </Accordion>
+                                        <CardAccordion title={'Dangerous Goods'}>
+                                            <Form.Check
+                                                name="not_specified"
+                                                label="Not Specified"
+                                                style={styles.label}
+                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Not Specified')}
+                                            />
+                                            <br></br>
+                                            <Form.Check
+                                                name="ceramic"
+                                                label="Ceramic"
+                                                style={styles.label}
+                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Ceramic')}
+                                            />
+                                            <br></br>
+                                            <Form.Check
+                                                name="glass"
+                                                label="Glass"
+                                                style={styles.label}
+                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Glass')}
+                                            />
+                                            <br></br>
+                                            <Form.Check
+                                                name="metal"
+                                                label="Metal"
+                                                style={styles.label}
+                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Metal')}
+                                            />
+                                            <br></br>
+                                            <Form.Check
+                                                name="plastic"
+                                                label="Plastic"
+                                                style={styles.label}
+                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Plastic')}
+                                            />
+                                        </CardAccordion>
                                         {/* End ofDangerous Goods */}
 
                                         {/* Product Tags */}
-                                        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-                                            <Form.Group as={Row} style={styles.row}>
-                                                <Card style={styles.card}>
-                                                    <Card.Header style={styles.card_header}>
-                                                        <Form.Label >Product Tags</Form.Label>
-                                                        <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                                                        </Accordion.Toggle>
-                                                    </Card.Header>
-                                                    <Accordion.Collapse eventKey="0">
-                                                        <Card.Body style={{ height: '250px' }}>
-                                                            <CreatableSelect
-                                                                isMulti
-                                                                onChange={this.handleProductTagChange}
-                                                                options={product_color_options}
-                                                                value={this.state.productTags}
-                                                                placeholder="Select/Enter Tags"
-                                                            />
-                                                        </Card.Body>
-                                                    </Accordion.Collapse>
-                                                </Card>
-                                            </Form.Group>
-                                        </Accordion>
+                                        <CardAccordion title={'Product Tags'}>
+                                            <CreatableSelect
+                                                isMulti
+                                                onChange={this.handleProductTagChange}
+                                                options={product_color_options}
+                                                value={this.state.productTags}
+                                                placeholder="Select/Enter Tags"
+                                            />
+                                        </CardAccordion>
                                         {/* End of Product Tags */}
-
                                     </Col>
                                 </Row>
 
-
                                 {/* Form Submit Btn Row */}
-                                <Form.Row style={styles.row}>
-                                    <Form.Group as={Col}>
-                                        <p style={styles.label}>Fields with <span> * </span> are mandatory.</p>
-                                        <p style={styles.label}>For adding new size, color, link: Enter text and hit Enter or Tab key</p>
-                                        <Button type="submit" onSubmit={handleSubmit} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                                            {this.state.isLoading ? 'Uploading' : 'Upload'}
-                                            {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
-                                        </Button>
-                                    </Form.Group>
-                                </Form.Row>
+                                <Row style={styles.row}>
+                                    <Button type="submit" onSubmit={handleSubmit} disabled={this.state.isLoading} block>
+                                        {this.state.isLoading ? 'Uploading' : 'Upload'}
+                                        {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
+                                    </Button>
+                                </Row>
                                 {/* End of Form Submit Btn Row */}
                             </Form>
-
                             <style jsx>
                                 {`
                                         .RedBorderDiv{
@@ -1105,24 +708,6 @@ class AddNew extends Component {
 }
 
 const styles = {
-    title_row: {
-        borderBottom: '1px solid gray',
-        padding: '0.7% 4%',
-        display: 'flex',
-        alignItems: 'center'
-    },
-    title_fontawesome: {
-        color: 'gray',
-        marginRight: '3%',
-        width: '20px',
-        height: '20px',
-        maxHeight: '20px',
-        maxWidth: '20px',
-    },
-    title: {
-        color: 'gray'
-    },
-
     nav_link: {
         color: 'white',
         fontSize: '13px',
@@ -1130,29 +715,23 @@ const styles = {
         alignItems: 'center',
         height: '45px',
     },
-
-
     row: {
         margin: '2%',
         padding: '0%'
     },
     card: {
         width: '100%',
+        border: '1px solid lightgray'
     },
     card_header: {
         alignItems: 'center',
-        // color: '#6A7074',
-        fontSize: '14px',
-        background: 'lightgray'
+        fontSize: `${GlobalStyleSheet.card_header_fontsize}`,
+        background: `${GlobalStyleSheet.card_header_background}`,
     },
     buttons: {
         background: `${GlobalStyleSheet.primry_color}`,
         border: 'none',
         fontSize: '10px',
-    },
-    submit_btn: {
-        // background: `${GlobalStyleSheet.admin_primry_color}`,
-        marginTop: '1%',
     },
     label: {
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,

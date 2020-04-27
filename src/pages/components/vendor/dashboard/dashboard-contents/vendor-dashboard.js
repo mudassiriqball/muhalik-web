@@ -9,6 +9,7 @@ import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons';
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 import CountUp from 'react-countup';
 import GlobalStyleSheet from '../../../../../styleSheet'
+import TitleRow from '../../../title-row'
 
 class VendorDashboard extends React.Component {
     constructor(props) {
@@ -33,10 +34,8 @@ class VendorDashboard extends React.Component {
     render() {
         return (
             <div>
-                <Row style={styles.title_row} noGutters>
-                    <FontAwesomeIcon icon={faTachometerAlt} style={styles.title_fontawesome} />
-                    <div className="mr-auto" style={styles.title}> Dashboard </div>
-                </Row>
+                <TitleRow icon={faTachometerAlt} title={'Vendor Dashboard'} />
+
                 <Row noGutters style={{ padding: '0% 1%' }}>
                     <Col lg={4} md={4} sm={12} xs={12} style={styles.product_card_col}>
                         <Card>
@@ -276,33 +275,16 @@ class VendorDashboard extends React.Component {
 }
 
 const styles = {
-    title_row: {
-        borderBottom: '1px solid lightgray',
-        padding: '1.5% 4%'
-    },
-    title_fontawesome: {
-        color: 'gray',
-        marginRight: '3%',
-        width: '26px',
-        height: '26px',
-        maxHeight: '26px',
-        maxWidth: '26px',
-    },
-    title: {
-        color: 'gray'
-    },
-
     row: {
         margin: '2%',
         padding: '0px'
     },
-
     card_header: {
         // background: 'white',
         // padding: '1.5% 5%',
         color: '#6A7074',
-        // borderBottom: `0.5px solid ${GlobalStyleSheet.body_color}`
-        fontSize: '15px'
+        fontSize: `${GlobalStyleSheet.card_header_fontsize}`,
+        background: `${GlobalStyleSheet.card_header_background}`,
     },
     card_text_div: {
         color: '#6A7074',

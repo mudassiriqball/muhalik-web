@@ -22,105 +22,129 @@ const Group = props => (
 
 const CustomFields = props => {
     const [modalShow, setModalShow] = React.useState(false);
+    const [fieldName, setFieldName] = React.useState('');
+    const [fieldValue, setFieldValue] = React.useState('');
+    const [error, setError] = React.useState('');
+
+    function handleAddCustomFieldBtnClick() {
+        if (fieldName != '' && fieldValue != '') {
+            const copyArray = Object.assign([], props.customFieldsArray)
+            copyArray.push({
+                name: fieldName.value,
+                value: fieldValue,
+            })
+            props.setFieldsArrayHandler(copyArray)
+            setError('');
+            setFieldName('');
+            setFieldValue('');
+        } else {
+            setError('Enter Field Name and Value');
+        }
+    }
+    function deleteCustomFieldsClick(index) {
+        const copyArray = Object.assign([], props.customFieldsArray);
+        copyArray.splice(index, 1);
+        props.setFieldsArrayHandler(copyArray)
+
+    }
+
+    function saveCustomFieldsHandler() {
+        if (props.customFieldsArray != '') {
+            setError('');
+            props.saveCustomFieldsHandler();
+        }
+        else {
+            setError('Add Fields First');
+        }
+    }
+
     return (
-        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-            <Card style={styles.card}>
-                <Card.Header style={styles.card_header}>
-                    <Form.Label >Custome Fields</Form.Label>
-                    <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                        <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.accordin_fontawesome} />
-                    </Accordion.Toggle>
-                </Card.Header>
-                <Accordion.Collapse eventKey="0">
-                    <Card.Body >
-                        {props.showCustomFields ? <Form.Label style={styles.label}>
-                            Please First Create Variations
-                        </Form.Label> :
-                            <Form.Row style={{ margin: '0.5% 1%', padding: '1% 2%', background: 'lightGray' }}>
-                                <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
-                                    <Form.Label style={styles.label}>Field Name</Form.Label>
-                                    <Select
-                                        options={groupedOptions}
-                                        components={{ Group }}
-                                        value={props.customFieldNameSelected}
-                                        onChange={props.fieldNameHandler}
-                                    />
-                                    <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={() => setModalShow(true)}>
-                                        Add New
-                                </Nav.Link>
+        <>
+            {props.showCustomFields ?
+                <Form.Label style={styles.label}> Please First Create Variations </Form.Label>
+                :
+                <>
+                    <Form.Row style={{ margin: '0%', padding: '1.5%', background: `${GlobalStyleSheet.body_color}` }}>
+                        <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
+                            <Form.Label style={styles.label}>Field Name</Form.Label>
+                            <Select
+                                styles={GlobalStyleSheet.react_select_styles}
+                                options={groupedOptions}
+                                components={{ Group }}
+                                value={fieldName}
+                                onChange={(e) => setFieldName(e)}
+                            />
+                            <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={() => setModalShow(true)}>
+                                Add New
+                        </Nav.Link>
+                            <AddNewFieldNameModal
+                                show={modalShow}
+                                onHide={() => setModalShow(false)}
+                            />
+                        </Form.Group>
+                        <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
+                            <Form.Label style={styles.label}>Field Value </Form.Label>
+                            <InputGroup>
+                                <Form.Control
+                                    style={{ fontSize: '14px' }}
+                                    type="text"
+                                    placeholder="Enter Value"
+                                    name="sku"
+                                    value={fieldValue}
+                                    onChange={(e) => setFieldValue(e.target.value)}
+                                />
+                                <Button variant="outline-primary" size="sm" style={{ marginLeft: '1%' }} onClick={handleAddCustomFieldBtnClick}>Add</Button>
+                            </InputGroup>
+                        </Form.Group>
+                        <span className="mr-auto"> {error} </span>
+                        <Row style={{ width: '100%', display: 'flex', alignItems: 'center' }} noGutters>
+                            <Form.Label style={styles.label} className="mr-auto">For Variable Products each Custom Field will be added to all variations</Form.Label>
+                            <Button variant="outline-primary" size="sm" onClick={saveCustomFieldsHandler}>Save Fields</Button>
+                        </Row>
+                    </Form.Row>
 
-                                    <AddNewFieldNameModal
-                                        show={modalShow}
-                                        onHide={() => setModalShow(false)}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
-                                    <Form.Label style={styles.label}>Field Value </Form.Label>
-                                    <InputGroup>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Enter Value"
-                                            name="sku"
-                                            value={props.value}
-                                            onChange={props.fieldValueHandler}
-                                        />
-                                    </InputGroup>
-                                </Form.Group>
-                                <Form.Label style={styles.label}>
-                                    {/* <span>For Multiple Values add | between values</span> */}
-                                    {props.isVariableProduct ?
-                                        <span>For Variable Products each Custom Field will be added to all variations</span>
-                                        : null
-                                    }
-                                    <span style={{ color: 'red' }}>
-                                        {props.error}</span>
-                                </Form.Label>
-                                <Button variant="outline-primary" size="sm" block style={{ margin: '2% 0px' }}
-                                    onClick={props.addFieldHandler}>Add Field</Button>
-                            </Form.Row>
-                        }
+                </>
+            }
 
 
-                        {/* Map */}
-                        <div style={{ background: 'lightGray', margin: '0.5% 1%' }}>
-                            {props.customFieldsArray && props.customFieldsArray.map((data, index) =>
-                                <Form.Row style={{ padding: '1% 2%' }} key={index}>
-                                    <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
-                                        <Form.Control
-                                            as="select"
-                                            size="sm"
-                                            value={data.name}
-                                            onChange={() => data.name}
-                                        >
-                                            <option>{data.name}</option>
-                                        </Form.Control>
-                                        {/* <Select
-                                            options={groupedOptions}
-                                            components={{ Group }}
-                                        /> */}
-                                    </Form.Group>
-                                    <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
-                                        <InputGroup>
-                                            <Form.Control
-                                                type="text"
-                                                size="sm"
-                                                placeholder="Enter Value"
-                                                name="sku"
-                                                value={data.value}
-                                                onChange={() => data.value}
-                                            />
-                                            <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
-                                                onClick={() => props.delete(index)}> delete</Button>
-                                        </InputGroup>
-                                    </Form.Group>
-                                </Form.Row>
-                            )}
-                        </div>
-                    </Card.Body>
-                </Accordion.Collapse>
-            </Card>
-        </Accordion>
-
+            {/* Map */}
+            <div style={{ background: `${GlobalStyleSheet.body_color}`, marginTop: '1%' }}>
+                {props.customFieldsArray && props.customFieldsArray.map((element, index) =>
+                    <Form.Row style={{ padding: '1% 2%' }} key={index}>
+                        <Col lg={5} md={5} sm={12} xs={12}>
+                            <Form.Control
+                                as="select"
+                                size="sm"
+                                value={element.name}
+                                onChange={() => element.name}
+                            >
+                                <option>{element.name}</option>
+                            </Form.Control>
+                        </Col>
+                        <Col lg={7} md={7} sm={12} xs={12}>
+                            <InputGroup>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    placeholder="Enter Value"
+                                    name="sku"
+                                    value={element.value}
+                                    onChange={() => element.value}
+                                />
+                                <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
+                                    onClick={() => deleteCustomFieldsClick(index)}> delete</Button>
+                            </InputGroup>
+                        </Col>
+                    </Form.Row>
+                )}
+            </div>
+            <style jsx>{`
+                span {
+                    color: red;
+                    font-size: 13px
+                }
+            `}</style>
+        </>
     )
 }
 
@@ -136,8 +160,8 @@ const styles = {
         width: '100%',
         alignItems: 'center',
         // color: '#6A7074',
-        fontSize: '15px',
-        background: 'lightgray'
+        fontSize: `${GlobalStyleSheet.card_header_fontsize}`,
+        background: `${GlobalStyleSheet.card_header_background}`,
     },
     label: {
         fontSize: '13px',

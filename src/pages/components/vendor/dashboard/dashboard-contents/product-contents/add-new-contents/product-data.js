@@ -1,851 +1,16 @@
-
-// import product_size_options from '../../../../../../../sdk/consts/product-size-options'
-// import product_color_options from '../../../../../../../sdk/consts/product-color-options'
-
-// import { Form, Col, Row, Card, InputGroup, Button, Toast, Tab, Nav, Tabs, Accordion, Spinner, Dropdown } from 'react-bootstrap';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import {
-//     faPlus, faKey, faSlidersH, faStoreAlt, faTruck, faTools, faDollarSign, faListAlt, faArrowAltCircleDown,
-// } from '@fortawesome/free-solid-svg-icons';
-
-// import CreatableSelect from 'react-select/creatable';
-// import ReactSelectMaterialUi from "react-select-material-ui";
-// import GlobalStyleSheet from '../../../../../../../styleSheet';
-// import MuhalikConfig from '../../../../../../../sdk/muhalik.config';
-
-// import Select, { components } from 'react-select';
-// import { groupedOptions } from '../../../../../../../sdk/consts/fields-data';
-// import AddNewFieldNameModal from './add-new-field-name-model'
-
-// const groupStyles = {
-//     border: `1px solid ${GlobalStyleSheet.admin_primry_color}`,
-//     borderRadius: '5px',
-//     background: 'white',
-//     color: `${GlobalStyleSheet.admin_primry_color}`,
-// };
-// const coomponents = {
-//     DropdownIndicator: null,
-// };
-// const Group = props => (
-//     <div style={groupStyles}>
-//         <components.Group {...props} />
-//     </div>
-// );
-
-// const ProductData = props => {
-//     const [modalShow, setModalShow] = React.useState(false);
-//     let variations = true;
-//     if (props.attributesArray == '') {
-//         variations = false;
-//     } else {
-//         variations = true;
-//     }
-
-//     return (
-//         <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-
-//             <Card style={styles.card}>
-//                 <Card.Header style={styles.card_header}>
-//                     <Row noGutters style={{ display: 'flex', alignItems: 'center' }}>
-//                         <Col lg={3} md={3} sm={3} xs={4}>
-//                             Product Data
-//                         </Col>
-//                         <Col lg={3} md={3} sm={5} xs={8}>
-//                             <Form.Control
-//                                 as="select"
-//                                 name="product_type"
-//                                 size="sm"
-//                                 value={props.product_type_values}
-//                                 onChange={(e) => { props.onChange(e); props.productTypeHandler(e) }}
-//                             >
-//                                 <option value='simple-product'> Simple Product </option>
-//                                 <option value="variable-prouct"> Variable Product </option>
-//                             </Form.Control>
-//                         </Col>
-//                         <div className="mr-auto"></div>
-//                         <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-//                             <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-//                         </Accordion.Toggle>
-//                     </Row>
-
-//                 </Card.Header>
-//                 <Accordion.Collapse eventKey="0">
-//                     <Card.Body style={{ padding: '0.5%', margin: '0px' }}>
-//                         <Tab.Container id="left-tabs-example" defaultActiveKey="Inventory">
-//                             <Row style={{ margin: '0px' }} noGutters>
-//                                 <Col lg="auto" md="auto" sm="auto" xs="auto" style={{ background: `${GlobalStyleSheet.admin_primry_color}` }}>
-//                                     <Nav variant="pills" className="flex-column" style={{ margin: '0px' }}>
-
-//                                         <Nav.Item>
-//                                             <div className="nav_link">
-//                                                 <Nav.Link eventKey="Inventory" style={styles.nav_link}>
-//                                                     <FontAwesomeIcon size="xs" icon={faStoreAlt} style={styles.product_fontawesome} />
-//                                                     <div className="linkName"> Inventory </div>
-//                                                 </Nav.Link>
-//                                             </div>
-//                                         </Nav.Item>
-
-//                                         {!props.isVariableProduct ?
-//                                             <Nav.Item>
-//                                                 <div className="nav_link">
-//                                                     <Nav.Link eventKey="General" style={styles.nav_link}>
-//                                                         <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.product_fontawesome} />
-//                                                         <div className="linkName"> General </div>
-//                                                     </Nav.Link>
-//                                                 </div>
-//                                             </Nav.Item>
-//                                             :
-//                                             <>
-//                                                 <Nav.Item>
-//                                                     <div className="nav_link">
-//                                                         <Nav.Link eventKey="Attributes" style={styles.nav_link}>
-//                                                             <FontAwesomeIcon size="xs" icon={faListAlt} style={styles.product_fontawesome} />
-//                                                             <div className="linkName"> Attributes </div>
-//                                                         </Nav.Link>
-//                                                     </div>
-//                                                 </Nav.Item>
-//                                                 <Nav.Item>
-//                                                     <div className="nav_link">
-//                                                         <Nav.Link eventKey="Variations" style={styles.nav_link}>
-//                                                             <FontAwesomeIcon size="xs" icon={faListAlt} style={styles.product_fontawesome} />
-//                                                             <div className="linkName"> Variations </div>
-//                                                         </Nav.Link>
-//                                                     </div>
-//                                                 </Nav.Item>
-//                                             </>
-//                                         }
-
-//                                         <Nav.Item>
-//                                             <div className="nav_link">
-//                                                 <Nav.Link eventKey="Shipping" style={styles.nav_link}>
-//                                                     <FontAwesomeIcon size="xs" icon={faTruck} style={styles.product_fontawesome} />
-//                                                     <div className="linkName"> Shipping </div>
-//                                                 </Nav.Link>
-//                                             </div>
-//                                         </Nav.Item>
-
-//                                         <Nav.Item>
-//                                             <div className="nav_link">
-//                                                 <Nav.Link eventKey="Advanced" style={styles.nav_link}>
-//                                                     <FontAwesomeIcon size="xs" icon={faTools} style={styles.product_fontawesome} />
-//                                                     <div className="linkName"> Advanced </div>
-//                                                 </Nav.Link>
-//                                             </div>
-//                                         </Nav.Item>
-//                                         {/* <Nav.Item>
-//                                     <div className="nav_link">
-//                                         <Nav.Link eventKey="Commission" style={styles.nav_link}>
-//                                             <FontAwesomeIcon size="xs" icon={faDollarSign} style={styles.product_fontawesome} />
-//                                             <div> Commission </div>
-//                                         </Nav.Link>
-//                                     </div>
-//                                 </Nav.Item> */}
-//                                     </Nav>
-//                                 </Col>
-//                                 <Col style={{ padding: '2%' }}>
-//                                     <Tab.Content>
-//                                         <Tab.Pane eventKey="General">
-
-//                                             {props.isVariableProduct ? null :
-//                                                 <>
-//                                                     <Form.Row>
-//                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-//                                                             <Form.Label style={styles.label}>Product Price <span> * </span></Form.Label>
-//                                                             <InputGroup>
-//                                                                 <Form.Control
-//                                                                     type="number"
-//                                                                     size="sm"
-//                                                                     placeholder="Enter Product Price"
-//                                                                     name="product_price"
-//                                                                     value={props.product_price_values}
-//                                                                     onChange={props.onChange}
-//                                                                     isInvalid={props.product_price_touched && props.product_price_errors}
-//                                                                 />
-//                                                                 <Form.Control.Feedback type="invalid">
-//                                                                     {props.product_price_errors}
-//                                                                 </Form.Control.Feedback>
-//                                                             </InputGroup>
-//                                                         </Form.Group>
-//                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-//                                                             <Form.Label style={styles.label}>Product in Stock</Form.Label>
-//                                                             <Form.Control type="number"
-//                                                                 size="sm"
-//                                                                 name="product_in_stock"
-//                                                                 value={props.product_in_stock_values}
-//                                                                 onChange={props.onChange}
-//                                                                 isInvalid={props.product_in_stock_touched && props.product_in_stock_errors}
-//                                                             />
-//                                                             <Form.Control.Feedback type="invalid">
-//                                                                 {props.product_in_stock_errors}
-//                                                             </Form.Control.Feedback>
-//                                                         </Form.Group>
-//                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-//                                                             <Form.Label style={styles.label}>Brand Name</Form.Label>
-//                                                             <InputGroup>
-//                                                                 <Form.Control
-//                                                                     type="text"
-//                                                                     size="sm"
-//                                                                     placeholder="Enter Brand Name"
-//                                                                     name="product_brand_name"
-//                                                                     value={props.product_brand_name_values}
-//                                                                     onChange={props.onChange}
-//                                                                     isInvalid={props.product_brand_name_touched && props.product_brand_name_errors}
-//                                                                 />
-//                                                                 <Form.Control.Feedback type="invalid">
-//                                                                     {props.product_brand_name_errors}
-//                                                                 </Form.Control.Feedback>
-//                                                             </InputGroup>
-//                                                         </Form.Group>
-//                                                     </Form.Row>
-//                                                     <Form.Row>
-//                                                         <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
-//                                                             <Form.Label style={styles.label}>Image Link <span> * </span></Form.Label>
-//                                                             {/* <CreatableSelect
-//                                                                 isMulti
-//                                                                 onChange={props.simpleProductImageLinkHandler}
-//                                                                 value={props.imageLink}
-//                                                                 placeholder="Select/Enter Size"
-//                                                             /> */}
-//                                                             <CreatableSelect
-//                                                                 components={coomponents}
-//                                                                 inputValue={props.inputValue}
-//                                                                 isClearable
-//                                                                 isMulti
-//                                                                 menuIsOpen={false}
-//                                                                 onChange={props.simpleProductImageLinkHandler}
-//                                                                 onInputChange={props.simpleProductImageLinkInputChangeHandler}
-//                                                                 onKeyDown={props.simpleProductImageLinkhandleKeyDownHandler}
-//                                                                 placeholder="Type something and press enter..."
-//                                                                 value={props.imageLink}
-//                                                             />
-//                                                         </Form.Group>
-//                                                     </Form.Row>
-//                                                     {/*<Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
-//                                                     <Form.Label style={styles.label}>Product Color</Form.Label>
-//                                                     <CreatableSelect
-//                                                         onChange={props.productColorChangeHandler}
-//                                                         options={product_color_options}
-//                                                         value={props.color}
-//                                                         placeholder="Select/Enter Color"
-//                                                     />
-//                                                 </Form.Group>
-//                                             </Form.Row> */}
-//                                                     <Form.Row>
-//                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-//                                                             <Form.Label style={styles.label}>Product Warranty (months) </Form.Label>
-//                                                             <InputGroup>
-//                                                                 <Form.Control
-//                                                                     type="number"
-//                                                                     size="sm"
-//                                                                     placeholder="Enter Product Warranty"
-//                                                                     name="product_warranty"
-//                                                                     value={props.product_warranty_values}
-//                                                                     onChange={props.onChange}
-//                                                                     isInvalid={props.product_warranty_touched && props.product_warranty_errors}
-//                                                                 />
-//                                                                 <Form.Control.Feedback type="invalid">
-//                                                                     {props.product_warranty_errors}
-//                                                                 </Form.Control.Feedback>
-//                                                             </InputGroup>
-//                                                         </Form.Group>
-//                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-//                                                             <Form.Label style={styles.label}> Warranty Type </Form.Label>
-//                                                             <InputGroup>
-//                                                                 <InputGroup.Prepend>
-//                                                                     <Form.Control
-//                                                                         as="select"
-//                                                                         name="warranty_type"
-//                                                                         size="sm"
-//                                                                         value={props.warranty_type_values}
-//                                                                         onChange={props.onChange}
-//                                                                         isInvalid={props.warranty_type_touched && props.warranty_type_errors}
-//                                                                     >
-//                                                                         <option>Waranty Type</option>
-//                                                                         <option> No Warranty </option>
-//                                                                         <option> Brand Warranty </option>
-//                                                                         <option> Local Warranty </option>
-//                                                                         <option> Local Seller Warranty </option>
-//                                                                         <option> Non-Local Warranty </option>
-//                                                                         <option> Internationsl Warranty </option>
-//                                                                         <option> Internationsl Seller Warranty </option>
-//                                                                         <option> International Manufacturer Warranty </option>
-
-//                                                                     </Form.Control>
-//                                                                 </InputGroup.Prepend>
-//                                                                 <Form.Control.Feedback type="invalid">
-//                                                                     {props.product_warranty_errors}
-//                                                                 </Form.Control.Feedback>
-//                                                             </InputGroup>
-//                                                         </Form.Group>
-//                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-//                                                             <Form.Label style={styles.label}>Product Discount</Form.Label>
-//                                                             <InputGroup>
-//                                                                 <Form.Control
-//                                                                     type="number"
-//                                                                     size="sm"
-//                                                                     placeholder="Enter Discount on on Product(%)"
-//                                                                     name="product_discount"
-//                                                                     value={props.product_discount_values}
-//                                                                     onChange={props.onChange}
-//                                                                     isInvalid={props.product_discount_touched && props.product_discount_errors}
-//                                                                 />
-//                                                                 <InputGroup.Prepend>
-//                                                                     <Button variant='primary' size="sm">%</Button>
-//                                                                 </InputGroup.Prepend>
-//                                                                 <Form.Control.Feedback type="invalid">
-//                                                                     {props.product_discount_errors}
-//                                                                 </Form.Control.Feedback>
-//                                                             </InputGroup>
-//                                                         </Form.Group>
-//                                                     </Form.Row>
-//                                                 </>
-//                                             }
-//                                         </Tab.Pane>
-
-
-//                                         <Tab.Pane eventKey="Inventory">
-//                                             <Form.Row>
-//                                                 <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
-//                                                     <Form.Label style={styles.label}>Product SKU</Form.Label>
-//                                                     <InputGroup>
-//                                                         <Form.Control
-//                                                             type="text"
-//                                                             size="sm"
-//                                                             placeholder="Enter SKU (Stock Keeping Unit)"
-//                                                             name="sku"
-//                                                             value={props.sku_values}
-//                                                             onChange={props.onChange}
-//                                                             isInvalid={props.sku_touched && props.sku_errors}
-//                                                         />
-//                                                         <Form.Control.Feedback type="invalid">
-//                                                             {props.sku_errors}
-//                                                         </Form.Control.Feedback>
-//                                                     </InputGroup>
-//                                                 </Form.Group>
-//                                             </Form.Row>
-//                                         </Tab.Pane>
-
-
-
-
-//                                         <Tab.Pane eventKey="Shipping">
-//                                             <Form.Group as={Row} noGutters>
-//                                                 <Form.Label style={styles.label}>Weight (kg)</Form.Label>
-//                                                 <Form.Control type="number"
-//                                                     name="product_weight"
-//                                                     size="sm"
-//                                                     value={props.product_weight_values}
-//                                                     onChange={props.onChange}
-//                                                     isInvalid={props.product_weight_touched && props.product_weight_errors}
-//                                                 />
-//                                                 <Form.Control.Feedback type="invalid">
-//                                                     {props.product_weight_errors}
-//                                                 </Form.Control.Feedback>
-//                                             </Form.Group>
-//                                             <Form.Group as={Row} noGutters>
-//                                                 <Form.Label style={styles.label}>Dimensions (cm)</Form.Label>
-//                                                 <InputGroup>
-//                                                     <InputGroup.Prepend>
-//                                                         <Form.Control
-//                                                             type="number"
-//                                                             name="dimension_length"
-//                                                             size="sm"
-//                                                             value={props.dimension_length_values}
-//                                                             onChange={props.onChange}
-//                                                             placeholder="Length"
-//                                                             isInvalid={props.dimension_length_touched && props.dimension_length_errors}
-//                                                         />
-//                                                         <Form.Control.Feedback type="invalid">
-//                                                             {props.dimension_length_errors}
-//                                                         </Form.Control.Feedback>
-//                                                     </InputGroup.Prepend>
-//                                                     <Form.Control
-//                                                         type="number"
-//                                                         name="dimension_width"
-//                                                         size="sm"
-//                                                         value={props.dimension_width_values}
-//                                                         placeholder="Width"
-//                                                         onChange={props.onChange}
-//                                                         isInvalid={props.dimension_width_touched && props.dimension_width_errors}
-//                                                     />
-//                                                     <InputGroup.Prepend>
-//                                                         <Form.Control.Feedback type="invalid">
-//                                                             {props.dimension_width_errors}
-//                                                         </Form.Control.Feedback>
-//                                                         <Form.Control
-//                                                             type="number"
-//                                                             name="dimension_height"
-//                                                             size="sm"
-//                                                             value={props.dimension_height_values}
-//                                                             placeholder="Height"
-//                                                             onChange={props.onChange}
-//                                                             isInvalid={props.dimension_height_touched && props.dimension_height_errors}
-//                                                         />
-//                                                         <Form.Control.Feedback type="invalid">
-//                                                             {props.dimension_height_errors}
-//                                                         </Form.Control.Feedback>
-//                                                     </InputGroup.Prepend>
-//                                                 </InputGroup>
-//                                             </Form.Group>
-//                                             <Form.Row>
-//                                                 <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
-//                                                     <Form.Label style={styles.label}>Product Shipping Charges</Form.Label>
-//                                                     <InputGroup>
-//                                                         <Form.Control
-//                                                             type="text"
-//                                                             size="sm"
-//                                                             placeholder="Enter Product Shipping Charges"
-//                                                             name="shipping_charges"
-//                                                             value={props.shipping_charges_values}
-//                                                             onChange={props.onChange}
-//                                                             isInvalid={props.shipping_charges_touched && props.shipping_charges_errors}
-//                                                         />
-//                                                         <InputGroup.Prepend>
-//                                                             <Button variant='primary' size="sm">Riyal</Button>
-//                                                         </InputGroup.Prepend>
-//                                                         <Form.Control.Feedback type="invalid">
-//                                                             {props.shipping_charges_errors}
-//                                                         </Form.Control.Feedback>
-//                                                     </InputGroup>
-//                                                 </Form.Group>
-//                                                 <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
-//                                                     <Form.Label style={styles.label}>Product Handling Fee</Form.Label>
-//                                                     <InputGroup>
-//                                                         <Form.Control
-//                                                             type="text"
-//                                                             size="sm"
-//                                                             placeholder="Enter Product Handling Fee"
-//                                                             name="handling_fee"
-//                                                             value={props.handling_fee_values}
-//                                                             onChange={props.onChange}
-//                                                             isInvalid={props.handling_fee_touched && props.handling_fee_errors}
-//                                                         />
-//                                                         <InputGroup.Prepend>
-//                                                             <Button variant='primary' size="sm">Riyal</Button>
-//                                                         </InputGroup.Prepend>
-//                                                         <Form.Control.Feedback type="invalid">
-//                                                             {props.handling_fee_errors}
-//                                                         </Form.Control.Feedback>
-//                                                     </InputGroup>
-//                                                 </Form.Group>
-//                                             </Form.Row>
-//                                         </Tab.Pane>
-
-
-
-
-
-//                                         <Tab.Pane eventKey="Attributes">
-//                                             <Form.Row >
-//                                                 <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
-//                                                     <Form.Label style={styles.label}>Field Name</Form.Label>
-//                                                     <Select
-//                                                         options={groupedOptions}
-//                                                         components={{ Group }}
-//                                                         value={props.productAttributeNameSelected}
-//                                                         onChange={props.attributeNameHandler}
-//                                                     />
-//                                                     <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={() => setModalShow(true)}>
-//                                                         Add New
-//                                                     </Nav.Link>
-//                                                     <AddNewFieldNameModal
-//                                                         show={modalShow}
-//                                                         onHide={() => setModalShow(false)}
-//                                                     />
-//                                                 </Form.Group>
-//                                                 <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
-//                                                     <Form.Label style={styles.label}>Field Value </Form.Label>
-//                                                     <InputGroup>
-//                                                         <Form.Control
-//                                                             type="text"
-//                                                             placeholder="Enter Value"
-//                                                             name="sku"
-//                                                             value={props.value}
-//                                                             onChange={props.attributeValueHandler}
-//                                                         />
-//                                                         <Button variant="outline-primary" style={{ marginLeft: '1%' }}
-//                                                             onClick={props.addAttributeHandler}>Add</Button>
-//                                                     </InputGroup>
-//                                                 </Form.Group>
-//                                                 <Form.Label style={styles.label}>
-//                                                     <span style={{ color: 'red' }}>{props.error}</span>
-//                                                 </Form.Label>
-//                                             </Form.Row>
-//                                             <Form.Row>
-//                                                 <Form.Label style={styles.label} className="mr-auto">For Multiple Values add | between values</Form.Label>
-//                                                 <Button variant="outline-primary" size="sm"
-//                                                     onClick={props.createVariationsHandler}>Create Variations</Button>
-//                                             </Form.Row>
-//                                             <hr />
-//                                             {/* <Card style={{ background: 'lightGray', margin: '0.5% 1%' }}> */}
-
-//                                             {props.attributesArray && props.attributesArray.map((data, index) =>
-//                                                 <Form.Row style={{ padding: '0%' }} key={index}>
-//                                                     <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
-//                                                         <Form.Control
-//                                                             as="select"
-//                                                             size="sm"
-//                                                             value={data.productAttributeName}
-//                                                             onChange={() => data.productAttributeName}
-//                                                         >
-//                                                             <option>{data.productAttributeName}</option>
-//                                                         </Form.Control>
-//                                                     </Form.Group>
-//                                                     <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
-//                                                         <InputGroup>
-//                                                             <Form.Control
-//                                                                 type="text"
-//                                                                 size="sm"
-//                                                                 placeholder="Enter Value"
-//                                                                 name="sku"
-//                                                                 value={data.productAttributeValue}
-//                                                                 onChange={() => data.productAttributeValue}
-//                                                             />
-//                                                             <Button variant="outline-primary" size="sm" style={{ marginLeft: '1%' }}
-//                                                                 onClick={() => props.deleteAttributeHandler(index)}> delete</Button>
-//                                                         </InputGroup>
-//                                                     </Form.Group>
-//                                                     {/* <Button variant="outline-primary" size="sm" block style={{ width: '100px' }}
-//                                                     onClick={() => props.update(index, data.fieldName, data.fieldValue)}> update</Button> */}
-
-
-//                                                 </Form.Row>
-//                                             )}
-//                                         </Tab.Pane>
-
-
-//                                         <Tab.Pane eventKey="Variations">
-//                                             {variations ?
-//                                                 <>
-//                                                     <Form.Row>
-//                                                         {/* Same Price */}
-//                                                         <Form.Group as={Col} >
-//                                                             <Form.Label style={styles.label}> Same Price</Form.Label>
-//                                                             <InputGroup>
-//                                                                 <Form.Control
-//                                                                     type="number"
-//                                                                     size="sm"
-//                                                                     placeholder="Enter Price"
-//                                                                     name="samePrice"
-//                                                                     value={props.samePriceInput}
-//                                                                     onChange={props.variationsSamePriceChanged}
-//                                                                     isInvalid={props.samePriceError}
-//                                                                 />
-//                                                                 <InputGroup.Prepend>
-//                                                                     <Button variant='primary' style={styles.label} onClick={props.variationsSamePriceHandler} size="sm">Apply</Button>
-//                                                                 </InputGroup.Prepend>
-//                                                                 <Form.Control.Feedback type="invalid">
-//                                                                     {props.samePriceError}
-//                                                                 </Form.Control.Feedback>
-//                                                             </InputGroup>
-//                                                         </Form.Group>
-//                                                         {/* Same Stock */}
-//                                                         <Form.Group as={Col} >
-//                                                             <Form.Label style={styles.label}> Same Stock</Form.Label>
-//                                                             <InputGroup>
-//                                                                 <Form.Control
-//                                                                     type="number"
-//                                                                     size="sm"
-//                                                                     placeholder="Enter Stock"
-//                                                                     name="sameStock"
-//                                                                     value={props.sameStockInput}
-//                                                                     onChange={props.variationsSameStockChanged}
-//                                                                     isInvalid={props.sameStockError}
-//                                                                 />
-//                                                                 <InputGroup.Prepend>
-//                                                                     <Button variant='primary' style={styles.label} onClick={props.variationsSameStockHandler} size="sm">Apply</Button>
-//                                                                 </InputGroup.Prepend>
-//                                                                 <Form.Control.Feedback type="invalid">
-//                                                                     {props.sameStockError}
-//                                                                 </Form.Control.Feedback>
-//                                                             </InputGroup>
-//                                                         </Form.Group>
-//                                                         {/* Same Image Link */}
-//                                                         <Form.Group as={Col} >
-//                                                             <Form.Label style={styles.label}> Same Image</Form.Label>
-//                                                             <InputGroup>
-//                                                                 <Form.Control
-//                                                                     type="text"
-//                                                                     size="sm"
-//                                                                     placeholder="Enter Image Link"
-//                                                                     name="sameImgLinkInput"
-//                                                                     value={props.sameImgLinkInput}
-//                                                                     onChange={props.variationsSameImgLinkChanged}
-//                                                                     isInvalid={props.sameImgLinkError}
-//                                                                 />
-//                                                                 <InputGroup.Prepend>
-//                                                                     <Button variant='primary' style={styles.label} onClick={props.variationsSameImgLinkHandler} size="sm">Apply</Button>
-//                                                                 </InputGroup.Prepend>
-//                                                                 <Form.Control.Feedback type="invalid">
-//                                                                     {props.sameImgLinkError}
-//                                                                 </Form.Control.Feedback>
-//                                                             </InputGroup>
-//                                                         </Form.Group>
-//                                                     </Form.Row>
-//                                                     <hr />
-//                                                     {props.variationsArray && props.variationsArray.map((data, index) =>
-//                                                         <div key={index} >
-//                                                             <Accordion>
-//                                                                 <Row noGutters style={{ border: props.variationsErrorHandler(data) }}>
-//                                                                     {data.items && data.items.map((d, i) =>
-//                                                                         <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
-//                                                                             <Form.Control
-//                                                                                 type="text"
-//                                                                                 size="sm"
-//                                                                                 placeholder="Enter Value"
-//                                                                                 name="sku"
-//                                                                                 value={d.value}
-//                                                                                 onChange={() => data.productAttributeValue}
-//                                                                             />
-//                                                                         </Form.Group>
-//                                                                     )}
-
-//                                                                     <div className="mr-auto"></div>
-//                                                                     <Accordion.Toggle as={Form.Group} eventKey="0">
-//                                                                         <Button variant="outline-primary" size="sm" style={{ marginRight: '10px' }}>
-//                                                                             <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-//                                                                         </Button>
-//                                                                     </Accordion.Toggle>
-//                                                                     <Form.Group style={{ float: 'right' }}>
-//                                                                         <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
-//                                                                             onClick={() => props.deleteVariationHandler(index)}> delete</Button>
-//                                                                     </Form.Group>
-//                                                                 </Row>
-
-//                                                                 <Accordion.Collapse eventKey="0">
-//                                                                     <div>
-//                                                                         <Form.Row>
-//                                                                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-//                                                                                 <Form.Label style={styles.label}>Product Price<span>*</span></Form.Label>
-//                                                                                 <InputGroup>
-//                                                                                     <Form.Control
-//                                                                                         type="number"
-//                                                                                         size="sm"
-//                                                                                         placeholder="Enter Product Price"
-//                                                                                         name="product_price"
-//                                                                                         value={data.price}
-//                                                                                         onChange={(e) => props.variationPriceHandler(e, index)}
-//                                                                                         isInvalid={data.price_error}
-//                                                                                     />
-//                                                                                     <Form.Control.Feedback type="invalid">
-//                                                                                         {data.price_error}
-//                                                                                     </Form.Control.Feedback>
-//                                                                                 </InputGroup>
-//                                                                             </Form.Group>
-//                                                                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-//                                                                                 <Form.Label style={styles.label}>Product in Stock</Form.Label>
-//                                                                                 <Form.Control type="number"
-//                                                                                     size="sm"
-//                                                                                     name="product_in_stock"
-//                                                                                     placeholder="Enter Product In Stock"
-//                                                                                     value={data.stock}
-//                                                                                     onChange={(e) => props.variationStockHandler(e, index)}
-//                                                                                 />
-//                                                                                 <Form.Control.Feedback type="invalid">
-//                                                                                 </Form.Control.Feedback>
-//                                                                             </Form.Group>
-//                                                                             <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-//                                                                                 <Form.Label style={styles.label}>Image Link</Form.Label>
-//                                                                                 <Form.Control type="text"
-//                                                                                     size="sm"
-//                                                                                     name="image_link"
-//                                                                                     placeholder="Enter Image Link"
-//                                                                                     value={data.image_link}
-//                                                                                     onChange={(e) => props.variationImageLinkHandler(e, index)}
-//                                                                                     isInvalid={data.image_link_error}
-//                                                                                 />
-//                                                                                 <Form.Control.Feedback type="invalid">
-//                                                                                     {data.image_link_error}
-//                                                                                 </Form.Control.Feedback>
-//                                                                             </Form.Group>
-//                                                                         </Form.Row>
-//                                                                         <Form.Row>
-//                                                                             {data.customField && data.customField.map((d, i) =>
-//                                                                                 <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
-//                                                                                     <Form.Label style={styles.label}>{d.name}</Form.Label>
-//                                                                                     <InputGroup>
-//                                                                                         <Form.Control
-//                                                                                             type="text"
-//                                                                                             size="sm"
-//                                                                                             placeholder="Enter Value"
-//                                                                                             name="sku"
-//                                                                                             value={d.value}
-//                                                                                             onChange={() => data.productAttributeValue}
-//                                                                                         />
-//                                                                                         <InputGroup.Prepend>
-//                                                                                             <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
-//                                                                                                 onClick={() => props.deleteVariationCustomFieldHandler(index, i)}> delete</Button>
-//                                                                                         </InputGroup.Prepend>
-//                                                                                     </InputGroup>
-//                                                                                 </Form.Group>
-//                                                                             )}
-//                                                                         </Form.Row>
-//                                                                     </div>
-//                                                                 </Accordion.Collapse>
-//                                                             </Accordion>
-//                                                             <hr />
-//                                                         </div>
-//                                                     )}
-//                                                     <Button variant="outline-primary" size="sm" block onClick={props.saveVariationsHandler}> Save Variations</Button>
-//                                                 </>
-//                                                 :
-//                                                 <div style={{ width: '100%', textAlign: 'center', marginTop: '10%' }}>
-//                                                     <Form.Label>Please First add Attributes from Attributes Tab</Form.Label>
-//                                                 </div>
-//                                             }
-//                                         </Tab.Pane>
-
-
-//                                         <Tab.Pane eventKey="Advanced">
-//                                             <Form.Row >
-//                                                 <Form.Label style={styles.label}>Purchase Note</Form.Label>
-//                                                 <InputGroup>
-//                                                     <Form.Control
-//                                                         type="text"
-//                                                         size="sm"
-//                                                         placeholder="Enter Purchase Notes"
-//                                                         name="purchase_note"
-//                                                         value={props.purchase_note_values}
-//                                                         onChange={props.onChange}
-//                                                         isInvalid={props.purchase_note_touched && props.purchase_note_errors}
-//                                                     />
-//                                                     <Form.Control.Feedback type="invalid">
-//                                                         {props.purchase_note_errors}
-//                                                     </Form.Control.Feedback>
-//                                                 </InputGroup>
-//                                             </Form.Row>
-//                                         </Tab.Pane>
-//                                         {/* <Tab.Pane eventKey="Commission">
-//                                     Commission
-//                                     </Tab.Pane> */}
-//                                     </Tab.Content>
-//                                 </Col>
-//                             </Row>
-//                         </Tab.Container>
-//                     </Card.Body>
-//                 </Accordion.Collapse>
-//             </Card>
-//             <style jsx>
-//                 {`
-//                     span {
-//                         color: red
-//                     }
-//                     @media (max-width: 991px) {
-//                         .linkName {
-//                             display: none
-//                         }
-//                     }
-
-//                 `}
-//             </style>
-//         </Accordion >
-//     )
-// }
-
-// const styles = {
-//     title_row: {
-//         borderBottom: '1px solid gray',
-//         padding: '1.5% 4%'
-//     },
-//     title_fontawesome: {
-//         color: 'gray',
-//         marginRight: '3%',
-//         width: '26px',
-//         height: '26px',
-//         maxHeight: '26px',
-//         maxWidth: '26px',
-//     },
-//     title: {
-//         color: 'gray'
-//     },
-
-//     nav_link: {
-//         color: 'white',
-//         fontSize: '12px',
-//         display: 'flex',
-//         alignItems: 'center',
-//         height: '45px',
-//     },
-
-
-//     row: {
-//         margin: '2%',
-//         padding: '0%'
-//     },
-//     card: {
-//         width: '100%',
-//     },
-//     card_header: {
-//         alignItems: 'center',
-//         // color: '#6A7074',
-//         fontSize: '15px',
-//         background: 'lightgray'
-//     },
-//     buttons: {
-//         background: `${GlobalStyleSheet.primry_color}`,
-//         border: 'none',
-//         fontSize: '10px',
-//     },
-//     submit_btn: {
-//         background: `${GlobalStyleSheet.primry_color}`,
-//         marginTop: '3%',
-//     },
-//     label: {
-//         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
-//     },
-//     term_condition_label: {
-//         width: '100%',
-//         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
-//         paddingTop: '-10px',
-//         marginTop: '-10px',
-//     },
-//     fontawesome: {
-//         color: `${GlobalStyleSheet.primary_text_color}`,
-//         width: '15px',
-//         height: '15px',
-//         maxHeight: '15px',
-//         maxWidth: '15px',
-//     },
-//     product_fontawesome: {
-//         color: `${GlobalStyleSheet.primary_text_color}`,
-//         marginRight: '10%',
-//         width: '15px',
-//         height: '15px',
-//         maxHeight: '15px',
-//         maxWidth: '15px',
-//     },
-//     variations_fontawesome: {
-//         color: `${GlobalStyleSheet.admin_primry_color}`,
-//         marginRight: '10%',
-//         width: '15px',
-//         height: '15px',
-//         maxHeight: '15px',
-//         maxWidth: '15px',
-//     },
-// }
-
-// export default ProductData;
-
-
-
-
-
-import product_size_options from '../../../../../../../sdk/consts/product-size-options'
-import product_color_options from '../../../../../../../sdk/consts/product-color-options'
-
-import { Form, Col, Row, Card, InputGroup, Button, Toast, Tab, Nav, Tabs, Accordion, Spinner, Dropdown } from 'react-bootstrap';
+import { Form, Col, Row, Card, InputGroup, Button, Toast, Tab, Nav, Tabs, Accordion, Spinner, Dropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faPlus, faKey, faSlidersH, faStoreAlt, faTruck, faTools, faDollarSign, faListAlt, faArrowAltCircleDown,
-} from '@fortawesome/free-solid-svg-icons';
+} from '@fortawesome/free-solid-svg-icons'
 
-import CreatableSelect from 'react-select/creatable';
-import ReactSelectMaterialUi from "react-select-material-ui";
-import GlobalStyleSheet from '../../../../../../../styleSheet';
-import MuhalikConfig from '../../../../../../../sdk/muhalik.config';
+import CreatableSelect from 'react-select/creatable'
+import ReactSelectMaterialUi from "react-select-material-ui"
+import GlobalStyleSheet from '../../../../../../../styleSheet'
+import MuhalikConfig from '../../../../../../../sdk/muhalik.config'
 
-import Select, { components } from 'react-select';
-import { groupedOptions } from '../../../../../../../sdk/consts/fields-data';
+import Select, { components } from 'react-select'
+import { groupedOptions } from '../../../../../../../sdk/consts/fields-data'
 import AddNewFieldNameModal from './add-new-field-name-model'
 
 const groupStyles = {
@@ -853,52 +18,42 @@ const groupStyles = {
     borderRadius: '5px',
     background: 'white',
     color: `${GlobalStyleSheet.admin_primry_color}`,
-};
+}
 const coomponents = {
     DropdownIndicator: null,
-};
+}
 const Group = props => (
     <div style={groupStyles}>
         <components.Group {...props} />
     </div>
-);
+)
 
 const ProductData = props => {
-    const [modalShow, setModalShow] = React.useState(false);
-    let variations = true;
-    if (props.attributesArray == '') {
-        variations = false;
-    } else {
-        variations = true;
-    }
+
+    const [imgLinkValue, setImgLinkValue] = React.useState('')
+    const [imgLinkError, setImgLinkError] = React.useState('')
 
     return (
-        <Accordion style={{ width: '100%' }} defaultActiveKey="0">
-
+        <Accordion as={Row} style={{ margin: '2%' }} defaultActiveKey="0">
             <Card style={styles.card}>
                 <Card.Header style={styles.card_header}>
-                    <Row noGutters style={{ display: 'flex', alignItems: 'center' }}>
-                        <Col lg={3} md={3} sm={3} xs={4}>
-                            Product Data
-                        </Col>
-                        <Col lg={3} md={3} sm={5} xs={8}>
-                            <Form.Control
-                                as="select"
-                                name="product_type"
-                                size="sm"
-                                value={props.product_type_values}
-                                onChange={(e) => { props.onChange(e); props.productTypeHandler(e) }}
-                            >
-                                <option value='simple-product'> Simple Product </option>
-                                <option value="variable-prouct"> Variable Product </option>
-                            </Form.Control>
-                        </Col>
-                        <div className="mr-auto"></div>
-                        <Accordion.Toggle as={Button} size="sm" eventKey="0" style={{ float: 'right', background: 'none' }}>
-                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                        </Accordion.Toggle>
-                    </Row>
-
+                    Product Data
+                    <div className='mr-auto'></div>
+                    <Form.Control
+                        style={{ width: '50%' }}
+                        as="select"
+                        name="product_type"
+                        size="sm"
+                        value={props.product_type_values}
+                        onChange={(e) => { props.onChange(e), props.productTypeHandler(e) }}
+                    >
+                        <option value='simple-product'> Simple Product </option>
+                        <option value="variable-prouct"> Variable Product </option>
+                    </Form.Control>
+                    <div className='mr-auto'></div>
+                    <Accordion.Toggle eventKey="0" style={{ background: 'none' }}>
+                        <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.slider_fontawesome} />
+                    </Accordion.Toggle>
                 </Card.Header>
                 <Accordion.Collapse eventKey="0">
                     <Card.Body style={{ padding: '0.5%', margin: '0px' }}>
@@ -963,20 +118,11 @@ const ProductData = props => {
                                                 </Nav.Link>
                                             </div>
                                         </Nav.Item>
-                                        {/* <Nav.Item>
-                                    <div className="nav_link">
-                                        <Nav.Link eventKey="Commission" style={styles.nav_link}>
-                                            <FontAwesomeIcon size="xs" icon={faDollarSign} style={styles.product_fontawesome} />
-                                            <div> Commission </div>
-                                        </Nav.Link>
-                                    </div>
-                                </Nav.Item> */}
                                     </Nav>
                                 </Col>
                                 <Col style={{ padding: '2%' }}>
                                     <Tab.Content>
                                         <Tab.Pane eventKey="General">
-
                                             {props.isVariableProduct ? null :
                                                 <>
                                                     <Form.Row>
@@ -990,7 +136,7 @@ const ProductData = props => {
                                                                     name="product_price"
                                                                     value={props.product_price_values}
                                                                     onChange={props.onChange}
-                                                                    isInvalid={props.product_price_errors}
+                                                                    isInvalid={props.product_price_touched && props.product_price_errors}
                                                                 />
                                                                 <Form.Control.Feedback type="invalid">
                                                                     {props.product_price_errors}
@@ -1031,36 +177,38 @@ const ProductData = props => {
                                                     <Form.Row>
                                                         <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                                                             <Form.Label style={styles.label}>Image Link <span> * </span></Form.Label>
-                                                            {/* <CreatableSelect
-                                                                isMulti
-                                                                onChange={props.simpleProductImageLinkHandler}
-                                                                value={props.imageLink}
-                                                                placeholder="Select/Enter Size"
-                                                            /> */}
+                                                            {/* <InputGroup style={{ width: '100%' }}> */}
                                                             <CreatableSelect
                                                                 components={coomponents}
-                                                                inputValue={props.inputValue}
+                                                                styles={GlobalStyleSheet.react_select_styles}
                                                                 isClearable
                                                                 isMulti
                                                                 menuIsOpen={false}
-                                                                onChange={props.simpleProductImageLinkHandler}
-                                                                onInputChange={props.simpleProductImageLinkInputChangeHandler}
-                                                                onKeyDown={props.simpleProductImageLinkhandleKeyDownHandler}
-                                                                placeholder="Type something and press enter..."
+                                                                placeholder="Paste link and press enter"
+                                                                inputValue={imgLinkValue}
                                                                 value={props.imageLink}
+                                                                onChange={(value) => props.simpleProductImgLinkChange(value)}
+                                                                onInputChange={(e) => {
+                                                                    if (e.length > 50) {
+                                                                        setImgLinkError(`Can't be longer than 50 characters`)
+                                                                    } else {
+                                                                        setImgLinkValue(e)
+                                                                        setImgLinkError('')
+                                                                    }
+                                                                }}
+                                                                onKeyDown={(e) => {
+                                                                    if (props.simpleProductImgLinkKeyDownHandler(e, imgLinkValue)) {
+                                                                        setImgLinkValue('')
+                                                                    }
+                                                                }}
+
                                                             />
+                                                            <Form.Label style={styles.label}>
+                                                                <span>{imgLinkError}</span>
+                                                            </Form.Label>
+                                                            {/* </InputGroup> */}
                                                         </Form.Group>
                                                     </Form.Row>
-                                                    {/*<Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
-                                                    <Form.Label style={styles.label}>Product Color</Form.Label>
-                                                    <CreatableSelect
-                                                        onChange={props.productColorChangeHandler}
-                                                        options={product_color_options}
-                                                        value={props.color}
-                                                        placeholder="Select/Enter Color"
-                                                    />
-                                                </Form.Group>
-                                            </Form.Row> */}
                                                     <Form.Row>
                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
                                                             <Form.Label style={styles.label}>Product Warranty (months) </Form.Label>
@@ -1262,270 +410,20 @@ const ProductData = props => {
                                             </Form.Row>
                                         </Tab.Pane>
 
-
-
-
-
                                         <Tab.Pane eventKey="Attributes">
-                                            <Form.Row >
-                                                <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
-                                                    <Form.Label style={styles.label}>Field Name</Form.Label>
-                                                    <Select
-                                                        options={groupedOptions}
-                                                        components={{ Group }}
-                                                        value={props.productAttributeNameSelected}
-                                                        onChange={props.attributeNameHandler}
-                                                    />
-                                                    <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={() => setModalShow(true)}>
-                                                        Add New
-                                                    </Nav.Link>
-                                                    <AddNewFieldNameModal
-                                                        show={modalShow}
-                                                        onHide={() => setModalShow(false)}
-                                                    />
-                                                </Form.Group>
-                                                <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
-                                                    <Form.Label style={styles.label}>Field Value </Form.Label>
-                                                    <InputGroup>
-                                                        <Form.Control
-                                                            type="text"
-                                                            placeholder="Enter Value"
-                                                            name="sku"
-                                                            value={props.value}
-                                                            onChange={props.attributeValueHandler}
-                                                        />
-                                                        <Button variant="outline-primary" style={{ marginLeft: '1%' }}
-                                                            onClick={props.addAttributeHandler}>Add</Button>
-                                                    </InputGroup>
-                                                </Form.Group>
-                                                <Form.Label style={styles.label}>
-                                                    <span style={{ color: 'red' }}>{props.error}</span>
-                                                </Form.Label>
-                                            </Form.Row>
-                                            <Form.Row>
-                                                <Form.Label style={styles.label} className="mr-auto">For Multiple Values add | between values</Form.Label>
-                                                <Button variant="outline-primary" size="sm"
-                                                    onClick={props.createVariationsHandler}>Create Variations</Button>
-                                            </Form.Row>
-                                            <hr />
-                                            {/* <Card style={{ background: 'lightGray', margin: '0.5% 1%' }}> */}
-
-                                            {props.attributesArray && props.attributesArray.map((data, index) =>
-                                                <Form.Row style={{ padding: '0%' }} key={index}>
-                                                    <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
-                                                        <Form.Control
-                                                            as="select"
-                                                            size="sm"
-                                                            value={data.productAttributeName}
-                                                            onChange={() => data.productAttributeName}
-                                                        >
-                                                            <option>{data.productAttributeName}</option>
-                                                        </Form.Control>
-                                                    </Form.Group>
-                                                    <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
-                                                        <InputGroup>
-                                                            <Form.Control
-                                                                type="text"
-                                                                size="sm"
-                                                                placeholder="Enter Value"
-                                                                name="sku"
-                                                                value={data.productAttributeValue}
-                                                                onChange={() => data.productAttributeValue}
-                                                            />
-                                                            <Button variant="outline-primary" size="sm" style={{ marginLeft: '1%' }}
-                                                                onClick={() => props.deleteAttributeHandler(index)}> delete</Button>
-                                                        </InputGroup>
-                                                    </Form.Group>
-                                                    {/* <Button variant="outline-primary" size="sm" block style={{ width: '100px' }}
-                                                    onClick={() => props.update(index, data.fieldName, data.fieldValue)}> update</Button> */}
-
-
-                                                </Form.Row>
-                                            )}
+                                            <ProductAttributes
+                                                setVariationsArray={props.setVariationsArray}
+                                            />
                                         </Tab.Pane>
-
 
                                         <Tab.Pane eventKey="Variations">
-                                            {variations ?
-                                                <>
-                                                    <Form.Row>
-                                                        {/* Same Price */}
-                                                        <Form.Group as={Col} >
-                                                            <Form.Label style={styles.label}> Same Price</Form.Label>
-                                                            <InputGroup>
-                                                                <Form.Control
-                                                                    type="number"
-                                                                    size="sm"
-                                                                    placeholder="Enter Price"
-                                                                    name="samePrice"
-                                                                    value={props.samePriceInput}
-                                                                    onChange={props.variationsSamePriceChanged}
-                                                                    isInvalid={props.samePriceError}
-                                                                />
-                                                                <InputGroup.Prepend>
-                                                                    <Button variant='primary' style={styles.label} onClick={props.variationsSamePriceHandler} size="sm">Apply</Button>
-                                                                </InputGroup.Prepend>
-                                                                <Form.Control.Feedback type="invalid">
-                                                                    {props.samePriceError}
-                                                                </Form.Control.Feedback>
-                                                            </InputGroup>
-                                                        </Form.Group>
-                                                        {/* Same Stock */}
-                                                        <Form.Group as={Col} >
-                                                            <Form.Label style={styles.label}> Same Stock</Form.Label>
-                                                            <InputGroup>
-                                                                <Form.Control
-                                                                    type="number"
-                                                                    size="sm"
-                                                                    placeholder="Enter Stock"
-                                                                    name="sameStock"
-                                                                    value={props.sameStockInput}
-                                                                    onChange={props.variationsSameStockChanged}
-                                                                    isInvalid={props.sameStockError}
-                                                                />
-                                                                <InputGroup.Prepend>
-                                                                    <Button variant='primary' style={styles.label} onClick={props.variationsSameStockHandler} size="sm">Apply</Button>
-                                                                </InputGroup.Prepend>
-                                                                <Form.Control.Feedback type="invalid">
-                                                                    {props.sameStockError}
-                                                                </Form.Control.Feedback>
-                                                            </InputGroup>
-                                                        </Form.Group>
-                                                        {/* Same Image Link */}
-                                                        <Form.Group as={Col} >
-                                                            <Form.Label style={styles.label}> Same Image</Form.Label>
-                                                            <InputGroup>
-                                                                <Form.Control
-                                                                    type="text"
-                                                                    size="sm"
-                                                                    placeholder="Enter Image Link"
-                                                                    name="sameImgLinkInput"
-                                                                    value={props.sameImgLinkInput}
-                                                                    onChange={props.variationsSameImgLinkChanged}
-                                                                    isInvalid={props.sameImgLinkError}
-                                                                />
-                                                                <InputGroup.Prepend>
-                                                                    <Button variant='primary' style={styles.label} onClick={props.variationsSameImgLinkHandler} size="sm">Apply</Button>
-                                                                </InputGroup.Prepend>
-                                                                <Form.Control.Feedback type="invalid">
-                                                                    {props.sameImgLinkError}
-                                                                </Form.Control.Feedback>
-                                                            </InputGroup>
-                                                        </Form.Group>
-                                                    </Form.Row>
-                                                    <hr />
-                                                    {props.variationsArray && props.variationsArray.map((data, index) =>
-                                                        <div key={index} >
-                                                            <Accordion>
-                                                                <Row noGutters style={{ border: props.variationsErrorHandler(data) }}>
-                                                                    {data.items && data.items.map((d, i) =>
-                                                                        <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
-                                                                            <Form.Control
-                                                                                type="text"
-                                                                                size="sm"
-                                                                                placeholder="Enter Value"
-                                                                                name="sku"
-                                                                                value={d.value}
-                                                                                onChange={() => data.productAttributeValue}
-                                                                            />
-                                                                        </Form.Group>
-                                                                    )}
-
-                                                                    <div className="mr-auto"></div>
-                                                                    <Accordion.Toggle as={Form.Group} eventKey="0">
-                                                                        <Button variant="outline-primary" size="sm" style={{ marginRight: '10px' }}>
-                                                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.variations_fontawesome} />
-                                                                        </Button>
-                                                                    </Accordion.Toggle>
-                                                                    <Form.Group style={{ float: 'right' }}>
-                                                                        <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
-                                                                            onClick={() => props.deleteVariationHandler(index)}> delete</Button>
-                                                                    </Form.Group>
-                                                                </Row>
-
-                                                                <Accordion.Collapse eventKey="0">
-                                                                    <div>
-                                                                        <Form.Row>
-                                                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-                                                                                <Form.Label style={styles.label}>Product Price<span>*</span></Form.Label>
-                                                                                <InputGroup>
-                                                                                    <Form.Control
-                                                                                        type="number"
-                                                                                        size="sm"
-                                                                                        placeholder="Enter Product Price"
-                                                                                        name="product_price"
-                                                                                        value={data.price}
-                                                                                        onChange={(e) => props.variationPriceHandler(e, index)}
-                                                                                        isInvalid={data.price_error}
-                                                                                    />
-                                                                                    <Form.Control.Feedback type="invalid">
-                                                                                        {data.price_error}
-                                                                                    </Form.Control.Feedback>
-                                                                                </InputGroup>
-                                                                            </Form.Group>
-                                                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-                                                                                <Form.Label style={styles.label}>Product in Stock</Form.Label>
-                                                                                <Form.Control type="number"
-                                                                                    size="sm"
-                                                                                    name="product_in_stock"
-                                                                                    placeholder="Enter Product In Stock"
-                                                                                    value={data.stock}
-                                                                                    onChange={(e) => props.variationStockHandler(e, index)}
-                                                                                />
-                                                                                <Form.Control.Feedback type="invalid">
-                                                                                </Form.Control.Feedback>
-                                                                            </Form.Group>
-                                                                            <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-                                                                                <Form.Label style={styles.label}>Image Link</Form.Label>
-                                                                                <Form.Control type="text"
-                                                                                    size="sm"
-                                                                                    name="image_link"
-                                                                                    placeholder="Enter Image Link"
-                                                                                    value={data.image_link}
-                                                                                    onChange={(e) => props.variationImageLinkHandler(e, index)}
-                                                                                    isInvalid={data.image_link_error}
-                                                                                />
-                                                                                <Form.Control.Feedback type="invalid">
-                                                                                    {data.image_link_error}
-                                                                                </Form.Control.Feedback>
-                                                                            </Form.Group>
-                                                                        </Form.Row>
-                                                                        <Form.Row>
-                                                                            {data.customField && data.customField.map((d, i) =>
-                                                                                <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
-                                                                                    <Form.Label style={styles.label}>{d.name}</Form.Label>
-                                                                                    <InputGroup>
-                                                                                        <Form.Control
-                                                                                            type="text"
-                                                                                            size="sm"
-                                                                                            placeholder="Enter Value"
-                                                                                            name="sku"
-                                                                                            value={d.value}
-                                                                                            onChange={() => data.productAttributeValue}
-                                                                                        />
-                                                                                        <InputGroup.Prepend>
-                                                                                            <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
-                                                                                                onClick={() => props.deleteVariationCustomFieldHandler(index, i)}> delete</Button>
-                                                                                        </InputGroup.Prepend>
-                                                                                    </InputGroup>
-                                                                                </Form.Group>
-                                                                            )}
-                                                                        </Form.Row>
-                                                                    </div>
-                                                                </Accordion.Collapse>
-                                                            </Accordion>
-                                                            <hr />
-                                                        </div>
-                                                    )}
-                                                    <Button variant="outline-primary" size="sm" block onClick={props.saveVariationsHandler}> Save Variations</Button>
-                                                </>
-                                                :
-                                                <div style={{ width: '100%', textAlign: 'center', marginTop: '10%' }}>
-                                                    <Form.Label>Please First add Attributes from Attributes Tab</Form.Label>
-                                                </div>
-                                            }
+                                            <ProductVariations
+                                                variationsArray={props.variationsArray}
+                                                setVariationsArray={props.setVariationsArray}
+                                                setVariationsSaved={props.setVariationsSaved}
+                                                isVariationsArrayEmpty={props.variationsArray == ''}
+                                            />
                                         </Tab.Pane>
-
 
                                         <Tab.Pane eventKey="Advanced">
                                             <Form.Row >
@@ -1566,30 +464,571 @@ const ProductData = props => {
                             display: none
                         }
                     }
-                    
                 `}
             </style>
         </Accordion >
     )
 }
 
-const styles = {
-    title_row: {
-        borderBottom: '1px solid gray',
-        padding: '1.5% 4%'
-    },
-    title_fontawesome: {
-        color: 'gray',
-        marginRight: '3%',
-        width: '26px',
-        height: '26px',
-        maxHeight: '26px',
-        maxWidth: '26px',
-    },
-    title: {
-        color: 'gray'
-    },
 
+function ProductAttributes(props) {
+    const [attributeName, setAttributeName] = React.useState('')
+    const [attributeValue, setAttributeValue] = React.useState('')
+    const [inputValue, setInputValue] = React.useState('')
+
+    const [error, setError] = React.useState('')
+    const [modalShow, setModalShow] = React.useState(false)
+    const [successMessage, setSuccessMessage] = React.useState('')
+    const [attributesArray, setAttributesArray] = React.useState([])
+
+    function handleAddProductAttributeClick() {
+        setSuccessMessage('')
+        if (attributeName != '' && attributeValue != '') {
+            setError('')
+            const copyArray = Object.assign([], attributesArray)
+            copyArray.push({
+                attributeName: attributeName.value,
+                attributeValue: attributeValue,
+            })
+            setAttributeName('')
+            setAttributeValue('')
+            setAttributesArray(copyArray)
+        } else {
+            setError('Enter Field Name and Value')
+        }
+    }
+
+    function handleDeleteProductAttributeClick(index) {
+        const copyArray = Object.assign([], attributesArray)
+        copyArray.splice(index, 1)
+        setAttributesArray(copyArray)
+    }
+
+    function handleCreateVariationsClick() {
+        if (attributesArray != '') {
+            var allArrays = []
+            attributesArray.forEach(element => {
+                var item = []
+                element.attributeValue.map(e => {
+                    item.push(e.value)
+                })
+                allArrays.push(item)
+            })
+            console.log('allArrays:', allArrays)
+
+            const array = allPossibleCases(allArrays)
+            console.log('array:', array)
+
+            var data = []
+            array.forEach((element, index) => {
+                const split = element.split('-')
+                let item = []
+                split.forEach((e, i) => {
+                    item.push({ name: attributesArray[i].attributeName, value: e })
+                })
+                data.push({
+                    items: item, price: '', stock: '', image_link: [], image_link_input: '',
+                    price_error: '', stock_error: '', image_link_error: '', customField: []
+                })
+            })
+            setSuccessMessage('Variations Created Successfully')
+            setAttributesArray([])
+            props.setVariationsArray(data)
+        } else {
+            setError('Add some attributes first')
+        }
+    }
+
+    function allPossibleCases(arr) {
+        if (arr.length == 1) {
+            return arr[0]
+        } else {
+            var result = []
+            var allCasesOfRest = allPossibleCases(arr.slice(1))  // recur with the rest of array
+            for (var i = 0; i < allCasesOfRest.length; i++) {
+                for (var j = 0; j < arr[0].length; j++) {
+                    result.push(arr[0][j] + "-" + allCasesOfRest[i])
+                }
+            }
+            return result
+        }
+    }
+
+    function handleAttributeValueKeyDown(event) {
+        if (inputValue == '') return
+        switch (event.key) {
+            case 'Enter':
+            case 'Tab':
+                setAttributeValue([...attributeValue, createOption(inputValue)])
+                setInputValue('')
+                event.preventDefault()
+        }
+    }
+
+    return (
+        <>
+            <Form.Row >
+                <Form.Group as={Col} lg={5} md={5} sm={12} xs={12} style={{ marginBottom: '0%', paddingBottom: '0%' }}>
+                    <Form.Label style={styles.label}>Field Name</Form.Label>
+                    <Select
+                        styles={GlobalStyleSheet.react_select_styles}
+                        options={groupedOptions}
+                        components={{ Group }}
+                        value={attributeName}
+                        onChange={(e) => setAttributeName(e)}
+                    />
+                    <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={() => setModalShow(true)}>
+                        Add New
+                    </Nav.Link>
+                    <AddNewFieldNameModal
+                        show={modalShow}
+                        onHide={() => setModalShow(false)}
+                    />
+                </Form.Group>
+                <Form.Group as={Col} lg={7} md={7} sm={12} xs={12} style={{ marginBottom: '0%', paddingBottom: '0%' }}>
+                    <Form.Label style={styles.label}>Field Value </Form.Label>
+                    <CreatableSelect
+                        components={coomponents}
+                        styles={GlobalStyleSheet.react_select_styles}
+                        isClearable
+                        isMulti
+                        menuIsOpen={false}
+                        inputValue={inputValue}
+                        value={attributeValue}
+                        onChange={(value) => setAttributeValue(value)}
+                        onInputChange={(value) => {
+                            if (value.length < 20) {
+                                setInputValue(value)
+                            } else {
+                                setError(`Value should be 1-20 characters`)
+                            }
+                        }}
+                        onKeyDown={(event) => handleAttributeValueKeyDown(event)}
+                        placeholder="Enter value and press enter"
+                    />
+                </Form.Group>
+            </Form.Row>
+            <Row noGutters>
+                <Form.Label style={styles.label}>
+                    <span style={{ color: 'red' }}>{error}</span>
+                </Form.Label>
+
+                <div className='mr-auto'></div>
+                <Button variant="outline-primary" size='sm' onClick={handleAddProductAttributeClick} style={{ marginRight: '2%' }}>Add</Button>
+                <Button variant="outline-success" size="sm" onClick={handleCreateVariationsClick}>Create Variations</Button>
+            </Row>
+            <hr />
+            <Form.Label style={styles.label}>
+                {successMessage}
+            </Form.Label>
+            {attributesArray && attributesArray.map((element, index) =>
+                <Form.Row style={{ padding: '0%' }} key={index}>
+                    <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
+                        <Form.Control
+                            as="select"
+                            size="sm"
+                            value={element.attributeName}
+                            onChange={() => element.attributeName}
+                            disabled
+                        >
+                            <option>{element.attributeName}</option>
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group as={Col} lg={7} md={7} sm={12} xs={12}>
+                        <InputGroup>
+                            <Form.Control
+                                type="text"
+                                size="sm"
+                                placeholder="Enter Value"
+                                name="sku"
+                                value={element.attributeValue.map(e =>
+                                    e.value + ' | '
+                                )}
+                                disabled
+                            />
+                            <Button variant="outline-primary" size="sm" style={{ marginLeft: '1%' }}
+                                onClick={() => handleDeleteProductAttributeClick(index)}> delete</Button>
+                        </InputGroup>
+                    </Form.Group>
+                </Form.Row>
+            )}
+        </>
+    )
+}
+
+const createOption = (label) => ({
+    value: label,
+    label,
+})
+
+
+function ProductVariations(props) {
+    const [samePrice, setSamePrice] = React.useState('')
+    const [samePriceError, setSamePriceError] = React.useState('')
+
+    const [sameStock, setSameStock] = React.useState('')
+    const [sameStockError, setSameStockError] = React.useState('')
+
+    const [sameImgLink, setSameImgLink] = React.useState('')
+    const [sameImgLinkError, setSameImgLinkError] = React.useState('')
+    const [successMessage, setSuccessMessage] = React.useState('')
+
+    // Same Price For All Variations
+    function handleSamePriceApplyBtnClick() {
+        if (samePrice != '') {
+            setSamePriceError('')
+            const copyArray = Object.assign([], props.variationsArray)
+            copyArray.forEach(element => {
+                element.price = samePrice
+            })
+            props.setVariationsArray(copyArray)
+        } else {
+            setSamePriceError('Enter Value')
+        }
+    }
+    // Same Stock For All Variations
+    function handleSameStockApplyBtnClick() {
+        if (sameStock != '') {
+            setSameStockError('')
+            const copyArray = Object.assign([], props.variationsArray)
+            copyArray.forEach(element => {
+                element.stock = sameStock
+            })
+            props.setVariationsArray(copyArray)
+        } else {
+            setSameStockError('Enter Value')
+        }
+    }
+    // Same Image link For All Variations
+    function handleSameImgLinkApplyBtnClick() {
+        if (sameImgLink != '') {
+            setSameImgLinkError('')
+            const copyArray = Object.assign([], props.variationsArray)
+            copyArray.forEach(element => {
+                element.image_link = createOption(sameImgLink)
+            })
+            props.setVariationsArray(copyArray)
+        } else {
+            setSameImgLinkError('Enter Value')
+        }
+    }
+
+    function handlenPriceChange(e, index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let object = copyArray[index]
+        if (e.target.value >= 0) {
+            object.price = e.target.value
+            object.price_error = ''
+            copyArray[index] = object
+            props.setVariationsArray(copyArray)
+        }
+    }
+    function handleInStockChang(e, index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let object = copyArray[index]
+        if (e.target.value >= 0) {
+            object.stock = e.target.value
+            object.stock_error = ''
+            copyArray[index] = object
+            props.setVariationsArray(copyArray)
+        }
+    }
+
+    function handleImgLinkKeyDown(event, index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let object = copyArray[index]
+        if (object.image_link_input == '') return
+        switch (event.key) {
+            case 'Enter':
+            case 'Tab':
+                object.image_link = [...object.image_link, createOption(object.image_link_input)]
+                object.image_link_input = ''
+                object.image_link_error = ``
+                event.preventDefault()
+                return true
+        }
+        copyArray[index] = object
+        props.setVariationsArray(copyArray)
+    }
+    function handleImgLinkChange(value, index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let object = copyArray[index]
+        object.image_link = value
+        copyArray[index] = object
+        props.setVariationsArray(copyArray)
+    }
+    function handleImgLinkInputChange(value, index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let object = copyArray[index]
+        if (value.length > 50) {
+            object.image_link_error = `Can't be longer than 50 characters`
+        } else {
+            object.image_link_input = value
+        }
+        copyArray[index] = object
+        props.setVariationsArray(copyArray)
+    }
+
+
+    function handleDeleteVariationClick(index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        copyArray.splice(index, 1)
+        props.setVariationsArray(copyArray)
+    }
+    function handleDeleteCustomFieldClick(index, i) {
+        const copyArray = Object.assign([], props.variationsArray)
+        copyArray[index].customField.splice(i, 1)
+        props.setVariationsArray(copyArray)
+    }
+
+    function handleSaveVariationsClick() {
+        const copyArray = Object.assign([], props.variationsArray)
+        let flag = true
+        copyArray.forEach(element => {
+            if (element.price == '' || element.stock == '' || element.image_link.length == 0) {
+                flag = false
+                if (element.price == '') {
+                    element.price_error = 'Enter price'
+                }
+                if (element.stock == '') {
+                    element.stock_error = 'Enter stock'
+                }
+                console.log('elemnt.image_link:', element.image_link)
+                if (element.image_link.length == 0) {
+                    element.image_link_error = 'Enter image Link'
+                }
+            } else {
+                element.price_error = ''
+                element.stock_error = ''
+                element.image_link_error = ''
+            }
+        })
+        if (flag == true) {
+            props.setVariationsSaved(true)
+            setSuccessMessage('Variations saved Successfully')
+        }
+        props.setVariationsArray(copyArray)
+    }
+
+    function handleVariationsErrorCheck(element) {
+        if (element.price_error != '' || element.image_link_error != '') {
+            return '1px solid red'
+        }
+        else {
+            return 'none'
+        }
+    }
+    return (
+        <>
+            {props.isVariationsArrayEmpty ?
+                <div style={{ width: '100%', textAlign: 'center', marginTop: '10%' }}>
+                    <Form.Label>Please First add Attributes from Attributes Tab</Form.Label>
+                </div>
+                :
+                <>
+                    <Form.Row>
+                        {/* Same Price */}
+                        <Form.Group as={Col} >
+                            <Form.Label style={styles.label}> Same Price</Form.Label>
+                            <InputGroup>
+                                <Form.Control
+                                    type="number"
+                                    size="sm"
+                                    placeholder="Enter Price"
+                                    name="samePrice"
+                                    value={samePrice}
+                                    onChange={(e) => {
+                                        if (e.target.value >= 0) {
+                                            setSamePrice(e.target.value)
+                                            setSamePriceError('')
+                                        }
+                                    }}
+                                    isInvalid={samePriceError}
+                                />
+                                <InputGroup.Prepend>
+                                    <Button variant='primary' style={styles.label} onClick={handleSamePriceApplyBtnClick} size="sm">Apply</Button>
+                                </InputGroup.Prepend>
+                                <Form.Control.Feedback type="invalid">
+                                    {props.samePriceError}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+                        {/* Same Stock */}
+                        <Form.Group as={Col} >
+                            <Form.Label style={styles.label}> Same Stock</Form.Label>
+                            <InputGroup>
+                                <Form.Control
+                                    type="number"
+                                    size="sm"
+                                    placeholder="Enter Stock"
+                                    name="sameStock"
+                                    value={sameStock}
+                                    onChange={(e) => {
+                                        if (e.target.value >= 0) {
+                                            setSameStock(e.target.value)
+                                            setSameStockError('')
+                                        }
+                                    }}
+                                    isInvalid={sameStockError}
+                                />
+                                <InputGroup.Prepend>
+                                    <Button variant='primary' style={styles.label} onClick={handleSameStockApplyBtnClick} size="sm">Apply</Button>
+                                </InputGroup.Prepend>
+                                <Form.Control.Feedback type="invalid">
+                                    {props.sameStockError}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+                        {/* Same Image Link */}
+                        <Form.Group as={Col} >
+                            <Form.Label style={styles.label}> Same Image</Form.Label>
+                            <InputGroup>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    placeholder="Enter Image Link"
+                                    name="sameImgLinkInput"
+                                    value={sameImgLink}
+                                    onChange={(e) => {
+                                        if (e.target.value != '') {
+                                            setSameImgLink(e.target.value)
+                                            setSameImgLinkError('')
+                                        }
+                                    }}
+                                    isInvalid={sameImgLinkError}
+                                />
+                                <InputGroup.Prepend>
+                                    <Button variant='primary' style={styles.label} onClick={handleSameImgLinkApplyBtnClick} size="sm">Apply</Button>
+                                </InputGroup.Prepend>
+                                <Form.Control.Feedback type="invalid">
+                                    {props.sameImgLinkError}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+                    </Form.Row>
+                    <hr style={{ marginTop: '0%' }} />
+                    {props.variationsArray && props.variationsArray.map((element, index) =>
+                        <>
+                            <Accordion>
+                                <Row noGutters style={{ border: handleVariationsErrorCheck(element) }}>
+                                    {element.items && element.items.map((e, i) =>
+                                        <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
+                                            <Form.Control
+                                                type="text"
+                                                size="sm"
+                                                placeholder="Enter Value"
+                                                name="sku"
+                                                value={e.value}
+                                                onChange={() => e.attributeValue}
+                                            />
+                                        </Form.Group>
+                                    )}
+
+                                    <div className="mr-auto"></div>
+                                    <Accordion.Toggle as={Form.Group} eventKey="0">
+                                        <Button variant="outline-primary" size="sm" style={{ marginRight: '10px' }}>
+                                            <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.slider_fontawesome} />
+                                        </Button>
+                                    </Accordion.Toggle>
+                                    <Form.Group style={{ float: 'right' }}>
+                                        <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
+                                            onClick={() => handleDeleteVariationClick(index)}> delete</Button>
+                                    </Form.Group>
+                                </Row>
+                                <Accordion.Collapse eventKey="0">
+                                    <>
+                                        <Form.Row>
+                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
+                                                <Form.Label style={styles.label}>Product Price<span>*</span></Form.Label>
+                                                <Form.Control
+                                                    type="number"
+                                                    size="sm"
+                                                    placeholder="Enter Product Price"
+                                                    name="product_price"
+                                                    value={element.price}
+                                                    onChange={(e) => handlenPriceChange(e, index)}
+                                                    isInvalid={element.price_error}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {element.price_error}
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
+                                                <Form.Label style={styles.label}>Product in Stock</Form.Label>
+                                                <Form.Control type="number"
+                                                    size="sm"
+                                                    name="product_in_stock"
+                                                    placeholder="Enter Product In Stock"
+                                                    value={element.stock}
+                                                    onChange={(e) => handleInStockChang(e, index)}
+                                                    isInvalid={element.stock_error}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {element.stock_error}
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
+                                                <Form.Label style={styles.label}>Image Link</Form.Label>
+                                                <CreatableSelect
+                                                    components={coomponents}
+                                                    styles={GlobalStyleSheet.react_select_styles}
+                                                    isClearable
+                                                    isMulti
+                                                    menuIsOpen={false}
+                                                    inputValue={element.image_link_input}
+                                                    value={element.image_link}
+                                                    onChange={(value) => handleImgLinkChange(value, index)}
+                                                    onInputChange={(value) => handleImgLinkInputChange(value, index)}
+                                                    onKeyDown={(event) => handleImgLinkKeyDown(event, index)}
+                                                    placeholder="Paste and press enter"
+                                                />
+                                                <Form.Label style={styles.label}>
+                                                    <span>{element.image_link_error}</span>
+                                                </Form.Label>
+                                            </Form.Group>
+                                        </Form.Row>
+                                        <Form.Row>
+                                            {element.customField && element.customField.map((e, i) =>
+                                                <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
+                                                    <Form.Label style={styles.label}>{e.name}</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control
+                                                            type="text"
+                                                            size="sm"
+                                                            placeholder="Enter Value"
+                                                            name="sku"
+                                                            value={e.value}
+                                                            onChange={() => e.attributeValue}
+                                                        />
+                                                        <InputGroup.Prepend>
+                                                            <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
+                                                                onClick={() => handleDeleteCustomFieldClick(index, i)}> delete</Button>
+                                                        </InputGroup.Prepend>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            )}
+                                        </Form.Row>
+                                    </>
+                                </Accordion.Collapse>
+                            </Accordion>
+                            <hr style={{ marginTop: '0%' }} />
+                        </>
+                    )}
+                    <Button variant="outline-success" size="sm" block onClick={handleSaveVariationsClick}> Save Variations</Button>
+                </>
+            }
+            <style jsx>
+                {`
+                    span{
+                        color: red
+                    }
+                `}
+            </style>
+        </>
+    )
+}
+
+const styles = {
     nav_link: {
         color: 'white',
         fontSize: '12px',
@@ -1597,38 +1036,22 @@ const styles = {
         alignItems: 'center',
         height: '45px',
     },
-
-
     row: {
         margin: '2%',
         padding: '0%'
     },
     card: {
         width: '100%',
+        border: '1px solid lightgray'
     },
     card_header: {
+        display: 'flex',
         alignItems: 'center',
-        // color: '#6A7074',
-        fontSize: '15px',
-        background: 'lightgray'
-    },
-    buttons: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        border: 'none',
-        fontSize: '10px',
-    },
-    submit_btn: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        marginTop: '3%',
+        fontSize: `${GlobalStyleSheet.card_header_fontsize}`,
+        background: `${GlobalStyleSheet.card_header_background}`,
     },
     label: {
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
-    },
-    term_condition_label: {
-        width: '100%',
-        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
-        paddingTop: '-10px',
-        marginTop: '-10px',
     },
     fontawesome: {
         color: `${GlobalStyleSheet.primary_text_color}`,
@@ -1645,9 +1068,8 @@ const styles = {
         maxHeight: '15px',
         maxWidth: '15px',
     },
-    variations_fontawesome: {
+    slider_fontawesome: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
-        marginRight: '10%',
         width: '15px',
         height: '15px',
         maxHeight: '15px',
@@ -1655,4 +1077,4 @@ const styles = {
     },
 }
 
-export default ProductData;
+export default ProductData
