@@ -9,6 +9,7 @@ import axios from 'axios';
 import AlertModal from '../../../../alert-modal';
 import TitleRow from '../../../../title-row';
 import CardAccordion from '../../../../card_accordion';
+import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
 
 let tagArray = [];
 class ProducTags extends Component {
@@ -32,9 +33,11 @@ class ProducTags extends Component {
 
     // Getting Product Tags from DB
     async componentDidMount() {
-        const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
-        try {
-            const response = await axios.get(url);
+        const url = MuhalikConfig.PATH + '/api/categories/tags';
+        await axios.get(url, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then((response) => {
+            // console.log('Tags_1:', response.data.data)
             let copyArray = [];
             copyArray = response.data.data;
             copyArray.forEach((data, index) => {
@@ -43,27 +46,27 @@ class ProducTags extends Component {
             this.setState({ tagList: copyArray });
             this.setState({ tagRequestList: this.state.tagList });
             tagArray = copyArray;
-        } catch (error) {
-            console.log('feror:', error);
-        }
+        }).catch((error) => {
+            // alert('Tags_1 Fetchig Error: ', error)
+        })
     }
 
-    async addTag() {
-        // const url = MuhalikConfig.PATH + '/api/products/add';
-        // await axios.post(url, {
-        // this.state.tagValue
-        // }, {
-        //     headers: { 'authorization': await getUncodededTokenFromStorage() }
-        // }).then(function (response) {
-        this.setState({ isLoading: true })
-        this.setState({ showModalMessage: 'Product Tag Added Successfully' })
-        this.setState({ showModal: true })
-        return true;
-        // }).catch(function (error) {
-        //     currentComponent.setState({ isLoading: false });
-        //     alert('Error: ', error.response.data.message);
-        //     return false;
-        // });
+    async addTag(tagValue, currentComponent) {
+        const url = MuhalikConfig.PATH + '/api/categories/add-tag';
+        let data = []
+        data = { label: tagValue, value: tagValue }
+        await axios.post(url, {
+            data
+        }, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then(function (response) {
+            currentComponent.setState({ isLoading: false })
+            currentComponent.setState({ showModalMessage: 'Product Tag Added Successfully' })
+            currentComponent.setState({ showModal: true })
+        }).catch(function (error) {
+            currentComponent.setState({ isLoading: false });
+            alert('Error: ', error.response.data.message);
+        });
     }
 
     handleFilterStrChange(e) {
@@ -82,13 +85,13 @@ class ProducTags extends Component {
         }
     }
 
-    handleSubmit() {
-        if (tagValue == '') {
+    async handleSubmit() {
+        if (this.state.tagValue == '') {
             this.setState({ error: 'Enter Value First' })
         } else {
             this.setState({ isLoading: true })
             this.setState({ error: '' })
-            this.addTag(this);
+            this.addTag(this.state.tagValue, this)
         }
     }
 
@@ -149,6 +152,7 @@ class ProducTags extends Component {
         copyArray = Object.assign([], this.state.tagRequestList);
         copyArray.splice(index, 1);
         this.setState({ tagRequestList: copyArray, showModalMessage: 'Product Tag Added Successfully', showModal: true })
+        this.addTag(copyArray[index].value, this)
     }
     //  => Delete
     handleDeleteTagRequestClick(index) {

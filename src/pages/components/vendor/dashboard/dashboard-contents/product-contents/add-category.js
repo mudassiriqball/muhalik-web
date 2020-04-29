@@ -18,15 +18,15 @@ class AddCategory extends Component {
     }
     //  Submit data to api
     async addCategory(currentComponent) {
-        // const url = MuhalikConfig.PATH + '/api/products/add';
+        // const url = MuhalikConfig.PATH + '/api/categories/add-category';
         // await axios.post(url, {
-        // this.state.categoryValue
+        //     this.state.categoryValue
         // }, {
         //     headers: { 'authorization': await getUncodededTokenFromStorage() }
         // }).then(function (response) {
-        currentComponent.setState({ isLoading: false });
-        currentComponent.setState({ showToast: true });
-        return true;
+        //     currentComponent.setState({ isLoading: false });
+        //     currentComponent.setState({ showToast: true });
+        //     return true;
         // }).catch(function (error) {
         //     currentComponent.setState({ isLoading: false });
         //     alert('Error: ', error.response.data.message);

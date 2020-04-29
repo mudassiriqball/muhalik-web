@@ -13,6 +13,7 @@ import MuhalikConfig from '../../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../../styleSheet'
 import TitleRow from '../../../../title-row';
 
+import AddNew from '../product-contents/add-new'
 
 
 class AllProducts extends Component {
@@ -26,14 +27,14 @@ class AllProducts extends Component {
     }
     // Getting Product Categories from DB
     async componentDidMount() {
-        const url = MuhalikConfig.PATH + '/api/products/';
-        try {
-            const response = await axios.get(url);
-            console.log('data:', response.data.data.docs)
-            this.setState({ productsArray: response.data.data.docs })
-        } catch (error) {
-            console.log('Data Fetching Eror:', error);
-        }
+        const url = MuhalikConfig.PATH + '/api/products/'
+        await axios.get(url, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then((response) => {
+            console.log('all product data:', response.data.data)
+        }).catch((error) => {
+            alert('all product data Fetchig Error: ', error)
+        })
     }
 
     handleViewProduct(index) {
@@ -78,7 +79,19 @@ class AllProducts extends Component {
             return false
         }
     }
-
+    async upload(data) {
+        console.log('Update Product: ', data)
+        // const url = MuhalikConfig.PATH + '/api/products/add';
+        // await axios.post(url, {
+        //     data
+        // }, {
+        //     headers: { 'authorization': await getUncodededTokenFromStorage() }
+        // }).then(function (response) {
+        //     return true;
+        // }).catch(function (error) {
+        //     return false;
+        // });
+    }
     render() {
         return (
             <>
@@ -88,6 +101,41 @@ class AllProducts extends Component {
                         back={() => this.setState({ viewProduct: false, data: {} })}
                         isVariableProduct={this.state.data.product_type != "simple-product"}
                     />
+
+                    // <AddNew
+                    //     upload={this.upload}
+                    //     isUpdateProduct={false}
+                    //     productCategories={this.state.data.product_category}
+                    //     productSubCategories={this.state.data.product_sub_cateory}
+                    //     productSubSubCategories={this.state.data.product_sub_sub_category}
+                    //     subCategoryDisabled={false}
+                    //     subSubCategoryDisabled={false}
+                    //     productTags={this.state.data.product_tags}
+                    //     warrantyType={this.state.data.warranty_type}
+                    //     simple_product_image_link={this.state.data.product_image_link}
+                    //     variationsArray={this.state.data.product_variations}
+                    //     dangerousGoodsArray={this.state.data.dangerous_goods}
+
+                    //     product_name={this.state.data.product_name}
+                    //     product_description={this.state.data.product_description}
+                    //     product_type={this.state.data.product_type}
+                    //     sku={this.state.data.sku}
+                    //     product_price={this.state.data.product_price}
+                    //     product_in_stock={this.state.data.product_in_stock}
+                    //     product_brand_name={this.state.data.product_brand_name}
+                    //     // product_image_link={this.state.data.product_image_link}
+                    //     product_warranty={this.state.data.product_warranty}
+                    //     warranty_type={this.state.data.warranty_type}
+                    //     product_discount={this.state.data.product_discount}
+                    //     purchase_note={this.state.data.purchase_note}
+                    //     // product_variations={this.state.data.product_variations}
+                    //     product_weight={this.state.data.product_weight}
+                    //     dimension_length={this.state.data.dimension_length}
+                    //     dimension_width={this.state.data.dimension_width}
+                    //     dimension_height={this.state.data.dimension_height}
+                    //     shipping_charges={this.state.data.shipping_charges}
+                    //     handling_fee={this.state.data.handling_fee}
+                    // />
                     :
                     <>
                         <TitleRow icon={faPlus} title={' Vendor Dashboard / All Products'} />
@@ -199,6 +247,16 @@ class AllProducts extends Component {
         );
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 const ViewProduct = props => {

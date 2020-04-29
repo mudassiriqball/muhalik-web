@@ -1,11 +1,11 @@
 
-const PORT = process.env.PORT || 3000;
 const express = require('express');
 const next = require('next');
 
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
+const port = process.env.PORT || 5000;
 
 nextApp.prepare()
   .then(() => {
@@ -49,8 +49,8 @@ nextApp.prepare()
       }
     })();
     const fs = require('fs');
-    fs.readdirSync(__dirname + "/api/models").forEach(function (file) {
-      require(__dirname + "/api/models/" + file);
+    fs.readdirSync(__dirname + "/api/modals").forEach(function (file) {
+      require(__dirname + "/api/modals/" + file);
     });
 
     // in case you want to serve images 
@@ -62,18 +62,18 @@ nextApp.prepare()
       });
     });
 
-    app.set('port', (process.env.PORT));
+    // app.set('port', (process.env.PORT));
 
     app.use(accessControls);
     app.use(cors());
 
     const UsersRoutes = require('./api/routes/users.routes');
     const ProductsRoutes = require('./api/routes/products.routes');
-    const Products_CategoriesRoutes = require('./api/routes/products-categories.routes');
+    const CategoriesRoutes = require('./api/routes/categories.routes');
 
     app.use("/api/users", UsersRoutes);
     app.use("/api/products", ProductsRoutes);
-    app.use("/api/products-categories", Products_CategoriesRoutes);
+    app.use("/api/categories", CategoriesRoutes);
 
 
     app.get("*", (req, res) => {
@@ -82,15 +82,14 @@ nextApp.prepare()
 
     app.use(errorHandler);
     app.use(errorMessage);
-
-    server.listen(process.env.PORT || 3000)
+    server.listen(port)
 
     // app.listen(PORT, err => {
     //   if (err) throw err;
     //   console.log(`> ready on port ${PORT}`);
     // })
 
-    console.log('listening on port', app.get('port'));
+    console.log('listening on port', port);
   })
   .catch(ex => {
     console.error(ex.stack);

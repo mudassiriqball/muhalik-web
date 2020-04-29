@@ -1,17 +1,23 @@
-import { Modal, Form, InputGroup, Button } from 'react-bootstrap';
-import React, { Component } from 'react';
+import { Modal, Form, InputGroup, Button } from 'react-bootstrap'
+import React, { Component } from 'react'
+import axios from 'axios'
+import MuhalikConfig from '../../../../../../../sdk/muhalik.config'
 
 function AddNewFieldNameModal(props) {
-    const [value, setValue] = React.useState("");
-    const [error, setError] = React.useState("");
+    const [value, setValue] = React.useState("")
+    const [error, setError] = React.useState("")
 
-    function handleAdd() {
-        if (value != "") {
-            console.log("handle Category:", value)
-            return true;
-        } else {
-            setError('Please Enter Value')
-        }
+    async function handleAdd() {
+        const url = MuhalikConfig.PATH + '/api/categories/add-field-request';
+        await axios.post(url, {
+            value
+        }, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then((response) => {
+            alert('Field request sended')
+        }).catch((error) => {
+            alert('Field request failed')
+        });
     }
 
     return (
@@ -55,7 +61,7 @@ function AddNewFieldNameModal(props) {
                 <Button size="sm" onClick={props.onHide}>Cancel</Button>
             </Modal.Footer>
         </Modal>
-    );
+    )
 }
 
-export default AddNewFieldNameModal;
+export default AddNewFieldNameModal

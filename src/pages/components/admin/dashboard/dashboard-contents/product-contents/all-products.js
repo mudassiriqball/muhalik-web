@@ -25,15 +25,26 @@ class AllProducts extends Component {
         }
     }
     // Getting Product Categories from DB
+    // async componentDidMount() {
+    //     const url = MuhalikConfig.PATH + '/api/products/';
+    //     try {
+    //         const response = await axios.get(url);
+    //         console.log('data:', response.data.data.docs)
+    //         this.setState({ productsArray: response.data.data.docs })
+    //     } catch (error) {
+    //         console.log('Data Fetching Eror:', error);
+    //     }    
+    // }
     async componentDidMount() {
-        const url = MuhalikConfig.PATH + '/api/products/';
-        try {
-            const response = await axios.get(url);
+        const url = MuhalikConfig.PATH + '/api/products/'
+        await axios.get(url, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then((response) => {
             console.log('data:', response.data.data.docs)
             this.setState({ productsArray: response.data.data.docs })
-        } catch (error) {
-            console.log('Data Fetching Eror:', error);
-        }
+        }).catch((error) => {
+            alert('Data Fetchig Error: ', error)
+        });
     }
 
     handleViewProduct(index) {

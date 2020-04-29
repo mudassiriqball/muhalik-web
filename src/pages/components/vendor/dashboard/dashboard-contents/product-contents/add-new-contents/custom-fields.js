@@ -41,6 +41,7 @@ const CustomFields = props => {
             setError('Enter Field Name and Value');
         }
     }
+
     function deleteCustomFieldsClick(index) {
         const copyArray = Object.assign([], props.customFieldsArray);
         copyArray.splice(index, 1);

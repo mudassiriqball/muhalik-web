@@ -9,6 +9,7 @@ import axios from 'axios';
 import AlertModal from '../../../../alert-modal';
 import TitleRow from '../../../../title-row';
 import CardAccordion from '../../../../card_accordion';
+import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
 
 let fieldsArray = [];
 class ProducFields extends Component {
@@ -32,38 +33,45 @@ class ProducFields extends Component {
 
     // Getting Product Fields from DB
     async componentDidMount() {
-        const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
-        try {
-            const response = await axios.get(url);
-            let copyArray = [];
-            copyArray = response.data.data;
-            copyArray.forEach((data, index) => {
-                data.label = true;
-            })
-            this.setState({ fieldList: copyArray });
-            this.setState({ fieldRequestList: this.state.fieldList });
-            fieldsArray = copyArray;
-        } catch (error) {
-            console.log('feror:', error);
-        }
+        const url = MuhalikConfig.PATH + '/api/categories/fields';
+
+        await axios.get(url, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then(function (response) {
+            await this.abc(response.data.data.docs)
+        }).catch(function (error) {
+            alert('Fields_1 Fetchig Error: ', error)
+        })
+    }
+    abc(data) {
+        console.log('Fields_1:', data)
+        let copyArray = [];
+        copyArray = data;
+        copyArray.forEach((e, index) => {
+            e.label = true;
+        })
+        this.setState({ fieldList: copyArray });
+        this.setState({ fieldRequestList: copyArray });
+        console.log('asasasasa:', this.state.fieldsArray[0].value)
+        fieldsArray = copyArray;
     }
 
-    async addField() {
-        // const url = MuhalikConfig.PATH + '/api/products/add';
-        // await axios.post(url, {
-        // this.state.fieldValue
-        // }, {
-        //     headers: { 'authorization': await getUncodededTokenFromStorage() }
-        // }).then(function (response) {
-        this.setState({ isLoading: true })
-        this.setState({ showModalMessage: 'Product Field Added Successfully' })
-        this.setState({ showModal: true })
-        return true;
-        // }).catch(function (error) {
-        //     currentComponent.setState({ isLoading: false });
-        //     alert('Error: ', error.response.data.message);
-        //     return false;
-        // });
+    async addField(fieldValue, currentComponent) {
+        const url = MuhalikConfig.PATH + '/api/categories/add-field';
+        let data = [];
+        data = { label: fieldValue, value: fieldValue }
+        await axios.post(url, {
+            data
+        }, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then(function (response) {
+            currentComponent.setState({ isLoading: false })
+            currentComponent.setState({ showModalMessage: 'Product Field Added Successfully' })
+            currentComponent.setState({ showModal: true })
+        }).catch(function (error) {
+            currentComponent.setState({ isLoading: false });
+            alert('Error: ', error.response.data.message);
+        });
     }
 
     handleFilterStrChange(e) {
@@ -83,12 +91,12 @@ class ProducFields extends Component {
     }
 
     handleSubmit() {
-        if (fieldValue == '') {
+        if (this.state.fieldValue == '') {
             this.setState({ error: 'Enter Value First' })
         } else {
             this.setState({ isLoading: true })
             this.setState({ error: '' })
-            this.addField(this);
+            this.addField(this.state.fieldValue, this)
         }
     }
 
@@ -149,6 +157,7 @@ class ProducFields extends Component {
         copyArray = Object.assign([], this.state.fieldRequestList);
         copyArray.splice(index, 1);
         this.setState({ fieldRequestList: copyArray, showModalMessage: 'Product Field Added Successfully', showModal: true })
+        this.addField(copyArray[index].value, this)
     }
     //  => Delete
     handleDeleteFieldRequestClick(index) {
@@ -281,7 +290,7 @@ class ProducFields extends Component {
                                     size="sm"
                                     placeholder="Enter Field Value"
                                     name="sku"
-                                    value={data.value}
+                                    value={data.entry_date}
                                     disabled={true}
                                 />
                             </Form.Group>
@@ -291,7 +300,7 @@ class ProducFields extends Component {
                                     size="sm"
                                     placeholder="Enter Field Value"
                                     name="sku"
-                                    value={data.value}
+                                    value={data.entry_date}
                                     disabled={true}
                                 />
                             </Form.Group>
@@ -355,7 +364,7 @@ class ProducFields extends Component {
                         </Form.Group>
                     </Form.Row>
                     <hr />
-                    {this.state.fieldList.map((data, index) =>
+                    {this.state.fieldList && this.state.fieldList.map((element, index) =>
                         <Form.Row>
                             <Form.Group as={Col} lg={8} md={8} sm={12} xs={12}>
                                 <InputGroup>
@@ -364,27 +373,27 @@ class ProducFields extends Component {
                                         size="sm"
                                         placeholder="Enter Field Value"
                                         name="sku"
-                                        value={data.value}
+                                        value={element.value}
                                         onChange={(e) => this.handleFieldChange(e, index)}
-                                        disabled={data.label}
-                                        isInvalid={data.error}
+                                        disabled={element.label}
+                                        isInvalid={element.error}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {data.error}
+                                        {element.error}
                                     </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
-                                    onClick={data.label ? () => this.handleEditFieldClick(index) : () => this.handleUpdateFieldClick(index)} >
-                                    <div>{data.label ? 'Edit' : 'Update'}</div>
+                                    onClick={element.label ? () => this.handleEditFieldClick(index) : () => this.handleUpdateFieldClick(index)} >
+                                    <div>{element.label ? 'Edit' : 'Update'}</div>
                                 </Button>
                             </Form.Group>
                             <div className="mr-auto"></div>
                             <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
-                                <Button type="submit" variant={data.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
-                                    onClick={data.label ? () => this.handleDeleteFieldClick(index) : () => this.handleCancelFieldClick(index)}>
-                                    <div>{data.label ? 'Delete' : 'Cancel'}</div>
+                                <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
+                                    onClick={element.label ? () => this.handleDeleteFieldClick(index) : () => this.handleCancelFieldClick(index)}>
+                                    <div>{element.label ? 'Delete' : 'Cancel'}</div>
                                 </Button>
                             </Form.Group>
 

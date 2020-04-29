@@ -18,8 +18,10 @@ import Reports from './dashboard-contents/reports';
 import BulkUpload from './dashboard-contents/bulk-upload';
 import Orders from './dashboard-contents/orders';
 
+import axios from 'axios';
+import { getUncodededTokenFromStorage } from '../../../../sdk/core/authentication-service'
+import MuhalikConfig from '../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../styleSheet';
-
 
 const DashboardSideDrawer = props => {
     let drawerClasses = "tabs_side_drawer";
@@ -27,6 +29,20 @@ const DashboardSideDrawer = props => {
         drawerClasses = "tabs_side_drawer open";
     }
     const [show_product, setShow_product] = React.useState(false);
+
+    async function upload(data) {
+        console.log('da111222333ta: ', data)
+        const url = MuhalikConfig.PATH + '/api/products/add';
+        await axios.post(url, {
+            data
+        }, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then(function (response) {
+            return true;
+        }).catch(function (error) {
+            return false;
+        });
+    }
 
     return (
         <div>
@@ -150,7 +166,20 @@ const DashboardSideDrawer = props => {
                                 <AllProducts />
                             </Tab.Pane>
                             <Tab.Pane eventKey="AddNew">
-                                <AddNew />
+                                <AddNew
+                                    upload={upload}
+                                    isUpdateProduct={false}
+                                    productCategories={''}
+                                    productSubCategories={''}
+                                    productSubSubCategories={''}
+                                    subCategoryDisabled={true}
+                                    subSubCategoryDisabled={true}
+                                    productTags={[]}
+                                    warrantyType={''}
+                                    simple_product_image_link={[]}
+                                    variationsArray={[]}
+                                    dangerousGoodsArray={[]}
+                                />
                             </Tab.Pane>
                             <Tab.Pane eventKey="AddCategory">
                                 <AddCategory />

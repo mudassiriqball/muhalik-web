@@ -137,18 +137,19 @@ class AddNew extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isUpdateProduct: this.props.isUpdateProduct,
             isLoading: false,
             showToast: false,
             showVariationsErrorAlert: false,
             showSimpleProductPriceImgLinkErrorrAlert: false,
             isVariableProduct: false,
 
-            productCategories: '',
-            productSubCategories: '',
-            productSubSubCategories: '',
+            productCategories: this.props.productCategories,
+            productSubCategories: this.props.productSubCategories,
+            productSubSubCategories: this.props.productSubSubCategories,
 
-            subCategoryDisabled: true,
-            subSubCategoryDisabled: true,
+            subCategoryDisabled: this.props.subCategoryDisabled,
+            subSubCategoryDisabled: this.props.subSubCategoryDisabled,
 
             subCategoryError: 'no_error',
             subSubCategoryError: 'no_error',
@@ -157,55 +158,69 @@ class AddNew extends Component {
             subCategoryErrorDiv: 'BorderDiv',
             subSubategoryErrorDiv: 'BorderDiv',
 
-            productTags: [],
+            productTags: this.props.productTags,
 
-            warrantyType: 'Year',
+            warrantyType: this.props.warrantyType,
             inputValue: '',
-            simple_product_image_link: [],
+            simple_product_image_link: this.props.simple_product_image_link,
 
             image_linkError: 'no_error',
             image_linkErrorDiv: 'BorderDiv',
 
-            variationsArray: [],
+            variationsArray: this.props.variationsArray,
             isVariationsSaved: false,
 
             // Custom Fields
             customFieldsArray: [],
 
             // Dangerous Goods
-            dangerousGoodsArray: [],
+            dangerousGoodsArray: this.props.dangerousGoodsArray,
         };
         this.handleProductTypeChange = this.handleProductTypeChange.bind(this);
     }
 
     // Getting Product Categories from DB
     async componentDidMount() {
-        const url = MuhalikConfig.PATH + '/api/products-categories/get-all';
-        try {
-            const response = await axios.get(url);
-            product_categories_options = response.data.data;
-        } catch (error) {
-            console.log(error);
-        }
+        const url = MuhalikConfig.PATH + '/api/categories/categories';
+        const url_1 = MuhalikConfig.PATH + '/api/categories/fields';
+        const url_2 = MuhalikConfig.PATH + '/api/categories/tags';
+        const token = await getUncodededTokenFromStorage()
+
+        await axios.get(url, {
+            headers: { 'authorization': token }
+        }).then((response) => {
+            // console.log('categories:', response.data)
+        }).catch((error) => {
+            // alert('categories Fetchig Error: ', error)
+        })
+        await axios.get(url_1, {
+            headers: { 'authorization': token }
+        }).then((response) => {
+            // console.log('fields:', response.data)
+        }).catch((error) => {
+            // console.log('fuck:', error)
+            // alert('fields Fetchig Error: ', error.response.data.message)
+        })
+        await axios.get(url_2, {
+            headers: { 'authorization': token }
+        }).then((response) => {
+            // console.log('tags:', response.data)
+        }).catch((error) => {
+            // alert('tags Fetchig Error: ', error)
+        })
     }
 
     //  Submit data to api
     async uploadProduct(data, currentComponent) {
-        console.log('data: ', data)
-        const url = MuhalikConfig.PATH + '/api/products/add';
-        await axios.post(url, {
-            data
-        }, {
-            headers: { 'authorization': await getUncodededTokenFromStorage() }
-        }).then(function (response) {
+        if (await this.props.upload(data) == true) {
             currentComponent.setState({ isLoading: false });
             currentComponent.setState({ showToast: true });
             return true;
-        }).catch(function (error) {
+        } else {
             currentComponent.setState({ isLoading: false });
-            alert('Error: ', error.response.data.message);
+            alert('Product Upload failed');
             return false;
-        });
+        }
     }
 
     handleProductTypeChange(e) {
@@ -294,7 +309,7 @@ class AddNew extends Component {
 
     render() {
         var showCustomFields = false;
-        if (this.state.variationsArray.length == 0 && this.state.isVariableProduct == true) {
+        if (this.state.variationsArray == [] && this.state.isVariableProduct == true) {
             showCustomFields = true;
         }
         else {
@@ -304,9 +319,32 @@ class AddNew extends Component {
         return (
             <Formik
                 validationSchema={schema}
-                initialValues={{
-                    product_type: 'simple-product',
-                }}
+                initialValues={
+                    this.props.isUpdateProduct ?
+                        {
+                            product_name: this.props.product_name,
+                            product_description: this.props.product_description,
+                            product_type: this.props.product_type,
+                            sku: this.props.sku,
+                            product_price: this.props.product_price,
+                            product_in_stock: this.props.product_in_stock,
+                            product_brand_name: this.props.product_brand_name,
+                            // product_image_link:this.props.product_image_link}
+                            product_warranty: this.props.product_warranty,
+                            warranty_type: this.props.warranty_type,
+                            product_discount: this.props.product_discount,
+                            purchase_note: this.props.purchase_note,
+                            // product_variations:this.props.product_variations}
+                            product_weight: this.props.product_weight,
+                            dimension_length: this.props.dimension_length,
+                            dimension_width: this.props.dimension_width,
+                            dimension_height: this.props.dimension_height,
+                            shipping_charges: this.props.shipping_charges,
+                            handling_fee: this.props.handling_fee,
+                        }
+                        :
+                        { product_type: 'simple-product' }
+                }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     if (this.state.productCategories == '' || this.state.productSubCategories == '' || this.state.productSubSubCategories == '' ||
                         (this.state.simple_product_image_link == '' && values.product_type == 'simple-product')) {
@@ -391,7 +429,7 @@ class AddNew extends Component {
 
                                     productTags: [],
 
-                                    warrantyType: 'Year',
+                                    warrantyType: '',
                                     inputValue: '',
                                     simple_product_image_link: [],
 
@@ -702,7 +740,7 @@ class AddNew extends Component {
                         </div>
                     )
                 }
-            </Formik>
+            </Formik >
         );
     }
 }

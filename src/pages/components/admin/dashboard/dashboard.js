@@ -18,9 +18,11 @@ import Inventory from './dashboard-contents/inventory';
 import Discounts from './dashboard-contents/discount';
 import Commision from './dashboard-contents/commision';
 import Reports from './dashboard-contents/reports';
-
 import GlobalStyleSheet from '../../../../styleSheet';
 import { removeTokenFromStorage } from '../../../../sdk/core/authentication-service';
+import axios from 'axios';
+import { getUncodededTokenFromStorage } from '../../../../sdk/core/authentication-service'
+import MuhalikConfig from '../../../../sdk/muhalik.config'
 
 const Dashboard = props => {
     let wprapper_Casses = "wrapper";
@@ -29,6 +31,20 @@ const Dashboard = props => {
     }
 
     const [show_product, setShow_product] = React.useState(false);
+
+    async function upload(data) {
+        console.log('da111222333ta: ', data)
+        const url = MuhalikConfig.PATH + '/api/products/add';
+        await axios.post(url, {
+            data
+        }, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then(function (response) {
+            return true;
+        }).catch(function (error) {
+            return false;
+        });
+    }
 
     return (
         <div>
@@ -234,7 +250,20 @@ const Dashboard = props => {
                                     <AllProducts />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddProduct">
-                                    <AddNew />
+                                    <AddNew
+                                        upload={upload}
+                                        isUpdateProduct={false}
+                                        productCategories={''}
+                                        productSubCategories={''}
+                                        productSubSubCategories={''}
+                                        subCategoryDisabled={true}
+                                        subSubCategoryDisabled={true}
+                                        productTags={[]}
+                                        warrantyType={''}
+                                        simple_product_image_link={[]}
+                                        variationsArray={[]}
+                                        dangerousGoodsArray={[]}
+                                    />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="ProductCategories">
                                     <ProducCategories />
