@@ -38,15 +38,16 @@ class ProducFields extends Component {
         await axios.get(url, {
             headers: { 'authorization': await getUncodededTokenFromStorage() }
         }).then(function (response) {
-            await this.abc(response.data.data.docs)
+            fieldsArray = response.data.data.docs;
         }).catch(function (error) {
             alert('Fields_1 Fetchig Error: ', error)
         })
+        await this.abc()
     }
-    abc(data) {
+    async abc() {
         console.log('Fields_1:', data)
         let copyArray = [];
-        copyArray = data;
+        copyArray = fieldsArray;
         copyArray.forEach((e, index) => {
             e.label = true;
         })
