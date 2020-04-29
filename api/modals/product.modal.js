@@ -105,14 +105,20 @@ const Product = new Schema({
         {
           name: { type: String },
           value: { type: String },
-          price: { type: Number },
-          stock: { type: Number },
-          image_link: {
-            label: { type: String },
-            value: { type: String }
-          },
-        },
+        }
       ],
+      custom_fields: [
+        {
+          name: { type: String },
+          value: { type: String },
+        }
+      ],
+      price: { type: Number },
+      stock: { type: Number },
+      image_link: {
+        label: { type: String },
+        value: { type: String }
+      },
     },
   ],
 

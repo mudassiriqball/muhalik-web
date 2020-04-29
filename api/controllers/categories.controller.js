@@ -25,7 +25,7 @@ categoriesController.add_category = async (req, res) => {
 };
 
 
-categoriesController.add_fields = async (req, res) => {
+categoriesController.add_field = async (req, res) => {
   const body = req.body.data;
   try {
     var datetime = new Date();
@@ -45,7 +45,7 @@ categoriesController.add_fields = async (req, res) => {
   }
 };
 
-categoriesController.add_tags = async (req, res) => {
+categoriesController.add_tag = async (req, res) => {
   const body = req.body.data;
   console.log('fields data:', body)
   try {

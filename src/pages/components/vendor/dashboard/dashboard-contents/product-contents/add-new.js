@@ -86,7 +86,7 @@ const schema = yup.object({
     product_image_link: yup.string(),
     product_warranty: yup.number().integer("Enter Only Numbers")
         .min(0, 'Enter Between 0-200')
-        .max(200, 'Enter Between 0-200'),
+        .max(10000, 'Enter Between 0-10000'),
     warranty_type: yup.string(),
     product_discount: yup.number().integer("Enter Only Numbers")
         .min(0, 'Enter Between 0-100')
@@ -99,26 +99,26 @@ const schema = yup.object({
     product_weight: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
-        .max(100, "Can't be longer than 100"),
+        .max(10000, "Can't be longer than 10000"),
     dimension_length: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
-        .max(100, "Can't be longer than 100"),
+        .max(10000, "Can't be longer than 10000"),
     dimension_width: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
-        .max(100, "Can't be longer than 100"),
+        .max(10000, "Can't be longer than 10000"),
     dimension_height: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
-        .max(100, "Can't be longer than 100"),
-    shipping_charges: yup.number().integer("Enter Only Numbers")
+        .max(10000, "Can't be longer than 10000"),
+    shipping_charges: yup.number("Enter Only Numbers")
         .min(0, 'Enter Between 0-100')
-        .max(100, 'Enter Between 0-100'),
+        .max(10000, 'Enter Between 0-10000'),
     handling_fee: yup.number()
         .integer("Enter Only Numbers")
         .min(0, "Must grater than 0 digit")
-        .max(100, "Can't be longer than 100"),
+        .max(10000, "Can't be longer than 1000"),
     // => Advanve
     purchase_note: yup.string(),
     // Custom Fields
@@ -389,20 +389,12 @@ class AddNew extends Component {
                                     element.items.forEach(e => {
                                         item.push({ name: e.name, value: e.value })
                                     });
+                                    let item_1 = []
                                     element.customField.forEach(e => {
-                                        item.push({ name: e.name, value: e.value })
+                                        item_1.push({ name: e.name, value: e.value })
                                     });
-                                    var obj = {};
-                                    obj['price'] = element.price;
-                                    item.push(obj)
-                                    var obj = {};
-                                    obj['stock'] = element.stock;
-                                    item.push(obj)
-                                    var obj = {};
-                                    obj['image_link'] = element.image_link;
-                                    item.push(obj)
 
-                                    array.push({ item: item })
+                                    array.push({ item: item, custom_fields: item_1, price: element.price, stock: element.stock, image_link: element.image_link })
                                 })
                                 values.product_variations = array;
                             }

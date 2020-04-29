@@ -40,8 +40,8 @@ class AllProducts extends Component {
         await axios.get(url, {
             headers: { 'authorization': await getUncodededTokenFromStorage() }
         }).then((response) => {
-            console.log('data:', response.data.data.docs)
-            this.setState({ productsArray: response.data.data.docs })
+            console.log('data:', response.data.data)
+            this.setState({ productsArray: response.data.data })
         }).catch((error) => {
             alert('Data Fetchig Error: ', error)
         });
@@ -136,9 +136,9 @@ class AllProducts extends Component {
                                                     <td align="center" style={styles.label}>{element.product_in_stock}</td>
                                                     <td align="center" style={styles.label}>{element.product_price}</td>
                                                     <td align="center" style={styles.label}>
-                                                        {element.product_category && element.product_category.map(e =>
+                                                        {/* {element.product_category && element.product_category.map(e =>
                                                             e.value + ','
-                                                        )}
+                                                        )} */}
                                                     </td>
                                                     <td align="center" style={styles.label}>
                                                         {element.product_tags && element.product_tags.map(e =>
@@ -406,9 +406,9 @@ const ViewProduct = props => {
                 <Form.Group>
                     <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Product Categories</Form.Label>
                     <InputGroup>
-                        {props.data.product_category && props.data.product_category.map(element =>
+                        {/* {props.data.product_category && props.data.product_category.map(element =>
                             <Form.Label style={styles.label}>{element.value}</Form.Label>
-                        )}
+                        )} */}
                     </InputGroup>
                 </Form.Group>
                 <hr />product_weight

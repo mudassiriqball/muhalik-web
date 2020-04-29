@@ -34,25 +34,25 @@ class ProducTags extends Component {
     // Getting Product Tags from DB
     async componentDidMount() {
         const url = MuhalikConfig.PATH + '/api/categories/tags';
+        const currentComponent = this;
         await axios.get(url, {
             headers: { 'authorization': await getUncodededTokenFromStorage() }
         }).then((response) => {
-            // console.log('Tags_1:', response.data.data)
             let copyArray = [];
-            copyArray = response.data.data;
-            copyArray.forEach((data, index) => {
-                data.label = true;
+            copyArray = response.data.data.docs;
+            copyArray.forEach(element => {
+                element.label = true;
             })
-            this.setState({ tagList: copyArray });
-            this.setState({ tagRequestList: this.state.tagList });
+            currentComponent.setState({ tagList: copyArray });
+            currentComponent.setState({ tagRequestList: copyArray });
             tagArray = copyArray;
         }).catch((error) => {
-            // alert('Tags_1 Fetchig Error: ', error)
+            console.log('Tags_1 Fetchig Error: ', error)
         })
     }
 
     async addTag(tagValue, currentComponent) {
-        const url = MuhalikConfig.PATH + '/api/categories/add-tag';
+        const url = MuhalikConfig.PATH + '/api/categories/tag';
         let data = []
         data = { label: tagValue, value: tagValue }
         await axios.post(url, {
@@ -65,7 +65,7 @@ class ProducTags extends Component {
             currentComponent.setState({ showModal: true })
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
-            alert('Error: ', error.response.data.message);
+            console.log('Error: ', error.response.data.message);
         });
     }
 
@@ -277,25 +277,23 @@ class ProducTags extends Component {
 
                 {/* Add Tag Requests */}
                 <CardAccordion title={'Add Tag Requests'}>
-                    {this.state.tagRequestList.map((data, index) =>
+                    {this.state.tagRequestList.map((element, index) =>
                         <Form.Row>
-                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                            <Form.Group as={Col} lg={2} md={2} sm={3} xs={12}>
                                 <Form.Control
                                     type="text"
                                     size="sm"
-                                    placeholder="Enter Tag Value"
                                     name="sku"
-                                    value={data.value}
+                                    value={element.entry_date}
                                     disabled={true}
                                 />
                             </Form.Group>
-                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                            <Form.Group as={Col} lg={2} md={2} sm={3} xs={12}>
                                 <Form.Control
                                     type="text"
                                     size="sm"
-                                    placeholder="Enter Tag Value"
                                     name="sku"
-                                    value={data.value}
+                                    value={element.entry_date}
                                     disabled={true}
                                 />
                             </Form.Group>
@@ -307,27 +305,27 @@ class ProducTags extends Component {
                                         size="sm"
                                         placeholder="Enter Tag Value"
                                         name="sku"
-                                        value={data.value}
+                                        value={element.value}
                                         onChange={(e) => this.handleTagRequestChange(e, index)}
-                                        isInvalid={data.error}
-                                        disabled={data.label}
+                                        isInvalid={element.error}
+                                        disabled={element.label}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {data.error}
+                                        {element.error}
                                     </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
                             <div className="mr-auto"></div>
                             <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
-                                    onClick={() => data.label ? this.handleEditTagRequestClick(index) : this.handleUpdateTagRequestClick(index)} >
-                                    <div>{data.label ? 'Edit' : 'Update'}</div>
+                                    onClick={() => element.label ? this.handleEditTagRequestClick(index) : this.handleUpdateTagRequestClick(index)} >
+                                    <div>{element.label ? 'Edit' : 'Update'}</div>
                                 </Button>
                             </Form.Group>
                             <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-primary" size="sm" block style={styles.submit_btn}
-                                    onClick={() => { data.label ? this.handleAddTagRequestClick(index) : this.handleCancelTagRequestClick(index) }}>
-                                    <div>{data.label ? 'Add' : 'Cancel'}</div>
+                                    onClick={() => { element.label ? this.handleAddTagRequestClick(index) : this.handleCancelTagRequestClick(index) }}>
+                                    <div>{element.label ? 'Add' : 'Cancel'}</div>
                                 </Button>
                             </Form.Group>
                             <div className="mr-auto"></div>
@@ -359,36 +357,47 @@ class ProducTags extends Component {
                         </Form.Group>
                     </Form.Row>
                     <hr />
-                    {this.state.tagList.map((data, index) =>
+                    {this.state.tagList.map((element, index) =>
                         <Form.Row>
-                            <Form.Group as={Col} lg={8} md={8} sm={12} xs={12}>
+                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    name="sku"
+                                    value={element.entry_date}
+                                    disabled={true}
+                                />
+                            </Form.Group>
+                            <div className="mr-auto"></div>
+                            <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
                                 <InputGroup>
                                     <Form.Control
                                         type="text"
                                         size="sm"
                                         placeholder="Enter Tag Value"
                                         name="sku"
-                                        value={data.value}
+                                        value={element.value}
                                         onChange={(e) => this.handleTagChange(e, index)}
-                                        disabled={data.label}
-                                        isInvalid={data.error}
+                                        disabled={element.label}
+                                        isInvalid={element.error}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {data.error}
+                                        {element.error}
                                     </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
-                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                            <div className="mr-auto"></div>
+                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
-                                    onClick={data.label ? () => this.handleEditTagClick(index) : () => this.handleUpdateTagClick(index)} >
-                                    <div>{data.label ? 'Edit' : 'Update'}</div>
+                                    onClick={element.label ? () => this.handleEditTagClick(index) : () => this.handleUpdateTagClick(index)} >
+                                    <div>{element.label ? 'Edit' : 'Update'}</div>
                                 </Button>
                             </Form.Group>
                             <div className="mr-auto"></div>
-                            <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
-                                <Button type="submit" variant={data.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
-                                    onClick={data.label ? () => this.handleDeleteTagClick(index) : () => this.handleCancelTagClick(index)}>
-                                    <div>{data.label ? 'Delete' : 'Cancel'}</div>
+                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
+                                    onClick={element.label ? () => this.handleDeleteTagClick(index) : () => this.handleCancelTagClick(index)}>
+                                    <div>{element.label ? 'Delete' : 'Cancel'}</div>
                                 </Button>
                             </Form.Group>
 

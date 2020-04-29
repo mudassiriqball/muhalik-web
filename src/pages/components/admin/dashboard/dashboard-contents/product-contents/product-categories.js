@@ -42,27 +42,30 @@ class ProducCategories extends Component {
     // Getting Product Categories from DB
     async componentDidMount() {
         const url = MuhalikConfig.PATH + '/api/categories/categories';
+        const currentComponent = this;
         await axios.get(url, {
             headers: { 'authorization': await getUncodededTokenFromStorage() }
         }).then((response) => {
-            console.log('Caterories_1:', response.data.data)
-            // let copyArray = [];
-            // copyArray = response.data.data;
-            // copyArray.forEach((data, index) => {
-            //     data.label = true;
+            let copyArray = [];
+            copyArray = response.data.data;
+            // copyArray.forEach(element => {
+            //     let item = []
+            //     item.push({ label: true })
+            //     element.push(item)
             // })
-            // this.setState({ categoryList: copyArray });
-            // this.setState({ categoryRequestList: this.state.categoryList });
-            // categoryArray = copyArray;
+            // console.log('copy array:', copyArray)
+            currentComponent.setState({ categoryList: copyArray });
+            currentComponent.setState({ categoryRequestList: currentComponent.state.categoryList });
+            categoryArray = copyArray;
         }).catch((error) => {
-            alert('Caterories_1 Fetchig Error: ', error)
+            console.log('Caterories_1 Fetchig Error: ', error)
         })
     }
 
     async addCategory(currentComponent) {
         let data = [];
         data = { category: this.state.categoryValue, sub_category: this.state.subCategoryValue, sub_sub_category: this.state.subSubCategoryValue }
-        const url = MuhalikConfig.PATH + '/api/categories/add-category';
+        const url = MuhalikConfig.PATH + '/api/categories/category';
         await axios.post(url, {
             data
         }, {
@@ -332,7 +335,7 @@ class ProducCategories extends Component {
 
                 {/* Add Category Requests */}
                 {/* <CardAccordion title={'Add Category Requests'}>
-                    {this.state.categoryRequestList.map((data, index) =>
+                    {this.state.categoryRequestList.map((element, index) =>
                         <Form.Row>
                             <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
                                 <Form.Control
@@ -340,7 +343,7 @@ class ProducCategories extends Component {
                                     size="sm"
                                     placeholder="Enter Category Value"
                                     name="sku"
-                                    value={data.value}
+                                    value={element.value}
                                     disabled={true}
                                 />
                             </Form.Group>
@@ -350,7 +353,7 @@ class ProducCategories extends Component {
                                     size="sm"
                                     placeholder="Enter Category Value"
                                     name="sku"
-                                    value={data.value}
+                                    value={element.value}
                                     disabled={true}
                                 />
                             </Form.Group>
@@ -362,27 +365,27 @@ class ProducCategories extends Component {
                                         size="sm"
                                         placeholder="Enter Category Value"
                                         name="sku"
-                                        value={data.value}
+                                        value={element.value}
                                         onChange={(e) => this.handleCategoryRequestChange(e, index)}
-                                        isInvalid={data.error}
-                                        disabled={data.label}
+                                        isInvalid={element.error}
+                                        disabled={element.label}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {data.error}
+                                        {element.error}
                                     </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
                             <div className="mr-auto"></div>
                             <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
-                                    onClick={() => data.label ? this.handleEditCategoryRequestClick(index) : this.handleUpdateCategoryRequestClick(index)} >
-                                    <div>{data.label ? 'Edit' : 'Update'}</div>
+                                    onClick={() => element.label ? this.handleEditCategoryRequestClick(index) : this.handleUpdateCategoryRequestClick(index)} >
+                                    <div>{element.label ? 'Edit' : 'Update'}</div>
                                 </Button>
                             </Form.Group>
                             <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-primary" size="sm" block style={styles.submit_btn}
-                                    onClick={() => { data.label ? this.handleAddCategoryRequestClick(index) : this.handleCancelCategoryRequestClick(index) }}>
-                                    <div>{data.label ? 'Add' : 'Cancel'}</div>
+                                    onClick={() => { element.label ? this.handleAddCategoryRequestClick(index) : this.handleCancelCategoryRequestClick(index) }}>
+                                    <div>{element.label ? 'Add' : 'Cancel'}</div>
                                 </Button>
                             </Form.Group>
                             <div className="mr-auto"></div>
@@ -414,70 +417,79 @@ class ProducCategories extends Component {
                         </Form.Group>
                     </Form.Row>
                     <hr />
-                    {this.state.categoryList.map((data, index) =>
+                    {this.state.categoryList.map((element, index) =>
                         <Form.Row>
-                            <Form.Group as={Col} lg={3} md={3} sm={6} xs={12}>
+                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs={12}>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    name="sku"
+                                    value={element.entry_date}
+                                    disabled={true}
+                                />
+                            </Form.Group>
+                            <Form.Group as={Col} lg={3} md={3} sm={3} xs={12}>
                                 <InputGroup>
                                     <Form.Control
                                         type="text"
                                         size="sm"
                                         placeholder="Enter Category Value"
                                         name="sku"
-                                        value={data.value}
+                                        value={element.category}
                                         onChange={(e) => this.handleCategoryChange(e, index)}
-                                        disabled={data.label}
-                                        isInvalid={data.error}
+                                        disabled={element.label}
+                                        isInvalid={element.error}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {data.error}
+                                        {element.error}
                                     </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
-                            <Form.Group as={Col} lg={3} md={3} sm={6} xs={12}>
+                            <Form.Group as={Col} lg={3} md={3} sm={3} xs={12}>
                                 <InputGroup>
                                     <Form.Control
                                         type="text"
                                         size="sm"
                                         placeholder="Enter Category Value"
                                         name="sku"
-                                        value={data.value}
+                                        value={element.sub_category}
                                         onChange={(e) => this.handleCategoryChange(e, index)}
-                                        disabled={data.label}
-                                        isInvalid={data.error}
+                                        disabled={element.label}
+                                        isInvalid={element.error}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {data.error}
+                                        {element.error}
                                     </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
-                            <Form.Group as={Col} lg={3} md={3} sm={6} xs={12}>
+                            <Form.Group as={Col} lg={3} md={3} sm={3} xs={12}>
                                 <InputGroup>
                                     <Form.Control
                                         type="text"
                                         size="sm"
                                         placeholder="Enter Category Value"
                                         name="sku"
-                                        value={data.value}
+                                        value={element.sub_sub_category}
                                         onChange={(e) => this.handleCategoryChange(e, index)}
-                                        disabled={data.label}
-                                        isInvalid={data.error}
+                                        disabled={element.label}
+                                        isInvalid={element.error}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {data.error}
+                                        {element.error}
                                     </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
-                                    onClick={data.label ? () => this.handleEditCategoryClick(index) : () => this.handleUpdateCategoryClick(index)} >
-                                    <div>{data.label ? 'Edit' : 'Update'}</div>
+                                    onClick={element.label ? () => this.handleEditCategoryClick(index) : () => this.handleUpdateCategoryClick(index)} >
+                                    <div>{element.label ? 'Edit' : 'Update'}</div>
                                 </Button>
                             </Form.Group>
                             <div className="mr-auto"></div>
                             <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                <Button type="submit" variant={data.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
-                                    onClick={data.label ? () => this.handleDeleteCategoryClick(index) : () => this.handleCancelCategoryClick(index)}>
-                                    <div>{data.label ? 'Delete' : 'Cancel'}</div>
+                                <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
+                                    onClick={element.label ? () => this.handleDeleteCategoryClick(index) : () => this.handleCancelCategoryClick(index)}>
+                                    <div>{element.label ? 'Delete' : 'Cancel'}</div>
                                 </Button>
                             </Form.Group>
 

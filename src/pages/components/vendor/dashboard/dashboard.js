@@ -37,6 +37,7 @@ const Dashboard = props => {
         }).then(function (response) {
             return true;
         }).catch(function (error) {
+            console.log('aaaaaaa error:', error)
             return false;
         });
     }

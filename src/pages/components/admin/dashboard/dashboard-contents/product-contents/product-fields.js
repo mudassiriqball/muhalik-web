@@ -34,31 +34,25 @@ class ProducFields extends Component {
     // Getting Product Fields from DB
     async componentDidMount() {
         const url = MuhalikConfig.PATH + '/api/categories/fields';
-
+        const currentComponent = this;
         await axios.get(url, {
             headers: { 'authorization': await getUncodededTokenFromStorage() }
         }).then(function (response) {
-            fieldsArray = response.data.data.docs;
+            let copyArray = [];
+            copyArray = response.data.data.docs;
+            copyArray.forEach((e, index) => {
+                e.label = true;
+            })
+            currentComponent.setState({ fieldList: copyArray });
+            currentComponent.setState({ fieldRequestList: copyArray });
+            fieldsArray = copyArray;
         }).catch(function (error) {
-            alert('Fields_1 Fetchig Error: ', error)
+            alert('F error: ', error)
         })
-        await this.abc()
-    }
-    async abc() {
-        console.log('Fields_1:', data)
-        let copyArray = [];
-        copyArray = fieldsArray;
-        copyArray.forEach((e, index) => {
-            e.label = true;
-        })
-        this.setState({ fieldList: copyArray });
-        this.setState({ fieldRequestList: copyArray });
-        console.log('asasasasa:', this.state.fieldsArray[0].value)
-        fieldsArray = copyArray;
     }
 
     async addField(fieldValue, currentComponent) {
-        const url = MuhalikConfig.PATH + '/api/categories/add-field';
+        const url = MuhalikConfig.PATH + '/api/categories/field';
         let data = [];
         data = { label: fieldValue, value: fieldValue }
         await axios.post(url, {
@@ -283,25 +277,23 @@ class ProducFields extends Component {
 
                 {/* Add Field Requests */}
                 <CardAccordion title={'Add Field Requests'}>
-                    {this.state.fieldRequestList.map((data, index) =>
+                    {this.state.fieldRequestList.map((element, index) =>
                         <Form.Row>
-                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                            <Form.Group as={Col} lg={2} md={2} sm={3} xs={12}>
                                 <Form.Control
                                     type="text"
                                     size="sm"
-                                    placeholder="Enter Field Value"
                                     name="sku"
-                                    value={data.entry_date}
+                                    value={element.entry_date}
                                     disabled={true}
                                 />
                             </Form.Group>
-                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                            <Form.Group as={Col} lg={2} md={2} sm={3} xs={12}>
                                 <Form.Control
                                     type="text"
                                     size="sm"
-                                    placeholder="Enter Field Value"
                                     name="sku"
-                                    value={data.entry_date}
+                                    value={element.entry_date}
                                     disabled={true}
                                 />
                             </Form.Group>
@@ -313,27 +305,27 @@ class ProducFields extends Component {
                                         size="sm"
                                         placeholder="Enter Field Value"
                                         name="sku"
-                                        value={data.value}
+                                        value={element.value}
                                         onChange={(e) => this.handleFieldRequestChange(e, index)}
-                                        isInvalid={data.error}
-                                        disabled={data.label}
+                                        isInvalid={element.error}
+                                        disabled={element.label}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {data.error}
+                                        {element.error}
                                     </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
                             <div className="mr-auto"></div>
                             <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
-                                    onClick={() => data.label ? this.handleEditFieldRequestClick(index) : this.handleUpdateFieldRequestClick(index)} >
-                                    <div>{data.label ? 'Edit' : 'Update'}</div>
+                                    onClick={() => element.label ? this.handleEditFieldRequestClick(index) : this.handleUpdateFieldRequestClick(index)} >
+                                    <div>{element.label ? 'Edit' : 'Update'}</div>
                                 </Button>
                             </Form.Group>
                             <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-primary" size="sm" block style={styles.submit_btn}
-                                    onClick={() => { data.label ? this.handleAddFieldRequestClick(index) : this.handleCancelFieldRequestClick(index) }}>
-                                    <div>{data.label ? 'Add' : 'Cancel'}</div>
+                                    onClick={() => { element.label ? this.handleAddFieldRequestClick(index) : this.handleCancelFieldRequestClick(index) }}>
+                                    <div>{element.label ? 'Add' : 'Cancel'}</div>
                                 </Button>
                             </Form.Group>
                             <div className="mr-auto"></div>
@@ -367,7 +359,17 @@ class ProducFields extends Component {
                     <hr />
                     {this.state.fieldList && this.state.fieldList.map((element, index) =>
                         <Form.Row>
-                            <Form.Group as={Col} lg={8} md={8} sm={12} xs={12}>
+                            <Form.Group as={Col} lg={2} md={2} sm={6} xs={12}>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    name="sku"
+                                    value={element.entry_date}
+                                    disabled={true}
+                                />
+                            </Form.Group>
+                            <div className="mr-auto"></div>
+                            <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
                                 <InputGroup>
                                     <Form.Control
                                         type="text"
@@ -384,14 +386,15 @@ class ProducFields extends Component {
                                     </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
-                            <Form.Group as={Col} lg={1} md={1} sm="auto" xs="auto">
+                            <div className="mr-auto"></div>
+                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
                                     onClick={element.label ? () => this.handleEditFieldClick(index) : () => this.handleUpdateFieldClick(index)} >
                                     <div>{element.label ? 'Edit' : 'Update'}</div>
                                 </Button>
                             </Form.Group>
                             <div className="mr-auto"></div>
-                            <Form.Group as={Col} lg={2} md={2} sm="auto" xs="auto">
+                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
                                 <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
                                     onClick={element.label ? () => this.handleDeleteFieldClick(index) : () => this.handleCancelFieldClick(index)}>
                                     <div>{element.label ? 'Delete' : 'Cancel'}</div>
