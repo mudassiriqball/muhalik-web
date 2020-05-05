@@ -48,7 +48,7 @@ usersController.getSingleUser = async (req, res) => {
 
 usersController.registerUser = async (req, res) => {
   try {
-    const body = req.body;
+    const body = req.body.data;
     const result = await Users.findOne({ mobile: body.mobile });
     if (result) {
       res.send({
@@ -87,7 +87,7 @@ usersController.registerUser = async (req, res) => {
 
 usersController.loginUser = async (req, res) => {
   try {
-    const body = req.body;
+    const body = req.body.data;
     const mobile = body.mobile;
     // lets check if email exists
     const result = await Users.findOne({ mobile: mobile });
