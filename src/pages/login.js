@@ -65,10 +65,14 @@ class Login extends Component {
             }
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false })
-            if (error.response.status == '401') {
-                currentComponent.setState({ serverErrorMsg: 'Mobile Number or Pasword Incorect' })
-            } else {
-                alert('ERROR:' + error.response.data.message)
+            try {
+                if (error.response.status == 401) {
+                    currentComponent.setState({ serverErrorMsg: 'Mobile Number or Pasword Incorect' })
+                } else {
+                    alert('ERROR:' + error.response.data.message)
+                }
+            } catch (err) {
+                alert(err)
             }
         });
     }

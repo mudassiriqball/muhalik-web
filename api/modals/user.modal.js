@@ -79,4 +79,4 @@ User.methods.toJSON = function () {
 }
 // User.index({'$**': 'text'});
 
-module.exports = mongoose.model("User", User);
+module.exports = mongoose.model("Users", User);

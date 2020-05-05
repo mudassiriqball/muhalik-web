@@ -88,9 +88,8 @@ usersController.registerUser = async (req, res) => {
 usersController.loginUser = async (req, res) => {
   try {
     const body = req.body.data;
-    const mobile = body.mobile;
     // lets check if email exists
-    const result = await Users.findOne({ mobile: mobile });
+    const result = await Users.findOne({ mobile: body.mobile });
     if (!result) {
       // this means result is null
       res.status(401).send({
@@ -105,7 +104,7 @@ usersController.loginUser = async (req, res) => {
         result.password = undefined;
         const token = jsonwebtoken.sign(
           {
-            result,
+            data: result,
             role: "User"
           },
           process.env.JWT_KEY,

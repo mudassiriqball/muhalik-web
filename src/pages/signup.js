@@ -67,7 +67,7 @@ class Signup extends Component {
         }).then(function (response) {
             console.log('response:', response)
 
-            if (response.status == '200') {
+            if (response.status == 200) {
                 currentComponent.setState({ isLoading: false });
                 currentComponent.setState({ showToast: true });
                 Router.push('/login');
@@ -75,7 +75,7 @@ class Signup extends Component {
             }
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
-            if (error.response.status == '401') {
+            if (error.response.status == 401) {
                 currentComponent.setState({ serverErrorMsg: 'Tis User already exists.' })
             } else {
                 alert('ERROR:' + error.response.data.message)

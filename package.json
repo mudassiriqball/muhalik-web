@@ -7,7 +7,7 @@
     "node": "12.13.0"
   },
   "scripts": {
-    "next": "next -p 3000",
+    "next": "next -p 5000",
     "dev": "nodemon app.js",
     "build": "next build",
     "start": "node app.js",

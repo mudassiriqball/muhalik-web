@@ -53,7 +53,6 @@ class AllProducts extends Component {
         this.setState({ data: this.state.productsArray[index], viewProduct: 'view' })
     }
 
-
     handleEditProduct(index) {
         const element = this.state.productsArray[index]
         if (element.product_type != 'simple-product') {
