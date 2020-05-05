@@ -219,7 +219,9 @@ const Dashboard = props => {
                                 <Tab.Pane eventKey="AddNew">
                                     <AddNew
                                         upload={upload}
+                                        title={'Vendor Dashboard / Add New'}
                                         isUpdateProduct={false}
+                                        isVariableProduct={false}
                                         productCategories={''}
                                         productSubCategories={''}
                                         productSubSubCategories={''}

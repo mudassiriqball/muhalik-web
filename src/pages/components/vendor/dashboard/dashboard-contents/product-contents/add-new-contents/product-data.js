@@ -46,9 +46,10 @@ const ProductData = props => {
                         size="sm"
                         value={props.product_type_values}
                         onChange={(e) => { props.onChange(e), props.productTypeHandler(e) }}
+                    // disabled={props.isUpdateProduct}
                     >
                         <option value='simple-product'> Simple Product </option>
-                        <option value="variable-prouct"> Variable Product </option>
+                        <option value='variable-prouct' selected> Variable Product </option>
                     </Form.Control>
                     <div className='mr-auto'></div>
                     <Accordion.Toggle eventKey="0" style={{ background: 'none' }}>
@@ -178,7 +179,7 @@ const ProductData = props => {
                                                         <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                                                             <Form.Label style={styles.label}>Image Link <span> * </span></Form.Label>
                                                             {/* <InputGroup style={{ width: '100%' }}> */}
-                                                            <CreatableSelect
+                                                            {/* <CreatableSelect
                                                                 components={coomponents}
                                                                 styles={GlobalStyleSheet.react_select_styles}
                                                                 isClearable
@@ -202,6 +203,12 @@ const ProductData = props => {
                                                                     }
                                                                 }}
 
+                                                            /> */}
+                                                            <CreatableSelect
+                                                                isMulti
+                                                                styles={GlobalStyleSheet.react_select_styles}
+                                                                onChange={(value) => props.simpleProductImgLinkChange(value)}
+                                                                placeholder="Paste and press enter"
                                                             />
                                                             <Form.Label style={styles.label}>
                                                                 <span>{imgLinkError}</span>
@@ -474,7 +481,7 @@ const ProductData = props => {
 function ProductAttributes(props) {
     const [attributeName, setAttributeName] = React.useState('')
     const [attributeValue, setAttributeValue] = React.useState('')
-    const [inputValue, setInputValue] = React.useState('')
+    // const [inputValue, setInputValue] = React.useState('')
 
     const [error, setError] = React.useState('')
     const [modalShow, setModalShow] = React.useState(false)
@@ -527,7 +534,7 @@ function ProductAttributes(props) {
                     item.push({ name: attributesArray[i].attributeName, value: e })
                 })
                 data.push({
-                    items: item, price: '', stock: '', image_link: [], image_link_input: '',
+                    item: item, price: '', stock: '', image_link: [], image_link_input: '',
                     price_error: '', stock_error: '', image_link_error: '', customField: []
                 })
             })
@@ -554,16 +561,16 @@ function ProductAttributes(props) {
         }
     }
 
-    function handleAttributeValueKeyDown(event) {
-        if (inputValue == '') return
-        switch (event.key) {
-            case 'Enter':
-            case 'Tab':
-                setAttributeValue([...attributeValue, createOption(inputValue)])
-                setInputValue('')
-                event.preventDefault()
-        }
-    }
+    // function handleAttributeValueKeyDown(event) {
+    //     if (inputValue == '') return
+    //     switch (event.key) {
+    //         case 'Enter':
+    //         case 'Tab':
+    //             setAttributeValue([...attributeValue, createOption(inputValue)])
+    //             setInputValue('')
+    //             event.preventDefault()
+    //     }
+    // }
 
     return (
         <>
@@ -587,7 +594,7 @@ function ProductAttributes(props) {
                 </Form.Group>
                 <Form.Group as={Col} lg={7} md={7} sm={12} xs={12} style={{ marginBottom: '0%', paddingBottom: '0%' }}>
                     <Form.Label style={styles.label}>Field Value </Form.Label>
-                    <CreatableSelect
+                    {/* <CreatableSelect
                         components={coomponents}
                         styles={GlobalStyleSheet.react_select_styles}
                         isClearable
@@ -605,6 +612,12 @@ function ProductAttributes(props) {
                         }}
                         onKeyDown={(event) => handleAttributeValueKeyDown(event)}
                         placeholder="Enter value and press enter"
+                    /> */}
+                    <CreatableSelect
+                        isMulti
+                        styles={GlobalStyleSheet.react_select_styles}
+                        onChange={(value) => setAttributeValue(value)}
+                        placeholder="Paste and press enter"
                     />
                 </Form.Group>
             </Form.Row>
@@ -705,8 +718,9 @@ function ProductVariations(props) {
             setSameImgLinkError('')
             const copyArray = Object.assign([], props.variationsArray)
             copyArray.forEach(element => {
-                element.image_link = createOption(sameImgLink)
+                element.image_link = ([...element.image_link, createOption(sameImgLink)])
             })
+            console.log('image link:', copyArray)
             props.setVariationsArray(copyArray)
         } else {
             setSameImgLinkError('Enter Value')
@@ -734,40 +748,43 @@ function ProductVariations(props) {
         }
     }
 
-    function handleImgLinkKeyDown(event, index) {
-        const copyArray = Object.assign([], props.variationsArray)
-        let object = copyArray[index]
-        if (object.image_link_input == '') return
-        switch (event.key) {
-            case 'Enter':
-            case 'Tab':
-                object.image_link = [...object.image_link, createOption(object.image_link_input)]
-                object.image_link_input = ''
-                object.image_link_error = ``
-                event.preventDefault()
-                return true
-        }
-        copyArray[index] = object
-        props.setVariationsArray(copyArray)
-    }
+    // function handleImgLinkKeyDown(event, index) {
+    //     const copyArray = Object.assign([], props.variationsArray)
+    //     let object = copyArray[index]
+    //     if (object.image_link_input == '') return
+    //     switch (event.key) {
+    //         case 'Enter':
+    //         case 'Tab':
+    //             object.image_link = ([...object.image_link, createOption(object.image_link_input)])
+    //             object.image_link_input = ''
+    //             object.image_link_error = ``
+    //             console.log('image link:', copyArray)
+    //             event.preventDefault()
+    //             return true
+    //     }
+    //     copyArray[index] = object
+    //     props.setVariationsArray(copyArray)
+    // }
     function handleImgLinkChange(value, index) {
+        console.log('aaaaaaaaa:', value)
+        console.log('aaaaaaaaa:', index)
         const copyArray = Object.assign([], props.variationsArray)
         let object = copyArray[index]
         object.image_link = value
         copyArray[index] = object
         props.setVariationsArray(copyArray)
     }
-    function handleImgLinkInputChange(value, index) {
-        const copyArray = Object.assign([], props.variationsArray)
-        let object = copyArray[index]
-        if (value.length > 50) {
-            object.image_link_error = `Can't be longer than 50 characters`
-        } else {
-            object.image_link_input = value
-        }
-        copyArray[index] = object
-        props.setVariationsArray(copyArray)
-    }
+    // function handleImgLinkInputChange(value, index) {
+    //     const copyArray = Object.assign([], props.variationsArray)
+    //     let object = copyArray[index]
+    //     if (value.length > 50) {
+    //         object.image_link_error = `Can't be longer than 50 characters`
+    //     } else {
+    //         object.image_link_input = value
+    //     }
+    //     copyArray[index] = object
+    //     props.setVariationsArray(copyArray)
+    // }
 
 
     function handleDeleteVariationClick(index) {
@@ -818,6 +835,14 @@ function ProductVariations(props) {
             return 'none'
         }
     }
+
+    function handleItemValueChange(event, index, i) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let obj = copyArray[index].item
+        obj[i].value = event.target.value
+        props.setVariationsArray(copyArray)
+    }
+
     return (
         <>
             {props.isVariationsArrayEmpty ?
@@ -911,7 +936,7 @@ function ProductVariations(props) {
                         <>
                             <Accordion>
                                 <Row noGutters style={{ border: handleVariationsErrorCheck(element) }}>
-                                    {element.items && element.items.map((e, i) =>
+                                    {element.item && element.item.map((e, i) =>
                                         <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
                                             <Form.Control
                                                 type="text"
@@ -919,7 +944,7 @@ function ProductVariations(props) {
                                                 placeholder="Enter Value"
                                                 name="sku"
                                                 value={e.value}
-                                                onChange={() => e.attributeValue}
+                                                onChange={(event) => handleItemValueChange(event, index, i)}
                                             />
                                         </Form.Group>
                                     )}
@@ -969,7 +994,7 @@ function ProductVariations(props) {
                                             </Form.Group>
                                             <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
                                                 <Form.Label style={styles.label}>Image Link</Form.Label>
-                                                <CreatableSelect
+                                                {/* <CreatableSelect
                                                     components={coomponents}
                                                     styles={GlobalStyleSheet.react_select_styles}
                                                     isClearable
@@ -981,6 +1006,13 @@ function ProductVariations(props) {
                                                     onInputChange={(value) => handleImgLinkInputChange(value, index)}
                                                     onKeyDown={(event) => handleImgLinkKeyDown(event, index)}
                                                     placeholder="Paste and press enter"
+                                                /> */}
+                                                <CreatableSelect
+                                                    isMulti
+                                                    styles={GlobalStyleSheet.react_select_styles}
+                                                    onChange={(value) => handleImgLinkChange(value, index)}
+                                                    placeholder="Paste and press enter"
+                                                    value={element.image_link}
                                                 />
                                                 <Form.Label style={styles.label}>
                                                     <span>{element.image_link_error}</span>

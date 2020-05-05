@@ -323,16 +323,16 @@ const ViewProduct = props => {
                                 <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
                                     <Form.Label style={styles.label}>Price</Form.Label>
                                     <InputGroup>
-                                        <Form.Control type="text" size="sm" value={element.item.price} disabled={true} />
+                                        <Form.Control type="text" size="sm" value={element.price} disabled={true} />
                                     </InputGroup>
                                 </Form.Group>
                                 <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
                                     <Form.Label style={styles.label}>Stock</Form.Label>
                                     <InputGroup>
-                                        <Form.Control type="text" size="sm" value={element.item.stock} disabled={true} />
+                                        <Form.Control type="text" size="sm" value={element.stock} disabled={true} />
                                     </InputGroup>
                                 </Form.Group>
-                                {element.item.map(e =>
+                                {element.item && element.item.map(e =>
                                     <>
                                         <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
                                             <Form.Label style={styles.label}>{e.name}</Form.Label>
@@ -342,9 +342,19 @@ const ViewProduct = props => {
                                         </Form.Group>
                                     </>
                                 )}
-                                {element.item.img_link && element.item.img_link.map((img, i) =>
+                                {element.custom_fields && element.custom_fields.map(e =>
+                                    <>
+                                        <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
+                                            <Form.Label style={styles.label}>{e.name}</Form.Label>
+                                            <InputGroup>
+                                                <Form.Control type="text" size="sm" value={e.value} disabled={true} />
+                                            </InputGroup>
+                                        </Form.Group>
+                                    </>
+                                )}
+                                {element.image_link && element.image_link.map((img, i) =>
                                     <Row>
-                                        <Image thumbnail fluid style={{ minWidth: '100px', maxWidth: '100px' }} src={img.value} alt="Product Image"
+                                        <Image thumbnail fluid style={{ minWidth: '100px', maxWidth: '100px' }} src={`https://drive.google.com/uc?export=view&id= ${img.value}`} alt="Product Image"
                                             onClick={() => { setImgPreview(true), setIndex(i), setImgData(e.img_link) }} />
                                     </Row>
                                 )}
@@ -356,7 +366,7 @@ const ViewProduct = props => {
                 :
                 <CardAccordion title={'Product Images'}>
                     {props.data.product_image_link && props.data.product_image_link.map((element, index) =>
-                        <Image thumbnail fluid style={{ minWidth: '200px', maxWidth: '200px' }} src={element.value}
+                        <Image thumbnail fluid style={{ minWidth: '200px', maxWidth: '200px' }} src={`https://drive.google.com/uc?export=view&id= ${img.value}`}
                             alt="Product Image" onClick={() => { setImgPreview(true), setIndex(index), setImgData(props.data.product_image_link) }} />
                     )}
                 </CardAccordion>
@@ -555,3 +565,25 @@ const styles = {
 }
 
 export default AllProducts;
+
+
+// import React, { Component } from 'react';
+
+// import CreatableSelect from 'react-select/creatable';
+// const colourOptions = [{ label: '111', value: '111' }]
+
+// export default class AllProducts extends Component {
+//     handleChange = (newValue) => {
+//         console.log('Value Changed', newValue);
+//     };
+
+//     render() {
+//         return (
+//             <CreatableSelect
+//                 isMulti
+//                 onChange={this.handleChange}
+//                 options={colourOptions}
+//             />
+//         );
+//     }
+// }

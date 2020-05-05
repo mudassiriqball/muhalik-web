@@ -4,9 +4,9 @@ import { Accordion, Form, Col, Row, Card, InputGroup, Button, Toast, Alert, Nav,
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faPlus, faExclamationTriangle,
+    faPlus, faArrowLeft, faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons';
 
@@ -25,7 +25,6 @@ import CustomFields from './add-new-contents/custom-fields';
 import ProductData from './add-new-contents/product-data';
 import product_size_options from '../../../../../../sdk/consts/product-size-options'
 import product_color_options from '../../../../../../sdk/consts/product-color-options'
-
 // Option List for select Product Category (when offline)
 let product_categories_options = [
     { value: 'Shoe', label: 'Shoe' },
@@ -142,7 +141,7 @@ class AddNew extends Component {
             showToast: false,
             showVariationsErrorAlert: false,
             showSimpleProductPriceImgLinkErrorrAlert: false,
-            isVariableProduct: false,
+            isVariableProduct: this.props.isVariableProduct,
 
             productCategories: this.props.productCategories,
             productSubCategories: this.props.productSubCategories,
@@ -176,7 +175,7 @@ class AddNew extends Component {
             // Dangerous Goods
             dangerousGoodsArray: this.props.dangerousGoodsArray,
         };
-        this.handleProductTypeChange = this.handleProductTypeChange.bind(this);
+        // this.handleProductTypeChange = this.handleProductTypeChange.bind(this);
     }
 
     // Getting Product Categories from DB
@@ -223,14 +222,14 @@ class AddNew extends Component {
         }
     }
 
-    handleProductTypeChange(e) {
-        if (e.target.value == 'variable-prouct') {
-            this.setState({ isVariableProduct: true, customFieldsArray: [] });
-        }
-        else {
-            this.setState({ isVariableProduct: false, variationsArray: [] });
-        }
-    }
+    // handleProductTypeChange(e) {
+    // if (e.target.value == 'variable-prouct') {
+    //     this.setState({ isVariableProduct: true, customFieldsArray: [] });
+    // }
+    //     else {
+    //         this.setState({ isVariableProduct: false, variationsArray: [] });
+    //     }
+    // }
 
     // Product Data
     // => Simple Product Image Link
@@ -446,7 +445,17 @@ class AddNew extends Component {
                     handleSubmit, handleChange, values, touched, isValid, errors, handleBlur, isSubmitting
                 }) => (
                         <div>
-                            <TitleRow icon={faPlus} title={'Vendor Dashboard / Add New Product'} />
+                            <TitleRow icon={faPlus} title={this.props.title} />
+                            {this.props.isUpdateProduct ?
+                                <Form.Row style={{ margin: ' 0% 2%', display: 'flex', alignItems: 'center' }} >
+                                    <Nav.Link style={{ fontSize: '14px' }} className="mr-auto" onClick={this.props.back}>Back</Nav.Link>
+                                    <div className="mr-auto" style={{ fontSize: '14px' }}> {this.props.product_name}</div>
+                                    <Nav.Link style={{ fontSize: '14px' }} onClick={this.props.view}> View </Nav.Link>
+                                    <Nav.Link style={{ fontSize: '14px' }} onClick={this.props.delete}> Delete </Nav.Link>
+                                </Form.Row>
+                                :
+                                null
+                            }
                             <Form noValidate onSubmit={handleSubmit}>
                                 <AlertModal
                                     onHide={(e) => this.setState({ showToast: false })}
@@ -512,10 +521,21 @@ class AddNew extends Component {
                                         </CardAccordion>
                                         {/* Product Data Row */}
                                         <ProductData
-                                            productTypeHandler={this.handleProductTypeChange}
+                                            isUpdateProduct={this.props.isUpdateProduct}
+                                            productTypeHandler={e => {
+                                                if (e.target.value == 'variable-prouct') {
+                                                    this.setState({
+                                                        isVariableProduct: true
+                                                    })
+                                                } else {
+                                                    this.setState({
+                                                        isVariableProduct: false
+                                                    })
+                                                }
+                                            }}
                                             isVariableProduct={this.state.isVariableProduct}
 
-                                            product_type_values={values.product_type || ''}
+                                            product_type_values={values.product_type}
 
                                             product_price_values={values.product_price || ''}
                                             product_price_errors={errors.product_price}

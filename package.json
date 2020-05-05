@@ -7,10 +7,10 @@
     "node": "12.13.0"
   },
   "scripts": {
-    "next": "next -p 5000",
+    "next": "next -p 3000",
     "dev": "nodemon app.js",
     "build": "next build",
-    "start": "next build && node app.js",
+    "start": "node app.js",
     "export": "npm run build && next export"
   },
   "keywords": [],

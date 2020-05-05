@@ -99,7 +99,11 @@ const CustomFields = props => {
                         </Form.Group>
                         <span className="mr-auto"> {error} </span>
                         <Row style={{ width: '100%', display: 'flex', alignItems: 'center' }} noGutters>
-                            <Form.Label style={styles.label} className="mr-auto">For Variable Products each Custom Field will be added to all variations</Form.Label>
+                            {props.isVariableProduct ?
+                                <Form.Label style={styles.label} className="mr-auto">For Variable Products each Custom Field will be added to all variations</Form.Label>
+                                : null
+                            }
+                            <div className='mr-auto'></div>
                             <Button variant="outline-primary" size="sm" onClick={saveCustomFieldsHandler}>Save Fields</Button>
                         </Row>
                     </Form.Row>
