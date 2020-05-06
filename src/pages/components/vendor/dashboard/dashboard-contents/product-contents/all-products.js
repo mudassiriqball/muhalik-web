@@ -49,19 +49,22 @@ class AllProducts extends Component {
         });
     }
 
-    handleViewProduct(index) {
-        this.setState({ data: this.state.productsArray[index], viewProduct: 'view' })
-    }
 
     handleEditProduct(index) {
-        const element = this.state.productsArray[index]
+        console.log('edit called')
+        let element = []
+        if (index == -1) {
+            element = this.state.data
+        } else {
+            element = this.state.productsArray[index]
+        }
         if (element.product_type != 'simple-product') {
             let array = [];
             let variations = element.product_variations
             variations.forEach((element, i) => {
                 array.push({
                     item: element.item, price: element.price, stock: element.stock, image_link: element.image_link,
-                    price_error: '', stock_error: '', image_link_error: '', customField: element.customField
+                    price_error: '', stock_error: '', image_link_error: '', custom_fields: element.custom_fields
                 })
             })
             element.product_variations = array
@@ -115,7 +118,7 @@ class AllProducts extends Component {
                     back={() => this.setState({ viewProduct: false, data: {} })}
                     isVariableProduct={this.state.data.product_type != "simple-product"}
                     delete={this.handleDeleteProduct(-1)}
-                    update={this.setState({ viewProduct: 'edit' })}
+                    edit={() => this.handleEditProduct(-1)}
                 />
                 break;
             case 'edit':
@@ -172,6 +175,7 @@ class AllProducts extends Component {
                                         <Form.Check type="checkbox" />
                                     </th>
                                     <th style={{ textAlign: 'center' }}>Name</th>
+                                    <th style={{ textAlign: 'center' }}>Product Type</th>
                                     <th style={{ textAlign: 'center' }}>SKU</th>
                                     <th style={{ textAlign: 'center' }}>Stock</th>
                                     <th style={{ textAlign: 'center' }}>Price</th>
@@ -189,13 +193,22 @@ class AllProducts extends Component {
                                                 <td className="td">
                                                     {element.product_name}
                                                     <div className="mr-auto"></div>
-                                                    <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}> View </Nav.Link>
+                                                    <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}> View </Nav.Link>
                                                     <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
                                                     <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
                                                 </td>
+                                                <td align="center" style={styles.label}>{element.product_type}</td>
                                                 <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
-                                                <td align="center" style={styles.label}>{element.product_in_stock}</td>
-                                                <td align="center" style={styles.label}>{element.product_price}</td>
+                                                <td align="center" style={styles.label}>
+                                                    {element.product_variations.map(e =>
+                                                        e.stock + ','
+                                                    )}
+                                                </td>
+                                                <td align="center" style={styles.label}>
+                                                    {element.product_variations.map(e =>
+                                                        e.price + ','
+                                                    )}
+                                                </td>
                                                 <td align="center" style={styles.label}>
                                                     {/* {element.product_category && element.product_category.map(e =>
                                                             e.value + ','
@@ -219,20 +232,17 @@ class AllProducts extends Component {
                                                     <td className="td">
                                                         {element.product_name}
                                                         <div className="mr-auto"></div>
-                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}>View</Nav.Link>
-                                                        <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
+                                                        <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}>View</Nav.Link>
+                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
                                                         <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
                                                     </td>
+                                                    <td align="center" style={styles.label}>{element.product_type}</td>
                                                     <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
                                                     <td align="center" style={styles.label}>
-                                                        {element.product_variations.map(e =>
-                                                            e.item[e.item.length - 2].value + ','
-                                                        )}
+                                                        {element.product_in_stock}
                                                     </td>
                                                     <td align="center" style={styles.label}>
-                                                        {element.product_variations.map(e =>
-                                                            e.item[e.item.length - 3].value + ','
-                                                        )}
+                                                        {element.product_price}
                                                     </td>
                                                     <td align="center" style={styles.label}>
                                                         {element.product_category && element.product_category.map(e =>
@@ -306,7 +316,7 @@ const ViewProduct = props => {
             <Form.Row style={{ margin: ' 0% 2%', display: 'flex', alignItems: 'center' }} >
                 <Nav.Link style={{ fontSize: '14px' }} className="mr-auto" onClick={props.back}>Back</Nav.Link>
                 <div className="mr-auto" style={{ fontSize: '14px' }}> {props.data.product_name}</div>
-                <Nav.Link style={{ fontSize: '14px' }} onClick={props.update}> Update </Nav.Link>
+                <Nav.Link style={{ fontSize: '14px' }} onClick={props.edit}> Edit </Nav.Link>
                 <Nav.Link style={{ fontSize: '14px' }} onClick={props.delete}> Delete </Nav.Link>
             </Form.Row>
             <CardAccordion title={'General Info'}>
@@ -483,16 +493,16 @@ const ViewProduct = props => {
             </CardAccordion>
             <CardAccordion title={'Product Categories'}>
                 <Form.Group>
-                    <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Product Categories</Form.Label>
+                    <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Product Categories:</Form.Label>
                     <InputGroup>
                         {/* {props.data.product_category && props.data.product_category.map(element =>
                             <Form.Label style={styles.label}>{element.value}</Form.Label>
                         )} */}
                     </InputGroup>
                 </Form.Group >
-                <hr />product_weight
+                <hr />
                 <Form.Group>
-                    <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Product Tags</Form.Label>
+                    <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Product Tags:</Form.Label>
                     <InputGroup>
                         {props.data.product_tags && props.data.product_tags.map(element =>
                             <Form.Label style={styles.label}>{element.value}</Form.Label>
@@ -501,7 +511,7 @@ const ViewProduct = props => {
                 </ Form.Group >
                 <hr />
                 <Form.Group>
-                    <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Dangerous Goods</Form.Label>
+                    <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Dangerous Goods:</Form.Label>
                     <InputGroup>
                         {props.data.dangerous_goods && props.data.dangerous_goods.map(element =>
                             <Form.Label style={styles.label}>{element.value}</Form.Label>

@@ -535,7 +535,7 @@ function ProductAttributes(props) {
                 })
                 data.push({
                     item: item, price: '', stock: '', image_link: [], image_link_input: '',
-                    price_error: '', stock_error: '', image_link_error: '', customField: []
+                    price_error: '', stock_error: '', image_link_error: '', custom_fields: []
                 })
             })
             setSuccessMessage('Variations Created Successfully')
@@ -794,7 +794,7 @@ function ProductVariations(props) {
     }
     function handleDeleteCustomFieldClick(index, i) {
         const copyArray = Object.assign([], props.variationsArray)
-        copyArray[index].customField.splice(i, 1)
+        copyArray[index].custom_fields.splice(i, 1)
         props.setVariationsArray(copyArray)
     }
 
@@ -1020,7 +1020,7 @@ function ProductVariations(props) {
                                             </Form.Group>
                                         </Form.Row>
                                         <Form.Row>
-                                            {element.customField && element.customField.map((e, i) =>
+                                            {element.custom_fields && element.custom_fields.map((e, i) =>
                                                 <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
                                                     <Form.Label style={styles.label}>{e.name}</Form.Label>
                                                     <InputGroup>

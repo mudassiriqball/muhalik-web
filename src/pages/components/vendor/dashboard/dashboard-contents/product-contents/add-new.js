@@ -481,10 +481,10 @@ class AddNew extends Component {
                                     iconName={faExclamationTriangle}
                                     color={"#ff3333"}
                                 />
-                                <Row noGutters style={{ paddingTop: '2%' }}>
+                                <Row noGutters style={{ paddingTop: '1%' }}>
                                     <Col lg={9} md={9} sm={12} xs={12}>
                                         {/* Product Name */}
-                                        <Form.Group as={Row} style={styles.row}>
+                                        <Form.Group as={Row} style={{ margin: '0.5% 2% 2% 2%', padding: '0%' }}>
                                             <Form.Label style={styles.label}>Product Name<span>*</span></Form.Label>
                                             <InputGroup>
                                                 <Form.Control
