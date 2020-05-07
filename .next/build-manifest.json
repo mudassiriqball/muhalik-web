@@ -1,5 +1,7 @@
 {
   "devFiles": [
+    "static/runtime/react-refresh.js",
+    "static/runtime/react-refresh.js.map",
     "static/development/dll/dll_a6769f6852830251a132.js",
     "static/development/dll/dll_a6769f6852830251a132.js.map"
   ],
@@ -19,6 +21,14 @@
     "/_polyfills": [
       "static/runtime/polyfills.js",
       "static/runtime/polyfills.js.map"
+    ],
+    "/admin": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
+    ],
+    "/vendor": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
     ]
   }
 }

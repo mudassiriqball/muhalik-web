@@ -208,9 +208,7 @@ class AllProducts extends Component {
                                                     )}
                                                 </td>
                                                 <td align="center" style={styles.label}>
-                                                    {/* {element.product_category && element.product_category.map(e =>
-                                                            e.value + ','
-                                                        )} */}
+                                                    {element.product_category.value + ' => ' + element.product_sub_category.value}
                                                 </td>
                                                 <td align="center" style={styles.label}>
                                                     {element.product_tags && element.product_tags.map(e =>
@@ -243,7 +241,7 @@ class AllProducts extends Component {
                                                         {element.product_price}
                                                     </td>
                                                     <td align="center" style={styles.label}>
-                                                        {/* {element.product_category} */}
+                                                        {element.product_category.value + ' => ' + element.product_sub_category.value}
                                                     </td>
                                                     <td align="center" style={styles.label}>
                                                         {element.product_tags && element.product_tags.map(e =>
@@ -442,14 +440,14 @@ const ViewProduct = props => {
                 <>
                     <CardAccordion title={'Custom Fields'}>
                         {props.data.custom_fields && props.data.custom_fields.map(element =>
-                            <>
+                            <Row>
                                 <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
                                     <Form.Label style={styles.label}>{element.name}</Form.Label>
                                     <InputGroup>
                                         <Form.Control type="text" size="sm" value={element.value} disabled={true} />
                                     </InputGroup>
                                 </Form.Group>
-                            </>
+                            </Row>
                         )}
                     </CardAccordion>
                     <CardAccordion title={'Product Images'}>

@@ -12,7 +12,7 @@ import CardAccordion from '../../../../card_accordion';
 import MuhalikConfig from '../../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../../styleSheet'
 import TitleRow from '../../../../title-row';
-
+import AddNew from '../../../../vendor/dashboard/dashboard-contents/product-contents/add-new'
 
 
 class AllProducts extends Component {
@@ -37,49 +37,69 @@ class AllProducts extends Component {
     // }
     async componentDidMount() {
         const url = MuhalikConfig.PATH + '/api/products/'
+        const currentComponent = this
+
         await axios.get(url, {
             headers: { 'authorization': await getUncodededTokenFromStorage() }
         }).then((response) => {
             console.log('data:', response.data.data)
-            this.setState({ productsArray: response.data.data })
+            currentComponent.setState({ productsArray: response.data.data })
         }).catch((error) => {
             alert('Data Fetchig Error: ', error)
         });
     }
 
-    handleViewProduct(index) {
-        // let dataa;
-        // Simple Product
-        // if (i == -1) {
-        this.setState({ data: this.state.productsArray[index], viewProduct: true })
 
-        // } else { // Variable Product
-        // dataa = Object.assign([], this.state.productsArray[index])
-        // dataa.product_variations = dataa.product_variations[i];
-        //     this.setState({ data: this.state.productsArray[index], viewProduct: true })
-        // }
-        // console.log('datadata:', data)
-        // Router.push({
-        //     pathname: '/view-product',
-        //     query: { data: data },
-        // }, '/vendor/view-product?' + data.product_name);
+    handleEditProduct(index) {
+        console.log('edit called')
+        let element = []
+        if (index == -1) {
+            element = this.state.data
+        } else {
+            element = this.state.productsArray[index]
+        }
+        if (element.product_type != 'simple-product') {
+            let array = [];
+            let variations = element.product_variations
+            variations.forEach((element, i) => {
+                array.push({
+                    item: element.item, price: element.price, stock: element.stock, image_link: element.image_link,
+                    price_error: '', stock_error: '', image_link_error: '', custom_fields: element.custom_fields
+                })
+            })
+            element.product_variations = array
+        } else {
+            element.product_variations = []
+        }
+
+        this.setState({ data: element, viewProduct: 'edit' })
+
     }
 
     async handleDeleteProduct(index) {
-        const copyArray = Object.assign([], this.state.productsArray)
-        const _id = copyArray[index]._id;
-        const url = MuhalikConfig.PATH + `/api/products/${_id}`;
-
-        copyArray.splice(index, 1)
-        this.setState({ productsArray: copyArray })
-        await axios.delete(url, {
-            headers: { 'authorization': await getUncodededTokenFromStorage() }
-        }).then(function (response) {
-            return true;
-        }).catch(function (error) {
-            alert('Error: ', error.response.data.message);
-            return false;
-        });
+        // const copyArray = Object.assign([], this.state.productsArray)
+        // const array = Object.assign([], this.state.productsArray)
+        // let _id = ''
+        // if (index == -1) {
+        //     _id = this.state.data._id;
+        // } else {
+        //     _id = copyArray[index]._id;
+        // }
+        // const url = MuhalikConfig.PATH + `/api/products/${_id}`;
+        // copyArray.forEach((element, i) => {
+        //     if (element._id == _id) {
+        //         array.splice(i, 1)
+        //     }
+        // })
+        // this.setState({ productsArray: array })
+        // await axios.delete(url, {
+        //     headers: { 'authorization': await getUncodededTokenFromStorage() }
+        // }).then(function (response) {
+        //     return true;
+        // }).catch(function (error) {
+        //     alert('Error: ', error.response.data.message);
+        //     return false;
+        // });
     }
 
     isVariableProduct(element) {
@@ -90,55 +110,138 @@ class AllProducts extends Component {
         }
     }
 
-    render() {
-        return (
-            <>
-                {this.state.viewProduct ?
-                    <ViewProduct
-                        data={this.state.data}
-                        back={() => this.setState({ viewProduct: false, data: {} })}
-                        isVariableProduct={this.state.data.product_type != "simple-product"}
-                    />
-                    :
-                    <>
-                        <TitleRow icon={faPlus} title={' Vendor Dashboard / All Products'} />
+    renderSwitch(param) {
+        switch (param) {
+            case 'view':
+                return <ViewProduct
+                    data={this.state.data}
+                    back={() => this.setState({ viewProduct: false, data: {} })}
+                    isVariableProduct={this.state.data.product_type != "simple-product"}
+                    delete={() => this.handleDeleteProduct(-1)}
+                    edit={() => this.handleEditProduct(-1)}
+                />
+                break;
+            case 'edit':
+                return <AddNew
+                    title={'Vendor Dashboard / All Products / Update'}
+                    isUpdateProduct={true}
+                    _id={this.state.data._id}
+                    isVariableProduct={this.state.data.product_type != 'simple-product'}
 
-                        <Row noGutters style={{ margin: '2%', background: 'white' }}>
-                            <Table responsive bordered hover size="sm">
-                                <thead>
-                                    <tr>
-                                        <th style={{ textAlign: 'center' }}>
-                                            <Form.Check type="checkbox" />
-                                        </th>
-                                        <th style={{ textAlign: 'center' }}>Name</th>
-                                        <th style={{ textAlign: 'center' }}>SKU</th>
-                                        <th style={{ textAlign: 'center' }}>Stock</th>
-                                        <th style={{ textAlign: 'center' }}>Price</th>
-                                        <th style={{ textAlign: 'center' }}>Categories</th>
-                                        <th style={{ textAlign: 'center' }}>Tags</th>
-                                        <th style={{ textAlign: 'center' }}>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {this.state.productsArray && this.state.productsArray.map((element, index) =>
-                                        <>
-                                            {this.isVariableProduct(element) ?
-                                                <tr key={index}>
-                                                    <td align="center" style={styles.label}><Form.Check type="checkbox" /></td>
+                    back={() => this.setState({ viewProduct: false, data: {} })}
+                    view={() => this.setState({ viewProduct: 'view' })}
+                    delete={() => this.handleDeleteProduct(-1)}
+
+                    productCategories={this.state.data.product_category}
+                    productSubCategories={this.state.data.product_sub_category}
+
+                    productTags={this.state.data.product_tags}
+                    warrantyType={this.state.data.warranty_type}
+                    simple_product_image_link={this.state.data.product_image_link}
+                    variationsArray={this.state.data.product_variations}
+                    dangerousGoodsArray={this.state.data.dangerous_goods}
+
+                    product_name={this.state.data.product_name}
+                    product_description={this.state.data.product_description}
+                    product_type={'variable-product'}
+                    product_type={this.state.data.product_type}
+                    sku={this.state.data.sku}
+                    product_price={this.state.data.product_price}
+                    product_in_stock={this.state.data.product_in_stock}
+                    product_brand_name={this.state.data.product_brand_name}
+
+                    product_warranty={this.state.data.product_warranty}
+                    warranty_type={this.state.data.warranty_type}
+                    product_discount={this.state.data.product_discount}
+                    purchase_note={this.state.data.purchase_note}
+                    product_weight={this.state.data.product_weight}
+                    dimension_length={this.state.data.dimension_length}
+                    dimension_width={this.state.data.dimension_width}
+                    dimension_height={this.state.data.dimension_height}
+                    shipping_charges={this.state.data.shipping_charges}
+                    handling_fee={this.state.data.handling_fee}
+                />
+                break;
+            default:
+                return <>
+                    <TitleRow icon={faPlus} title={' Vendor Dashboard / All Products'} />
+                    <Row noGutters style={{ margin: '2%', background: 'white' }}>
+                        <Table responsive bordered hover size="sm">
+                            <thead>
+                                <tr>
+                                    <th style={{ textAlign: 'center' }}>
+                                        <Form.Check type="checkbox" />
+                                    </th>
+                                    <th style={{ textAlign: 'center' }}>Name</th>
+                                    <th style={{ textAlign: 'center' }}>Product Type</th>
+                                    <th style={{ textAlign: 'center' }}>SKU</th>
+                                    <th style={{ textAlign: 'center' }}>Stock</th>
+                                    <th style={{ textAlign: 'center' }}>Price</th>
+                                    <th style={{ textAlign: 'center' }}>Categories</th>
+                                    <th style={{ textAlign: 'center' }}>Tags</th>
+                                    <th style={{ textAlign: 'center' }}>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.state.productsArray && this.state.productsArray.map((element, index) =>
+                                    <>
+                                        {this.isVariableProduct(element) ?
+                                            <tr key={index}>
+                                                <td align="center" style={styles.label}><Form.Check type="checkbox" /></td>
+                                                <td className="td">
+                                                    {element.product_name}
+                                                    <div className="mr-auto"></div>
+                                                    <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}> View </Nav.Link>
+                                                    <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
+                                                    <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
+                                                </td>
+                                                <td align="center" style={styles.label}>{element.product_type}</td>
+                                                <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
+                                                <td align="center" style={styles.label}>
+                                                    {element.product_variations.map(e =>
+                                                        e.stock + ','
+                                                    )}
+                                                </td>
+                                                <td align="center" style={styles.label}>
+                                                    {element.product_variations.map(e =>
+                                                        e.price + ','
+                                                    )}
+                                                </td>
+                                                <td align="center" style={styles.label}>
+                                                    {element.product_category.value + ' => ' + element.product_sub_category.value}
+                                                </td>
+                                                <td align="center" style={styles.label}>
+                                                    {element.product_tags && element.product_tags.map(e =>
+                                                        e.value + ','
+                                                    )}
+                                                </td>
+                                                <td align="center" style={styles.label}>
+                                                    {element.product_entry_date}
+                                                </td>
+                                            </tr>
+                                            :
+                                            <>
+                                                <tr>
+                                                    <td align="center" style={styles.label}>
+                                                        <Form.Check type="checkbox" />
+                                                    </td>
                                                     <td className="td">
                                                         {element.product_name}
                                                         <div className="mr-auto"></div>
-                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}> View </Nav.Link>
-                                                        <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
+                                                        <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}>View</Nav.Link>
+                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
                                                         <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
                                                     </td>
+                                                    <td align="center" style={styles.label}>{element.product_type}</td>
                                                     <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
-                                                    <td align="center" style={styles.label}>{element.product_in_stock}</td>
-                                                    <td align="center" style={styles.label}>{element.product_price}</td>
                                                     <td align="center" style={styles.label}>
-                                                        {/* {element.product_category && element.product_category.map(e =>
-                                                            e.value + ','
-                                                        )} */}
+                                                        {element.product_in_stock}
+                                                    </td>
+                                                    <td align="center" style={styles.label}>
+                                                        {element.product_price}
+                                                    </td>
+                                                    <td align="center" style={styles.label}>
+                                                        {element.product_category.value + ' => ' + element.product_sub_category.value}
                                                     </td>
                                                     <td align="center" style={styles.label}>
                                                         {element.product_tags && element.product_tags.map(e =>
@@ -149,55 +252,15 @@ class AllProducts extends Component {
                                                         {element.product_entry_date}
                                                     </td>
                                                 </tr>
-                                                :
-                                                <>
-                                                    <tr>
-                                                        <td align="center" style={styles.label}>
-                                                            <Form.Check type="checkbox" />
-                                                        </td>
-                                                        <td className="td">
-                                                            {element.product_name}
-                                                            <div className="mr-auto"></div>
-                                                            <Nav.Link style={styles.nav_link} onClick={() => this.handleViewProduct(index)}>View</Nav.Link>
-                                                            <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
-                                                            <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
-                                                        </td>
-                                                        <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
-                                                        <td align="center" style={styles.label}>
-                                                            {element.product_variations.map(e =>
-                                                                e.item[e.item.length - 2].value + ','
-                                                            )}
-                                                        </td>
-                                                        <td align="center" style={styles.label}>
-                                                            {element.product_variations.map(e =>
-                                                                e.item[e.item.length - 3].value + ','
-                                                            )}
-                                                        </td>
-                                                        <td align="center" style={styles.label}>
-                                                            {element.product_category && element.product_category.map(e =>
-                                                                e.value + ','
-                                                            )}
-                                                        </td>
-                                                        <td align="center" style={styles.label}>
-                                                            {element.product_tags && element.product_tags.map(e =>
-                                                                e.value + ','
-                                                            )}
-                                                        </td>
-                                                        <td align="center" style={styles.label}>
-                                                            {element.product_entry_date}
-                                                        </td>
-                                                    </tr>
-                                                </>
-                                            }
-                                        </>
-                                    )}
-                                </tbody>
-                            </Table>
-                        </Row >
-                    </>
-                }
-                <style jsx>
-                    {`
+                                            </>
+                                        }
+                                    </>
+                                )}
+                            </tbody>
+                        </Table>
+                    </Row >
+                    <style jsx >
+                        {`
                         .td {
                             display: flex;
                             flex-direction: row;
@@ -205,7 +268,17 @@ class AllProducts extends Component {
                             font-size: ${GlobalStyleSheet.form_label_fontsize};
                         }
                     `}
-                </style>
+                    </style>
+                </>
+        }
+    }
+
+    render() {
+        return (
+            <>
+                <div>
+                    {this.renderSwitch(this.state.viewProduct)}
+                </div>
             </>
         );
     }
@@ -234,11 +307,11 @@ const ViewProduct = props => {
     return (
         <>
             <TitleRow icon={faPlus} title={` Vendor Dashboard / All Products / ${props.data.product_name}`} />
-            <Form.Row style={{ margin: '2%' }} >
-                <FontAwesomeIcon className="fontawesome" icon={faArrowLeft} style={styles.fontawesome} onClick={props.back} className="mr-auto" />
-                <div className="mr-auto" style={styles.title}> {props.data.product_name}</div>
-                <div style={styles.title}> Prev </div>
-                <div style={styles.title}> Next </div>
+            <Form.Row style={{ margin: ' 0% 2%', display: 'flex', alignItems: 'center' }} >
+                <Nav.Link style={{ fontSize: '14px' }} className="mr-auto" onClick={props.back}>Back</Nav.Link>
+                <div className="mr-auto" style={{ fontSize: '14px' }}> {props.data.product_name}</div>
+                <Nav.Link style={{ fontSize: '14px' }} onClick={props.edit}> Edit </Nav.Link>
+                <Nav.Link style={{ fontSize: '14px' }} onClick={props.delete}> Delete </Nav.Link>
             </Form.Row>
             <CardAccordion title={'General Info'}>
                 <Row>
@@ -352,24 +425,38 @@ const ViewProduct = props => {
                                         </Form.Group>
                                     </>
                                 )}
-                                {element.image_link && element.image_link.map((img, i) =>
+                                {/* {element.image_link && element.image_link.map((img, i) =>
                                     <Row>
                                         <Image thumbnail fluid style={{ minWidth: '100px', maxWidth: '100px' }} src={`https://drive.google.com/uc?export=view&id= ${img.value}`} alt="Product Image"
                                             onClick={() => { setImgPreview(true), setIndex(i), setImgData(e.img_link) }} />
                                     </Row>
-                                )}
+                                )} */}
                             </Row>
                             <hr />
                         </>
                     )}
                 </CardAccordion>
                 :
-                <CardAccordion title={'Product Images'}>
-                    {props.data.product_image_link && props.data.product_image_link.map((element, index) =>
-                        <Image thumbnail fluid style={{ minWidth: '200px', maxWidth: '200px' }} src={`https://drive.google.com/uc?export=view&id= ${img.value}`}
-                            alt="Product Image" onClick={() => { setImgPreview(true), setIndex(index), setImgData(props.data.product_image_link) }} />
-                    )}
-                </CardAccordion>
+                <>
+                    <CardAccordion title={'Custom Fields'}>
+                        {props.data.custom_fields && props.data.custom_fields.map(element =>
+                            <Row>
+                                <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
+                                    <Form.Label style={styles.label}>{element.name}</Form.Label>
+                                    <InputGroup>
+                                        <Form.Control type="text" size="sm" value={element.value} disabled={true} />
+                                    </InputGroup>
+                                </Form.Group>
+                            </Row>
+                        )}
+                    </CardAccordion>
+                    <CardAccordion title={'Product Images'}>
+                        {props.data.product_image_link && props.data.product_image_link.map((element, index) =>
+                            <Image thumbnail fluid style={{ minWidth: '200px', maxWidth: '200px' }} src={`https://drive.google.com/uc?export=view&id=${element.value}`}
+                                alt="Product Image" onClick={() => { setImgPreview(true), setIndex(index), setImgData(props.data.product_image_link) }} />
+                        )}
+                    </CardAccordion>
+                </>
             }
             <CardAccordion title={'Shipping Details'}>
                 <Row>
@@ -414,57 +501,58 @@ const ViewProduct = props => {
             </CardAccordion>
             <CardAccordion title={'Product Categories'}>
                 <Form.Group>
-                    <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Product Categories</Form.Label>
+                    <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Product Categories:</Form.Label>
                     <InputGroup>
-                        {/* {props.data.product_category && props.data.product_category.map(element =>
-                            <Form.Label style={styles.label}>{element.value}</Form.Label>
-                        )} */}
+                        <Form.Label style={styles.label}>
+                            {props.data.product_category.value + ' => ' + props.data.product_sub_category.value}
+                        </Form.Label>
                     </InputGroup>
-                </Form.Group>
-                <hr />product_weight
+                </Form.Group >
+                <hr />
                 <Form.Group>
-                    <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Product Tags</Form.Label>
+                    <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Product Tags:</Form.Label>
                     <InputGroup>
                         {props.data.product_tags && props.data.product_tags.map(element =>
                             <Form.Label style={styles.label}>{element.value}</Form.Label>
                         )}
                     </InputGroup>
-                </Form.Group>
+                </ Form.Group >
                 <hr />
                 <Form.Group>
-                    <Form.Label style={{ fontSie: '14px', fontWeight: 'bold' }}>Dangerous Goods</Form.Label>
+                    <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Dangerous Goods:</Form.Label>
                     <InputGroup>
                         {props.data.dangerous_goods && props.data.dangerous_goods.map(element =>
                             <Form.Label style={styles.label}>{element.value}</Form.Label>
                         )}
                     </InputGroup>
                 </Form.Group>
-            </CardAccordion>
+            </CardAccordion >
 
             {/* Image Preview */}
-            {imgPreview ?
-                <div className="modal-overlay">
-                    <div className="modal-body">
-                        <div className="close-modal">
-                            <div className="mr-auto"></div>
-                            <div className="mr-auto"></div>
-                            <FontAwesomeIcon className="mr-auto" icon={faChevronLeft} style={styles.img_preview_fontawesome}
-                                onClick={() => prevImage} />
-                            <FontAwesomeIcon className="mr-auto" icon={faChevronRight} style={styles.img_preview_fontawesome}
-                                onClick={nextImage} />
-                            <div className="mr-auto"></div>
-                            <FontAwesomeIcon icon={faTimes} style={styles.img_preview_fontawesome}
-                                onClick={() => setImgPreview(false)} />
-                        </div>
-                        <div className="image-container">
-                            <img
-                                src={imgData[index].value}
-                                style={{ maxWidth: '100%', maxHeight: '90vh', margin: 'auto' }}
-                            />
+            {
+                imgPreview ?
+                    <div className="modal-overlay">
+                        <div className="modal-body">
+                            <div className="close-modal">
+                                <div className="mr-auto"></div>
+                                <div className="mr-auto"></div>
+                                <FontAwesomeIcon className="mr-auto" icon={faChevronLeft} style={styles.img_preview_fontawesome}
+                                    onClick={() => prevImage} />
+                                <FontAwesomeIcon className="mr-auto" icon={faChevronRight} style={styles.img_preview_fontawesome}
+                                    onClick={nextImage} />
+                                <div className="mr-auto"></div>
+                                <FontAwesomeIcon icon={faTimes} style={styles.img_preview_fontawesome}
+                                    onClick={() => setImgPreview(false)} />
+                            </div>
+                            <div className="image-container">
+                                <img
+                                    src={imgData[index].value}
+                                    style={{ maxWidth: '100%', maxHeight: '90vh', margin: 'auto' }}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-                : null
+                    : null
             }
             <style jsx>
                 {`
