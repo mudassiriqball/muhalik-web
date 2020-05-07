@@ -683,7 +683,7 @@ class AddNew extends Component {
                                                 name="not_specified"
                                                 label="Not Specified"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                checked={this.state.dangerousGoodsArray.forEach(element => {
                                                     if (element.value == 'Not-Specified') {
                                                         return true
                                                     }
