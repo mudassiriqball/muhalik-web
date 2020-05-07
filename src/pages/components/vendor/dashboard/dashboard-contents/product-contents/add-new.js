@@ -72,18 +72,18 @@ const schema = yup.object({
         .max(1000000, 'Enter Between 1-1000000'),
     product_in_stock: yup.number()
         .integer("Enter Only Numbers")
-        .min(1, "Must grater than 1 digit")
+        .positive('Enter Between 1-1000000')
         .max(1000000, "Can't be longer than 1000000"),
     product_brand_name: yup.string()
         .min(2, "Must have at least 2 characters")
         .max(40, "Can't be longer than 40 characters"),
     product_image_link: yup.string(),
     product_warranty: yup.number().integer("Enter Only Numbers")
-        .min(0, 'Enter Between 0-200')
-        .max(10000, 'Enter Between 0-10000'),
+        .positive('Enter Between 1-1000')
+        .max(1000, 'Enter Between 0-1000'),
     warranty_type: yup.string(),
     product_discount: yup.number().integer("Enter Only Numbers")
-        .min(0, 'Enter Between 0-100')
+        .positive('Enter Between 0-100')
         .max(100, 'Enter Between 0-100'),
     // => Attributes (Variable Product)
     purchase_note: yup.string(),
@@ -92,26 +92,26 @@ const schema = yup.object({
     // => Shipping
     product_weight: yup.number()
         .integer("Enter Only Numbers")
-        .min(0, "Must grater than 0 digit")
+        .positive('Enter Between 0-10000')
         .max(10000, "Can't be longer than 10000"),
     dimension_length: yup.number()
         .integer("Enter Only Numbers")
-        .min(0, "Must grater than 0 digit")
+        .positive('Enter Between 0-10000')
         .max(10000, "Can't be longer than 10000"),
     dimension_width: yup.number()
         .integer("Enter Only Numbers")
-        .min(0, "Must grater than 0 digit")
+        .positive('Enter Between 0-10000')
         .max(10000, "Can't be longer than 10000"),
     dimension_height: yup.number()
         .integer("Enter Only Numbers")
-        .min(0, "Must grater than 0 digit")
+        .positive('Enter Between 0-10000')
         .max(10000, "Can't be longer than 10000"),
     shipping_charges: yup.number("Enter Only Numbers")
-        .min(0, 'Enter Between 0-100')
+        .positive('Enter Between 0-10000')
         .max(10000, 'Enter Between 0-10000'),
     handling_fee: yup.number()
         .integer("Enter Only Numbers")
-        .min(0, "Must grater than 0 digit")
+        .positive('Enter Between 0-10000')
         .max(10000, "Can't be longer than 1000"),
     // => Advanve
     purchase_note: yup.string(),
@@ -150,9 +150,6 @@ class AddNew extends Component {
             warrantyType: this.props.warrantyType,
             inputValue: '',
             simple_product_image_link: this.props.simple_product_image_link,
-
-            image_linkError: 'no_error',
-            image_linkErrorDiv: 'BorderDiv',
 
             variationsArray: this.props.variationsArray,
             isVariationsSaved: false,
@@ -384,20 +381,24 @@ class AddNew extends Component {
                             handling_fee: this.props.handling_fee,
                         }
                         :
-                        { product_type: 'simple-product' }
+                        {
+                            product_type: 'simple-product',
+                            product_price: '',
+                            product_in_stock: ''
+                        }
                 }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    if (this.state.productCategories == '' || this.state.productSubCategories == '' || (this.state.files == [] && values.product_type == 'simple-product')) {
+                    if (this.state.productCategories == '' || this.state.productSubCategories == '') {
                         if (this.state.productCategories == '') {
                             this.setState({ categoryErrorDiv: 'RedBorderDiv' });
                         }
                         if (this.state.productSubCategories == '') {
                             this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
                         }
-                        if (this.state.files == [] && values.product_type == 'simple-product') {
-                            this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true, image_linkError: "error", image_linkErrorDiv: 'RedBorderDiv' });
-                        }
+
                         setSubmitting(false);
+                    } else if (values.product_type == 'simple-prouct' && values.product_price == '' || values.product_in_stock == '' || this.state.files == '') {
+                        this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
                     } else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
                         this.setState({ showVariationsErrorAlert: true });
                     } else {
@@ -451,9 +452,6 @@ class AddNew extends Component {
                                     inputValue: '',
                                     files: [],
 
-                                    image_linkError: 'no_error',
-                                    image_linkErrorDiv: 'BorderDiv',
-
                                     variationsArray: [],
                                     isVariationsSaved: false,
 
@@ -504,7 +502,7 @@ class AddNew extends Component {
                                     onHide={(e) => this.setState({ showSimpleProductPriceImgLinkErrorrAlert: false })}
                                     show={this.state.showSimpleProductPriceImgLinkErrorrAlert}
                                     header={'Error'}
-                                    message={'Enter Price/Image Link in General Tab First'}
+                                    message={'Enter Price/Stock/Image(s) in General Tab First'}
                                     iconName={faExclamationTriangle}
                                     color={"#ff3333"}
                                 />

@@ -144,10 +144,11 @@ const ProductData = props => {
                                                             </InputGroup>
                                                         </Form.Group>
                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-                                                            <Form.Label style={styles.label}>Product in Stock</Form.Label>
+                                                            <Form.Label style={styles.label}>Product in Stock<span> * </span></Form.Label>
                                                             <Form.Control type="number"
                                                                 size="sm"
                                                                 name="product_in_stock"
+                                                                placeholder="Enter Product In Stock"
                                                                 value={props.product_in_stock_values}
                                                                 onChange={props.onChange}
                                                                 isInvalid={props.product_in_stock_errors}

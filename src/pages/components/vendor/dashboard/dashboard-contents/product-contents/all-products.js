@@ -1,40 +1,33 @@
 import React, { Component } from 'react';
-import { Row, Table, Button, Nav, Col, Image, Card, Form, InputGroup, Accordion } from 'react-bootstrap'
+import { Row, Modal, Table, Button, Nav, Col, Image, Card, Form, InputGroup, Accordion } from 'react-bootstrap'
 import axios from 'axios'
 import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
 // import ViewProduct from './all-products-contents/view-product'
 import Link from 'next/link'
 import Router from 'next/router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faArrowLeft, faTimes, faChevronLeft, faChevronRight, faSlidersH } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faArrowLeft, faTimes, faChevronLeft, faChevronRight, faSlidersH, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons';
 import { faArrowAltCircleLeft } from '@fortawesome/free-regular-svg-icons';
 import CardAccordion from '../../../../card_accordion';
 import MuhalikConfig from '../../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../../styleSheet'
 import TitleRow from '../../../../title-row';
 import AddNew from './add-new'
-
+import AlertModal from '../../../../alert-modal'
 
 class AllProducts extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            showConfirmDeleteModal: false,
+            showToast: false,
             productsArray: [],
-            viewProduct: false,
+            showProduct: false,
             data: {},
         }
     }
-    // Getting Product Categories from DB
-    // async componentDidMount() {
-    //     const url = MuhalikConfig.PATH + '/api/products/';
-    //     try {
-    //         const response = await axios.get(url);
-    //         console.log('data:', response.data.data.docs)
-    //         this.setState({ productsArray: response.data.data.docs })
-    //     } catch (error) {
-    //         console.log('Data Fetching Eror:', error);
-    //     }    
-    // }
+
     async componentDidMount() {
         const url = MuhalikConfig.PATH + '/api/products/'
         const currentComponent = this
@@ -72,34 +65,36 @@ class AllProducts extends Component {
             element.product_variations = []
         }
 
-        this.setState({ data: element, viewProduct: 'edit' })
+        this.setState({ data: element, showProduct: 'edit' })
 
     }
 
-    async handleDeleteProduct(index) {
-        // const copyArray = Object.assign([], this.state.productsArray)
-        // const array = Object.assign([], this.state.productsArray)
-        // let _id = ''
-        // if (index == -1) {
-        //     _id = this.state.data._id;
-        // } else {
-        //     _id = copyArray[index]._id;
-        // }
-        // const url = MuhalikConfig.PATH + `/api/products/${_id}`;
-        // copyArray.forEach((element, i) => {
-        //     if (element._id == _id) {
-        //         array.splice(i, 1)
-        //     }
-        // })
-        // this.setState({ productsArray: array })
-        // await axios.delete(url, {
-        //     headers: { 'authorization': await getUncodededTokenFromStorage() }
-        // }).then(function (response) {
-        //     return true;
-        // }).catch(function (error) {
-        //     alert('Error: ', error.response.data.message);
-        //     return false;
-        // });
+    async handleDeleteProduct() {
+        const _id = this.state.data._id;
+        console.log('fuck fuck', _id)
+        const url = MuhalikConfig.PATH + `/api/products/${_id}`;
+        this.setState({ showConfirmDeleteModal: false })
+        const currentComponent = this
+
+        await axios.delete(url, {
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
+        }).then(function (response) {
+            const copyArray = Object.assign([], currentComponent.state.productsArray)
+            let array = copyArray
+            copyArray.forEach((element, i) => {
+                if (element._id == _id) {
+                    array.splice(i, 1)
+                    return
+                }
+            })
+            currentComponent.setState({ productsArray: array, showToast: true })
+        }).catch(function (error) {
+            try {
+                alert('Error Message: ', error.response.data.message);
+            } catch (err) {
+                console.log('Error: ', error);
+            }
+        });
     }
 
     isVariableProduct(element) {
@@ -115,9 +110,9 @@ class AllProducts extends Component {
             case 'view':
                 return <ViewProduct
                     data={this.state.data}
-                    back={() => this.setState({ viewProduct: false, data: {} })}
+                    back={() => this.setState({ showProduct: false, data: {} })}
                     isVariableProduct={this.state.data.product_type != "simple-product"}
-                    delete={() => this.handleDeleteProduct(-1)}
+                    delete={() => this.setState({ showConfirmDeleteModal: true })}
                     edit={() => this.handleEditProduct(-1)}
                 />
                 break;
@@ -128,9 +123,9 @@ class AllProducts extends Component {
                     _id={this.state.data._id}
                     isVariableProduct={this.state.data.product_type != 'simple-product'}
 
-                    back={() => this.setState({ viewProduct: false, data: {} })}
-                    view={() => this.setState({ viewProduct: 'view' })}
-                    delete={() => this.handleDeleteProduct(-1)}
+                    back={() => this.setState({ showProduct: false, data: {} })}
+                    view={() => this.setState({ showProduct: 'view' })}
+                    delete={() => this.setState({ showConfirmDeleteModal: true, showProduct: false })}
 
                     productCategories={this.state.data.product_category}
                     productSubCategories={this.state.data.product_sub_category}
@@ -169,16 +164,15 @@ class AllProducts extends Component {
                         <Table responsive bordered hover size="sm">
                             <thead>
                                 <tr>
-                                    <th style={{ textAlign: 'center' }}>
-                                        <Form.Check type="checkbox" />
-                                    </th>
+                                    <th style={{ textAlign: 'center' }}>#</th>
                                     <th style={{ textAlign: 'center' }}>Name</th>
+                                    <th style={{ textAlign: 'center' }}>Product ID</th>
                                     <th style={{ textAlign: 'center' }}>Product Type</th>
                                     <th style={{ textAlign: 'center' }}>SKU</th>
                                     <th style={{ textAlign: 'center' }}>Stock</th>
                                     <th style={{ textAlign: 'center' }}>Price</th>
                                     <th style={{ textAlign: 'center' }}>Categories</th>
-                                    <th style={{ textAlign: 'center' }}>Tags</th>
+                                    {/* <th style={{ textAlign: 'center' }}>Tags</th> */}
                                     <th style={{ textAlign: 'center' }}>Date</th>
                                 </tr>
                             </thead>
@@ -187,68 +181,69 @@ class AllProducts extends Component {
                                     <>
                                         {this.isVariableProduct(element) ?
                                             <tr key={index}>
-                                                <td align="center" style={styles.label}><Form.Check type="checkbox" /></td>
+                                                <td align="center" >{index + 1}</td>
                                                 <td className="td">
                                                     {element.product_name}
                                                     <div className="mr-auto"></div>
-                                                    <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}> View </Nav.Link>
+                                                    <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, showProduct: 'view' })}> View </Nav.Link>
                                                     <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
-                                                    <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
+                                                    <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, showConfirmDeleteModal: true, showProduct: false })}>Delete</Nav.Link>
                                                 </td>
-                                                <td align="center" style={styles.label}>{element.product_type}</td>
-                                                <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
-                                                <td align="center" style={styles.label}>
+                                                <td align="center" >{element._id}</td>
+                                                <td align="center" >{element.product_type}</td>
+                                                <td align="center" >{element.sku ? element.sku : '-'}</td>
+                                                <td align="center" >
                                                     {element.product_variations.map(e =>
                                                         e.stock + ','
                                                     )}
                                                 </td>
-                                                <td align="center" style={styles.label}>
+                                                <td align="center" >
                                                     {element.product_variations.map(e =>
                                                         e.price + ','
                                                     )}
                                                 </td>
-                                                <td align="center" style={styles.label}>
+                                                <td align="center" >
                                                     {element.product_category.value + ' => ' + element.product_sub_category.value}
                                                 </td>
-                                                <td align="center" style={styles.label}>
+                                                {/* <td align="center" >
                                                     {element.product_tags && element.product_tags.map(e =>
                                                         e.value + ','
                                                     )}
-                                                </td>
-                                                <td align="center" style={styles.label}>
+                                                </td> */}
+                                                <td align="center" >
                                                     {element.product_entry_date}
                                                 </td>
                                             </tr>
                                             :
                                             <>
                                                 <tr>
-                                                    <td align="center" style={styles.label}>
-                                                        <Form.Check type="checkbox" />
-                                                    </td>
+                                                    <td align="center" >{index + 1}</td>
                                                     <td className="td">
                                                         {element.product_name}
                                                         <div className="mr-auto"></div>
-                                                        <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}>View</Nav.Link>
+                                                        <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, showProduct: 'view' })}>View</Nav.Link>
                                                         <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
-                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
+                                                        <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, showConfirmDeleteModal: true, showProduct: false })}>Delete</Nav.Link>
+                                                        {/* <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link> */}
                                                     </td>
-                                                    <td align="center" style={styles.label}>{element.product_type}</td>
-                                                    <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
-                                                    <td align="center" style={styles.label}>
+                                                    <td align="center" >{element._id}</td>
+                                                    <td align="center" >{element.product_type}</td>
+                                                    <td align="center" >{element.sku ? element.sku : '-'}</td>
+                                                    <td align="center" >
                                                         {element.product_in_stock}
                                                     </td>
-                                                    <td align="center" style={styles.label}>
+                                                    <td align="center" >
                                                         {element.product_price}
                                                     </td>
-                                                    <td align="center" style={styles.label}>
+                                                    <td align="center" >
                                                         {element.product_category.value + ' => ' + element.product_sub_category.value}
                                                     </td>
-                                                    <td align="center" style={styles.label}>
+                                                    {/* <td align="center" >
                                                         {element.product_tags && element.product_tags.map(e =>
                                                             e.value + ','
                                                         )}
-                                                    </td>
-                                                    <td align="center" style={styles.label}>
+                                                    </td> */}
+                                                    <td align="center" >
                                                         {element.product_entry_date}
                                                     </td>
                                                 </tr>
@@ -267,6 +262,10 @@ class AllProducts extends Component {
                             align-items: center;
                             font-size: ${GlobalStyleSheet.form_label_fontsize};
                         }
+                        td {
+                            vertical-align: middle;
+                            font-size: ${GlobalStyleSheet.form_label_fontsize};
+                        }
                     `}
                     </style>
                 </>
@@ -276,8 +275,23 @@ class AllProducts extends Component {
     render() {
         return (
             <>
+                <ConfirmDeleteModal
+                    onHide={() => this.setState({ showConfirmDeleteModal: false })}
+                    show={this.state.showConfirmDeleteModal}
+                    _id={this.state.data._id}
+                    product_name={this.state.data.product_name}
+                    confirmDelete={this.handleDeleteProduct.bind(this)}
+                />
+                <AlertModal
+                    onHide={(e) => this.setState({ showToast: false })}
+                    show={this.state.showToast}
+                    header={'Success'}
+                    message={'Product Deleted Successfully.'}
+                    iconName={faThumbsUp}
+                    color={"#00b300"}
+                />
                 <div>
-                    {this.renderSwitch(this.state.viewProduct)}
+                    {this.renderSwitch(this.state.showProduct)}
                 </div>
             </>
         );
@@ -654,6 +668,45 @@ const styles = {
 
 export default AllProducts;
 
+
+function ConfirmDeleteModal(props) {
+    return (
+        <Modal
+            {...props}
+            size="md"
+            aria-labelledby="alert-modal"
+            centered
+        >
+            <div style={{
+                border: '1px solid #ff3333', borderRadius: '5px'
+            }}>
+                <Modal.Header closeButton style={{ color: '#ff3333', borderBottom: '1px solid #ff3333' }}>
+                    <FontAwesomeIcon icon={faTrash} style={{
+                        color: '#ff3333',
+                        marginRight: '10px',
+                        width: '35px',
+                        height: '35px',
+                        maxHeight: '35px',
+                        maxWidth: '35px',
+                    }} ></FontAwesomeIcon>
+                    <Modal.Title id="alert-modal">
+                        {'Delete Product ?'}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body >
+                    <Form.Label style={{ fontSize: '14px', padding: '0%', margin: '0%' }}>
+                        {`Product Name: ${props.product_name}`}
+                        {`Product ID: ${props._id}`}
+                    </Form.Label>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button size="sm" variant='outline-danger' className='mr-auto' onClick={props.confirmDelete}>Confirm</Button>
+                    <Button size="sm" variant='outline-primary' onClick={props.onHide}>Cancel</Button>
+                </Modal.Footer>
+            </div>
+        </Modal>
+    );
+}
 
 // import React, { Component } from 'react';
 
