@@ -683,7 +683,7 @@ class AddNew extends Component {
                                                 name="not_specified"
                                                 label="Not Specified"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray.forEach(element => {
+                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
                                                     if (element.value == 'Not-Specified') {
                                                         return true
                                                     }
@@ -695,7 +695,7 @@ class AddNew extends Component {
                                                 name="ceramic"
                                                 label="Ceramic"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
                                                     if (element.value == 'Ceramic') {
                                                         return true
                                                     }
@@ -707,7 +707,7 @@ class AddNew extends Component {
                                                 name="glass"
                                                 label="Glass"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
                                                     if (element.value == 'Glass') {
                                                         return true
                                                     }
@@ -719,7 +719,7 @@ class AddNew extends Component {
                                                 name="metal"
                                                 label="Metal"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
                                                     if (element.value == 'Metal') {
                                                         return true
                                                     }
@@ -731,7 +731,7 @@ class AddNew extends Component {
                                                 name="plastic"
                                                 label="Plastic"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
                                                     if (element.value == 'Plastic') {
                                                         return true
                                                     }
