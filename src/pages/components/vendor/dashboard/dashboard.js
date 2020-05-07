@@ -16,10 +16,11 @@ import Discounts from './dashboard-contents/discounts';
 import Reports from './dashboard-contents/reports';
 import BulkUpload from './dashboard-contents/bulk-upload';
 import Orders from './dashboard-contents/orders';
-import axios from 'axios';
-import { getUncodededTokenFromStorage } from '../../../../sdk/core/authentication-service'
-import MuhalikConfig from '../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../styleSheet';
+
+// import axios from 'axios';
+// import { getUncodededTokenFromStorage } from '../../../../sdk/core/authentication-service'
+// import MuhalikConfig from '../../../../sdk/muhalik.config'
 
 const Dashboard = props => {
     let wprapper_Casses = "wrapper";
@@ -27,20 +28,20 @@ const Dashboard = props => {
         wprapper_Casses = "wrapper open";
     }
 
-    async function upload(data) {
-        console.log('da111222333ta: ', data)
-        const url = MuhalikConfig.PATH + '/api/products/add';
-        await axios.post(url, {
-            data
-        }, {
-            headers: { 'authorization': await getUncodededTokenFromStorage() }
-        }).then(function (response) {
-            return true;
-        }).catch(function (error) {
-            console.log('aaaaaaa error:', error)
-            return false;
-        });
-    }
+    // async function upload(data) {
+    //     console.log('da111222333ta: ', data)
+    //     const url = MuhalikConfig.PATH + '/api/products/add';
+    //     await axios.post(url, {
+    //         data
+    //     }, {
+    //         headers: { 'authorization': await getUncodededTokenFromStorage() }
+    //     }).then(function (response) {
+    //         return true;
+    //     }).catch(function (error) {
+    //         console.log('aaaaaaa error:', error)
+    //         return false;
+    //     });
+    // }
 
     const [show_product, setShow_product] = React.useState(false);
 
@@ -218,15 +219,14 @@ const Dashboard = props => {
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddNew">
                                     <AddNew
-                                        upload={upload}
                                         title={'Vendor Dashboard / Add New'}
+                                        _id={''}
                                         isUpdateProduct={false}
                                         isVariableProduct={false}
+
                                         productCategories={''}
                                         productSubCategories={''}
-                                        productSubSubCategories={''}
-                                        subCategoryDisabled={true}
-                                        subSubCategoryDisabled={true}
+
                                         productTags={[]}
                                         warrantyType={''}
                                         simple_product_image_link={[]}

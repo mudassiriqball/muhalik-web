@@ -80,7 +80,7 @@ const Product = new Schema({
     type: String,
   },
   sku: {
-    type: Number,
+    type: String,
   },
   shipping_charges: {
     type: Number,

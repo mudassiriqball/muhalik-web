@@ -49,7 +49,7 @@ const ProductData = props => {
                     // disabled={props.isUpdateProduct}
                     >
                         <option value='simple-product'> Simple Product </option>
-                        <option value='variable-prouct' selected> Variable Product </option>
+                        <option value='variable-prouct'> Variable Product </option>
                     </Form.Control>
                     <div className='mr-auto'></div>
                     <Accordion.Toggle eventKey="0" style={{ background: 'none' }}>
@@ -59,10 +59,9 @@ const ProductData = props => {
                 <Accordion.Collapse eventKey="0">
                     <Card.Body style={{ padding: '0.5%', margin: '0px' }}>
                         <Tab.Container id="left-tabs-example" defaultActiveKey="Inventory">
-                            <Row style={{ margin: '0px' }} noGutters>
+                            <Row style={{ margin: '0px', minHeight: '300px' }} noGutters>
                                 <Col lg="auto" md="auto" sm="auto" xs="auto" style={{ background: `${GlobalStyleSheet.admin_primry_color}` }}>
                                     <Nav variant="pills" className="flex-column" style={{ margin: '0px' }}>
-
                                         <Nav.Item>
                                             <div className="nav_link">
                                                 <Nav.Link eventKey="Inventory" style={styles.nav_link}>
@@ -72,16 +71,7 @@ const ProductData = props => {
                                             </div>
                                         </Nav.Item>
 
-                                        {!props.isVariableProduct ?
-                                            <Nav.Item>
-                                                <div className="nav_link">
-                                                    <Nav.Link eventKey="General" style={styles.nav_link}>
-                                                        <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.product_fontawesome} />
-                                                        <div className="linkName"> General </div>
-                                                    </Nav.Link>
-                                                </div>
-                                            </Nav.Item>
-                                            :
+                                        {props.isVariableProduct ?
                                             <>
                                                 <Nav.Item>
                                                     <div className="nav_link">
@@ -100,6 +90,15 @@ const ProductData = props => {
                                                     </div>
                                                 </Nav.Item>
                                             </>
+                                            :
+                                            <Nav.Item>
+                                                <div className="nav_link">
+                                                    <Nav.Link eventKey="General" style={styles.nav_link}>
+                                                        <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.product_fontawesome} />
+                                                        <div className="linkName"> General </div>
+                                                    </Nav.Link>
+                                                </div>
+                                            </Nav.Item>
                                         }
 
                                         <Nav.Item>
@@ -176,45 +175,25 @@ const ProductData = props => {
                                                         </Form.Group>
                                                     </Form.Row>
                                                     <Form.Row>
-                                                        <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
-                                                            <Form.Label style={styles.label}>Image Link <span> * </span></Form.Label>
-                                                            {/* <InputGroup style={{ width: '100%' }}> */}
-                                                            {/* <CreatableSelect
-                                                                components={coomponents}
-                                                                styles={GlobalStyleSheet.react_select_styles}
-                                                                isClearable
-                                                                isMulti
-                                                                menuIsOpen={false}
-                                                                placeholder="Paste link and press enter"
-                                                                inputValue={imgLinkValue}
-                                                                value={props.imageLink}
-                                                                onChange={(value) => props.simpleProductImgLinkChange(value)}
-                                                                onInputChange={(e) => {
-                                                                    if (e.length > 50) {
-                                                                        setImgLinkError(`Can't be longer than 50 characters`)
-                                                                    } else {
-                                                                        setImgLinkValue(e)
-                                                                        setImgLinkError('')
-                                                                    }
-                                                                }}
-                                                                onKeyDown={(e) => {
-                                                                    if (props.simpleProductImgLinkKeyDownHandler(e, imgLinkValue)) {
-                                                                        setImgLinkValue('')
-                                                                    }
-                                                                }}
-
-                                                            /> */}
-                                                            <CreatableSelect
-                                                                isMulti
-                                                                styles={GlobalStyleSheet.react_select_styles}
-                                                                onChange={(value) => props.simpleProductImgLinkChange(value)}
-                                                                placeholder="Paste and press enter"
+                                                        <Form.Group as={Col} lg={12} md={12} sm={12} xs={12} style={{ marginBottom: '5px' }}>
+                                                            <Form.Label style={styles.label}>Product Images <span> * </span></Form.Label>
+                                                            <input type="file" style={{ margin: '0% 2%', fontSize: '13px' }}
+                                                                multiple onChange={props.fileSelectedHandler}
+                                                                name="image" accept="image/*"
                                                             />
                                                             <Form.Label style={styles.label}>
                                                                 <span>{imgLinkError}</span>
                                                             </Form.Label>
                                                             {/* </InputGroup> */}
                                                         </Form.Group>
+                                                    </Form.Row>
+                                                    <Form.Row>
+                                                        {(props.imagePreviewArray || []).map((url, index) => (
+                                                            <div className="show-image">
+                                                                <img style={{ height: '100px', width: '100px', margin: '1%' }} src={url} alt="..." />
+                                                                <input className="deleteImage" type="button" onClick={() => props.deleteImage(index)} value="Delete" />
+                                                            </div>
+                                                        ))}
                                                     </Form.Row>
                                                     <Form.Row>
                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
@@ -471,6 +450,27 @@ const ProductData = props => {
                             display: none
                         }
                     }
+                    div.show-image {
+                        position: relative;
+                        float:left;
+                        margin:5px;
+                    }
+                    div.show-image:hover img{
+                        opacity:0.5;
+                    }
+                    div.show-image:hover input {
+                        display: block;
+                    }
+                    div.show-image input {
+                        position:absolute;
+                        display:none;
+                    }
+                    div.show-image input.deleteImage {
+                        top:0;
+                        left:0;
+                        color: red;
+                        font-size: 13px
+                    }
                 `}
             </style>
         </Accordion >
@@ -481,7 +481,6 @@ const ProductData = props => {
 function ProductAttributes(props) {
     const [attributeName, setAttributeName] = React.useState('')
     const [attributeValue, setAttributeValue] = React.useState('')
-    // const [inputValue, setInputValue] = React.useState('')
 
     const [error, setError] = React.useState('')
     const [modalShow, setModalShow] = React.useState(false)
@@ -497,8 +496,9 @@ function ProductAttributes(props) {
                 attributeName: attributeName.value,
                 attributeValue: attributeValue,
             })
+            console.log('aaaaaaa:', copyArray)
             setAttributeName('')
-            setAttributeValue('')
+            setAttributeValue()
             setAttributesArray(copyArray)
         } else {
             setError('Enter Field Name and Value')
@@ -521,7 +521,6 @@ function ProductAttributes(props) {
                 })
                 allArrays.push(item)
             })
-            console.log('allArrays:', allArrays)
 
             const array = allPossibleCases(allArrays)
             console.log('array:', array)
@@ -534,7 +533,7 @@ function ProductAttributes(props) {
                     item.push({ name: attributesArray[i].attributeName, value: e })
                 })
                 data.push({
-                    item: item, price: '', stock: '', image_link: [], image_link_input: '',
+                    item: item, price: '', stock: '', image_link: [], imagePreviewArray: '',
                     price_error: '', stock_error: '', image_link_error: '', custom_fields: []
                 })
             })
@@ -561,17 +560,6 @@ function ProductAttributes(props) {
         }
     }
 
-    // function handleAttributeValueKeyDown(event) {
-    //     if (inputValue == '') return
-    //     switch (event.key) {
-    //         case 'Enter':
-    //         case 'Tab':
-    //             setAttributeValue([...attributeValue, createOption(inputValue)])
-    //             setInputValue('')
-    //             event.preventDefault()
-    //     }
-    // }
-
     return (
         <>
             <Form.Row >
@@ -594,30 +582,11 @@ function ProductAttributes(props) {
                 </Form.Group>
                 <Form.Group as={Col} lg={7} md={7} sm={12} xs={12} style={{ marginBottom: '0%', paddingBottom: '0%' }}>
                     <Form.Label style={styles.label}>Field Value </Form.Label>
-                    {/* <CreatableSelect
-                        components={coomponents}
-                        styles={GlobalStyleSheet.react_select_styles}
-                        isClearable
-                        isMulti
-                        menuIsOpen={false}
-                        inputValue={inputValue}
-                        value={attributeValue}
-                        onChange={(value) => setAttributeValue(value)}
-                        onInputChange={(value) => {
-                            if (value.length < 20) {
-                                setInputValue(value)
-                            } else {
-                                setError(`Value should be 1-20 characters`)
-                            }
-                        }}
-                        onKeyDown={(event) => handleAttributeValueKeyDown(event)}
-                        placeholder="Enter value and press enter"
-                    /> */}
                     <CreatableSelect
                         isMulti
                         styles={GlobalStyleSheet.react_select_styles}
                         onChange={(value) => setAttributeValue(value)}
-                        placeholder="Paste and press enter"
+                        placeholder="Press enter to add more"
                     />
                 </Form.Group>
             </Form.Row>
@@ -654,12 +623,11 @@ function ProductAttributes(props) {
                                 size="sm"
                                 placeholder="Enter Value"
                                 name="sku"
-                                value={element.attributeValue.map(e =>
-                                    e.value + ' | '
+                                value={element.attributeValue.map(e => (e.value)
                                 )}
                                 disabled
                             />
-                            <Button variant="outline-primary" size="sm" style={{ marginLeft: '1%' }}
+                            <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
                                 onClick={() => handleDeleteProductAttributeClick(index)}> delete</Button>
                         </InputGroup>
                     </Form.Group>
@@ -682,8 +650,6 @@ function ProductVariations(props) {
     const [sameStock, setSameStock] = React.useState('')
     const [sameStockError, setSameStockError] = React.useState('')
 
-    const [sameImgLink, setSameImgLink] = React.useState('')
-    const [sameImgLinkError, setSameImgLinkError] = React.useState('')
     const [successMessage, setSuccessMessage] = React.useState('')
 
     // Same Price For All Variations
@@ -712,20 +678,6 @@ function ProductVariations(props) {
             setSameStockError('Enter Value')
         }
     }
-    // Same Image link For All Variations
-    function handleSameImgLinkApplyBtnClick() {
-        if (sameImgLink != '') {
-            setSameImgLinkError('')
-            const copyArray = Object.assign([], props.variationsArray)
-            copyArray.forEach(element => {
-                element.image_link = ([...element.image_link, createOption(sameImgLink)])
-            })
-            console.log('image link:', copyArray)
-            props.setVariationsArray(copyArray)
-        } else {
-            setSameImgLinkError('Enter Value')
-        }
-    }
 
     function handlenPriceChange(e, index) {
         const copyArray = Object.assign([], props.variationsArray)
@@ -747,45 +699,6 @@ function ProductVariations(props) {
             props.setVariationsArray(copyArray)
         }
     }
-
-    // function handleImgLinkKeyDown(event, index) {
-    //     const copyArray = Object.assign([], props.variationsArray)
-    //     let object = copyArray[index]
-    //     if (object.image_link_input == '') return
-    //     switch (event.key) {
-    //         case 'Enter':
-    //         case 'Tab':
-    //             object.image_link = ([...object.image_link, createOption(object.image_link_input)])
-    //             object.image_link_input = ''
-    //             object.image_link_error = ``
-    //             console.log('image link:', copyArray)
-    //             event.preventDefault()
-    //             return true
-    //     }
-    //     copyArray[index] = object
-    //     props.setVariationsArray(copyArray)
-    // }
-    function handleImgLinkChange(value, index) {
-        console.log('aaaaaaaaa:', value)
-        console.log('aaaaaaaaa:', index)
-        const copyArray = Object.assign([], props.variationsArray)
-        let object = copyArray[index]
-        object.image_link = value
-        copyArray[index] = object
-        props.setVariationsArray(copyArray)
-    }
-    // function handleImgLinkInputChange(value, index) {
-    //     const copyArray = Object.assign([], props.variationsArray)
-    //     let object = copyArray[index]
-    //     if (value.length > 50) {
-    //         object.image_link_error = `Can't be longer than 50 characters`
-    //     } else {
-    //         object.image_link_input = value
-    //     }
-    //     copyArray[index] = object
-    //     props.setVariationsArray(copyArray)
-    // }
-
 
     function handleDeleteVariationClick(index) {
         const copyArray = Object.assign([], props.variationsArray)
@@ -840,6 +753,32 @@ function ProductVariations(props) {
         const copyArray = Object.assign([], props.variationsArray)
         let obj = copyArray[index].item
         obj[i].value = event.target.value
+        props.setVariationsArray(copyArray)
+    }
+
+    async function fileSelectedHandler(e, index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let object = copyArray[index]
+
+        if (e.target.files != '') {
+            object.image_link = [...object.image_link, ...e.target.files]
+            let array = []
+            object.image_link.forEach(element => {
+                array.push(URL.createObjectURL(element))
+            })
+            object.imagePreviewArray = array
+            object.image_link_error = ''
+            copyArray[index] = object
+            props.setVariationsArray(copyArray)
+        }
+    }
+    function deleteImage(index, i) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let obj = copyArray[index]
+
+        obj.image_link.splice(i, 1)
+        obj.imagePreviewArray.splice(i, 1)
+        copyArray[index] = obj
         props.setVariationsArray(copyArray)
     }
 
@@ -905,7 +844,7 @@ function ProductVariations(props) {
                             </InputGroup>
                         </Form.Group>
                         {/* Same Image Link */}
-                        <Form.Group as={Col} >
+                        {/* <Form.Group as={Col} >
                             <Form.Label style={styles.label}> Same Image</Form.Label>
                             <InputGroup>
                                 <Form.Control
@@ -929,7 +868,7 @@ function ProductVariations(props) {
                                     {props.sameImgLinkError}
                                 </Form.Control.Feedback>
                             </InputGroup>
-                        </Form.Group>
+                        </Form.Group> */}
                     </Form.Row>
                     <hr style={{ marginTop: '0%' }} />
                     {props.variationsArray && props.variationsArray.map((element, index) =>
@@ -964,7 +903,7 @@ function ProductVariations(props) {
                                     <>
                                         <Form.Row>
                                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-                                                <Form.Label style={styles.label}>Product Price<span>*</span></Form.Label>
+                                                <Form.Label style={styles.label}>Product Price <span> * </span></Form.Label>
                                                 <Form.Control
                                                     type="number"
                                                     size="sm"
@@ -979,7 +918,7 @@ function ProductVariations(props) {
                                                 </Form.Control.Feedback>
                                             </Form.Group>
                                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-                                                <Form.Label style={styles.label}>Product in Stock</Form.Label>
+                                                <Form.Label style={styles.label}>Product in Stock <span> * </span></Form.Label>
                                                 <Form.Control type="number"
                                                     size="sm"
                                                     name="product_in_stock"
@@ -993,31 +932,23 @@ function ProductVariations(props) {
                                                 </Form.Control.Feedback>
                                             </Form.Group>
                                             <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-                                                <Form.Label style={styles.label}>Image Link</Form.Label>
-                                                {/* <CreatableSelect
-                                                    components={coomponents}
-                                                    styles={GlobalStyleSheet.react_select_styles}
-                                                    isClearable
-                                                    isMulti
-                                                    menuIsOpen={false}
-                                                    inputValue={element.image_link_input}
-                                                    value={element.image_link}
-                                                    onChange={(value) => handleImgLinkChange(value, index)}
-                                                    onInputChange={(value) => handleImgLinkInputChange(value, index)}
-                                                    onKeyDown={(event) => handleImgLinkKeyDown(event, index)}
-                                                    placeholder="Paste and press enter"
-                                                /> */}
-                                                <CreatableSelect
-                                                    isMulti
-                                                    styles={GlobalStyleSheet.react_select_styles}
-                                                    onChange={(value) => handleImgLinkChange(value, index)}
-                                                    placeholder="Paste and press enter"
-                                                    value={element.image_link}
+                                                <Form.Label style={styles.label}>Product Images <span> * </span></Form.Label>
+                                                <input type="file" style={{ margin: '0% 2%', fontSize: '13px' }}
+                                                    multiple onChange={(e) => fileSelectedHandler(e, index)}
+                                                    name="image" accept="image/*"
                                                 />
                                                 <Form.Label style={styles.label}>
                                                     <span>{element.image_link_error}</span>
                                                 </Form.Label>
                                             </Form.Group>
+                                        </Form.Row>
+                                        <Form.Row>
+                                            {(element.imagePreviewArray || []).map((url, i) => (
+                                                <div className="show-image">
+                                                    <img style={{ height: '100px', width: '100px', margin: '1%' }} src={url} alt="..." />
+                                                    <input className="deleteImage" type="button" onClick={() => deleteImage(index, i)} value="Delete" />
+                                                </div>
+                                            ))}
                                         </Form.Row>
                                         <Form.Row>
                                             {element.custom_fields && element.custom_fields.map((e, i) =>
@@ -1053,6 +984,27 @@ function ProductVariations(props) {
                 {`
                     span{
                         color: red
+                    }
+                    div.show-image {
+                        position: relative;
+                        float:left;
+                        margin:5px;
+                    }
+                    div.show-image:hover img{
+                        opacity:0.5;
+                    }
+                    div.show-image:hover input {
+                        display: block;
+                    }
+                    div.show-image input {
+                        position:absolute;
+                        display:none;
+                    }
+                    div.show-image input.deleteImage {
+                        top:0;
+                        left:0;
+                        color: red;
+                        font-size: 13px
                     }
                 `}
             </style>

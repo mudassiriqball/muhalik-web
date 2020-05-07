@@ -42,6 +42,8 @@ let GlobalStyleSheet = {
         option: provided => ({
             ...provided,
             fontSize: '13px',
+            display: 'absolute',
+            zIndex: '1000',
         }),
     },
 }

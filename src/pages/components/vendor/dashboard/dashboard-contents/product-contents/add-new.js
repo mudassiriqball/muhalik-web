@@ -37,11 +37,6 @@ const product_sub_categories_options = [
     { value: 'Sub Cloth', label: 'Sub Cloth' },
     { value: 'Sub Shirt', label: 'Sub Shirt' },
 ]
-const product_sub_sub_categories_options = [
-    { value: 'Foo', label: 'Foo' },
-    { value: 'Loo', label: 'Loo' },
-    { value: 'Khoo', label: 'Khoo' },
-]
 
 // For React-Select
 const components = {
@@ -125,7 +120,6 @@ const schema = yup.object({
 
     product_category: yup.string(),
     product_sub_category: yup.string(),
-    product_sub_sub_category: yup.string(),
 
     dangerous_goods: yup.string(),
     product_tags: yup.string(),
@@ -137,25 +131,19 @@ class AddNew extends Component {
         super(props);
         this.state = {
             isUpdateProduct: this.props.isUpdateProduct,
+            _id: this.props._id,
             isLoading: false,
             showToast: false,
+            toastMessage: '',
             showVariationsErrorAlert: false,
             showSimpleProductPriceImgLinkErrorrAlert: false,
             isVariableProduct: this.props.isVariableProduct,
 
             productCategories: this.props.productCategories,
             productSubCategories: this.props.productSubCategories,
-            productSubSubCategories: this.props.productSubSubCategories,
-
-            subCategoryDisabled: this.props.subCategoryDisabled,
-            subSubCategoryDisabled: this.props.subSubCategoryDisabled,
-
-            subCategoryError: 'no_error',
-            subSubCategoryError: 'no_error',
-
+            subCategoryDisabled: true,
             categoryErrorDiv: 'BorderDiv',
             subCategoryErrorDiv: 'BorderDiv',
-            subSubategoryErrorDiv: 'BorderDiv',
 
             productTags: this.props.productTags,
 
@@ -172,6 +160,8 @@ class AddNew extends Component {
             // Custom Fields
             customFieldsArray: [],
 
+            files: [],
+            imagePreviewArray: [],
             // Dangerous Goods
             dangerousGoodsArray: this.props.dangerousGoodsArray,
         };
@@ -209,18 +199,57 @@ class AddNew extends Component {
         })
     }
 
-    //  Submit data to api
-    async uploadProduct(data, currentComponent) {
-        if (await this.props.upload(data) == true) {
-            currentComponent.setState({ isLoading: false });
-            currentComponent.setState({ showToast: true });
-            return true;
+    async  uploadProduct(data, currentComponent) {
+        console.log('da111222333ta: ', data)
+        if (this.state.isUpdateProduct == false) {
+            const url = MuhalikConfig.PATH + '/api/products/add'
+            await axios.post(url, {
+                data
+            }, {
+                headers: {
+                    'authorization': await getUncodededTokenFromStorage(),
+                }
+            }).then(function (response) {
+                currentComponent.setState({ isLoading: false });
+                currentComponent.setState({ showToast: true, toastMessage: 'Product Uploaded Successfully' });
+                return true;
+            }).catch(function (error) {
+                console.log('error rooro:', error)
+                console.log('error rooro:', error.response)
+                currentComponent.setState({ isLoading: false });
+                alert('Product Upload failed');
+                return false;
+            });
         } else {
-            currentComponent.setState({ isLoading: false });
-            alert('Product Upload failed');
-            return false;
+            const url = MuhalikConfig.PATH + `/api/products/${this.state._id}`
+            await axios.put(url, {
+                data
+            }, {
+                headers: { 'authorization': await getUncodededTokenFromStorage() }
+            }).then(function (response) {
+                currentComponent.setState({ isLoading: false });
+                currentComponent.setState({ showToast: true, toastMessage: 'Product Updated Successfully' });
+                return true;
+            }).catch(function (error) {
+                currentComponent.setState({ isLoading: false });
+                alert('Product Update failed');
+                return false;
+            });
         }
     }
+
+    //  Submit data to api
+    // async uploadProduct(data, ) {
+    //     if (await this.props.upload(data) == true) {
+    //         currentComponent.setState({ isLoading: false });
+    //         currentComponent.setState({ showToast: true });
+    //         return true;
+    //     } else {
+    //         currentComponent.setState({ isLoading: false });
+    //         alert('Product Upload failed');
+    //         return false;
+    //     }
+    // }
 
     // handleProductTypeChange(e) {
     // if (e.target.value == 'variable-prouct') {
@@ -262,11 +291,8 @@ class AddNew extends Component {
                         value: e.value
                     });
                 })
-                console.log("element.customField: ", element.customField);
             });
             this.setState({ variationsArray: copyArray, customFieldsArray: [] })
-        } else {
-            this.setState({ customFieldsArray: [] });
         }
     }
 
@@ -279,11 +305,8 @@ class AddNew extends Component {
 
         this.setState({
             productSubCategories: value, subSubCategoryDisabled: false,
-            subCategoryError: 'no_error', subCategoryErrorDiv: 'BorderDiv'
+            subCategoryErrorDiv: 'BorderDiv'
         });
-    }
-    handleProductSubSubCategoryChange = (value) => {
-        this.setState({ productSubSubCategories: value, subSubCategoryError: 'no_error', subSubCategoryErrorDiv: 'BorderDiv' });
     }
 
     // Dangerous Goods
@@ -305,6 +328,25 @@ class AddNew extends Component {
     handleProductTagChange = (arr) => {
         this.setState({ productTags: arr });
     };
+
+
+    async fileSelectedHandler(e) {
+        await this.setState({ files: [...this.state.files, ...e.target.files] })
+
+        let array = []
+        this.state.files.forEach(element => {
+            array.push(URL.createObjectURL(element))
+        })
+
+        this.setState({ imagePreviewArray: array })
+    }
+    deleteImage = (index) => {
+        const copyArray = Object.assign([], this.state.files)
+        const imgCopyArray = Object.assign([], this.state.imagePreviewArray)
+        copyArray.splice(index, 1)
+        imgCopyArray.splice(index, 1)
+        this.setState({ files: copyArray, imagePreviewArray: imgCopyArray })
+    }
 
     render() {
         var showCustomFields = false;
@@ -345,19 +387,14 @@ class AddNew extends Component {
                         { product_type: 'simple-product' }
                 }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    if (this.state.productCategories == '' || this.state.productSubCategories == '' || this.state.productSubSubCategories == '' ||
-                        (this.state.simple_product_image_link == '' && values.product_type == 'simple-product')) {
-
+                    if (this.state.productCategories == '' || this.state.productSubCategories == '' || (this.state.files == [] && values.product_type == 'simple-product')) {
                         if (this.state.productCategories == '') {
                             this.setState({ categoryErrorDiv: 'RedBorderDiv' });
                         }
                         if (this.state.productSubCategories == '') {
                             this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
                         }
-                        if (this.state.productSubSubCategories == '') {
-                            this.setState({ subSubCategoryErrorDiv: 'RedBorderDiv' });
-                        }
-                        if (this.state.simple_product_image_link == '' && values.product_type == 'simple-product') {
+                        if (this.state.files == [] && values.product_type == 'simple-product') {
                             this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true, image_linkError: "error", image_linkErrorDiv: 'RedBorderDiv' });
                         }
                         setSubmitting(false);
@@ -371,28 +408,24 @@ class AddNew extends Component {
                             let array = [];
                             values.product_category = this.state.productCategories;
                             values.product_sub_category = this.state.productSubCategories;
-                            values.product_sub_sub_category = this.state.productSubSubCategories;
                             values.product_tags = this.state.productTags;
 
                             values.dangerous_goods = this.state.dangerousGoodsArray;
 
-                            if (values.product_type == 'simple-product') {
-                                values.product_image_link = this.state.simple_product_image_link;
-                                if (this.state.customFieldsArray != []) {
-                                    values.custom_fields = this.state.customFieldsArray;
-                                }
+                            if (!this.state.isVariableProduct) {
+                                values.product_image_link = this.state.files;
+                                values.custom_fields = this.state.customFieldsArray;
                             } else {
                                 array = [];
                                 this.state.variationsArray.forEach((element, index) => {
                                     let item = []
-                                    element.items.forEach(e => {
+                                    element.item.forEach(e => {
                                         item.push({ name: e.name, value: e.value })
                                     });
                                     let item_1 = []
-                                    element.customField.forEach(e => {
+                                    element.custom_fields.forEach(e => {
                                         item_1.push({ name: e.name, value: e.value })
                                     });
-
                                     array.push({ item: item, custom_fields: item_1, price: element.price, stock: element.stock, image_link: element.image_link })
                                 })
                                 values.product_variations = array;
@@ -406,23 +439,17 @@ class AddNew extends Component {
 
                                     productCategories: '',
                                     productSubCategories: '',
-                                    productSubSubCategories: '',
 
                                     subCategoryDisabled: true,
                                     subSubCategoryDisabled: true,
 
-                                    subCategoryError: 'no_error',
-                                    subSubCategoryError: 'no_error',
-
                                     categoryErrorDiv: 'BorderDiv',
                                     subCategoryErrorDiv: 'BorderDiv',
-                                    subSubategoryErrorDiv: 'BorderDiv',
-
                                     productTags: [],
 
                                     warrantyType: '',
                                     inputValue: '',
-                                    simple_product_image_link: [],
+                                    files: [],
 
                                     image_linkError: 'no_error',
                                     image_linkErrorDiv: 'BorderDiv',
@@ -461,7 +488,7 @@ class AddNew extends Component {
                                     onHide={(e) => this.setState({ showToast: false })}
                                     show={this.state.showToast}
                                     header={'Success'}
-                                    message={'Product Uploaded Successfully'}
+                                    message={this.state.toastMessage}
                                     iconName={faThumbsUp}
                                     color={"#00b300"}
                                 />
@@ -546,6 +573,11 @@ class AddNew extends Component {
 
                                             product_brand_name_values={values.product_brand_name || ''}
                                             product_brand_name_errors={errors.product_brand_name}
+
+
+                                            fileSelectedHandler={this.fileSelectedHandler.bind(this)}
+                                            imagePreviewArray={this.state.imagePreviewArray}
+                                            deleteImage={this.deleteImage}
 
                                             imageLink={this.state.simple_product_image_link}
                                             simpleProductImgLinkChange={this.simpleProductImgLinkChange.bind(this)}
@@ -640,21 +672,7 @@ class AddNew extends Component {
                                                         isDisabled={this.state.subCategoryDisabled}
                                                     />
                                                 </div>
-                                            </Form.Group>
-                                            <Form.Group>
-                                                <Form.Label style={styles.label}>Sub Sub Category</Form.Label>
-                                                <div className={this.state.subSubCategoryErrorDiv}>
-                                                    <Select
-                                                        styles={GlobalStyleSheet.react_select_styles}
-                                                        onChange={this.handleProductSubSubCategoryChange}
-                                                        options={product_sub_sub_categories_options}
-                                                        value={this.state.productSubSubCategories}
-                                                        isSearchable={true}
-                                                        isClearable={true}
-                                                        placeholder="Select Sub Sub Category"
-                                                        isDisabled={this.state.subSubCategoryDisabled}
-                                                    />
-                                                </div>
+                                                <div style={{ minHeight: '150px' }}></div>
                                             </Form.Group>
                                         </CardAccordion>
                                         {/* End of Product ategory */}
@@ -665,13 +683,23 @@ class AddNew extends Component {
                                                 name="not_specified"
                                                 label="Not Specified"
                                                 style={styles.label}
-                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Not Specified')}
+                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                    if (element.value == 'Not-Specified') {
+                                                        return true
+                                                    }
+                                                })}
+                                                onChange={(e) => this.handleDangerousGoodsChange(e, 'Not-Specified')}
                                             />
                                             <br></br>
                                             <Form.Check
                                                 name="ceramic"
                                                 label="Ceramic"
                                                 style={styles.label}
+                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                    if (element.value == 'Ceramic') {
+                                                        return true
+                                                    }
+                                                })}
                                                 onChange={(e) => this.handleDangerousGoodsChange(e, 'Ceramic')}
                                             />
                                             <br></br>
@@ -679,6 +707,11 @@ class AddNew extends Component {
                                                 name="glass"
                                                 label="Glass"
                                                 style={styles.label}
+                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                    if (element.value == 'Glass') {
+                                                        return true
+                                                    }
+                                                })}
                                                 onChange={(e) => this.handleDangerousGoodsChange(e, 'Glass')}
                                             />
                                             <br></br>
@@ -686,6 +719,11 @@ class AddNew extends Component {
                                                 name="metal"
                                                 label="Metal"
                                                 style={styles.label}
+                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                    if (element.value == 'Metal') {
+                                                        return true
+                                                    }
+                                                })}
                                                 onChange={(e) => this.handleDangerousGoodsChange(e, 'Metal')}
                                             />
                                             <br></br>
@@ -693,6 +731,11 @@ class AddNew extends Component {
                                                 name="plastic"
                                                 label="Plastic"
                                                 style={styles.label}
+                                                checked={this.state.dangerousGoodsArray.find(element => {
+                                                    if (element.value == 'Plastic') {
+                                                        return true
+                                                    }
+                                                })}
                                                 onChange={(e) => this.handleDangerousGoodsChange(e, 'Plastic')}
                                             />
                                         </CardAccordion>
@@ -702,11 +745,13 @@ class AddNew extends Component {
                                         <CardAccordion title={'Product Tags'}>
                                             <CreatableSelect
                                                 isMulti
+                                                styles={GlobalStyleSheet.react_select_styles}
                                                 onChange={this.handleProductTagChange}
                                                 options={product_color_options}
                                                 value={this.state.productTags}
                                                 placeholder="Select/Enter Tags"
                                             />
+                                            <div style={{ minHeight: '150px' }}></div>
                                         </CardAccordion>
                                         {/* End of Product Tags */}
                                     </Col>
