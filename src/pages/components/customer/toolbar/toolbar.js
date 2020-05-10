@@ -16,7 +16,6 @@ import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 import MuhalikConfig from '../../../../sdk/muhalik.config'
 import axios from 'axios'
 import { removeTokenFromStorage } from '../../../../sdk/core/authentication-service'
-import OverlayPopover from '../../overlay-opover'
 
 const categoryArray = [{ value: 'All' }, { value: 'Machinay' }, { value: 'Clothes' }]
 function Toolbar(props) {
@@ -155,36 +154,28 @@ function Toolbar(props) {
                                         </Dropdown>
                                         <div style={{ color: `${GlobalStyleSheet.primry_color}` }}>|</div>
                                         {isShops ?
-                                            <OverlayPopover title={'Find Shops'} content={'Here you will get shops'}>
-                                                <Nav.Link href="#" style={styles.flex_row} onClick={() => setIsShops(false)}>
-                                                    <FontAwesomeIcon icon={faStoreAlt} style={styles.second_nav_fontawesome} />
-                                                    <div className='second_nav_link_text'>Shops</div>
-                                                    <div className='width' style={{ width: '70px' }}></div>
-                                                </Nav.Link>
-                                            </OverlayPopover>
+                                            <Nav.Link href="#" style={styles.flex_row} onClick={() => setIsShops(false)}>
+                                                <FontAwesomeIcon icon={faStoreAlt} style={styles.second_nav_fontawesome} />
+                                                <div className='second_nav_link_text'>Shops</div>
+                                                <div className='width' style={{ width: '70px' }}></div>
+                                            </Nav.Link>
                                             :
-                                            <OverlayPopover title={'Find Products'} content={'Here you will get our products'}>
-                                                <Nav.Link href="#" style={styles.flex_row} onClick={() => setIsShops(true)}>
-                                                    <FontAwesomeIcon icon={faProductHunt} style={styles.second_nav_fontawesome} />
-                                                    <div className='second_nav_link_text'>Products</div>
-                                                    <div className='width' style={{ width: '70px' }}></div>
-                                                </Nav.Link>
-                                            </OverlayPopover>
+                                            <Nav.Link href="#" style={styles.flex_row} onClick={() => setIsShops(true)}>
+                                                <FontAwesomeIcon icon={faProductHunt} style={styles.second_nav_fontawesome} />
+                                                <div className='second_nav_link_text'>Products</div>
+                                                <div className='width' style={{ width: '70px' }}></div>
+                                            </Nav.Link>
                                         }
                                     </Col>
                                     <Col style={styles.flex_row}>
-                                        <OverlayPopover title={'Know About Us'} content={'We are providing you the best services, know about us'}>
-                                            <Nav.Link href="#" style={styles.flex_row}>
-                                                <FontAwesomeIcon icon={faHandsHelping} style={styles.second_nav_fontawesome} />
-                                                <div className='second_nav_link_text'>About Us</div>
-                                            </Nav.Link>
-                                        </OverlayPopover>
-                                        <OverlayPopover title={'Feedback'} content={'Give your feedback and help us to improve'}>
-                                            <Nav.Link href="#" style={styles.flex_row}>
-                                                <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} />
-                                                <div className='second_nav_link_text'>Feedback</div>
-                                            </Nav.Link>
-                                        </OverlayPopover>
+                                        <Nav.Link href="#" style={styles.flex_row}>
+                                            <FontAwesomeIcon icon={faHandsHelping} style={styles.second_nav_fontawesome} />
+                                            <div className='second_nav_link_text'>About Us</div>
+                                        </Nav.Link>
+                                        <Nav.Link href="#" style={styles.flex_row}>
+                                            <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} />
+                                            <div className='second_nav_link_text'>Feedback</div>
+                                        </Nav.Link>
                                         <Nav.Link href="#" style={styles.flex_row}>
                                             <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} />
                                             <div className='second_nav_link_text'>Help</div>
@@ -192,17 +183,13 @@ function Toolbar(props) {
                                     </Col>
                                     <Col style={styles.flex_row}>
                                         <div className='mr-auto'></div>
-                                        <OverlayPopover title={'Sell Your Products with Muhalik'} content={'Register your shop and sell your products online'}>
-                                            <Nav.Link href="#" style={styles.flex_row}>
-                                                <div className='second_nav_link_text'>Sell With Muhalik</div>
-                                            </Nav.Link>
-                                        </OverlayPopover>
+                                        <Nav.Link href="#" style={styles.flex_row}>
+                                            <div className='second_nav_link_text'>Sell With Muhalik</div>
+                                        </Nav.Link>
                                         <div style={{ color: `${GlobalStyleSheet.primry_color}` }}>|</div>
-                                        <OverlayPopover title={'App for Andriod & IOS'} content={'Install the app and continue your shopping with mobile app'}>
-                                            <Nav.Link href="#" style={styles.flex_row}>
-                                                <div className='second_nav_link_text'>Get Muhalik's App</div>
-                                            </Nav.Link>
-                                        </OverlayPopover>
+                                        <Nav.Link href="#" style={styles.flex_row}>
+                                            <div className='second_nav_link_text'>Get Muhalik's App</div>
+                                        </Nav.Link>
                                     </Col>
                                 </Row>
                             </Nav>
