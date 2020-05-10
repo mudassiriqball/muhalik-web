@@ -1,4 +1,4 @@
-import GlobalStyleSheet from '../../../../styleSheet';
+import GlobalStyleSheet from '../../../styleSheet';
 import { Row, Col, Button, Card } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {

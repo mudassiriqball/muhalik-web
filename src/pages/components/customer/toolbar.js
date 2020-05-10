@@ -3,7 +3,7 @@ import {
     NavDropdown, DropdownButton, Card, Dropdown, ButtonGroup,
     Row, Col, OverlayTrigger, Popover
 } from 'react-bootstrap'
-import GlobalStyleSheet from '../../../../styleSheet'
+import GlobalStyleSheet from '../../../styleSheet'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -13,9 +13,9 @@ import {
     faStoreAlt, faChevronDown,
 } from '@fortawesome/free-solid-svg-icons'
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
-import MuhalikConfig from '../../../../sdk/muhalik.config'
+import MuhalikConfig from '../../../sdk/muhalik.config'
 import axios from 'axios'
-import { removeTokenFromStorage } from '../../../../sdk/core/authentication-service'
+import { removeTokenFromStorage } from '../../../sdk/core/authentication-service'
 
 const categoryArray = [{ value: 'All' }, { value: 'Machinay' }, { value: 'Clothes' }]
 function Toolbar(props) {

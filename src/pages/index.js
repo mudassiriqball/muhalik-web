@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
-import Layout from './components/customer/layout/layout';
+import Layout from './components/customer/layout'
 import Router from 'next/router'
 import { getTokenFromStorage, removeTokenFromStorage } from '../sdk/core/authentication-service';
 import GlobalStyleSheet from '../styleSheet';

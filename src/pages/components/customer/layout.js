@@ -1,6 +1,6 @@
 import Head from 'next/head';
-import Toolbar from '../toolbar/toolbar';
-import Footer from '../footer/footer';
+import Toolbar from './toolbar';
+import Footer from './footer';
 
 const Layout = (props) => (
     <>
