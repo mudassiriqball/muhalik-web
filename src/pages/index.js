@@ -38,12 +38,13 @@ class Index extends Component {
     async componentDidMount() {
         const token = await getTokenFromStorage()
         if (token !== null) {
-            this.setState({ jwt_token: token.role });
+            this.setState({ jwt_token: token.role })
         }
     }
 
     logout() {
-        removeTokenFromStorage();
+        removeTokenFromStorage()
+        this.setState({ jwt_token: '' })
     }
 
     render() {
@@ -76,7 +77,6 @@ const styles = {
         left: '0',
         right: '0',
         minHeight: '100vh',
-        // bottom: '-100',
     },
 }
 export default Index;

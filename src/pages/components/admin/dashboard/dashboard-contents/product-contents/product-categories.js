@@ -22,11 +22,9 @@ class ProducCategories extends Component {
 
             categoryValue: '',
             subCategoryValue: '',
-            subSubCategoryValue: '',
 
             categoryError: '',
             subCategoryError: '',
-            subSubCategoryError: '',
 
             categoryList: [],
             categoryRequestList: [],
@@ -64,7 +62,11 @@ class ProducCategories extends Component {
 
     async addCategory(currentComponent) {
         let data = [];
-        data = { category: this.state.categoryValue, sub_category: this.state.subCategoryValue, sub_sub_category: this.state.subSubCategoryValue }
+
+        data = {
+            category: { value: this.state.categoryValue, label: this.state.categoryValue },
+            sub_category: { value: this.state.subCategoryValue, label: this.state.subCategoryValue }
+        }
         const url = MuhalikConfig.PATH + '/api/categories/category';
         await axios.post(url, {
             data
@@ -99,15 +101,12 @@ class ProducCategories extends Component {
     }
 
     async handleSubmit() {
-        if (this.state.categoryValue == '' || this.state.subCategoryValue == '' || this.state.subSubCategoryValue == '') {
+        if (this.state.categoryValue == '' || this.state.subCategoryValue == '') {
             if (this.state.categoryValue == '') {
                 this.setState({ categoryError: 'Enter Value First' });
             }
             if (this.state.subCategoryValue == '') {
                 this.setState({ subCategoryError: 'Enter Value First' });
-            }
-            if (this.state.subSubCategoryValue == '') {
-                this.setState({ subSubCategoryError: 'Enter Value First' });
             }
         } else {
             this.setState({ isLoading: true })
@@ -304,23 +303,6 @@ class ProducCategories extends Component {
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     {this.state.subCategoryError}
-                                </Form.Control.Feedback>
-                            </InputGroup>
-                        </Form.Group>
-                        <Form.Group as={Col} lg={4} md={4} sm={4} xs={12}>
-                            <Form.Label style={styles.label}>Sub Sub Category</Form.Label>
-                            <InputGroup>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    placeholder="Enter Category Value"
-                                    name="sku"
-                                    value={this.state.subSubCategoryValue}
-                                    onChange={(e) => this.setState({ subSubCategoryValue: e.target.value, subSubCategoryError: '' })}
-                                    isInvalid={this.state.subSubCategoryError}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.subSubCategoryError}
                                 </Form.Control.Feedback>
                             </InputGroup>
                         </Form.Group>

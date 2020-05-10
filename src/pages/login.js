@@ -48,7 +48,6 @@ class Login extends Component {
         await axios.post(url, {
             data
         }).then(function (response) {
-            console.log("wertyuiwertyuiwertyuierty:", response)
             if (response.status == '200') {
                 saveTokenToStorage(response.data.token);
                 const decodedToken = decode(response.data.token);
