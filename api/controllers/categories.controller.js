@@ -1,28 +1,137 @@
 const categoriesController = {};
-const Product_Categories = require("../modals/product_category.modal");
+const Categories = require("../modals/category.modal");
+const Sub_Categories = require("../modals/sub-category.model");
 const Tags = require("../modals/tag.modal");
 const Fields = require("../modals/field.modal");
 const Field_Request = require("../modals/field-request.modal");
 
+// categoriesController.add_category = async (req, res) => {
+//   const body = req.body.data;
+//   try {
+//     var datetime = new Date();
+//     var date = datetime.toISOString().slice(0, 10);
+//     body.entry_date = date;
+//     const product_category = new Product_Categories(body);
+//     const result = await product_category.save();
+//     res.status(200).send({
+//       code: 200,
+//       message: "Category Added Successfully"
+//     });
+//     return res
+//       .status(500)
+//       .send({ message: "Category Adding Failed" });
+//   } catch (error) {
+//     console.log("error", error);
+//   }
+// };
 categoriesController.add_category = async (req, res) => {
+  // const body = req.body.data;
+  // try {
+  //   var datetime = new Date();
+  //   var date = datetime.toISOString().slice(0, 10);
+  //   body.entry_date = date;
+
+  //   let search = null;
+  //   search = await Categories.findOne({
+  //     "label": body.category.label,
+  //   });
+  //   if (search === null) {
+  //     const category = new Categories(body.category);
+  //     const result = await category.save();
+  //     body.sub_category.category_id = category._id;
+  //     const sub_category = new Sub_Categories(body.sub_category);
+  //     const result1 = await sub_category.save();
+  //     res.status(200).send({
+  //       code: 200,
+  //       message: "Category Added Successfully",
+  //     });
+  //     return
+  //   } else {
+  //     let search1 = null;
+  //     search1 = await Sub_Categories.find({
+  //       "label": body.sub_category.label,
+  //     });
+  //     try {
+  //       console.log(search1 + '--' + search1._id)
+  //     } catch (err) {
+
+  //     }
+  //     if (search1 === null) {
+  //       body.sub_category.category_id = search._id;
+  //       const sub_category = new Sub_Categories(body.sub_category);
+  //       const result1 = await sub_category.save();
+  //       res.status(200).send({
+  //         code: 200,
+  //         message: "Category Added Successfully",
+  //       });
+  //       return res
+  //         .status(500)()
+  //         .send({ message: "Category Adding Successfully" });
+  //     } else {
+  //       res
+  //         .send({
+  //           message: "Already exists",
+  //           code: 500,
+  //         })
+  //         .status(500);
+  //     }
+  //   }
+  // } catch (error) {
+  //   console.log("error", error);
+  // }
   const body = req.body.data;
   try {
     var datetime = new Date();
     var date = datetime.toISOString().slice(0, 10);
     body.entry_date = date;
-    const product_category = new Product_Categories(body);
-    const result = await product_category.save();
-    res.status(200).send({
-      code: 200,
-      message: "Category Added Successfully"
+
+    const search = await Categories.findOne({
+      "label": body.category.label,
     });
-    return res
-      .status(500)
-      .send({ message: "Category Adding Failed" });
+    if (search === null) {
+      const category = new Categories(body.category);
+      const result = await category.save();
+      console.log(category._id);
+      body.sub_category.category_id = category._id;
+      const sub_category = new Sub_Categories(body.sub_category);
+      const result1 = await sub_category.save();
+      res.status(200).send({
+        code: 200,
+        message: "Category Added Successfully",
+      });
+      return res
+        .status(500)
+        .send({ message: "Category Adding Successfully" });
+    } else if (search.label === body.category.label) {
+      const search1 = await Sub_Categories.find({
+        category_id: search._id,
+        "label": body.sub_category.label,
+      });
+      if (!search1.length) {
+        body.sub_category.category_id = search._id;
+        const sub_category = new Sub_Categories(body.sub_category);
+        const result1 = await sub_category.save();
+        res.status(200).send({
+          code: 200,
+          message: "Category Added Successfully",
+        });
+        return res
+          .status(500)()
+          .send({ message: "Category Adding Successfully" });
+      } else {
+        res
+          .send({
+            message: "Already exists",
+            code: 500,
+          })
+          .status(500);
+      }
+    }
   } catch (error) {
     console.log("error", error);
   }
 };
+
 
 
 categoriesController.add_field = async (req, res) => {
@@ -66,28 +175,55 @@ categoriesController.add_tag = async (req, res) => {
   }
 };
 
+// categoriesController.get_categories = async (req, res) => {
+//   let caterories;
+//   let categories = [];
+//   try {
+//     let merged = {};
+//     const start = 0;
+//     const length = 100;
+//     caterories = await Product_Categories.paginate(merged, {
+//       offset: parseInt(start),
+//       limit: parseInt(length)
+//     });
+//     var getdata = caterories.docs;
+//     var i = 0;
+//     getdata.forEach(element => {
+//       categories[i] = { value: element.value, label: element.label };
+//       i++;
+//       //console.log(categories);
+//     });
+//     res.status(200).send({
+//       code: 200,
+//       message: "Successful",
+//       data: categories
+//     });
+//   } catch (error) {
+//     console.log("error", error);
+//     return res.status(500).send(error);
+//   }
+// };
 categoriesController.get_categories = async (req, res) => {
-  let caterories;
-  let categories = [];
+  let category;
+  let sub_category;
+
   try {
     let merged = {};
     const start = 0;
     const length = 100;
-    caterories = await Product_Categories.paginate(merged, {
+    category = await Categories.paginate(merged, {
       offset: parseInt(start),
-      limit: parseInt(length)
+      limit: parseInt(length),
     });
-    var getdata = caterories.docs;
-    var i = 0;
-    getdata.forEach(element => {
-      categories[i] = { value: element.value, label: element.label };
-      i++;
-      //console.log(categories);
+    sub_category = await Sub_Categories.paginate(merged, {
+      offset: parseInt(start),
+      limit: parseInt(length),
     });
     res.status(200).send({
       code: 200,
       message: "Successful",
-      data: categories
+      category,
+      sub_category
     });
   } catch (error) {
     console.log("error", error);

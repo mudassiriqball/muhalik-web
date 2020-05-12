@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[55],{wJP7:function(n,o,w){(window.__NEXT_P=window.__NEXT_P||[]).push(["/components/customer/layout/layout",function(){return w("5Imh")}])}},[["wJP7",0,1,4,16,2,3,5,6,7,9,10,12,14,20,29]]]);

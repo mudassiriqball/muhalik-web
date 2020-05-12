@@ -9,20 +9,13 @@ const Product = new Schema({
   product_name: {
     type: String,
   },
-  product_category: {
-    label: { type: String },
-    value: { type: String },
+  category_id: {
+    type: String
   },
 
-  product_sub_category: {
-    label: { type: String },
-    value: { type: String },
+  sub_category_id: {
+    type: String
   },
-  product_sub_sub_category: {
-    label: { type: String },
-    value: { type: String },
-  },
-
 
   product_tags: [
     {

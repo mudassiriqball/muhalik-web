@@ -7,7 +7,7 @@ import { getTokenFromStorage, removeTokenFromStorage } from '../sdk/core/authent
 import GlobalStyleSheet from '../styleSheet';
 import Typical from 'react-typical'
 import { Container, Row, Col, Carousel } from 'react-bootstrap'
-
+import CarouselDiv from './components/customer/main-carousel'
 
 let animation =
     <Container >
@@ -62,8 +62,10 @@ class Index extends Component {
                     <link rel="shortcut icon" href=""></link>
                 </Head>
                 <Layout token={this.state.jwt_token} logoutClickHandler={this.logout}>
+                    <CarouselDiv />
                     {animation}
                 </Layout>
+
             </div>
         );
     }

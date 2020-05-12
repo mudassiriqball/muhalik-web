@@ -39,25 +39,19 @@ class ProducCategories extends Component {
 
     // Getting Product Categories from DB
     async componentDidMount() {
-        const url = MuhalikConfig.PATH + '/api/categories/categories';
-        const currentComponent = this;
-        await axios.get(url, {
-            headers: { 'authorization': await getUncodededTokenFromStorage() }
-        }).then((response) => {
-            let copyArray = [];
-            copyArray = response.data.data;
-            // copyArray.forEach(element => {
-            //     let item = []
-            //     item.push({ label: true })
-            //     element.push(item)
-            // })
-            // console.log('copy array:', copyArray)
-            currentComponent.setState({ categoryList: copyArray });
-            currentComponent.setState({ categoryRequestList: currentComponent.state.categoryList });
-            categoryArray = copyArray;
-        }).catch((error) => {
-            console.log('Caterories_1 Fetchig Error: ', error)
-        })
+        // const url = MuhalikConfig.PATH + '/api/categories/categories';
+        // const currentComponent = this;
+        // await axios.get(url, {
+        //     headers: { 'authorization': await getUncodededTokenFromStorage() }
+        // }).then((response) => {
+        //     let copyArray = [];
+        //     copyArray = response.data.data;
+        //     currentComponent.setState({ categoryList: copyArray });
+        //     currentComponent.setState({ categoryRequestList: currentComponent.state.categoryList });
+        //     categoryArray = copyArray;
+        // }).catch((error) => {
+        //     console.log('Caterories_1 Fetchig Error: ', error)
+        // })
     }
 
     async addCategory(currentComponent) {
@@ -79,7 +73,11 @@ class ProducCategories extends Component {
             return true;
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
-            alert('Error: ', error.response.data.message);
+            try {
+                alert('Error: ', error.response.data.message);
+            } catch (err) {
+                console.log('Request Failed:', error)
+            }
             return false;
         });
     }
@@ -399,7 +397,7 @@ class ProducCategories extends Component {
                         </Form.Group>
                     </Form.Row>
                     <hr />
-                    {this.state.categoryList.map((element, index) =>
+                    {this.state.categoryList && this.state.categoryList.map((element, index) =>
                         <Form.Row>
                             <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs={12}>
                                 <Form.Control

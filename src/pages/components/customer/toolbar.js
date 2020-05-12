@@ -54,158 +54,173 @@ function Toolbar(props) {
     return (
         <div>
             <Card>
-                <Card.Body style={{ padding: '0%', margin: '0%' }}>
-                    <Navbar style={styles.nav_bar}>
-                        <Row style={styles.row} >
-                            <Col lg={2} md={4} sm={12} xs={12} style={{
-                                display: 'flex', alignItems: 'center', marginTop: '1%', marginBottom: '1%'
-                            }}>
-                                <div className='mr-auto'></div>
-                                <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '50px', display: 'flex', marginLeft: '5%' }} />
-                                <h5 style={{ marginLeft: '5%' }} className="text-center mr-auto">Muhalik</h5>
-                            </Col>
-                            <Col lg={7} md={8} sm={12} xs={12} style={styles.col}>
-                                <InputGroup style={styles.search_div}>
-                                    <InputGroup.Prepend >
-                                        <Dropdown as={ButtonGroup}>
-                                            <Dropdown.Toggle as={Nav.Link} variant="success" style={styles.search_type}>
-                                                {searchType}
-                                            </Dropdown.Toggle>
-                                            <Dropdown.Menu className="super-colors">
-                                                {categoryArray.map((element, index) =>
-                                                    <Dropdown.Item key={index} onClick={() => setSearchType(element.value)}>{element.value}</Dropdown.Item>
-                                                )}
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                    </InputGroup.Prepend>
-                                    <FormControl style={styles.search_box} placeholder="Search here" />
-                                    <InputGroup.Append style={styles.search_btn}>
-                                        <FontAwesomeIcon icon={faSearch} style={styles.search_fontawesome} />
-                                    </InputGroup.Append>
-                                </InputGroup>
-                            </Col>
-                            <Col lg={3} md={12} sm={12} xs={12} style={styles.col}>
-                                <Nav style={styles.nav}>
-                                    <div className='mr-auto width'></div>
-                                    {loggedIn ?
-                                        null
-                                        :
-                                        <Nav.Link href='./login' className='mr-auto' style={styles.nav_link}>
-                                            <FontAwesomeIcon icon={faUser} style={styles.nav_fontawesome} />
-                                            <FontAwesomeIcon icon={faUserPlus} style={styles.nav_fontawesome} />
-                                            <div className='nav_link_text'>Signin/up</div>
-                                        </Nav.Link>
-                                    }
-                                    <Nav.Link href='#' className='mr-auto' style={styles.nav_link}>
-                                        <FontAwesomeIcon icon={faGlobe} style={styles.nav_fontawesome} />
-                                        <div className='nav_link_text'>Eng</div>
+                <Card.Body className='p-0 m-0'>
+                    <Navbar className='d-flex flex-lg-row align-items-center w-100'>
+                        <div style={{ width: '10%' }}></div>
+                        <Navbar.Brand className='d-inline-flex align-items-center'>
+                            <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '50px', display: 'flex' }} />
+                            <h5 className="text-center pl-3">Muhalik</h5>
+                        </Navbar.Brand>
+                        <div style={{ width: '10%' }}></div>
+                        <InputGroup className='d-inline-flex align-items-center pl-2 pr-2'>
+                            <InputGroup.Prepend >
+                                <Dropdown as={ButtonGroup}>
+                                    <Dropdown.Toggle as={Button} variant='outline-success'>
+                                        {searchType}
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu className="super-colors">
+                                        {categoryArray.map((element, index) =>
+                                            <Dropdown.Item key={index} onClick={() => setSearchType(element.value)}>{element.value}</Dropdown.Item>
+                                        )}
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </InputGroup.Prepend>
+                            <FormControl placeholder="Search here" />
+                            <InputGroup.Append>
+                                <Button variant='outline-success'>Search</Button>
+                                {/* <FontAwesomeIcon icon={faSearch} style={styles.search_fontawesome} /> */}
+                            </InputGroup.Append>
+                        </InputGroup>
+                        <div style={{ width: '10%' }}></div>
+                        <div className='categories_lg_md'>
+                            <Nav >
+                                {loggedIn ?
+                                    null
+                                    :
+                                    <Nav.Link href='./login' style={styles.nav_link}>
+                                        <FontAwesomeIcon icon={faUser} style={styles.nav_fontawesome} />
+                                        <FontAwesomeIcon icon={faUserPlus} style={styles.nav_fontawesome} />
+                                        <div className='nav_link_text'>Signin/up</div>
                                     </Nav.Link>
-                                    <Nav.Link href='#' className='mr-auto' style={styles.nav_link}>
-                                        <FontAwesomeIcon icon={faFileInvoiceDollar} style={styles.nav_fontawesome} />
-                                        <div className='nav_link_text'>Orders</div>
-                                    </Nav.Link>
-                                    <Nav.Link href="#" className='mr-auto' style={styles.nav_link}>
-                                        <FontAwesomeIcon icon={faLuggageCart} style={styles.nav_cart_fontawesome} />
-                                        <div className='nav_link_text'>Cart</div>
-                                    </Nav.Link>
-                                    {loggedIn ?
-                                        <NavDropdown title={
-                                            <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '40px', maxWidth: '40px' }} />
-                                        } id="nav-dropdown" alignRight>
-                                            <NavDropdown.Item href={dashboard_href} style={styles.flex_row}>
-                                                <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
-                                                <div>Dashboard</div>
-                                            </NavDropdown.Item>
-                                            <NavDropdown.Item style={styles.flex_row}>
-                                                <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
-                                                <div>Profile</div>
-                                            </NavDropdown.Item>
-                                            <NavDropdown.Divider />
-                                            <NavDropdown.Item onClick={() => removeTokenFromStorage()} style={styles.flex_row}>
-                                                <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
-                                                <div>Logout</div>
-                                            </NavDropdown.Item>
-                                        </NavDropdown>
-                                        :
-                                        null
-                                    }
-                                </Nav>
-                            </Col>
-                        </Row>
+                                }
+                                <Nav.Link href='#' className='mr-4' style={styles.nav_link}>
+                                    <FontAwesomeIcon icon={faGlobe} style={styles.nav_fontawesome} />
+                                    <div className='nav_link_text'>Eng</div>
+                                </Nav.Link>
+                                <Nav.Link href='#' className='mr-4' style={styles.nav_link}>
+                                    <FontAwesomeIcon icon={faFileInvoiceDollar} style={styles.nav_fontawesome} />
+                                    <div className='nav_link_text'>Orders</div>
+                                </Nav.Link>
+                                <Nav.Link href="#" className='mr-4' style={styles.nav_link}>
+                                    <FontAwesomeIcon icon={faLuggageCart} style={styles.nav_cart_fontawesome} />
+                                    <div className='nav_link_text'>Cart</div>
+                                </Nav.Link>
+                                {loggedIn ?
+                                    <NavDropdown title={
+                                        <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '40px', maxWidth: '40px' }} />
+                                    } id="nav-dropdown" alignRight>
+                                        <NavDropdown.Item href={dashboard_href} >
+                                            <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
+                                            <div>Dashboard</div>
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Item >
+                                            <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
+                                            <div>Profile</div>
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item onClick={() => removeTokenFromStorage()} >
+                                            <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
+                                            <div>Logout</div>
+                                        </NavDropdown.Item>
+                                    </NavDropdown>
+                                    :
+                                    null
+                                }
+                            </Nav>
+                        </div>
                     </Navbar>
-                    <Navbar expand="md" style={{ padding: '0px 0.3% 0.3% 0.3%' }}>
+
+
+                    <Navbar expand="md" className=' m-2 p-0'>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <div className='categories_sm_xs'>
+                        </div>
+                        <div className='categories_sm_xs'>
+                        </div>
+                        <div className='categories_sm_xs'>
+                        </div>
+                        <div className='categories_sm_xs'>
+                        </div>
+                        <div className='categories_sm_xs'>
+                            <Dropdown onMouseOver={onMouseEnter}
+                                onMouseLeave={onMouseLeave} show={isCategoryOpen}>
+                                <Dropdown.Toggle as={Nav.Link} className="d-inline-flex align-items-center">
+                                    <FontAwesomeIcon icon={faListAlt} style={styles.second_nav_fontawesome} />
+                                    <div className='second_nav_link_text'>Categories</div>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item >Header</Dropdown.Item>
+                                    <Dropdown.Item >Action</Dropdown.Item>
+                                    <Dropdown.Item>Another Action</Dropdown.Item>
+                                    <Dropdown.Item>Another Action</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </div>
                         <Navbar.Collapse >
-                            <Nav style={styles.nav_bar}>
-                                <Row style={{ border: `1px solid ${GlobalStyleSheet.card_header_background}`, width: '100%' }} noGutters>
-                                    <Col lg='auto' md='auto' sm='auto' xs='auto' style={styles.flex_row}>
-                                        <Dropdown className="d-inline-block" onMouseOver={onMouseEnter}
-                                            onMouseLeave={onMouseLeave} show={isCategoryOpen}>
-                                            <Dropdown.Toggle as={Nav.Link} style={styles.flex_row}>
-                                                <FontAwesomeIcon icon={faListAlt} style={styles.second_nav_fontawesome} />
-                                                <div className='second_nav_link_text'>Categories</div>
-                                            </Dropdown.Toggle>
-                                            <Dropdown.Menu>
-                                                <Dropdown.Item >Header</Dropdown.Item>
-                                                <Dropdown.Item >Action</Dropdown.Item>
-                                                <Dropdown.Item>Another Action</Dropdown.Item>
-                                                <Dropdown.Item>Another Action</Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                        <div style={{ color: `${GlobalStyleSheet.primry_color}` }}>|</div>
-                                        {isShops ?
-                                            <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
-                                                <Nav.Link href="#" style={styles.flex_row} onClick={() => setIsShops(false)}>
-                                                    <FontAwesomeIcon icon={faStoreAlt} style={styles.second_nav_fontawesome} />
-                                                    <div className='second_nav_link_text'>Shops</div>
-                                                    <div className='width' style={{ width: '70px' }}></div>
-                                                </Nav.Link>
-                                            </OverlyPopover>
-                                            :
-                                            <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
-                                                <Nav.Link href="#" style={styles.flex_row} onClick={() => setIsShops(true)}>
-                                                    <FontAwesomeIcon icon={faProductHunt} style={styles.second_nav_fontawesome} />
-                                                    <div className='second_nav_link_text'>Products</div>
-                                                    <div className='width' style={{ width: '70px' }}></div>
-                                                </Nav.Link>
-                                            </OverlyPopover>
-                                        }
-                                    </Col>
-                                    <Col style={styles.flex_row}>
-                                        <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
-                                            <Nav.Link href="#" style={styles.flex_row}>
-                                                <FontAwesomeIcon icon={faHandsHelping} style={styles.second_nav_fontawesome} />
-                                                <div className='second_nav_link_text'>About Us</div>
-                                            </Nav.Link>
-                                        </OverlyPopover>
-                                        <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
-                                            <Nav.Link href="#" style={styles.flex_row}>
-                                                <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} />
-                                                <div className='second_nav_link_text'>Feedback</div>
-                                            </Nav.Link>
-                                        </OverlyPopover>
-                                        <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
-                                            <Nav.Link href="#" style={styles.flex_row}>
-                                                <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} />
-                                                <div className='second_nav_link_text'>Help</div>
-                                            </Nav.Link>
-                                        </OverlyPopover>
-                                    </Col>
-                                    <Col style={styles.flex_row}>
-                                        <div className='mr-auto'></div>
-                                        <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
-                                            <Nav.Link href="#" style={styles.flex_row}>
-                                                <div className='second_nav_link_text'>Sell With Muhalik</div>
-                                            </Nav.Link>
-                                        </OverlyPopover>
-                                        <div style={{ color: `${GlobalStyleSheet.primry_color}` }}>|</div>
-                                        <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
-                                            <Nav.Link href="#" style={styles.flex_row}>
-                                                <div className='second_nav_link_text'>Get Muhalik's App</div>
-                                            </Nav.Link>
-                                        </OverlyPopover>
-                                    </Col>
-                                </Row>
+                            <Nav className='w-100 d-flex align-items-center' style={{ border: `0.5px solid ${GlobalStyleSheet.primry_color}` }}>
+                                <div className='categories_lg_md'>
+                                    <Dropdown onMouseOver={onMouseEnter}
+                                        onMouseLeave={onMouseLeave} show={isCategoryOpen}>
+                                        <Dropdown.Toggle as={Nav.Link} className="d-inline-flex align-items-center">
+                                            <FontAwesomeIcon icon={faListAlt} style={styles.second_nav_fontawesome} />
+                                            <div className='second_nav_link_text'>Categories</div>
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item >Header</Dropdown.Item>
+                                            <Dropdown.Item >Action</Dropdown.Item>
+                                            <Dropdown.Item>Another Action</Dropdown.Item>
+                                            <Dropdown.Item>Another Action</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </div>
+                                <div className='vertical_bar'>|</div>
+                                {isShops ?
+                                    <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
+                                        <Nav.Link href="#" className="d-inline-flex" onClick={() => setIsShops(false)}>
+                                            <FontAwesomeIcon icon={faStoreAlt} style={styles.second_nav_fontawesome} />
+                                            <div className='second_nav_link_text'>Shops</div>
+                                            <div className='width' style={{ width: '70px' }}></div>
+                                        </Nav.Link>
+                                    </OverlyPopover>
+                                    :
+                                    <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
+                                        <Nav.Link href="#" className="d-inline-flex" onClick={() => setIsShops(true)}>
+                                            <FontAwesomeIcon icon={faProductHunt} style={styles.second_nav_fontawesome} />
+                                            <div className='second_nav_link_text'>Products</div>
+                                            <div className='width' style={{ width: '70px' }}></div>
+                                        </Nav.Link>
+                                    </OverlyPopover>
+                                }
+                                <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
+                                    <Nav.Link href="#" className="d-inline-flex p-2">
+                                        <FontAwesomeIcon icon={faHandsHelping} style={styles.second_nav_fontawesome} />
+                                        <div className='second_nav_link_text'>About Us</div>
+                                    </Nav.Link>
+                                </OverlyPopover>
+                                <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
+                                    <Nav.Link href="#" className="d-inline-flex p-2">
+                                        <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} />
+                                        <div className='second_nav_link_text'>Feedback</div>
+                                    </Nav.Link>
+                                </OverlyPopover>
+                                <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
+                                    <Nav.Link href="#" className="d-inline-flex p-2">
+                                        <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} />
+                                        <div className='second_nav_link_text'>Help</div>
+                                    </Nav.Link>
+                                </OverlyPopover>
+                                <div className='mr-auto'></div>
+                                <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
+                                    <Nav.Link href="#" >
+                                        <div className='second_nav_link_text'>Sell With Muhalik</div>
+                                    </Nav.Link>
+                                </OverlyPopover>
+                                <div className='vertical_bar'>|</div>
+                                <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
+                                    <Nav.Link href="#" >
+                                        <div className='second_nav_link_text'>Get Muhalik's App</div>
+                                    </Nav.Link>
+                                </OverlyPopover>
                             </Nav>
                         </Navbar.Collapse>
                     </Navbar>
@@ -216,9 +231,7 @@ function Toolbar(props) {
             <style jsx>
                 {`
                     .nav_link_text {
-                        text-align: center;
                         white-space: nowrap;
-                        overflow: hidden;
                         font-size: 14px;
                         color: ${GlobalStyleSheet.primry_color}
                     }
@@ -226,18 +239,31 @@ function Toolbar(props) {
                         color: black
                     }
                     .second_nav_link_text {
-                        text-align: center;
                         white-space: nowrap;
-                        overflow: hidden;
                         font-size: 14px;
-                        margin-left: 5px;
-                        margin-right: 8px;
                         color: ${GlobalStyleSheet.primry_color}
                     }
                     @media (max-width: 992px) {
                         .width {
                             max-width: 0px;
                             display: none
+                        }
+                    }
+                    .vertical_bar {
+                       color: ${GlobalStyleSheet.primry_color}
+                    }
+                    .categories_sm_xs {
+                        display: none;
+                    }
+                    @media (max-width: 768px) {
+                        .vertical_bar {
+                            display: none;
+                        }
+                        .categories_sm_xs {
+                            display: block;
+                        }
+                        .categories_lg_md {
+                            display: none;
                         }
                     }
                 `}
@@ -276,57 +302,6 @@ Toolbar.getInitialProps = async ctx => {
 }
 
 const styles = {
-    row: {
-        width: '100%',
-        margin: '0%',
-        padding: '0%',
-        display: 'flex',
-        alignItems: 'center'
-    },
-    col: {
-        marginTop: '0.5%',
-        marginBottom: '0.5%',
-    },
-    nav_bar: {
-        padding: '0%',
-        width: '100%'
-    },
-    nav: {
-        display: 'flex',
-        alignItems: 'center'
-    },
-    flex_row: {
-        // fontSize: '13px',
-        display: 'flex',
-        alignItems: 'center',
-        flexDirection: 'row',
-        margin: '0px'
-    },
-    search_type: {
-        background: 'none',
-        border: `2px solid ${GlobalStyleSheet.primry_color}`,
-        borderRight: 'none',
-        color: 'black',
-        padding: '0px 15px',
-        display: 'flex',
-        textAlign: 'center',
-        alignItems: 'center',
-        borderTopLeftRadius: '18px',
-        borderBottomLeftRadius: '18px',
-    },
-    search_box: {
-        border: `2px solid ${GlobalStyleSheet.primry_color}`,
-        // borderLeft: 'none'
-    },
-    search_btn: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        padding: '0px 15px',
-        display: 'flex',
-        alignItems: 'center',
-        borderTopRightRadius: '18px',
-        borderBottomRightRadius: '18px',
-    },
-
     nav_link: {
         textAlign: 'center',
         whiteSpace: 'nowrap',
@@ -340,13 +315,6 @@ const styles = {
         height: '18px',
         maxHeight: '18px',
         maxWidth: '18x',
-    },
-    search_fontawesome: {
-        color: `${GlobalStyleSheet.primary_text_color}`,
-        width: '18px',
-        height: '18px',
-        maxHeight: '18px',
-        maxWidth: '18px',
     },
     nav_fontawesome: {
         color: `${GlobalStyleSheet.primry_color}`,
@@ -373,6 +341,7 @@ const styles = {
     },
     second_nav_fontawesome: {
         color: `${GlobalStyleSheet.primry_color}`,
+        marginRight: '3%',
         width: '22px',
         height: '22px',
         maxHeight: '22px',

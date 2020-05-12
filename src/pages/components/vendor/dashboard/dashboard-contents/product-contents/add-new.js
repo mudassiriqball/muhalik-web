@@ -118,8 +118,8 @@ const schema = yup.object({
     // Custom Fields
     custom_fields: yup.string(),
 
-    product_category: yup.string(),
-    product_sub_category: yup.string(),
+    category_id: yup.string(),
+    sub_category_id: yup.string(),
 
     dangerous_goods: yup.string(),
     product_tags: yup.string(),
@@ -141,6 +141,12 @@ class AddNew extends Component {
 
             productCategories: this.props.productCategories,
             productSubCategories: this.props.productSubCategories,
+            category_id: '',
+            sub_category_id: '',
+            category_options: product_categories_options,
+            sub_category_list: product_sub_categories_options,
+            sub_category_options: [],
+
             subCategoryDisabled: true,
             categoryErrorDiv: 'BorderDiv',
             subCategoryErrorDiv: 'BorderDiv',
@@ -172,13 +178,19 @@ class AddNew extends Component {
         const url_2 = MuhalikConfig.PATH + '/api/categories/tags';
         const token = await getUncodededTokenFromStorage()
 
+        const currentComponent = this;
         await axios.get(url, {
-            headers: { 'authorization': token }
+            headers: { 'authorization': await getUncodededTokenFromStorage() }
         }).then((response) => {
-            // console.log('categories:', response.data)
+            console.log('Categories: ', response.data)
+            currentComponent.setState({
+                category_options: response.data.category.docs,
+                sub_category_list: response.data.sub_category.docs
+            });
         }).catch((error) => {
-            // alert('categories Fetchig Error: ', error)
+            console.log('Caterories_1 Fetchig Error: ', error)
         })
+
         await axios.get(url_1, {
             headers: { 'authorization': token }
         }).then((response) => {
@@ -196,7 +208,7 @@ class AddNew extends Component {
         })
     }
 
-    async  uploadProduct(data, currentComponent) {
+    async uploadProduct(data, currentComponent) {
         console.log('da111222333ta: ', data)
         if (this.state.isUpdateProduct == false) {
             const url = MuhalikConfig.PATH + '/api/products/add'
@@ -296,13 +308,39 @@ class AddNew extends Component {
 
     // Product Category
     handleProductCategoryChange = (value) => {
-        this.setState({ productCategories: value, subCategoryDisabled: false, categoryErrorDiv: 'BorderDiv' });
-    }
-    handleProductSubCategoryChange = (value) => {
+        let array = []
+        let _id = null
+        this.state.category_options.forEach(element => {
+            if (value.label == element.label) {
+                _id = element._id
+            }
+        })
+
+        console.log('_id:', _id)
+        this.state.sub_category_list.forEach(element => {
+            if (element.category_id == _id) {
+                array.push(element)
+            }
+        })
+        console.log('array:', array)
 
         this.setState({
-            productSubCategories: value, subSubCategoryDisabled: false,
-            subCategoryErrorDiv: 'BorderDiv'
+            productCategories: value, sub_category_options: array,
+            subCategoryDisabled: false, categoryErrorDiv: 'BorderDiv',
+            category_id: _id
+        });
+    }
+    handleProductSubCategoryChange = (value) => {
+        let _id = null
+        this.state.sub_category_options.forEach(element => {
+            if (value.label == element.label) {
+                _id = element._id
+            }
+        })
+        this.setState({
+            productSubCategories: value,
+            subCategoryErrorDiv: 'BorderDiv',
+            sub_category_id: _id
         });
     }
 
@@ -407,8 +445,8 @@ class AddNew extends Component {
                         this.setState({ isLoading: true });
                         setTimeout(() => {
                             let array = [];
-                            values.product_category = this.state.productCategories;
-                            values.product_sub_category = this.state.productSubCategories;
+                            values.category_id = this.state.category_id;
+                            values.sub_category_id = this.state.sub_category_id;
                             values.product_tags = this.state.productTags;
 
                             values.dangerous_goods = this.state.dangerousGoodsArray;
@@ -648,7 +686,7 @@ class AddNew extends Component {
                                                     <Select
                                                         styles={GlobalStyleSheet.react_select_styles}
                                                         onChange={this.handleProductCategoryChange}
-                                                        options={product_categories_options}
+                                                        options={this.state.category_options}
                                                         value={this.state.productCategories}
                                                         isSearchable={true}
                                                         isClearable={true}
@@ -662,7 +700,7 @@ class AddNew extends Component {
                                                     <Select
                                                         styles={GlobalStyleSheet.react_select_styles}
                                                         onChange={this.handleProductSubCategoryChange}
-                                                        options={product_sub_categories_options}
+                                                        options={this.state.sub_category_options}
                                                         value={this.state.productSubCategories}
                                                         isSearchable={true}
                                                         isClearable={true}
