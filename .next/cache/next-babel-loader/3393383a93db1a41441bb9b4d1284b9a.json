@@ -1,0 +1,1 @@
+{"ast":null,"code":"var path = 'https://muhalikweb.herokuapp.com'; // const path = 'http://localhost:5000';\n\nvar MuhalikConfig = {\n  PATH: path\n};\nexport default MuhalikConfig;","map":null,"metadata":{},"sourceType":"module"}

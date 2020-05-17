@@ -208,27 +208,55 @@ class AddNew extends Component {
         })
     }
 
-    async uploadProduct(data, currentComponent) {
-        console.log('da111222333ta: ', data)
+    async uploadProduct(values, currentComponent) {
+        console.log('values: ', values)
+        const formData = new FormData();
+        formData.append('product_name', values.product_name)
+        formData.append('product_description', values.product_description)
+        formData.append('product_type', values.product_type)
+        formData.append('sku', values.sku)
+        formData.append('product_price', values.product_price)
+        formData.append('product_in_stock', values.product_in_stock)
+        formData.append('product_brand_name', values.product_brand_name)
+        formData.append('product_image_link', '')
+        values.product_image_link.forEach(element => {
+            formData.append('myImage', element)
+        })
+        formData.append('product_warranty', values.product_warranty)
+        formData.append('warranty_type', values.warranty_type)
+        formData.append('product_discount', values.product_discount)
+        formData.append('purchase_note', values.purchase_note)
+        formData.append('product_variations', values.product_variations)
+        formData.append('product_weight', values.product_weight)
+        formData.append('dimension_length', values.dimension_length)
+        formData.append('dimension_width', values.dimension_width)
+        formData.append('dimension_height', values.dimension_height)
+        formData.append('shipping_charges', values.shipping_charges)
+        formData.append('handling_fee', values.handling_fee)
+        formData.append('custom_fields', values.custom_fields)
+        formData.append('category_id', values.category_id)
+        formData.append('sub_category_id', values.sub_category_id)
+        formData.append('dangerous_goods', values.dangerous_goods)
+        formData.append('product_tags', values.product_tags)
+
         if (this.state.isUpdateProduct == false) {
             const url = MuhalikConfig.PATH + '/api/products/add'
-            await axios.post(url, {
-                data
-            }, {
+            const config = {
                 headers: {
+                    'content-type': 'multipart/form-data',
                     'authorization': await getUncodededTokenFromStorage(),
                 }
-            }).then(function (response) {
-                currentComponent.setState({ isLoading: false });
-                currentComponent.setState({ showToast: true, toastMessage: 'Product Uploaded Successfully' });
-                return true;
-            }).catch(function (error) {
-                console.log('error rooro:', error)
-                console.log('error rooro:', error.response)
-                currentComponent.setState({ isLoading: false });
-                alert('Product Upload failed');
-                return false;
-            });
+            };
+            axios.post(url, formData, config)
+                .then((response) => {
+                    currentComponent.setState({ isLoading: false });
+                    currentComponent.setState({ showToast: true, toastMessage: 'Product Uploaded Successfully' });
+                    return true;
+                }).catch((error) => {
+                    currentComponent.setState({ isLoading: false });
+                    alert('Product Upload failed');
+                    return false;
+                });
         } else {
             const url = MuhalikConfig.PATH + `/api/products/${this.state._id}`
             await axios.put(url, {
@@ -247,55 +275,13 @@ class AddNew extends Component {
         }
     }
 
-    //  Submit data to api
-    // async uploadProduct(data, ) {
-    //     if (await this.props.upload(data) == true) {
-    //         currentComponent.setState({ isLoading: false });
-    //         currentComponent.setState({ showToast: true });
-    //         return true;
-    //     } else {
-    //         currentComponent.setState({ isLoading: false });
-    //         alert('Product Upload failed');
-    //         return false;
-    //     }
-    // }
-
-    // handleProductTypeChange(e) {
-    // if (e.target.value == 'variable-prouct') {
-    //     this.setState({ isVariableProduct: true, customFieldsArray: [] });
-    // }
-    //     else {
-    //         this.setState({ isVariableProduct: false, variationsArray: [] });
-    //     }
-    // }
-
-    // Product Data
-    // => Simple Product Image Link
-    simpleProductImgLinkChange(value) {
-        this.setState({ simple_product_image_link: value });
-    }
-    handleSimpleProductImage_linkKeyDown = (event, inputValue) => {
-        const simple_product_image_link = this.state.simple_product_image_link;
-        if (!inputValue) return;
-        switch (event.key) {
-            case 'Enter':
-            case 'Tab':
-                this.setState({
-                    simple_product_image_link: [...simple_product_image_link, createOption(inputValue)],
-                });
-                event.preventDefault();
-                return true;
-        }
-    };
-    // => End Of Simple Product Image Link
-
     // Custom Fields
     handleSaveCustomFieldsBtnClick() {
         if (this.state.isVariableProduct == true) {
             const copyArray = Object.assign([], this.state.variationsArray)
             copyArray.forEach(element => {
                 this.state.customFieldsArray.forEach(e => {
-                    element.customField.push({
+                    element.custom_fields.push({
                         name: e.name,
                         value: e.value
                     });
@@ -421,8 +407,29 @@ class AddNew extends Component {
                         :
                         {
                             product_type: 'simple-product',
-                            product_price: '',
-                            product_in_stock: ''
+                            product_price: 0,
+                            product_in_stock: 0,
+                            product_name: '',
+                            product_description: '',
+                            sku: '',
+                            product_brand_name: '',
+                            product_image_link: '',
+                            product_warranty: '',
+                            warranty_type: '',
+                            product_discount: '',
+                            purchase_note: '',
+                            product_variations: '',
+                            product_weight: '',
+                            dimension_length: '',
+                            dimension_width: '',
+                            dimension_height: '',
+                            shipping_charges: '',
+                            handling_fee: '',
+                            custom_fields: '',
+                            category_id: '',
+                            sub_category_id: '',
+                            dangerous_goods: '',
+                            product_tags: '',
                         }
                 }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -435,7 +442,7 @@ class AddNew extends Component {
                         }
 
                         setSubmitting(false);
-                    } else if (values.product_type == 'simple-prouct' && values.product_price == '' || values.product_in_stock == '' || this.state.files == '') {
+                    } else if (values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
                         this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
                     } else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
                         this.setState({ showVariationsErrorAlert: true });
@@ -470,6 +477,34 @@ class AddNew extends Component {
                                 values.product_variations = array;
                             }
                             resetForm();
+
+                            // formData.append('product_name', values.product_name)
+                            // formData.append('product_description', values.product_description)
+                            // formData.append('product_type', values.product_type)
+                            // formData.append('sku', values.sku)
+                            // formData.append('product_price', values.product_price)
+                            // formData.append('product_in_stock', values.product_in_stock)
+                            // formData.append('product_brand_name', values.product_brand_name)
+                            // formData.append('product_image_link', values.product_image_link)
+                            // formData.append('product_warranty', values.product_warranty)
+                            // formData.append('warranty_type', values.warranty_type)
+                            // formData.append('product_discount', values.product_discount)
+                            // formData.append('purchase_note', values.purchase_note)
+                            // formData.append('product_variations', values.product_variations)
+                            // formData.append('product_weight', values.product_weight)
+                            // formData.append('dimension_length', values.dimension_length)
+                            // formData.append('dimension_width', values.dimension_width)
+                            // formData.append('dimension_height', values.dimension_height)
+                            // formData.append('shipping_charges', values.shipping_charges)
+                            // formData.append('handling_fee', values.handling_fee)
+                            // formData.append('purchase_note', values.purchase_note)
+                            // formData.append('custom_fields', values.custom_fields)
+                            // formData.append('category_id', values.category_id)
+                            // formData.append('sub_category_id', values.sub_category_id)
+                            // formData.append('dangerous_goods', values.dangerous_goods)
+                            // formData.append('product_tags', values.product_tags)
+
+
                             if (this.uploadProduct(values, this)) {
                                 this.setState({
                                     showVariationsErrorAlert: false,
@@ -614,11 +649,6 @@ class AddNew extends Component {
                                             fileSelectedHandler={this.fileSelectedHandler.bind(this)}
                                             imagePreviewArray={this.state.imagePreviewArray}
                                             deleteImage={this.deleteImage}
-
-                                            imageLink={this.state.simple_product_image_link}
-                                            simpleProductImgLinkChange={this.simpleProductImgLinkChange.bind(this)}
-                                            simpleProductImgLinkKeyDownHandler={this.handleSimpleProductImage_linkKeyDown.bind(this)}
-                                            simpleProductError={this.state.showSimpleProductPriceImgLinkErrorrAlert}
 
                                             product_warranty_values={values.product_warranty || ''}
                                             product_warranty_errors={errors.product_warranty}

@@ -1,4 +1,4 @@
-import { Image, Nav, Navbar, Dropdown, ButtonGroup, Form, FormControl, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
+import { Image, Nav, Navbar, Dropdown, NavDropdown, ButtonGroup, Form, FormControl, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faBars, faPowerOff, faChevronRight, faPlusCircle, faChevronDown, faChevronUp, faTachometerAlt, faPersonBooth, faHandsHelping, faUser, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar } from '@fortawesome/free-solid-svg-icons';
@@ -177,7 +177,7 @@ const Dashboard = props => {
                     {/* Toolbar & Tabs Contents */}
                     <Col>
                         {/* Toolbar */}
-                        <Navbar collapseOnSelect expand="lg" style={styles.navbar} variant="dark">
+                        <Navbar collapseOnSelect expand="lg" style={styles.navbar} variant="dark" className='p-1 m-0'>
                             {/* Show/Hide bar btn while screen switches to Large to Small,Medium,Extra-Small Devices */}
                             <div className="side_tab_toogle_btn mr-auto" style={styles.toolbar_btn_div}>
                                 <Button style={styles.toolbar_btn} onClick={props.drawerClickHandler}>
@@ -186,7 +186,7 @@ const Dashboard = props => {
                             </div>
                             {/* Bars Btn to Show/Hide Tabs Sde Drawer in Large Devices */}
                             <div className="wrapper_btn" style={styles.toolbar_btn_div}>
-                                <Button style={styles.toolbar_btn} onClick={props.wrapperBtnClickHandler}>
+                                <Button style={styles.toolbar_btn} onClick={props.wrapperBtnClickHandler} className='ml-1'>
                                     <FontAwesomeIcon icon={faBars} style={styles.toolbar_fontawesomer} />
                                 </Button>
                             </div>
@@ -208,28 +208,27 @@ const Dashboard = props => {
                             </Form>
                             {/* Account Setting Dropdown */}
                             <div className="account_settig_dropdown">
-                                <Dropdown as={ButtonGroup} alignRight>
-                                    <Dropdown.Toggle size="sm" split variant="light" id="dropdown-split" style={{ background: 'none', border: 'none' }} />
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item href="#/action-1">
-                                            <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
+                                <NavDropdown className='p-0 m-0' title={
+                                    <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '30px', maxWidth: '30px' }} />
+                                } id="nav-dropdown" alignRight>
+                                    <NavDropdown.Item href="#/action-1">
+                                        <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
                                         My Profile
-                                    </Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2">
-                                            <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item href="#/action-2">
+                                        <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
                                         Feedback
-                                    </Dropdown.Item>
-                                        <Dropdown.Item href="#/action-3">
-                                            <FontAwesomeIcon icon={faHandsHelping} style={styles.dropDown_fontawesome} />
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item href="#/action-3">
+                                        <FontAwesomeIcon icon={faHandsHelping} style={styles.dropDown_fontawesome} />
                                         Help?
-                                    </Dropdown.Item>
-                                        <Dropdown.Divider />
-                                        <Dropdown.Item onClick={props.logoutClickHandler}>
-                                            <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Divider />
+                                    <NavDropdown.Item onClick={props.logoutClickHandler}>
+                                        <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
                                         Logout
-                                </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
+                                </NavDropdown.Item>
+                                </NavDropdown>
                             </div>
                         </Navbar>
                         {/* End of Toolbar */}

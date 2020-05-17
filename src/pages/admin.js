@@ -66,7 +66,7 @@ class Admin extends Component {
             <div style={styles.body}>
                 {/* <AdminLayout> */}
                 <Dashboard token={this.state.jwt_token} show={this.state.showWrapper} drawerClickHandler={this.drawerToggleClickHandler}
-                    ClickHandler={this.ShowWrapperClickHandler} logoutClickHandler={this.logout} />
+                    wrapperBtnClickHandler={this.ShowWrapperClickHandler} logoutClickHandler={this.logout} />
                 <DashboardSideDrawer token={this.state.jwt_token} show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler} logoutClickHandler={this.logout} />
                 {backdrop}

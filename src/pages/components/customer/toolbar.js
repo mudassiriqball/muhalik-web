@@ -134,14 +134,6 @@ function Toolbar(props) {
                     <Navbar expand="md" className=' m-2 p-0'>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <div className='categories_sm_xs'>
-                        </div>
-                        <div className='categories_sm_xs'>
-                        </div>
-                        <div className='categories_sm_xs'>
-                        </div>
-                        <div className='categories_sm_xs'>
-                        </div>
-                        <div className='categories_sm_xs'>
                             <Dropdown onMouseOver={onMouseEnter}
                                 onMouseLeave={onMouseLeave} show={isCategoryOpen}>
                                 <Dropdown.Toggle as={Nav.Link} className="d-inline-flex align-items-center">
@@ -165,7 +157,7 @@ function Toolbar(props) {
                                             <FontAwesomeIcon icon={faListAlt} style={styles.second_nav_fontawesome} />
                                             <div className='second_nav_link_text'>Categories</div>
                                         </Dropdown.Toggle>
-                                        <Dropdown.Menu>
+                                        <Dropdown.Menu style={{ minWidth: '300px', minHeight: '50vh' }}>
                                             <Dropdown.Item >Header</Dropdown.Item>
                                             <Dropdown.Item >Action</Dropdown.Item>
                                             <Dropdown.Item>Another Action</Dropdown.Item>
