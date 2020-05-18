@@ -346,8 +346,14 @@ productsController.addfile = async (req, res) => {
 
 //Add product endpoint definition
 productsController.addProduct = async (req, res) => {
-  console.log('Data:', req.body.toString())
+  console.log('Data:', req.body)
   const body = req.body;
+
+  body.product_variations = JSON.parse(body.product_variations)
+  body.custom_fields = JSON.parse(body.custom_fields)
+  body.dangerous_goods = JSON.parse(body.dangerous_goods)
+  body.product_tags = JSON.parse(body.product_tags)
+
   try {
     var datetime = new Date();
     var date = datetime.toISOString().slice(0, 10);
@@ -359,12 +365,7 @@ productsController.addProduct = async (req, res) => {
     for (let index = 0; index < req.files.length; index++) {
       paths.push({ 'path': req.files[index].path })
     }
-    body.product_image_link_path = paths;
-    console.log("1111", body.product_image_link_path);
-    //  body.product_image_link.label="hello";
-    // console.log("again",body.product_image_link.label);
-    // console.log(util.inspect(body, { showHidden: false, depth: null }));
-    //console.log("0",body.product_image_link);
+    body.product_image_link = paths;
     const product = new Products(body);
     const result = await product.save();
     res.status(200).send({

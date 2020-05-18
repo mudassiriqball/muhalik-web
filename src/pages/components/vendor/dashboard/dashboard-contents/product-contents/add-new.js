@@ -226,18 +226,18 @@ class AddNew extends Component {
         formData.append('warranty_type', values.warranty_type)
         formData.append('product_discount', values.product_discount)
         formData.append('purchase_note', values.purchase_note)
-        formData.append('product_variations', values.product_variations)
+        formData.append('product_variations', JSON.stringify(values.product_variations))
         formData.append('product_weight', values.product_weight)
         formData.append('dimension_length', values.dimension_length)
         formData.append('dimension_width', values.dimension_width)
         formData.append('dimension_height', values.dimension_height)
         formData.append('shipping_charges', values.shipping_charges)
         formData.append('handling_fee', values.handling_fee)
-        formData.append('custom_fields', values.custom_fields)
+        formData.append('custom_fields', JSON.stringify(values.custom_fields))
         formData.append('category_id', values.category_id)
         formData.append('sub_category_id', values.sub_category_id)
-        formData.append('dangerous_goods', values.dangerous_goods)
-        formData.append('product_tags', values.product_tags)
+        formData.append('dangerous_goods', JSON.stringify(values.dangerous_goods))
+        formData.append('product_tags', JSON.stringify(values.product_tags))
 
         if (this.state.isUpdateProduct == false) {
             const url = MuhalikConfig.PATH + '/api/products/add'
@@ -418,7 +418,7 @@ class AddNew extends Component {
                             warranty_type: '',
                             product_discount: '',
                             purchase_note: '',
-                            product_variations: '',
+                            product_variations: [],
                             product_weight: '',
                             dimension_length: '',
                             dimension_width: '',
