@@ -400,6 +400,7 @@ const ProductData = props => {
                                         <Tab.Pane eventKey="Attributes">
                                             <ProductAttributes
                                                 setVariationsArray={props.setVariationsArray}
+                                                variationsArray={props.variationsArray}
                                             />
                                         </Tab.Pane>
 
@@ -524,7 +525,6 @@ function ProductAttributes(props) {
             })
 
             const array = allPossibleCases(allArrays)
-            console.log('array:', array)
 
             var data = []
             array.forEach((element, index) => {
@@ -539,7 +539,7 @@ function ProductAttributes(props) {
                 })
             })
             setSuccessMessage('Variations Created Successfully')
-            setAttributesArray([])
+            // setAttributesArray([])
             props.setVariationsArray(data)
         } else {
             setError('Add some attributes first')

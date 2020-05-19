@@ -61,7 +61,7 @@ const CustomFields = props => {
 
     return (
         <>
-            {props.showCustomFields ?
+            {props.hideCustomFields ?
                 <Form.Label style={styles.label}> Please First Create Variations </Form.Label>
                 :
                 <>

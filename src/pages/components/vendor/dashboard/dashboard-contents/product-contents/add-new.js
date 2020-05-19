@@ -219,7 +219,7 @@ class AddNew extends Component {
         formData.append('product_in_stock', values.product_in_stock)
         formData.append('product_brand_name', values.product_brand_name)
         formData.append('product_image_link', '')
-        values.product_image_link.forEach(element => {
+        values.product_image_link && values.product_image_link.forEach(element => {
             formData.append('myImage', element)
         })
         formData.append('product_warranty', values.product_warranty)
@@ -370,14 +370,6 @@ class AddNew extends Component {
     }
 
     render() {
-        var showCustomFields = false;
-        if (this.state.variationsArray == [] && this.state.isVariableProduct == true) {
-            showCustomFields = true;
-        }
-        else {
-            showCustomFields = false;
-        }
-
         return (
             <Formik
                 validationSchema={schema}
@@ -407,8 +399,8 @@ class AddNew extends Component {
                         :
                         {
                             product_type: 'simple-product',
-                            product_price: 0,
-                            product_in_stock: 0,
+                            product_price: '',
+                            product_in_stock: '',
                             product_name: '',
                             product_description: '',
                             sku: '',
@@ -425,11 +417,11 @@ class AddNew extends Component {
                             dimension_height: '',
                             shipping_charges: '',
                             handling_fee: '',
-                            custom_fields: '',
+                            custom_fields: [],
                             category_id: '',
                             sub_category_id: '',
-                            dangerous_goods: '',
-                            product_tags: '',
+                            dangerous_goods: [],
+                            product_tags: [],
                         }
                 }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -477,33 +469,6 @@ class AddNew extends Component {
                                 values.product_variations = array;
                             }
                             resetForm();
-
-                            // formData.append('product_name', values.product_name)
-                            // formData.append('product_description', values.product_description)
-                            // formData.append('product_type', values.product_type)
-                            // formData.append('sku', values.sku)
-                            // formData.append('product_price', values.product_price)
-                            // formData.append('product_in_stock', values.product_in_stock)
-                            // formData.append('product_brand_name', values.product_brand_name)
-                            // formData.append('product_image_link', values.product_image_link)
-                            // formData.append('product_warranty', values.product_warranty)
-                            // formData.append('warranty_type', values.warranty_type)
-                            // formData.append('product_discount', values.product_discount)
-                            // formData.append('purchase_note', values.purchase_note)
-                            // formData.append('product_variations', values.product_variations)
-                            // formData.append('product_weight', values.product_weight)
-                            // formData.append('dimension_length', values.dimension_length)
-                            // formData.append('dimension_width', values.dimension_width)
-                            // formData.append('dimension_height', values.dimension_height)
-                            // formData.append('shipping_charges', values.shipping_charges)
-                            // formData.append('handling_fee', values.handling_fee)
-                            // formData.append('purchase_note', values.purchase_note)
-                            // formData.append('custom_fields', values.custom_fields)
-                            // formData.append('category_id', values.category_id)
-                            // formData.append('sub_category_id', values.sub_category_id)
-                            // formData.append('dangerous_goods', values.dangerous_goods)
-                            // formData.append('product_tags', values.product_tags)
-
 
                             if (this.uploadProduct(values, this)) {
                                 this.setState({
@@ -621,7 +586,7 @@ class AddNew extends Component {
                                         <ProductData
                                             isUpdateProduct={this.props.isUpdateProduct}
                                             productTypeHandler={e => {
-                                                if (e.target.value == 'variable-prouct') {
+                                                if (e.target.value === 'variable-prouct') {
                                                     this.setState({
                                                         isVariableProduct: true
                                                     })
@@ -700,7 +665,7 @@ class AddNew extends Component {
                                                 customFieldsArray={this.state.customFieldsArray}
                                                 setFieldsArrayHandler={(arr) => this.setState({ customFieldsArray: arr })}
                                                 isVariableProduct={this.state.isVariableProduct}
-                                                showCustomFields={showCustomFields}
+                                                hideCustomFields={this.state.variationsArray == '' && this.state.isVariableProduct == true}
                                                 saveCustomFieldsHandler={this.handleSaveCustomFieldsBtnClick.bind(this)}
                                             />
                                         </CardAccordion>

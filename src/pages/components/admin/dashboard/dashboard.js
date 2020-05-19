@@ -254,9 +254,7 @@ const Dashboard = props => {
                                         isUpdateProduct={false}
                                         productCategories={''}
                                         productSubCategories={''}
-                                        productSubSubCategories={''}
                                         subCategoryDisabled={true}
-                                        subSubCategoryDisabled={true}
                                         productTags={[]}
                                         warrantyType={''}
                                         simple_product_image_link={[]}
