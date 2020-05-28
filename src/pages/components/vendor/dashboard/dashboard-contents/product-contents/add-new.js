@@ -219,10 +219,12 @@ class AddNew extends Component {
                 currentComponent.setState({ showToast: true, toastMessage: 'Product Uploaded Successfully' });
                 return true;
             }).catch((error) => {
+                console.log('error:', error)
                 currentComponent.setState({ isLoading: false });
                 alert('Product Upload failed');
                 return false;
             });
+
         // } else {
         // const url = MuhalikConfig.PATH + `/api/products/add`
         // await axios.post(url, {
@@ -559,6 +561,7 @@ class AddNew extends Component {
                                         </CardAccordion>
                                         {/* Product Data Row */}
                                         <ProductData
+                                            {...this.props}
                                             isUpdateProduct={this.props.isUpdateProduct}
                                             fields_list={this.state.fields_list}
                                             productTypeHandler={e => {

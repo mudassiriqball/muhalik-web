@@ -158,7 +158,10 @@ class ProducFields extends Component {
         await axios.post(url, {
             data
         }, {
-            headers: { 'authorization': this.state.token }
+            headers: {
+                '_id': copyArray[index]._id,
+                'authorization': this.state.token
+            }
         }).then(function (response) {
             copyArray.splice(index, 1);
             currentComponent.setState({
@@ -168,10 +171,10 @@ class ProducFields extends Component {
             })
         }).catch(function (error) {
             try {
-                alert('Error: ', error.response.data.message);
+                alert('Add Field Failed:', error.response.data.message);
             } catch (err) {
+                console.log('Add Field Failed:', error)
                 alert('Add Field Failed ');
-                console.log('Request Failed:', error)
             }
         });
     }

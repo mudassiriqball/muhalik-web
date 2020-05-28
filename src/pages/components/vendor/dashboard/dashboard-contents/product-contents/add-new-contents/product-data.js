@@ -394,6 +394,7 @@ const ProductData = props => {
 
                                         <Tab.Pane eventKey="Attributes">
                                             <ProductAttributes
+                                                {...props}
                                                 setVariationsArray={props.setVariationsArray}
                                                 variationsArray={props.variationsArray}
                                                 fields_list={props.fields_list}
@@ -574,6 +575,7 @@ function ProductAttributes(props) {
                         Add New
                     </Nav.Link>
                     <AddNewFieldNameModal
+                        {...props}
                         show={modalShow}
                         onHide={() => setModalShow(false)}
                     />

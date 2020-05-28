@@ -46,8 +46,7 @@ class Admin extends Component {
 
     async componentDidMount() {
         const url = MuhalikConfig.PATH + '/api/categories/categories';
-        const _token = await getTokenFromStorage()
-        this.setState({ token: _token })
+        this.setState({ token: await getTokenFromStorage() })
         const currentComponent = this;
         await axios.get(url).then((response) => {
             currentComponent.setState({
@@ -62,9 +61,19 @@ class Admin extends Component {
         await axios.get(url_1).then(function (response) {
             currentComponent.setState({
                 fields_list: response.data.data.docs,
+            });
+        }).catch(function (error) {
+            console.log("Fields Fetching Error:", error)
+            alert('Fields Fetching Error: ', error)
+        })
+
+        const url_2 = MuhalikConfig.PATH + '/api/categories/field-requests';
+        await axios.get(url_2).then(function (response) {
+            currentComponent.setState({
                 field_requests_list: response.data.data.docs,
             });
         }).catch(function (error) {
+            console.log("Field Requests Fetching Error:", error)
             alert('F error: ', error)
         })
 
@@ -123,7 +132,7 @@ class Admin extends Component {
                     sub_categories_list={this.state.sub_categories_list}
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
-                    token={this.state.tokentoken}
+                    token={this.state.token}
                     user_name={this.state.user_name}
                     show={this.state.showWrapper}
                     drawerClickHandler={this.drawerToggleClickHandler}

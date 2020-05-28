@@ -43,8 +43,7 @@ class Vendor extends Component {
 
     async componentDidMount() {
         const url = MuhalikConfig.PATH + '/api/categories/categories'
-        const _token = await getTokenFromStorage()
-        this.setState({ token: _token })
+        this.setState({ token: await getTokenFromStorage() })
         const currentComponent = this
         await axios.get(url).then((response) => {
             currentComponent.setState({
