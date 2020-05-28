@@ -1,5 +1,5 @@
 const usersController = {};
-const Users = require("../modals/user.modal");
+const Users = require("../models/user.model");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Router from 'next/router'
+import axios from 'axios'
 import Dashboard from './components/admin/dashboard/dashboard';
 import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-drawer';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import GlobalStyleSheet from '../styleSheet';
-import { chectAuth, removeTokenFromStorage } from '../sdk/core/authentication-service';
+import MuhalikConfig from '../sdk/muhalik.config'
+import { chectAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service';
 
 const BackDrop = props => (
     <div>
@@ -22,6 +24,7 @@ const BackDrop = props => (
     </div>
 )
 
+let token = ''
 class Admin extends Component {
     constructor(props) {
         super(props);
@@ -29,12 +32,63 @@ class Admin extends Component {
         this.state = {
             sideDrawerOpen: false,
             showWrapper: true,
-            jwt_token: '',
+
+            categories_list: [],
+            sub_categories_list: [],
+
+            fields_list: [],
+            field_requests_list: [],
+
+            token: '',
+            user_name: '',
         }
     }
 
+    async componentDidMount() {
+        const url = MuhalikConfig.PATH + '/api/categories/categories';
+        const _token = await getTokenFromStorage()
+        this.setState({ token: _token })
+        const currentComponent = this;
+        await axios.get(url).then((response) => {
+            currentComponent.setState({
+                categories_list: response.data.category.docs,
+                sub_categories_list: response.data.sub_category.docs
+            });
+        }).catch((error) => {
+            console.log('Caterories Fetchig Error: ', error)
+        })
+
+        const url_1 = MuhalikConfig.PATH + '/api/categories/fields';
+        await axios.get(url_1).then(function (response) {
+            currentComponent.setState({
+                fields_list: response.data.data.docs,
+                field_requests_list: response.data.data.docs,
+            });
+        }).catch(function (error) {
+            alert('F error: ', error)
+        })
+
+        // function getCategories() {
+        //     return axios.get(MuhalikConfig.PATH + '/api/categories_list/categories_list');
+        // }
+        // function getFields() {
+        //     return axios.get(MuhalikConfig.PATH + '/api/categories_list/fields');
+        // }
+
+        // axios.all([getCategories(), getFields()])
+        //     .then(axios.spread(function (response) {
+        //         this.setState({
+        //             categories_list: response[0].data.category.docs,
+        //             sub_categories_list: response[0].data.sub_category.docs,
+        //             fields: response[1].data.sub_category.docs
+        //         })
+        //     })).catch(function (error) {
+        //         console.log('ERRORR:', error);
+        //     });
+    }
+
     async authUser() {
-        this.setState({ jwt_token: await chectAuth('admin') });
+        this.setState({ user_name: await chectAuth('admin') });
     }
 
     drawerToggleClickHandler = () => {
@@ -61,14 +115,30 @@ class Admin extends Component {
         if (this.state.sideDrawerOpen) {
             backdrop = <BackDrop click={this.backdropClickHandler} />;
         }
-
         return (
             <div style={styles.body}>
                 {/* <AdminLayout> */}
-                <Dashboard token={this.state.jwt_token} show={this.state.showWrapper} drawerClickHandler={this.drawerToggleClickHandler}
-                    wrapperBtnClickHandler={this.ShowWrapperClickHandler} logoutClickHandler={this.logout} />
-                <DashboardSideDrawer token={this.state.jwt_token} show={this.state.sideDrawerOpen}
-                    click={this.backdropClickHandler} logoutClickHandler={this.logout} />
+                <Dashboard
+                    categories_list={this.state.categories_list}
+                    sub_categories_list={this.state.sub_categories_list}
+                    fields_list={this.state.fields_list}
+                    field_requests_list={this.state.field_requests_list}
+                    token={this.state.tokentoken}
+                    user_name={this.state.user_name}
+                    show={this.state.showWrapper}
+                    drawerClickHandler={this.drawerToggleClickHandler}
+                    wrapperBtnClickHandler={this.ShowWrapperClickHandler}
+                    logoutClickHandler={this.logout} />
+                <DashboardSideDrawer
+                    categories_list={this.state.categories_list}
+                    sub_categories_list={this.state.sub_categories_list}
+                    fields_list={this.state.fields_list}
+                    field_requests_list={this.state.field_requests_list}
+                    token={this.state.token}
+                    user_name={this.state.user_name}
+                    show={this.state.sideDrawerOpen}
+                    click={this.backdropClickHandler}
+                    logoutClickHandler={this.logout} />
                 {backdrop}
                 {/* </AdminLayout> */}
             </div>

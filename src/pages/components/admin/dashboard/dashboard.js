@@ -19,10 +19,6 @@ import Discounts from './dashboard-contents/discount';
 import Commision from './dashboard-contents/commision';
 import Reports from './dashboard-contents/reports';
 import GlobalStyleSheet from '../../../../styleSheet';
-import { removeTokenFromStorage } from '../../../../sdk/core/authentication-service';
-import axios from 'axios';
-import { getUncodededTokenFromStorage } from '../../../../sdk/core/authentication-service'
-import MuhalikConfig from '../../../../sdk/muhalik.config'
 
 const Dashboard = props => {
     let wprapper_Casses = "wrapper";
@@ -31,20 +27,6 @@ const Dashboard = props => {
     }
 
     const [show_product, setShow_product] = React.useState(false);
-
-    async function upload(data) {
-        console.log('da111222333ta: ', data)
-        const url = MuhalikConfig.PATH + '/api/products/add';
-        await axios.post(url, {
-            data
-        }, {
-            headers: { 'authorization': await getUncodededTokenFromStorage() }
-        }).then(function (response) {
-            return true;
-        }).catch(function (error) {
-            return false;
-        });
-    }
 
     return (
         <div>
@@ -56,7 +38,7 @@ const Dashboard = props => {
                             <Nav.Item style={styles.image_div}>
                                 <p>
                                     <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                    <Nav.Link href="/index" style={styles.muhalik}> {props.token} </Nav.Link>
+                                    <Nav.Link href="/index" style={styles.muhalik}> {props.user_name} </Nav.Link>
                                 </p>
                             </Nav.Item>
                             <Nav.Item>
@@ -119,7 +101,7 @@ const Dashboard = props => {
                                         </Nav.Link>
                                     </div>
                                     <div className="product_submenu">
-                                        <Nav.Link eventKey="ProductTags" style={styles.product_submenu_link}>
+                                        <Nav.Link eventKey="ProductTags" style={styles.product_submenu_link} disabled={true}>
                                             <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
                                             <div className="mr-auto"> Product Tags </div>
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -250,7 +232,7 @@ const Dashboard = props => {
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddProduct">
                                     <AddNew
-                                        upload={upload}
+                                        {...props}
                                         isUpdateProduct={false}
                                         productCategories={''}
                                         productSubCategories={''}
@@ -263,13 +245,13 @@ const Dashboard = props => {
                                     />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="ProductCategories">
-                                    <ProducCategories />
+                                    <ProducCategories {...props} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="ProductTags">
                                     <ProductTags />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="ProductFields">
-                                    <ProductFields />
+                                    <ProductFields {...props} />
                                 </Tab.Pane>
                                 {/*  */}
                                 <Tab.Pane eventKey="Inventory">

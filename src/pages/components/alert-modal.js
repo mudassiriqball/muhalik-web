@@ -11,7 +11,7 @@ function AlertModal(props) {
         >
             <div style={{ border: `1px solid ${props.color}`, borderRadius: '5px' }}>
                 <Modal.Header closeButton style={{ color: `${props.color}`, borderBottom: `1px solid ${props.color}` }}>
-                    <FontAwesomeIcon icon={props.iconName} style={{
+                    <FontAwesomeIcon icon={props.iconname} style={{
                         color: `${props.color}`,
                         marginRight: '10px',
                         width: '35px',

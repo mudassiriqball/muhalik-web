@@ -1,4 +1,4 @@
-import { Form, Row, Accordion, Col, Card, InputGroup, Button, Spinner } from 'react-bootstrap'
+import { Form, Row, Accordion, Col, Card, InputGroup, Button, Spinner, Dropdown, ButtonGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faListAlt, faSlidersH } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons'
@@ -7,18 +7,26 @@ import MuhalikConfig from '../../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../.././../styleSheet'
 import axios from 'axios';
 import AlertModal from '../../../../alert-modal';
+import ConfirmModal from '../../../../confirm-modal'
 import TitleRow from '../../../../title-row';
 import CardAccordion from '../../../../card_accordion';
 
 import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
 
 let categoryArray = [];
-class ProducCategories extends Component {
+class ProducCategories extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            token: '',
             isLoading: false,
             showToast: false,
+
+            showConfirmDeleteModal: false,
+            delete_category_id: '',
+            delete_category_name: '',
+            index: '',
+
 
             categoryValue: '',
             subCategoryValue: '',
@@ -26,37 +34,29 @@ class ProducCategories extends Component {
             categoryError: '',
             subCategoryError: '',
 
-            categoryList: [],
-            categoryRequestList: [],
+            categories_list: [],
+            sub_categories_list: [],
 
             editRequestedCategory: '',
             showModalMessage: '',
             showModal: false,
 
+            searchType: 'Category',
             filterStr: '',
         }
     }
 
-    // Getting Product Categories from DB
-    async componentDidMount() {
-        // const url = MuhalikConfig.PATH + '/api/categories/categories';
-        // const currentComponent = this;
-        // await axios.get(url, {
-        //     headers: { 'authorization': await getUncodededTokenFromStorage() }
-        // }).then((response) => {
-        //     let copyArray = [];
-        //     copyArray = response.data.data;
-        //     currentComponent.setState({ categoryList: copyArray });
-        //     currentComponent.setState({ categoryRequestList: currentComponent.state.categoryList });
-        //     categoryArray = copyArray;
-        // }).catch((error) => {
-        //     console.log('Caterories_1 Fetchig Error: ', error)
-        // })
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({
+            categories_list: nextProps.categories_list,
+            sub_categories_list: nextProps.sub_categories_list,
+            token: nextProps.token
+        });
+        categoryArray = nextProps.categories_list
     }
 
     async addCategory(currentComponent) {
         let data = [];
-
         data = {
             category: { value: this.state.categoryValue, label: this.state.categoryValue },
             sub_category: { value: this.state.subCategoryValue, label: this.state.subCategoryValue }
@@ -65,7 +65,7 @@ class ProducCategories extends Component {
         await axios.post(url, {
             data
         }, {
-            headers: { 'authorization': await getUncodededTokenFromStorage() }
+            headers: { 'authorization': this.state.token }
         }).then(function (response) {
             currentComponent.setState({ isLoading: false })
             currentComponent.setState({ showModalMessage: 'Product Category Added Successfully' })
@@ -80,22 +80,6 @@ class ProducCategories extends Component {
             }
             return false;
         });
-    }
-
-    handleFilterStrChange(e) {
-        this.setState({ filterStr: e.target.value });
-        if (e.target.value == '') {
-            this.setState({ categoryList: categoryArray });
-        } else {
-            let array = [];
-            this.state.categoryList.filter(function (data) {
-                // var value = data.value.toLowerCase;
-                if (data.value.includes(e.target.value)) {
-                    array.push(data);
-                }
-            })
-            this.setState({ categoryList: array });
-        }
     }
 
     async handleSubmit() {
@@ -185,10 +169,47 @@ class ProducCategories extends Component {
 
 
     // All categories
+
+    handleFilterStrChange(e) {
+        this.setState({ filterStr: e.target.value });
+        let array = [];
+        if (e.target.value != '') {
+            if (this.state.searchType == 'Category') {
+                categoryArray.filter(function (data) {
+                    const value = data.value.toLowerCase()
+                    if (value.includes(e.target.value.toLowerCase())) {
+                        array.push(data);
+                    }
+                })
+            } else {
+                let currentComponent = this
+                this.state.sub_categories_list.filter(function (element) {
+                    const value = element.value.toLowerCase()
+                    if (value.includes(e.target.value.toLowerCase())) {
+                        categoryArray.filter(function (e) {
+                            if (element.category_id == e._id) {
+                                array.push(e)
+                            }
+                        })
+                    }
+                })
+                let a = []
+                array.map(x => {
+                    if (!a.includes(x)) {
+                        a.push(x)
+                    }
+                })
+                array = a
+            }
+            this.setState({ categories_list: array })
+        } else {
+            this.setState({ categories_list: categoryArray })
+        }
+    }
     //  => Chane
     handleCategoryChange = (e, index) => {
         let copyArray = [];
-        copyArray = Object.assign([], this.state.categoryList);
+        copyArray = Object.assign([], this.state.categories_list);
         copyArray[index].value = e.target.value;
 
         if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
@@ -196,61 +217,175 @@ class ProducCategories extends Component {
         } else {
             copyArray[index].error = 'Value must be 3-20 characters'
         }
-        this.setState({ categoryList: copyArray })
+        this.setState({ categories_list: copyArray })
     }
 
     //  => Edit
     async handleEditCategoryClick(index) {
         let copyArray = [];
-        copyArray = Object.assign([], this.state.categoryList);
+        copyArray = Object.assign([], this.state.categories_list);
         var obj = {};
+        obj['_id'] = copyArray[index]._id;
         obj['value'] = copyArray[index].value;
         obj['label'] = false;
         obj['prevVal'] = copyArray[index].value;
         obj['error'] = '';
         copyArray[index] = obj
-        await this.setState({ categoryList: copyArray })
+        await this.setState({ categories_list: copyArray })
     }
     //  => Cancle
     handleCancelCategoryClick(index) {
         let copyArray = [];
-        copyArray = Object.assign([], this.state.categoryList);
+        copyArray = Object.assign([], this.state.categories_list);
         copyArray[index].value = copyArray[index].prevVal;
         copyArray[index].error = '';
         copyArray[index].label = true;
-        this.setState({ categoryList: copyArray })
+        this.setState({ categories_list: copyArray })
     }
     //  => Update
-    handleUpdateCategoryClick(index) {
+    async handleUpdateCategoryClick() {
         let copyArray = [];
-        copyArray = Object.assign([], this.state.categoryList);
+        let index = this.state.index
+        copyArray = Object.assign([], this.state.categories_list);
         if (copyArray[index].value == copyArray[index].prevVal) {
             copyArray[index].error = 'Enter Different Value';
-            this.setState({ categoryRequestList: copyArray });
+            this.setState({ categories_list: copyArray });
         } else {
-            if (copyArray[index].error == '') {
-                copyArray[index].label = true;
-                categoryArray.forEach((element, i) => {
-                    if (copyArray[index].prevVal == element.value) {
-                        element.value = copyArray[index].value;
-                    }
-                });
-                this.setState({ categoryList: copyArray, showModalMessage: 'Product Category Updated Successfully', showModal: true });
+            const currentComponent = this
+            let data = [];
+            data = {
+                category: { value: copyArray[index].value, label: copyArray[index].value },
             }
+            const url = MuhalikConfig.PATH + `/api/categories/category/${copyArray[index]._id}`
+            await axios.put(url, {
+                data
+            }, {
+                headers: { 'authorization': this.state.token }
+            }).then(function (response) {
+                copyArray[index].label = copyArray[index].value;
+                copyArray[index].prevVal = copyArray[index].value;
+                currentComponent.setState({
+                    categories_list: copyArray,
+                    showModalMessage: 'Product Category Updated Successfully',
+                    showModal: true
+                });
+                categoryArray = copyArray
+            }).catch(function (error) {
+                try {
+                    alert('Error: ', error.response.data.message);
+                } catch (err) {
+                    alert('Category Update Failed');
+                    console.log('Request Failed:', error)
+                }
+            });
+        }
+    }
+
+
+    // 
+    // Sub Category
+    handleSubCategoryChange = (e, index) => {
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.sub_categories_list);
+        copyArray[index].value = e.target.value;
+
+        if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
+            copyArray[index].error = ''
+        } else {
+            copyArray[index].error = 'Value must be 3-20 characters'
+        }
+        this.setState({ sub_categories_list: copyArray })
+    }
+
+    //  => Edit
+    async handleEditSubCategoryClick(index) {
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.sub_categories_list);
+        var obj = {};
+        obj['_id'] = copyArray[index]._id;
+        obj['category_id'] = copyArray[index].category_id;
+        obj['value'] = copyArray[index].value;
+        obj['label'] = false;
+        obj['prevVal'] = copyArray[index].value;
+        obj['error'] = '';
+        copyArray[index] = obj
+        await this.setState({ sub_categories_list: copyArray })
+    }
+    //  => Cancle
+    handleCancelSubCategoryClick(index) {
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.sub_categories_list);
+        copyArray[index].value = copyArray[index].prevVal;
+        copyArray[index].error = '';
+        copyArray[index].label = true;
+        this.setState({ sub_categories_list: copyArray })
+    }
+    //  => Update
+    async handleUpdateSubCategoryClick(index) {
+        let copyArray = [];
+        copyArray = Object.assign([], this.state.sub_categories_list);
+        if (copyArray[index].value == copyArray[index].prevVal) {
+            copyArray[index].error = 'Enter Different Value';
+            this.setState({ categories_list: copyArray });
+        } else {
+            const currentComponent = this
+            let data = [];
+            data = {
+                value: copyArray[index].value,
+                label: copyArray[index].value,
+                category_id: copyArray[index].category_id
+            }
+            const url = MuhalikConfig.PATH + `/api/categories/sub-category/${copyArray[index]._id}`
+            await axios.put(url, {
+                data
+            }, {
+                headers: { 'authorization': this.state.token }
+            }).then(function (response) {
+                copyArray[index].label = copyArray[index].value;
+                copyArray[index].prevVal = copyArray[index].value;
+                currentComponent.setState({
+                    sub_categories_list: copyArray,
+                    showModalMessage: 'Product Sub Category Updated Successfully',
+                    showModal: true
+                });
+                categoryArray = copyArray
+            }).catch(function (error) {
+                try {
+                    alert('Error: ', error.response.data.message);
+                } catch (err) {
+                    console.log('Request Failed:', error)
+                }
+            });
         }
     }
     //  => Delete
-    handleDeleteCategoryClick = (index) => {
+    async handleDeleteSubCategoryClick() {
+        this.setState({ showConfirmDeleteModal: false })
         let copyArray = [];
-        copyArray = Object.assign([], this.state.categoryList);
-        categoryArray.forEach((element, i) => {
-            if (copyArray[index].value == element.value) {
-                categoryArray.splice(index, 1);
+        const index = this.state.index
+        const currentComponent = this
+        copyArray = Object.assign([], this.state.sub_categories_list);
+
+        const url = MuhalikConfig.PATH + `/api/categories/sub-category/${copyArray[index]._id}`
+        await axios.delete(url, {
+            headers: { 'authorization': this.state.token }
+        }).then(function (response) {
+            copyArray.splice(index, 1);
+            currentComponent.setState({
+                sub_categories_list: copyArray,
+                showModalMessage: 'Product Category Deleted',
+                showModal: true
+            })
+            categoryArray = copyArray
+        }).catch(function (error) {
+            try {
+                alert('Error: ', error.response.data.message);
+            } catch (err) {
+                console.log('Request Failed:', error)
             }
         });
-        copyArray.splice(index, 1);
-        this.setState({ categoryList: copyArray, showModalMessage: 'Product Category Deleted', showModal: true })
     }
+
 
     render() {
         return (
@@ -260,9 +395,18 @@ class ProducCategories extends Component {
                     show={this.state.showModal}
                     header={'Success'}
                     message={this.state.showModalMessage}
-                    iconName={faThumbsUp}
+                    iconname={faThumbsUp}
                     color={"#00b300"}
                 />
+                <ConfirmModal
+                    onHide={() => this.setState({ showConfirmDeleteModal: false })}
+                    show={this.state.showConfirmDeleteModal}
+                    title={'Delete Sub Category'}
+                    _id={this.state.delete_category_id}
+                    name={this.state.delete_category_name}
+                    confirm={this.handleDeleteSubCategoryClick.bind(this)}
+                />
+
                 <TitleRow icon={faListAlt} title={' Admin Dashboard / Product Categories'} />
 
 
@@ -270,7 +414,7 @@ class ProducCategories extends Component {
                 {/* Add New Category */}
                 <CardAccordion title={'Add New Category'}>
                     <Form.Row>
-                        <Form.Group as={Col} lg={4} md={4} sm={4} xs={12}>
+                        <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
                             <Form.Label style={styles.label}>Category</Form.Label>
                             <InputGroup>
                                 <Form.Control
@@ -287,7 +431,7 @@ class ProducCategories extends Component {
                                 </Form.Control.Feedback>
                             </InputGroup>
                         </Form.Group>
-                        <Form.Group as={Col} lg={4} md={4} sm={4} xs={12}>
+                        <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
                             <Form.Label style={styles.label}>Sub Category</Form.Label>
                             <InputGroup>
                                 <Form.Control
@@ -304,13 +448,14 @@ class ProducCategories extends Component {
                                 </Form.Control.Feedback>
                             </InputGroup>
                         </Form.Group>
+                        <Form.Group as={Col}>
+                            <Button type="submit" size="sm" onClick={this.handleSubmit.bind(this)} disabled={this.state.isLoading} block style={styles.submit_btn}>
+                                {this.state.isLoading ? 'Uploading' : 'Add Category'}
+                                {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
+                            </Button>
+                        </Form.Group>
                     </Form.Row>
-                    <Form.Group>
-                        <Button type="submit" size="sm" onClick={this.handleSubmit.bind(this)} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                            {this.state.isLoading ? 'Uploading' : 'Add Category'}
-                            {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
-                        </Button>
-                    </Form.Group>
+
                 </CardAccordion>
 
                 {/* Add Category Requests */}
@@ -385,11 +530,18 @@ class ProducCategories extends Component {
                     <Form.Row style={{ margin: '0% 5%' }}>
                         <Form.Group as={Col}>
                             <InputGroup>
+                                <InputGroup.Prepend >
+                                    <Form.Control as="select" variant="primary" size='sm'
+                                        value={this.state.searchType} onChange={(e) => this.setState({ searchType: e.target.value })}>
+                                        <option>Category</option>
+                                        <option>Sub Category</option>
+                                    </Form.Control>
+                                </InputGroup.Prepend>
                                 <Form.Control
                                     type="text"
                                     size="sm"
-                                    placeholder="Enter Category Value"
-                                    name="sku"
+                                    placeholder="Search Here"
+                                    name="search"
                                     value={this.state.filterStr}
                                     onChange={(e) => this.handleFilterStrChange(e)}
                                 />
@@ -397,85 +549,109 @@ class ProducCategories extends Component {
                         </Form.Group>
                     </Form.Row>
                     <hr />
-                    {this.state.categoryList && this.state.categoryList.map((element, index) =>
-                        <Form.Row>
-                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs={12}>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    name="sku"
-                                    value={element.entry_date}
-                                    disabled={true}
-                                />
-                            </Form.Group>
-                            <Form.Group as={Col} lg={3} md={3} sm={3} xs={12}>
-                                <InputGroup>
+                    {this.state.categories_list && this.state.categories_list.map((element, index) =>
+                        <div key={index}>
+                            <Form.Row>
+                                <Form.Group as={Col} lg={6} md={6} sm={8} xs={12}>
                                     <Form.Control
                                         type="text"
                                         size="sm"
-                                        placeholder="Enter Category Value"
                                         name="sku"
-                                        value={element.category}
-                                        onChange={(e) => this.handleCategoryChange(e, index)}
+                                        value={element.value}
                                         disabled={element.label}
+                                        onChange={(e) => this.handleCategoryChange(e, index)}
                                         isInvalid={element.error}
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         {element.error}
                                     </Form.Control.Feedback>
-                                </InputGroup>
-                            </Form.Group>
-                            <Form.Group as={Col} lg={3} md={3} sm={3} xs={12}>
-                                <InputGroup>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        placeholder="Enter Category Value"
-                                        name="sku"
-                                        value={element.sub_category}
-                                        onChange={(e) => this.handleCategoryChange(e, index)}
-                                        disabled={element.label}
-                                        isInvalid={element.error}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {element.error}
-                                    </Form.Control.Feedback>
-                                </InputGroup>
-                            </Form.Group>
-                            <Form.Group as={Col} lg={3} md={3} sm={3} xs={12}>
-                                <InputGroup>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        placeholder="Enter Category Value"
-                                        name="sku"
-                                        value={element.sub_sub_category}
-                                        onChange={(e) => this.handleCategoryChange(e, index)}
-                                        disabled={element.label}
-                                        isInvalid={element.error}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {element.error}
-                                    </Form.Control.Feedback>
-                                </InputGroup>
-                            </Form.Group>
-                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                <Button type="submit" variant="outline-success" size="sm" block style={styles.submit_btn}
-                                    onClick={element.label ? () => this.handleEditCategoryClick(index) : () => this.handleUpdateCategoryClick(index)} >
-                                    <div>{element.label ? 'Edit' : 'Update'}</div>
-                                </Button>
-                            </Form.Group>
-                            <div className="mr-auto"></div>
-                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
-                                    onClick={element.label ? () => this.handleDeleteCategoryClick(index) : () => this.handleCancelCategoryClick(index)}>
-                                    <div>{element.label ? 'Delete' : 'Cancel'}</div>
-                                </Button>
-                            </Form.Group>
-
-                        </Form.Row>
+                                </Form.Group>
+                                <div className='sm_xs_show mr-auto'></div>
+                                <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                    <Button type="submit" variant={element.label ? "outline-primary" : "outline-success"} size="sm" block style={styles.submit_btn}
+                                        onClick={element.label ? () => this.handleEditCategoryClick(index) : () => this.handleUpdateCategoryClick(index)}
+                                        disabled={element.label ? false : element.error}
+                                    >
+                                        <div>{element.label ? 'Edit' : 'Update'}</div>
+                                    </Button>
+                                </Form.Group>
+                                <div className='sm_xs_show mr-auto'>
+                                </div>
+                                <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                    <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"}
+                                        size="sm" block style={styles.submit_btn}
+                                        onClick={element.label ? null : () => this.handleCancelCategoryClick(index)}
+                                        disabled={element.label ? true : false}
+                                    >
+                                        <div>{element.label ? 'Delete' : 'Cancel'}</div>
+                                    </Button>
+                                </Form.Group>
+                            </Form.Row>
+                            <hr className='pb-0 pt-0 mt-0' />
+                            <Form.Row >
+                                {this.state.sub_categories_list.map((e, i) => (element._id == e.category_id) ?
+                                    <Col lg={6} md={6} sm={12} xs={12} key={e._id}>
+                                        <Form.Row>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm={8} xs={12}>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    name="sku"
+                                                    value={e.value}
+                                                    disabled={e.label}
+                                                    onChange={(event) => this.handleSubCategoryChange(event, i)}
+                                                    isInvalid={e.error}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {e.error}
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                            <div className='mr-auto'></div>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                                <Button type="submit" variant={e.label ? "outline-primary" : "outline-success"} size="sm" block style={styles.submit_btn}
+                                                    onClick={e.label ? () => this.handleEditSubCategoryClick(i) : () => this.handleUpdateSubCategoryClick(i)}
+                                                    disabled={e.label ? false : e.error}
+                                                >
+                                                    <div>{e.label ? 'Edit' : 'Update'}</div>
+                                                </Button>
+                                            </Form.Group>
+                                            <div className='sm_xs_show mr-auto'></div>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                                <Button type="submit" variant={e.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
+                                                    onClick={
+                                                        e.label ?
+                                                            () => this.setState({
+                                                                showConfirmDeleteModal: true,
+                                                                delete_category_id: e._id,
+                                                                delete_category_name: e.value,
+                                                                index: index
+                                                            })
+                                                            :
+                                                            () => this.handleCancelSubCategoryClick(i)}
+                                                >
+                                                    <div>{e.label ? 'Delete' : 'Cancel'}</div>
+                                                </Button>
+                                            </Form.Group>
+                                        </Form.Row>
+                                    </Col>
+                                    :
+                                    null
+                                )}
+                            </Form.Row>
+                            <hr className='mb-0' />
+                            <hr className='pb-0 pt-0 mt-0' />
+                        </div>
                     )}
                 </CardAccordion>
+                <style jsx>
+                    {`
+                        @media only screen and (min-width: 768px){
+                            .sm_xs_show {
+                                display: none
+                            }
+                        }
+                    `}
+                </style>
             </>
         )
     }

@@ -17,10 +17,6 @@ import Discounts from './dashboard-contents/discounts';
 import Reports from './dashboard-contents/reports';
 import BulkUpload from './dashboard-contents/bulk-upload';
 import Orders from './dashboard-contents/orders';
-
-import axios from 'axios';
-import { getUncodededTokenFromStorage } from '../../../../sdk/core/authentication-service'
-import MuhalikConfig from '../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../styleSheet';
 
 const DashboardSideDrawer = props => {
@@ -29,20 +25,6 @@ const DashboardSideDrawer = props => {
         drawerClasses = "tabs_side_drawer open";
     }
     const [show_product, setShow_product] = React.useState(false);
-
-    async function upload(data) {
-        console.log('da111222333ta: ', data)
-        const url = MuhalikConfig.PATH + '/api/products/add';
-        await axios.post(url, {
-            data
-        }, {
-            headers: { 'authorization': await getUncodededTokenFromStorage() }
-        }).then(function (response) {
-            return true;
-        }).catch(function (error) {
-            return false;
-        });
-    }
 
     return (
         <div>
@@ -53,7 +35,7 @@ const DashboardSideDrawer = props => {
                         <Nav.Item style={styles.image_div}>
                             <p>
                                 <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                <Nav.Link href="/index" style={styles.muhalik}> {props.token} </Nav.Link>
+                                <Nav.Link href="/index" style={styles.muhalik}> {props.user_name} </Nav.Link>
                             </p>
                         </Nav.Item>
                         <Nav.Item>
@@ -167,7 +149,7 @@ const DashboardSideDrawer = props => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="AddNew">
                                 <AddNew
-                                    upload={upload}
+                                    {...props}
                                     isUpdateProduct={false}
                                     productCategories={''}
                                     productSubCategories={''}

@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import GlobalStyleSheet from '../../../../../../../styleSheet';
 import Select, { components } from 'react-select';
-import { groupedOptions } from '../../../../../../../sdk/consts/fields-data';
 import AddNewFieldNameModal from './add-new-field-name-model';
 const groupStyles = {
     border: `1px solid ${GlobalStyleSheet.admin_primry_color}`,
@@ -69,8 +68,11 @@ const CustomFields = props => {
                         <Form.Group as={Col} lg={5} md={5} sm={12} xs={12}>
                             <Form.Label style={styles.label}>Field Name</Form.Label>
                             <Select
+                                id={'1'}
+                                instanceId={'1'}
+                                inputId={'1'}
                                 styles={GlobalStyleSheet.react_select_styles}
-                                options={groupedOptions}
+                                options={props.fields_list}
                                 components={{ Group }}
                                 value={fieldName}
                                 onChange={(e) => setFieldName(e)}

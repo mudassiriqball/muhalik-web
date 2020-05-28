@@ -1,15 +1,21 @@
-import { Accordion, Card, Button, Row, Form } from 'react-bootstrap';
+import { Accordion, Card, Button, Badge, Row, Form } from 'react-bootstrap';
 import GlobalStyleSheet from '../../styleSheet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 
-
 const CardAccordion = props => (
     <>
-        <Accordion as={Row} defaultActiveKey="0" noGutters style={{ margin: '2%' }}>
+        <Accordion as={Row} defaultActiveKey="0" style={{ margin: '2%' }} noGutters >
             <Card style={styles.card}>
                 <Card.Header style={styles.card_header}>
-                    <Form.Label >{props.title}</Form.Label>
+                    <Form.Label className='p-0 ml-0 mt-0 mb-0 mr-2'>{props.title}</Form.Label>
+                    {props.notification ?
+                        <Button size='sm' variant="primary" style={{ fontSize: '12px' }}>
+                            New <Badge variant="light" style={{ fontSize: '12px' }}>{props.badge}</Badge>
+                        </Button>
+                        :
+                        null
+                    }
                     <div className='mr-auto'></div>
                     <Accordion.Toggle eventKey="0" style={{ background: 'none' }}>
                         <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.slider_fontawesome} />

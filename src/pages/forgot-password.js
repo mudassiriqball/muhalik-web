@@ -88,7 +88,6 @@ class ForgotPassword extends Component {
                                             </p>
                                             <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Forgot Password</h6>
                                             <Form noValidate onSubmit={handleSubmit}>
-                                                {console.log("fucking values fffffffffffffffff: ", values)}
                                                 <Form.Row>
                                                     <Form.Group as={Col} controlId="validationMobile">
                                                         <Form.Label style={styles.label}>Enter Your Mobile Number</Form.Label>

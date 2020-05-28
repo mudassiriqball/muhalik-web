@@ -148,24 +148,26 @@ function VendorTable(props) {
                         </tr>
                     </thead>
                     <tbody>
-                        <td align="center" >
-                            <Form.Check type="checkbox" />
-                        </td>
-                        <td className="td">
-                            ID
+                        <tr>
+                            <td align="center" >
+                                <Form.Check type="checkbox" />
+                            </td>
+                            <td className="td">
+                                ID
                                         <div className="mr-auto"></div>
-                            <Nav.Link style={styles.nav_link} > View </Nav.Link>
-                            <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
-                            <Nav.Link style={styles.nav_link}>Delete</Nav.Link>
-                        </td>
-                        <td align="center" >Name</td>
-                        <td align="center" >Shop Name</td>
-                        <td align="center" >Shop Location</td>
-                        {props.rank ?
-                            <td align="center" >Rank</td>
-                            : null
-                        }
-                        <td align="center" >{Date.now()}</td>
+                                <Nav.Link style={styles.nav_link} > View </Nav.Link>
+                                <Nav.Link style={styles.nav_link}>Edit</Nav.Link>
+                                <Nav.Link style={styles.nav_link}>Delete</Nav.Link>
+                            </td>
+                            <td align="center" >Name</td>
+                            <td align="center" >Shop Name</td>
+                            <td align="center" >Shop Location</td>
+                            {props.rank ?
+                                <td align="center" >Rank</td>
+                                : null
+                            }
+                            <td align="center" >{'10/05/2020'}</td>
+                        </tr>
                     </tbody>
                 </Table>
             </CardAccordion>

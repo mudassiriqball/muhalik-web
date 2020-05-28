@@ -18,30 +18,11 @@ import BulkUpload from './dashboard-contents/bulk-upload';
 import Orders from './dashboard-contents/orders';
 import GlobalStyleSheet from '../../../../styleSheet';
 
-// import axios from 'axios';
-// import { getUncodededTokenFromStorage } from '../../../../sdk/core/authentication-service'
-// import MuhalikConfig from '../../../../sdk/muhalik.config'
-
 const Dashboard = props => {
     let wprapper_Casses = "wrapper";
     if (props.show) {
         wprapper_Casses = "wrapper open";
     }
-
-    // async function upload(data) {
-    //     console.log('da111222333ta: ', data)
-    //     const url = MuhalikConfig.PATH + '/api/products/add';
-    //     await axios.post(url, {
-    //         data
-    //     }, {
-    //         headers: { 'authorization': await getUncodededTokenFromStorage() }
-    //     }).then(function (response) {
-    //         return true;
-    //     }).catch(function (error) {
-    //         console.log('aaaaaaa error:', error)
-    //         return false;
-    //     });
-    // }
 
     const [show_product, setShow_product] = React.useState(false);
 
@@ -55,7 +36,7 @@ const Dashboard = props => {
                             <Nav.Item style={styles.image_div}>
                                 <p>
                                     <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                    <Nav.Link href="/index" style={styles.muhalik}> {props.token} </Nav.Link>
+                                    <Nav.Link href="/index" style={styles.muhalik}> {props.user_name} </Nav.Link>
                                 </p>
                             </Nav.Item>
                             <Nav.Item>
@@ -218,6 +199,7 @@ const Dashboard = props => {
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddNew">
                                     <AddNew
+                                        {...props}
                                         title={'Vendor Dashboard / Add New'}
                                         _id={''}
                                         isUpdateProduct={false}

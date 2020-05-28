@@ -1,9 +1,9 @@
 const categoriesController = {};
-const Categories = require("../modals/category.modal");
-const Sub_Categories = require("../modals/sub-category.model");
-const Tags = require("../modals/tag.modal");
-const Fields = require("../modals/field.modal");
-const Field_Request = require("../modals/field-request.modal");
+const Categories = require("../models/category.model");
+const Sub_Categories = require("../models/sub-category.model");
+const Tags = require("../models/tag.model");
+const Fields = require("../models/field.model");
+const Field_Request = require("../models/field-request.model");
 
 // categoriesController.add_category = async (req, res) => {
 //   const body = req.body.data;

@@ -34,7 +34,6 @@ class Index extends Component {
         }
     }
 
-
     async componentDidMount() {
         const token = await getTokenFromStorage()
         if (token !== null) {

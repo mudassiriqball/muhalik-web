@@ -20,23 +20,8 @@ import TitleRow from '../../../../title-row';
 import CardAccordion from '../../../../card_accordion';
 
 import MuhalikConfig from '../../../../../../sdk/muhalik.config';
-import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service';
 import CustomFields from './add-new-contents/custom-fields';
 import ProductData from './add-new-contents/product-data';
-import product_size_options from '../../../../../../sdk/consts/product-size-options'
-import product_color_options from '../../../../../../sdk/consts/product-color-options'
-// Option List for select Product Category (when offline)
-let product_categories_options = [
-    { value: 'Shoe', label: 'Shoe' },
-    { value: 'Cloth', label: 'Cloth' },
-    { value: 'Shirt', label: 'Shirt' },
-    { value: 'Pant', label: 'Pant' }
-]
-const product_sub_categories_options = [
-    { value: 'Sub Shoe', label: 'Sub Shoe' },
-    { value: 'Sub Cloth', label: 'Sub Cloth' },
-    { value: 'Sub Shirt', label: 'Sub Shirt' },
-]
 
 // For React-Select
 const components = {
@@ -47,7 +32,6 @@ const createOption = (label) => ({
     value: label,
     label,
 });
-
 
 
 // Yup Schema for validation fields
@@ -125,11 +109,11 @@ const schema = yup.object({
     product_tags: yup.string(),
 });
 
-
 class AddNew extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            token: '',
             isUpdateProduct: this.props.isUpdateProduct,
             _id: this.props._id,
             isLoading: false,
@@ -139,12 +123,12 @@ class AddNew extends Component {
             showSimpleProductPriceImgLinkErrorrAlert: false,
             isVariableProduct: this.props.isVariableProduct,
 
-            productCategories: this.props.productCategories,
-            productSubCategories: this.props.productSubCategories,
+            productCategory: this.props.productCategory,
+            productSubCategory: this.props.productSubCategory,
             category_id: '',
             sub_category_id: '',
-            category_options: product_categories_options,
-            sub_category_list: product_sub_categories_options,
+            categories_list: [],
+            sub_categories_list: [],
             sub_category_options: [],
 
             subCategoryDisabled: true,
@@ -168,44 +152,18 @@ class AddNew extends Component {
             // Dangerous Goods
             dangerousGoodsArray: this.props.dangerousGoodsArray,
         };
-        // this.handleProductTypeChange = this.handleProductTypeChange.bind(this);
     }
 
-    // Getting Product Categories from DB
-    async componentDidMount() {
-        const url = MuhalikConfig.PATH + '/api/categories/categories';
-        const url_1 = MuhalikConfig.PATH + '/api/categories/fields';
-        const url_2 = MuhalikConfig.PATH + '/api/categories/tags';
-        const token = await getUncodededTokenFromStorage()
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({
+            categories_list: nextProps.categories_list,
+            sub_categories_list: nextProps.sub_categories_list,
 
-        const currentComponent = this;
-        await axios.get(url, {
-            headers: { 'authorization': await getUncodededTokenFromStorage() }
-        }).then((response) => {
-            console.log('Categories: ', response.data)
-            currentComponent.setState({
-                category_options: response.data.category.docs,
-                sub_category_list: response.data.sub_category.docs
-            });
-        }).catch((error) => {
-            console.log('Caterories_1 Fetchig Error: ', error)
-        })
+            fields_list: nextProps.fields_list,
+            field_requests_list: nextProps.field_requests_list,
 
-        await axios.get(url_1, {
-            headers: { 'authorization': token }
-        }).then((response) => {
-            // console.log('fields:', response.data)
-        }).catch((error) => {
-            // console.log('fuck:', error)
-            // alert('fields Fetchig Error: ', error.response.data.message)
-        })
-        await axios.get(url_2, {
-            headers: { 'authorization': token }
-        }).then((response) => {
-            // console.log('tags:', response.data)
-        }).catch((error) => {
-            // alert('tags Fetchig Error: ', error)
-        })
+            token: nextProps.token
+        });
     }
 
     async uploadProduct(values, currentComponent) {
@@ -221,6 +179,14 @@ class AddNew extends Component {
         formData.append('product_image_link', '')
         values.product_image_link && values.product_image_link.forEach(element => {
             formData.append('myImage', element)
+        })
+        values.product_variations && values.product_variations.forEach((element, index) => {
+            let array = [];
+            element.image_link && element.image_link.forEach(file => {
+                formData.append('myImage', file)
+                array.push({ name: file.name })
+            })
+            element.image_link = array
         })
         formData.append('product_warranty', values.product_warranty)
         formData.append('warranty_type', values.warranty_type)
@@ -244,7 +210,7 @@ class AddNew extends Component {
             const config = {
                 headers: {
                     'content-type': 'multipart/form-data',
-                    'authorization': await getUncodededTokenFromStorage(),
+                    'authorization': this.state.token,
                 }
             };
             axios.post(url, formData, config)
@@ -262,7 +228,7 @@ class AddNew extends Component {
             await axios.put(url, {
                 data
             }, {
-                headers: { 'authorization': await getUncodededTokenFromStorage() }
+                headers: { 'authorization': this.state.token }
             }).then(function (response) {
                 currentComponent.setState({ isLoading: false });
                 currentComponent.setState({ showToast: true, toastMessage: 'Product Updated Successfully' });
@@ -296,38 +262,41 @@ class AddNew extends Component {
     handleProductCategoryChange = (value) => {
         let array = []
         let _id = null
-        this.state.category_options.forEach(element => {
-            if (value.label == element.label) {
-                _id = element._id
-            }
-        })
-
-        console.log('_id:', _id)
-        this.state.sub_category_list.forEach(element => {
-            if (element.category_id == _id) {
-                array.push(element)
-            }
-        })
-        console.log('array:', array)
-
-        this.setState({
-            productCategories: value, sub_category_options: array,
-            subCategoryDisabled: false, categoryErrorDiv: 'BorderDiv',
-            category_id: _id
-        });
+        if (value != null) {
+            this.state.categories_list.forEach(element => {
+                if (value.label == element.label) {
+                    _id = element._id
+                }
+            })
+            this.state.sub_categories_list.forEach(element => {
+                if (element.category_id == _id) {
+                    array.push(element)
+                }
+            })
+            this.setState({
+                productCategory: value,
+                sub_category_options: array,
+                productSubCategory: [],
+                subCategoryDisabled: false,
+                categoryErrorDiv: 'BorderDiv',
+                category_id: _id
+            });
+        }
     }
     handleProductSubCategoryChange = (value) => {
         let _id = null
-        this.state.sub_category_options.forEach(element => {
-            if (value.label == element.label) {
-                _id = element._id
-            }
-        })
-        this.setState({
-            productSubCategories: value,
-            subCategoryErrorDiv: 'BorderDiv',
-            sub_category_id: _id
-        });
+        if (value != null) {
+            this.state.sub_category_options.forEach(element => {
+                if (value.label == element.label) {
+                    _id = element._id
+                }
+            })
+            this.setState({
+                productSubCategory: value,
+                subCategoryErrorDiv: 'BorderDiv',
+                sub_category_id: _id
+            });
+        }
     }
 
     // Dangerous Goods
@@ -425,11 +394,11 @@ class AddNew extends Component {
                         }
                 }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    if (this.state.productCategories == '' || this.state.productSubCategories == '') {
-                        if (this.state.productCategories == '') {
+                    if (this.state.productCategory == '' || this.state.productSubCategory == '') {
+                        if (this.state.productCategory == '') {
                             this.setState({ categoryErrorDiv: 'RedBorderDiv' });
                         }
-                        if (this.state.productSubCategories == '') {
+                        if (this.state.productSubCategory == '') {
                             this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
                         }
 
@@ -476,8 +445,8 @@ class AddNew extends Component {
                                     showSimpleProductPriceImgLinkErrorrAlert: false,
                                     isVariableProduct: false,
 
-                                    productCategories: '',
-                                    productSubCategories: '',
+                                    productCategory: '',
+                                    productSubCategory: '',
 
                                     subCategoryDisabled: true,
                                     subSubCategoryDisabled: true,
@@ -525,7 +494,7 @@ class AddNew extends Component {
                                     show={this.state.showToast}
                                     header={'Success'}
                                     message={this.state.toastMessage}
-                                    iconName={faThumbsUp}
+                                    iconname={faThumbsUp}
                                     color={"#00b300"}
                                 />
                                 <AlertModal
@@ -533,7 +502,7 @@ class AddNew extends Component {
                                     show={this.state.showVariationsErrorAlert}
                                     header={'Error'}
                                     message={'Please Add/Save Variations First'}
-                                    iconName={faExclamationTriangle}
+                                    iconname={faExclamationTriangle}
                                     color={"#ff3333"}
                                 />
                                 <AlertModal
@@ -541,7 +510,7 @@ class AddNew extends Component {
                                     show={this.state.showSimpleProductPriceImgLinkErrorrAlert}
                                     header={'Error'}
                                     message={'Enter Price/Stock/Image(s) in General Tab First'}
-                                    iconName={faExclamationTriangle}
+                                    iconname={faExclamationTriangle}
                                     color={"#ff3333"}
                                 />
                                 <Row noGutters style={{ paddingTop: '1%' }}>
@@ -556,7 +525,7 @@ class AddNew extends Component {
                                                     name="product_name"
                                                     value={values.product_name || ''}
                                                     onChange={handleChange}
-                                                    isInvalid={errors.product_name}
+                                                    isInvalid={errors.product_name && touched.product_name}
                                                 />
                                                 <Form.Control.Feedback type="invalid">
                                                     {errors.product_name}
@@ -575,7 +544,7 @@ class AddNew extends Component {
                                                     value={values.product_description || ''}
                                                     rows="7"
                                                     onChange={handleChange}
-                                                    isInvalid={errors.product_description}
+                                                    isInvalid={errors.product_description && touched.product_description}
                                                 />
                                                 <Form.Control.Feedback type="invalid">
                                                     {errors.product_description}
@@ -585,6 +554,7 @@ class AddNew extends Component {
                                         {/* Product Data Row */}
                                         <ProductData
                                             isUpdateProduct={this.props.isUpdateProduct}
+                                            fields_list={this.state.fields_list}
                                             productTypeHandler={e => {
                                                 if (e.target.value === 'variable-prouct') {
                                                     this.setState({
@@ -662,6 +632,7 @@ class AddNew extends Component {
                                         {/* Custom Fields Row */}
                                         <CardAccordion title={'Custom Fields'}>
                                             <CustomFields
+                                                fields_list={this.state.fields_list}
                                                 customFieldsArray={this.state.customFieldsArray}
                                                 setFieldsArrayHandler={(arr) => this.setState({ customFieldsArray: arr })}
                                                 isVariableProduct={this.state.isVariableProduct}
@@ -679,12 +650,15 @@ class AddNew extends Component {
                                                 <Form.Label style={styles.label}>Category</Form.Label>
                                                 <div className={this.state.categoryErrorDiv}>
                                                     <Select
+                                                        id={'1'}
+                                                        instanceId={'1'}
+                                                        inputId={'1'}
+
                                                         styles={GlobalStyleSheet.react_select_styles}
                                                         onChange={this.handleProductCategoryChange}
-                                                        options={this.state.category_options}
-                                                        value={this.state.productCategories}
+                                                        options={this.state.categories_list}
+                                                        value={this.state.productCategory}
                                                         isSearchable={true}
-                                                        isClearable={true}
                                                         placeholder="Select Category"
                                                     />
                                                 </div>
@@ -693,12 +667,14 @@ class AddNew extends Component {
                                                 <Form.Label style={styles.label}>Sub Category</Form.Label>
                                                 <div className={this.state.subCategoryErrorDiv}>
                                                     <Select
+                                                        id={'1'}
+                                                        instanceId={'1'}
+                                                        inputId={'1'}
                                                         styles={GlobalStyleSheet.react_select_styles}
                                                         onChange={this.handleProductSubCategoryChange}
                                                         options={this.state.sub_category_options}
-                                                        value={this.state.productSubCategories}
+                                                        value={this.state.productSubCategory}
                                                         isSearchable={true}
-                                                        isClearable={true}
                                                         placeholder="Select Sub Category"
                                                         isDisabled={this.state.subCategoryDisabled}
                                                     />
@@ -775,12 +751,15 @@ class AddNew extends Component {
                                         {/* Product Tags */}
                                         <CardAccordion title={'Product Tags'}>
                                             <CreatableSelect
+                                                id={'1'}
+                                                instanceId={'1'}
+                                                inputId={'1'}
                                                 isMulti
+                                                value={this.state.productTags}
+                                                components={{ DropdownIndicator: null }}
                                                 styles={GlobalStyleSheet.react_select_styles}
                                                 onChange={this.handleProductTagChange}
-                                                options={product_color_options}
-                                                value={this.state.productTags}
-                                                placeholder="Select/Enter Tags"
+                                                placeholder="Type and press enter"
                                             />
                                             <div style={{ minHeight: '150px' }}></div>
                                         </CardAccordion>

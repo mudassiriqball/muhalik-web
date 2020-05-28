@@ -10,7 +10,6 @@ import GlobalStyleSheet from '../../../../../../../styleSheet'
 import MuhalikConfig from '../../../../../../../sdk/muhalik.config'
 
 import Select, { components } from 'react-select'
-import { groupedOptions } from '../../../../../../../sdk/consts/fields-data'
 import AddNewFieldNameModal from './add-new-field-name-model'
 
 const groupStyles = {
@@ -18,9 +17,6 @@ const groupStyles = {
     borderRadius: '5px',
     background: 'white',
     color: `${GlobalStyleSheet.admin_primry_color}`,
-}
-const coomponents = {
-    DropdownIndicator: null,
 }
 const Group = props => (
     <div style={groupStyles}>
@@ -190,7 +186,7 @@ const ProductData = props => {
                                                     </Form.Row>
                                                     <Form.Row>
                                                         {(props.imagePreviewArray || []).map((url, index) => (
-                                                            <div className="show-image">
+                                                            <div className="show-image" key={index}>
                                                                 <img style={{ height: '100px', width: '100px', margin: '1%' }} src={url} alt="..." />
                                                                 <input className="deleteImage" type="button" onClick={() => props.deleteImage(index)} value="Delete" />
                                                             </div>
@@ -268,10 +264,9 @@ const ProductData = props => {
                                             }
                                         </Tab.Pane>
 
-
                                         <Tab.Pane eventKey="Inventory">
                                             <Form.Row>
-                                                <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
+                                                <Form.Group as={Col} lg={6} md={6} sm={12} xs={12} >
                                                     <Form.Label style={styles.label}>Product SKU</Form.Label>
                                                     <InputGroup>
                                                         <Form.Control
@@ -401,6 +396,7 @@ const ProductData = props => {
                                             <ProductAttributes
                                                 setVariationsArray={props.setVariationsArray}
                                                 variationsArray={props.variationsArray}
+                                                fields_list={props.fields_list}
                                             />
                                         </Tab.Pane>
 
@@ -486,11 +482,11 @@ function ProductAttributes(props) {
 
     const [error, setError] = React.useState('')
     const [modalShow, setModalShow] = React.useState(false)
-    const [successMessage, setSuccessMessage] = React.useState('')
+    const [message, setMessage] = React.useState('')
     const [attributesArray, setAttributesArray] = React.useState([])
 
     function handleAddProductAttributeClick() {
-        setSuccessMessage('')
+        setMessage('')
         if (attributeName != '' && attributeValue != '') {
             setError('')
             const copyArray = Object.assign([], attributesArray)
@@ -498,9 +494,8 @@ function ProductAttributes(props) {
                 attributeName: attributeName.value,
                 attributeValue: attributeValue,
             })
-            console.log('aaaaaaa:', copyArray)
             setAttributeName('')
-            setAttributeValue()
+            setAttributeValue('')
             setAttributesArray(copyArray)
         } else {
             setError('Enter Field Name and Value')
@@ -538,8 +533,7 @@ function ProductAttributes(props) {
                     price_error: '', stock_error: '', image_link_error: '', custom_fields: []
                 })
             })
-            setSuccessMessage('Variations Created Successfully')
-            // setAttributesArray([])
+            setMessage('Variations Created Successfully')
             props.setVariationsArray(data)
         } else {
             setError('Add some attributes first')
@@ -567,8 +561,11 @@ function ProductAttributes(props) {
                 <Form.Group as={Col} lg={5} md={5} sm={12} xs={12} style={{ marginBottom: '0%', paddingBottom: '0%' }}>
                     <Form.Label style={styles.label}>Field Name</Form.Label>
                     <Select
+                        id={'1'}
+                        instanceId={'1'}
+                        inputId={'1'}
                         styles={GlobalStyleSheet.react_select_styles}
-                        options={groupedOptions}
+                        options={props.fields_list}
                         components={{ Group }}
                         value={attributeName}
                         onChange={(e) => setAttributeName(e)}
@@ -584,7 +581,12 @@ function ProductAttributes(props) {
                 <Form.Group as={Col} lg={7} md={7} sm={12} xs={12} style={{ marginBottom: '0%', paddingBottom: '0%' }}>
                     <Form.Label style={styles.label}>Field Value </Form.Label>
                     <CreatableSelect
+                        id={'1'}
+                        instanceId={'1'}
+                        inputId={'1'}
                         isMulti
+                        value={attributeValue || ''}
+                        components={{ DropdownIndicator: null }}
                         styles={GlobalStyleSheet.react_select_styles}
                         onChange={(value) => setAttributeValue(value)}
                         placeholder="Press enter to add more"
@@ -602,7 +604,7 @@ function ProductAttributes(props) {
             </Row>
             <hr />
             <Form.Label style={styles.label}>
-                {successMessage}
+                {message}
             </Form.Label>
             {attributesArray && attributesArray.map((element, index) =>
                 <Form.Row style={{ padding: '0%' }} key={index}>
@@ -624,8 +626,7 @@ function ProductAttributes(props) {
                                 size="sm"
                                 placeholder="Enter Value"
                                 name="sku"
-                                value={element.attributeValue.map(e => (e.value)
-                                )}
+                                value={element.attributeValue.forEach(e => (e.value))}
                                 disabled
                             />
                             <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
@@ -651,7 +652,8 @@ function ProductVariations(props) {
     const [sameStock, setSameStock] = React.useState('')
     const [sameStockError, setSameStockError] = React.useState('')
 
-    const [successMessage, setSuccessMessage] = React.useState('')
+    const [message, setMessage] = React.useState('')
+    const [error, setError] = React.useState('')
 
     // Same Price For All Variations
     function handleSamePriceApplyBtnClick() {
@@ -724,7 +726,6 @@ function ProductVariations(props) {
                 if (element.stock == '') {
                     element.stock_error = 'Enter stock'
                 }
-                console.log('elemnt.image_link:', element.image_link)
                 if (element.image_link.length == 0) {
                     element.image_link_error = 'Enter image Link'
                 }
@@ -736,7 +737,11 @@ function ProductVariations(props) {
         })
         if (flag == true) {
             props.setVariationsSaved(true)
-            setSuccessMessage('Variations saved Successfully')
+            setMessage('Variations saved Successfully')
+            setError('')
+        } else {
+            setMessage('Please fill all required fields')
+            setError('red')
         }
         props.setVariationsArray(copyArray)
     }
@@ -873,7 +878,7 @@ function ProductVariations(props) {
                     </Form.Row>
                     <hr style={{ marginTop: '0%' }} />
                     {props.variationsArray && props.variationsArray.map((element, index) =>
-                        <>
+                        <div key={index}>
                             <Accordion>
                                 <Row noGutters style={{ border: handleVariationsErrorCheck(element) }}>
                                     {element.item && element.item.map((e, i) =>
@@ -945,7 +950,7 @@ function ProductVariations(props) {
                                         </Form.Row>
                                         <Form.Row>
                                             {(element.imagePreviewArray || []).map((url, i) => (
-                                                <div className="show-image">
+                                                <div className="show-image" key={i}>
                                                     <img style={{ height: '100px', width: '100px', margin: '1%' }} src={url} alt="..." />
                                                     <input className="deleteImage" type="button" onClick={() => deleteImage(index, i)} value="Delete" />
                                                 </div>
@@ -976,8 +981,9 @@ function ProductVariations(props) {
                                 </Accordion.Collapse>
                             </Accordion>
                             <hr style={{ marginTop: '0%' }} />
-                        </>
+                        </div>
                     )}
+                    <Form.Label style={{ fontSize: `${GlobalStyleSheet.form_label_fontsize}`, width: '100%', color: `${error}` }}>{message}</Form.Label>
                     <Button variant="outline-success" size="sm" block onClick={handleSaveVariationsClick}> Save Variations</Button>
                 </>
             }

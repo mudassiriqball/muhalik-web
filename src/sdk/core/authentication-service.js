@@ -14,7 +14,7 @@ export async function saveTokenToStorage(token) {
     await reactLocalStorage.set('token', token);
 }
 
-export function getTokenFromStorage() {
+export function getDecodedTokenFromStorage() {
     try {
         const token = reactLocalStorage.get('token');
         const decodedToken = decode(token);
@@ -24,7 +24,7 @@ export function getTokenFromStorage() {
     }
 }
 
-export function getUncodededTokenFromStorage() {
+export function getTokenFromStorage() {
     return reactLocalStorage.get('token');
 }
 

@@ -9,19 +9,27 @@ router.post("/field-request", categoriesController.add_field_request);
 router.post("/tag", categoriesController.add_tag);
 
 router.get("/categories", categoriesController.get_categories);
+// router.get("/fields-and-request", categoriesController.get_fields);
 router.get("/fields", categoriesController.get_fields);
 router.get("/field-requests", categoriesController.get_field_requests);
 router.get("/tags", categoriesController.get_tags);
 
-// router.put("/category", categoriesController.update_categorie);
-// router.put("/field", categoriesController.update_field);
-// router.put("/field-request", categoriesController.update_field_request);
-// router.put("/tag", categoriesController.update_tag);
 
-// router.delete("/category", categoriesController.delete_category);
-// router.delete("/field", categoriesController.delete_field);
-// router.delete("/field-request", categoriesController.delete_field_request);
-// router.delete("/tag", categoriesController.delete_tag);
+
+// router.put("/category/:_id", categoriesController.update_category);
+// router.put("/sub-category/:_id", categoriesController.update_sub_category);
+// router.delete("/sub-category/_id", categoriesController.delete_sub_category);
+
+
+
+// router.put("/field/:_id", categoriesController.update_field);
+// router.put("/field-request/:_id", categoriesController.update_field_request);
+// router.put("/tag/:_id", categoriesController.update_tag);
+
+
+// router.delete("/field/_id", categoriesController.delete_field);
+// router.delete("/field-request/_id", categoriesController.delete_field_request);
+// router.delete("/tag/_id", categoriesController.delete_tag);
 
 
 module.exports = router;
