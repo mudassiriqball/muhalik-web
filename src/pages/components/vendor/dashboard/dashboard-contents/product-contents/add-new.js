@@ -205,40 +205,47 @@ class AddNew extends Component {
         formData.append('dangerous_goods', JSON.stringify(values.dangerous_goods))
         formData.append('product_tags', JSON.stringify(values.product_tags))
 
-        if (this.state.isUpdateProduct == false) {
-            const url = MuhalikConfig.PATH + '/api/products/add'
-            const config = {
-                headers: {
-                    'content-type': 'multipart/form-data',
-                    'authorization': this.state.token,
-                }
-            };
-            axios.post(url, formData, config)
-                .then((response) => {
-                    currentComponent.setState({ isLoading: false });
-                    currentComponent.setState({ showToast: true, toastMessage: 'Product Uploaded Successfully' });
-                    return true;
-                }).catch((error) => {
-                    currentComponent.setState({ isLoading: false });
-                    alert('Product Upload failed');
-                    return false;
-                });
-        } else {
-            const url = MuhalikConfig.PATH + `/api/products/${this.state._id}`
-            await axios.put(url, {
-                data
-            }, {
-                headers: { 'authorization': this.state.token }
-            }).then(function (response) {
+        // if (this.state.isUpdateProduct == false) {
+        const url = MuhalikConfig.PATH + '/api/products/add'
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data',
+                'authorization': this.state.token,
+            }
+        };
+        axios.post(url, formData, config)
+            .then((response) => {
                 currentComponent.setState({ isLoading: false });
-                currentComponent.setState({ showToast: true, toastMessage: 'Product Updated Successfully' });
+                currentComponent.setState({ showToast: true, toastMessage: 'Product Uploaded Successfully' });
                 return true;
-            }).catch(function (error) {
+            }).catch((error) => {
                 currentComponent.setState({ isLoading: false });
-                alert('Product Update failed');
+                alert('Product Upload failed');
                 return false;
             });
-        }
+        // } else {
+        // const url = MuhalikConfig.PATH + `/api/products/add`
+        // await axios.post(url, {
+        //     formData
+        // }, {
+        //     headers: { 'authorization': this.state.token }
+        // }).then(function (response) {
+        //     currentComponent.setState({ isLoading: false });
+        //     currentComponent.setState({ showToast: true, toastMessage: 'Product Updated Successfully' });
+        //     return true;
+        // }).catch(function (error) {
+        //     currentComponent.setState({ isLoading: false });
+        //     console.log('error:', error)
+        //     try {
+        //         console.log('error:', error.response.data.mesage)
+        //     } catch (err) {
+        //         console.log('error:', error)
+
+        //     }
+        //     alert('Product Update failed');
+        //     return false;
+        // });
+        // }
     }
 
     // Custom Fields
@@ -408,7 +415,6 @@ class AddNew extends Component {
                     } else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
                         this.setState({ showVariationsErrorAlert: true });
                     } else {
-                        resetForm();
                         setSubmitting(true);
                         this.setState({ isLoading: true });
                         setTimeout(() => {
@@ -437,9 +443,9 @@ class AddNew extends Component {
                                 })
                                 values.product_variations = array;
                             }
-                            resetForm();
 
                             if (this.uploadProduct(values, this)) {
+                                resetForm();
                                 this.setState({
                                     showVariationsErrorAlert: false,
                                     showSimpleProductPriceImgLinkErrorrAlert: false,
