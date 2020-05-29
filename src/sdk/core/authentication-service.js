@@ -31,10 +31,10 @@ export function getTokenFromStorage() {
 export function removeTokenFromStorage() {
     try {
         reactLocalStorage.remove('token');
-        Router.replace('/index');
-        Router.reload('/index');
+        return true
     } catch (error) {
         console.log("error:", error)
+        return false
     }
 }
 
@@ -50,7 +50,7 @@ export function chectAuth(rolee) {
             return decodedToken.data.fullName;
         }
     } catch (error) {
-        return null;
+        Router.replace('/index')
     }
 }
 

@@ -116,7 +116,7 @@ categoriesController.add_category = async (req, res) => {
           message: "Category Added Successfully",
         });
         return res
-          .status(500)()
+          .status(500)
           .send({ message: "Category Adding Successfully" });
       } else {
         res
@@ -287,7 +287,7 @@ categoriesController.add_field_request = async (req, res) => {
       message: "custom_fields_requested  Successfully"
     });
     return res
-      .status(500)()
+      .status(500)
       .send({ message: "custom_fields_requested  Successfully" });
   } catch (error) {
     console.log("error", error);

@@ -26,8 +26,7 @@ const Group = props => (
 
 const ProductData = props => {
 
-    const [imgLinkValue, setImgLinkValue] = React.useState('')
-    const [imgLinkError, setImgLinkError] = React.useState('')
+    const [imgError, setImgError] = React.useState('')
 
     return (
         <Accordion as={Row} style={{ margin: '2%' }} defaultActiveKey="0">
@@ -179,7 +178,7 @@ const ProductData = props => {
                                                                 name="image" accept="image/*"
                                                             />
                                                             <Form.Label style={styles.label}>
-                                                                <span>{imgLinkError}</span>
+                                                                <span>{imgError}</span>
                                                             </Form.Label>
                                                             {/* </InputGroup> */}
                                                         </Form.Group>

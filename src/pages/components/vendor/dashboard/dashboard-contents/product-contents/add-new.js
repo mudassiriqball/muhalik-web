@@ -641,6 +641,7 @@ class AddNew extends Component {
                                         {/* Custom Fields Row */}
                                         <CardAccordion title={'Custom Fields'}>
                                             <CustomFields
+                                                {...this.props}
                                                 fields_list={this.state.fields_list}
                                                 customFieldsArray={this.state.customFieldsArray}
                                                 setFieldsArrayHandler={(arr) => this.setState({ customFieldsArray: arr })}

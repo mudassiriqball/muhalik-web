@@ -81,6 +81,7 @@ const CustomFields = props => {
                                 Add New
                         </Nav.Link>
                             <AddNewFieldNameModal
+                                {...props}
                                 show={modalShow}
                                 onHide={() => setModalShow(false)}
                             />

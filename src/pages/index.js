@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import Router from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link';
 import Layout from './components/customer/layout'
-import Router from 'next/router'
-import { getTokenFromStorage, removeTokenFromStorage } from '../sdk/core/authentication-service';
+import { getTokenFromStorage, removeTokenFromStorage, getDecodedTokenFromStorage } from '../sdk/core/authentication-service';
 import GlobalStyleSheet from '../styleSheet';
 import Typical from 'react-typical'
 import { Container, Row, Col, Carousel } from 'react-bootstrap'
@@ -35,15 +35,21 @@ class Index extends Component {
     }
 
     async componentDidMount() {
-        const token = await getTokenFromStorage()
+        const token = await getDecodedTokenFromStorage()
         if (token !== null) {
             this.setState({ jwt_token: token.role })
         }
     }
 
-    logout() {
-        removeTokenFromStorage()
-        this.setState({ jwt_token: '' })
+    logout = () => {
+        if (removeTokenFromStorage()) {
+            this.setState({ jwt_token: '' })
+            // window.location.reload(true);
+            Router.reload('/index');
+            Router.replace('/index');
+        } else {
+            alert('Logout Failed')
+        }
     }
 
     render() {

@@ -10,7 +10,7 @@ router.get("/total-Sold", productController.get_total_sold);
 router.get("/all", productController.geteverything);
 //router.get("/all", productController.get_decoded_token);
 
-router.post("/add", productController.addProduct);
+router.post("/add", checkAuth, productController.addProduct);
 //router.post("/bulk_upload", productController.bulkupload);
 router.put("/:_id", productController.updateProduct);
 router.delete("/:_id", productController.deleteProduct);

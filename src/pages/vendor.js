@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Router from 'next/router'
 import axios from 'axios'
 import Dashboard from './components/vendor/dashboard/dashboard'
 import DashboardSideDrawer from './components/vendor/dashboard/dashboard-side-drawer'
@@ -84,8 +85,13 @@ class Vendor extends Component {
         this.setState({ sideDrawerOpen: false })
     }
 
-    logout() {
-        removeTokenFromStorage()
+    logout = () => {
+        if (removeTokenFromStorage()) {
+            this.setState({ token: '', user_name: '', })
+            Router.replace('/index');
+        } else {
+            alert('Logout Failed')
+        }
     }
 
     render() {
