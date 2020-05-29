@@ -4,7 +4,8 @@ import Footer from './footer';
 
 const Layout = (props) => (
     <>
-        <Toolbar token={props.token} logout={props.logoutClickHandler} />
+        <Toolbar {...props} />
+        {/* <Toolbar token={props.token} logout={props.logoutClickHandler} /> */}
         {props.children}
         <Footer />
     </>

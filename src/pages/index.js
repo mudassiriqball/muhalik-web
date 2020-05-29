@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import Router from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link';
+import axios from 'axios'
 import Layout from './components/customer/layout'
 import { getTokenFromStorage, removeTokenFromStorage, getDecodedTokenFromStorage } from '../sdk/core/authentication-service';
 import GlobalStyleSheet from '../styleSheet';
+import MuhalikConfig from '../sdk/muhalik.config'
 import Typical from 'react-typical'
 import { Container, Row, Col, Carousel } from 'react-bootstrap'
 import CarouselDiv from './components/customer/main-carousel'
@@ -30,7 +32,11 @@ class Index extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            token: '',
             jwt_token: '',
+
+            categories_list: [],
+            sub_categories_list: []
         }
     }
 
@@ -39,6 +45,16 @@ class Index extends Component {
         if (token !== null) {
             this.setState({ jwt_token: token.role })
         }
+        const url = MuhalikConfig.PATH + '/api/categories/categories';
+        const currentComponent = this;
+        await axios.get(url).then((response) => {
+            currentComponent.setState({
+                categories_list: response.data.category.docs,
+                sub_categories_list: response.data.sub_category.docs
+            });
+        }).catch((error) => {
+            console.log('Caterories Fetchig Error: ', error)
+        })
     }
 
     logout = () => {
@@ -66,7 +82,12 @@ class Index extends Component {
                     />
                     <link rel="shortcut icon" href=""></link>
                 </Head>
-                <Layout token={this.state.jwt_token} logoutClickHandler={this.logout}>
+                <Layout
+                    token={this.state.jwt_token}
+                    logout={this.logout}
+                    categories_list={this.state.categories_list}
+                    sub_categories_list={this.state.sub_categories_list}
+                >
                     <CarouselDiv />
                     {animation}
                 </Layout>
