@@ -65,21 +65,19 @@ function Toolbar(props) {
         <div>
             <Card >
                 <Card.Body className='p-0 m-0'>
-                    <Navbar className='w-100'>
-                        <Row className='align-items-center w-100' noGutters>
-                            <Col lg={2} md={3} sm={12} xs={12} className='d-inline-flex align-items-center'>
-                                <div className='mr-auto'></div>
+                    <Navbar className='w-100' style={{ padding: '0.35% 2.5%' }}>
+                        <Row className='d-inline-flex align-items-center w-100 p-0 m-0'>
+                            <Col lg='auto' md={12} sm={12} xs={12} className='d-inline-flex align-items-center'>
                                 <Navbar.Brand className='d-inline-flex align-items-center'>
-                                    <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '50px', display: 'flex' }} />
-                                    <h5 className="text-center pl-3">Muhalik</h5>
+                                    <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '50px', display: 'flex', margin: '0% 3%' }} />
+                                    <h4 className=" text_animation">Muhalik<span style={{ fontSize: '15px' }}>@2020</span></h4>
                                 </Navbar.Brand>
-                                <div className='mr-auto'></div>
                             </Col>
-                            <Col lg={7} md={5} sm={12} xs={12} className='align-items-center'>
+                            <Col className='align-items-center'>
                                 <InputGroup className='d-inline-flex align-items-center'>
                                     <InputGroup.Prepend >
                                         <Dropdown as={ButtonGroup}>
-                                            <Dropdown.Toggle as={Button} variant='outline-success'>
+                                            <Dropdown.Toggle as={Button} variant='success'>
                                                 {searchType}
                                             </Dropdown.Toggle>
                                             <Dropdown.Menu className="super-colors">
@@ -91,44 +89,38 @@ function Toolbar(props) {
                                     </InputGroup.Prepend>
                                     <FormControl placeholder="Search here" />
                                     <InputGroup.Append>
-                                        <Button variant='outline-success'>Search</Button>
+                                        <Button variant='success'>Search</Button>
                                     </InputGroup.Append>
                                 </InputGroup>
                             </Col>
-                            <Col lg={3} md={4} sm={12} xs={12}>
+                            <Col lg='auto' md='auto' sm={12} xs={12}>
                                 <div className='categories_lg_md align-items-center'>
                                     <Nav className='d-inline-flex align-items-center w-100'>
-                                        <div className='mr-auto'></div>
-                                        <div className='mr-auto'></div>
-                                        <div className='mr-auto'></div>
-                                        <div className='mr-auto'></div>
-                                        <div className='mr-auto'></div>
-                                        <div className='mr-auto'></div>
+                                        <div className='ml-5'></div>
                                         {loggedIn ?
                                             null
                                             :
-                                            <Nav.Link href='./login' className='mr-auto  align-items-center' style={styles.nav_link}>
+                                            <Nav.Link href='./login' className='ml-3  align-items-center' style={styles.nav_link}>
                                                 <FontAwesomeIcon icon={faUser} style={styles.nav_fontawesome} />
                                                 <FontAwesomeIcon icon={faUserPlus} style={styles.nav_fontawesome} />
                                                 <div className='nav_link_text'>Signin/up</div>
                                             </Nav.Link>
                                         }
-                                        <Nav.Link href='#' className='mr-auto' style={styles.nav_link}>
+                                        <Nav.Link href='#' className='ml-3' style={styles.nav_link}>
                                             <FontAwesomeIcon icon={faGlobe} style={styles.nav_fontawesome} />
                                             <div className='nav_link_text'>Eng</div>
                                         </Nav.Link>
-                                        <Nav.Link href='#' className='mr-auto' style={styles.nav_link}>
+                                        <Nav.Link href='#' className='ml-3' style={styles.nav_link}>
                                             <FontAwesomeIcon icon={faFileInvoiceDollar} style={styles.nav_fontawesome} />
                                             <div className='nav_link_text'>Orders</div>
                                         </Nav.Link>
-                                        <Nav.Link href="#" className='mr-auto' style={styles.nav_link}>
+                                        <Nav.Link href="#" className='ml-3' style={styles.nav_link}>
                                             <FontAwesomeIcon icon={faLuggageCart} style={styles.nav_cart_fontawesome} />
                                             <div className='nav_link_text'>Cart</div>
                                         </Nav.Link>
                                         {loggedIn ?
-                                            <NavDropdown title={
-                                                <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '35px', maxWidth: '40px' }} />
-                                            } id="nav-dropdown" alignRight>
+                                            <NavDropdown title={<Image src="muhalik.jpg" roundedCircle fluid style={{ width: '35px', maxWidth: '35px' }} />}
+                                                className='ml-3' id="nav-dropdown" alignRight>
                                                 <NavDropdown.Item href={dashboard_href} className='d-inline-flex align-items-center'>
                                                     <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
                                                     <div>Dashboard</div>
@@ -157,7 +149,7 @@ function Toolbar(props) {
                     </Navbar>
 
 
-                    <Navbar expand="md" className=' m-2 p-0'>
+                    <Navbar expand="md" className=' ml-2 mr-2 mb-2 p-0'>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" className='p-1 m-0' />
                         <div className='categories_sm_xs'>
                             <div className='d-inline-flex align-items-center'>
@@ -166,10 +158,27 @@ function Toolbar(props) {
                                     <Dropdown.Toggle as={Nav.Link} className="p-2" style={{ color: `${GlobalStyleSheet.primry_color}` }}>
                                         <FontAwesomeIcon icon={faListAlt} style={styles.small_fontawesome} />
                                     </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                        {props.categories_list && props.categories_list.map((element, index) =>
-                                            <Dropdown.Item key={index}>{element.value}</Dropdown.Item>
-                                        )}
+                                    <Dropdown.Menu style={{ width: '60vw', left: '-20vw', position: 'absolute', maxHeight: '50vh', overflowY: 'auto' }}>
+                                        <Row noGutters className='pl-2 pr-2'>
+                                            {props.categories_list && props.categories_list.map((element, index) =>
+                                                <Col key={index} style={{ border: '1px solid lightgray' }} className='p-1 m-1'>
+                                                    <div className="category_list_item">
+                                                        {element.value}
+                                                        <div className='mr-auto'></div>
+                                                        <FontAwesomeIcon icon={faChevronDown} style={styles.categories_fontawesome} />
+                                                    </div>
+                                                    <hr className='p-0 m-0' />
+                                                    {props.sub_categories_list && props.sub_categories_list.map((e, i) =>
+                                                        e.category_id == element._id ?
+                                                            <div key={i} className="category_list_item" >
+                                                                {e.value}
+                                                            </div>
+                                                            :
+                                                            null
+                                                    )}
+                                                </Col>
+                                            )}
+                                        </Row>
                                     </Dropdown.Menu>
                                 </Dropdown>
                                 <div className='no_width_sm mr-2 ml-2'></div>
@@ -224,19 +233,18 @@ function Toolbar(props) {
                             </div>
                         </div>
                         <Navbar.Collapse >
-                            <Nav className='w-100 d-flex align-items-center' style={{ border: `0.5px solid ${GlobalStyleSheet.primry_color}` }}>
+                            <Nav className='w-100 d-flex align-items-center' style={{ border: '0.5px solid lightgray' }}>
                                 <div className='categories_lg_md'>
                                     <Dropdown onMouseOver={onMouseEnter} onMouseLeave={onMouseLeave} show={isCategoryOpen} >
-                                        <Dropdown.Toggle as={Nav.Link} className="d-inline-flex align-items-center">
+                                        <Dropdown.Toggle as={Nav.Link} className="d-inline-flex align-items-center ml-5 mr-5">
                                             <FontAwesomeIcon icon={faListAlt} style={styles.second_nav_fontawesome} />
-                                            <div className='second_nav_link_text'>Categories</div>
+                                            <div className='second_nav_link_text'> Categories </div>
                                         </Dropdown.Toggle>
-                                        <Dropdown.Menu style={{ minWidth: category_id == '' ? '207px' : '400px' }} >
+                                        <Dropdown.Menu style={{ minWidth: category_id == '' ? '207px' : '400px', }} >
                                             <Row noGutters onMouseLeave={() => categoryMouseLeave()} className='pl-2 pr-2'>
-                                                <Col style={{ border: '1px solid lightgray' }} className='p-1'>
+                                                <Col style={{ border: '1px solid lightgray', maxHeight: '50vh', overflowY: 'auto' }} className='p-1'>
                                                     {props.categories_list && props.categories_list.map((element, index) =>
-                                                        <div key={index} className="category_list_item"
-                                                            onMouseOver={() => categoryMouseEnter(index)}>
+                                                        <div key={index} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)}>
                                                             {element.value}
                                                             <div className='mr-auto'></div>
                                                             <FontAwesomeIcon icon={faChevronRight} style={styles.categories_fontawesome} />
@@ -244,7 +252,7 @@ function Toolbar(props) {
                                                     )}
                                                 </Col>
                                                 {category_id ?
-                                                    <Col style={{ border: '1px solid lightgray' }} className='ml-1 p-1'>
+                                                    <Col style={{ border: '1px solid lightgray', maxHeight: '50vh', overflowY: 'auto' }} className='ml-1 p-1'>
                                                         {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
                                                             element.category_id == category_id ?
                                                                 <div key={index} className="category_list_item" >
@@ -262,40 +270,38 @@ function Toolbar(props) {
                                         </Dropdown.Menu>
                                     </Dropdown>
                                 </div>
-                                <div className='vertical_bar'>|</div>
+
                                 {isShops ?
                                     <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
                                         <Nav.Link href="#" className="d-inline-flex" onClick={() => setIsShops(false)}>
-                                            <FontAwesomeIcon icon={faStoreAlt} style={styles.second_nav_fontawesome} />
+                                            {/* <FontAwesomeIcon icon={faStoreAlt} style={styles.second_nav_fontawesome} /> */}
                                             <div className='second_nav_link_text'>Shops</div>
-                                            <div className='width' style={{ width: '70px' }}></div>
                                         </Nav.Link>
                                     </OverlyPopover>
                                     :
                                     <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
                                         <Nav.Link href="#" className="d-inline-flex" onClick={() => setIsShops(true)}>
-                                            <FontAwesomeIcon icon={faProductHunt} style={styles.second_nav_fontawesome} />
+                                            {/* <FontAwesomeIcon icon={faProductHunt} style={styles.second_nav_fontawesome} /> */}
                                             <div className='second_nav_link_text'>Products</div>
-                                            <div className='width' style={{ width: '70px' }}></div>
                                         </Nav.Link>
                                     </OverlyPopover>
                                 }
                                 <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
                                     <Nav.Link href="#" className="d-inline-flex p-2">
-                                        <FontAwesomeIcon icon={faHandsHelping} style={styles.second_nav_fontawesome} />
+                                        {/* <FontAwesomeIcon icon={faHandsHelping} style={styles.second_nav_fontawesome} /> */}
                                         <div className='second_nav_link_text'>About Us</div>
                                     </Nav.Link>
                                 </OverlyPopover>
                                 <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
                                     <Nav.Link href="#" className="d-inline-flex p-2">
-                                        <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} />
+                                        {/* <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} /> */}
                                         <div className='second_nav_link_text'>Feedback</div>
                                     </Nav.Link>
                                 </OverlyPopover>
                                 <OverlyPopover title={'Get Android/IOS App'} content={'Shop products using mobile app'}>
                                     <Nav.Link href="#" className="d-inline-flex p-2">
-                                        <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} />
-                                        <div className='second_nav_link_text'>Help</div>
+                                        {/* <FontAwesomeIcon icon={faEdit} style={styles.second_nav_fontawesome} /> */}
+                                        <div className='second_nav_link_text'>Help?</div>
                                     </Nav.Link>
                                 </OverlyPopover>
                                 <div className='mr-auto'></div>
@@ -319,20 +325,31 @@ function Toolbar(props) {
 
             <style jsx>
                 {`
+                    .text_animation{
+                        animation: mymove 5s infinite;
+                        color: ${GlobalStyleSheet.primry_color};
+                        font-family: Verdana, Geneva, sans-serif;
+                        margin: 0%;
+                    }
+
+                    @keyframes mymove {
+                        50% {text-shadow: 10px 10px 10px green;}
+                    }
+
                     .nav_link_text {
                         white-space: nowrap;
                         font-size: 13px;
                         padding: 0px;
                         margin-top: 1px;
-                        color: ${GlobalStyleSheet.primry_color}
+                        color: gray
                     }
                     .nav_link_text:hover, .second_nav_link_text:hover {
-                        color: black
+                        color: green
                     }
                     .second_nav_link_text {
                         white-space: nowrap;
                         font-size: 14px;
-                        color: ${GlobalStyleSheet.primry_color}
+                        color: ${GlobalStyleSheet.admin_primry_color}
                     }
 
                     .category_list_item {
@@ -404,16 +421,8 @@ const styles = {
         overflow: 'hidden',
         fontSize: '13px',
     },
-
-    fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
-        width: '18px',
-        height: '18px',
-        maxHeight: '18px',
-        maxWidth: '18x',
-    },
     nav_fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
+        color: 'gray',
         width: '24px',
         height: '24px',
         maxHeight: '24px',
@@ -421,14 +430,14 @@ const styles = {
         margin: '0px'
     },
     nav_cart_fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
+        color: 'gray',
         width: '28px',
         height: '28px',
         maxHeight: '28px',
         maxWidth: '28px',
     },
     dropDown_fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
+        color: 'gray',
         margin: '0px 20px 0px 0px',
         width: '18px',
         height: '18px',
@@ -436,7 +445,7 @@ const styles = {
         maxWidth: '18px',
     },
     second_nav_fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
+        color: 'gray',
         marginRight: '3%',
         width: '22px',
         height: '22px',
@@ -452,14 +461,14 @@ const styles = {
         maxWidth: '10px',
     },
     faChevronDown_fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
+        color: 'gray',
         width: '12px',
         height: '12px',
         maxHeight: '12px',
         maxWidth: '12px',
     },
     small_fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
+        color: 'gray',
         width: '20px',
         height: '20px',
         maxHeight: '20px',
