@@ -206,7 +206,7 @@ const Dashboard = props => {
                                         Help?
                                     </NavDropdown.Item>
                                     <NavDropdown.Divider />
-                                    <NavDropdown.Item onClick={props.logoutClickHandler}>
+                                    <NavDropdown.Item onClick={props.logout}>
                                         <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
                                         Logout
                                 </NavDropdown.Item>

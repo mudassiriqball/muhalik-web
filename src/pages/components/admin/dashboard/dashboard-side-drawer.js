@@ -157,7 +157,7 @@ const DashboardSideDrawer = props => {
                         </Nav.Item>
                         <Nav.Item>
                             <div className="nav_link" >
-                                <Nav.Link onClick={props.click, props.logoutClickHandler} style={styles.nav_link}>
+                                <Nav.Link onClick={props.click, props.logout} style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
                                     <div className="mr-auto">Logout</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />

@@ -4,7 +4,7 @@ import axios from 'axios'
 import Dashboard from './components/vendor/dashboard/dashboard'
 import DashboardSideDrawer from './components/vendor/dashboard/dashboard-side-drawer'
 import GlobalStyleSheet from '../styleSheet'
-import { chectAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service'
+import { checkAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service'
 import MuhalikConfig from '../sdk/muhalik.config'
 
 const BackDrop = props => (
@@ -26,7 +26,6 @@ const BackDrop = props => (
 class Vendor extends Component {
     constructor(props) {
         super(props);
-        this.authUser();
         this.state = {
             sideDrawerOpen: false,
             showWrapper: true,
@@ -43,6 +42,7 @@ class Vendor extends Component {
     }
 
     async componentDidMount() {
+        this.authUser();
         const url = MuhalikConfig.PATH + '/api/categories/categories'
         this.setState({ token: await getTokenFromStorage() })
         const currentComponent = this
@@ -67,7 +67,7 @@ class Vendor extends Component {
     }
 
     async authUser() {
-        this.setState({ user_name: await chectAuth('vendor') })
+        this.setState({ user_name: await checkAuth('vendor') })
     }
 
     drawerToggleClickHandler = () => {

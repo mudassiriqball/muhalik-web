@@ -1,8 +1,5 @@
 // export default AuthenticationService;
 import { reactLocalStorage } from 'reactjs-localstorage';
-// import { useRouter } from 'next/router'
-// import Router from 'next/router'
-
 import * as decode from 'jwt-decode'
 import Router from 'next/router'
 
@@ -38,7 +35,7 @@ export function removeTokenFromStorage() {
     }
 }
 
-export function chectAuth(rolee) {
+export function checkAuth(rolee) {
     try {
         const token = reactLocalStorage.get('token');
         const decodedToken = decode(token);

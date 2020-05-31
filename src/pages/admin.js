@@ -6,7 +6,7 @@ import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-dra
 import AdminLayout from './components/admin/layout/AdminLayout';
 import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config'
-import { chectAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service';
+import { checkAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service';
 
 const BackDrop = props => (
     <div>
@@ -28,7 +28,6 @@ let token = ''
 class Admin extends Component {
     constructor(props) {
         super(props);
-        this.authUser()
         this.state = {
             sideDrawerOpen: false,
             showWrapper: true,
@@ -45,6 +44,8 @@ class Admin extends Component {
     }
 
     async componentDidMount() {
+        this.authUser()
+
         const url = MuhalikConfig.PATH + '/api/categories/categories';
         this.setState({ token: await getTokenFromStorage() })
         const currentComponent = this;
@@ -97,7 +98,7 @@ class Admin extends Component {
     }
 
     async authUser() {
-        this.setState({ user_name: await chectAuth('admin') });
+        this.setState({ user_name: await checkAuth('admin') });
     }
 
     drawerToggleClickHandler = () => {
@@ -142,7 +143,7 @@ class Admin extends Component {
                     show={this.state.showWrapper}
                     drawerClickHandler={this.drawerToggleClickHandler}
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
-                    logoutClickHandler={this.logout} />
+                    logout={this.logout} />
                 <DashboardSideDrawer
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
@@ -152,7 +153,7 @@ class Admin extends Component {
                     user_name={this.state.user_name}
                     show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler}
-                    logoutClickHandler={this.logout} />
+                    logout={this.logout} />
                 {backdrop}
                 {/* </AdminLayout> */}
             </div>
