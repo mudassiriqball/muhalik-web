@@ -1,122 +1,115 @@
 // const express = require("express");
 // const next = require("next");
 
+// const PORT = process.env.PORT || 5000;
 // const dev = process.env.NODE_ENV !== "production";
-// const nextApp = next({ dev });
-// const handle = nextApp.getRequestHandler();
-// const port = process.env.PORT || 5000;
-// var multer = require("multer");
+// const app = next({ dev });
+// const handle = app.getRequestHandler();
+// const multer = require("multer");
 // const path = require("path");
-// // const upload=multer({dest:'images/'})
 
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
-//     cb(null, 'images/');
+//     cb(null, 'images/')
 //   },
 //   filename: function (req, file, cb) {
-//     cb(
-//       null,
-//       file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-//     );
-//   },
+//     cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname);
+//   }
 // });
+
 // const upload = multer({
 //   storage: storage,
 // });
-// nextApp
-//   .prepare()
-//   .then(() => {
-//     const app = express();
-//     const http = require("http");
-//     const server = http.createServer(app);
 
-//     require("dotenv").config();
-//     const errorHandler = require("./api/middleware/error-handler");
-//     const errorMessage = require("./api/middleware/error-message");
-//     const accessControls = require("./api/middleware/access-controls");
-//     const mongoose = require("mongoose");
-//     const cors = require("cors");
-//     const bodyParser = require("body-parser");
-//     app.use(
-//       bodyParser.urlencoded({
-//         extended: true,
-//       })
-//     );
-//     app.use(bodyParser.json());
+// app.prepare().then(() => {
+//   const app = express();
+//   const http = require("http");
+//   const server = http.createServer(app);
+//   require("dotenv").config();
 
-//     // for parsing multipart/form-data
-//     app.use(upload.array('myImage'));
-//     app.use(express.static("public"));
+//   require("dotenv").config();
+//   const errorHandler = require("./api/middleware/error-handler");
+//   const errorMessage = require("./api//middleware/error-message");
+//   const accessControls = require("./api//middleware/access-controls");
+//   const mongoose = require("mongoose");
+//   const cors = require("cors");
+//   const bodyParser = require("body-parser");
+//   app.use(
+//     bodyParser.urlencoded({
+//       extended: true
+//     })
+//   );
+//   app.use(bodyParser.json());
 
-//     // connection to mongoose
-//     const mongoCon = process.env.mongoCon;
+//   // for parsing multipart/form-data
+//   app.use(upload.array('myImage'));
+//   app.use(express.static("public"));
 
-//     const connect = async function () {
-//       return mongoose.connect(mongoCon, {
-//         useNewUrlParser: true,
-//         useCreateIndex: true,
-//         useUnifiedTopology: true,
-//       });
-//     };
+//   // connection to mongoose
+//   const mongoCon = process.env.mongoCon;
 
-//     (async () => {
-//       try {
-//         const connected = await connect();
-//       } catch (e) {
-//         console.log("Error happend while connecting to the DB: ", e.message);
-//       }
-//     })();
-//     const fs = require("fs");
-//     fs.readdirSync(__dirname + "/api/modals").forEach(function (file) {
-//       require(__dirname + "/api/modals/" + file);
+//   const connect = async function () {
+//     return mongoose.connect(mongoCon, {
+//       useNewUrlParser: true,
+//       useCreateIndex: true,
+//       useUnifiedTopology: true
 //     });
+//   };
 
-//     // in case you want to serve images
-//     // app.use(express.static("public"));
+//   (async () => {
+//     try {
+//       const connected = await connect();
+//     } catch (e) {
+//       console.log("Error happend while connecting to the DB: ", e.message);
+//     }
+//   })();
+//   const fs = require("fs");
+//   fs.readdirSync(__dirname + "/api/models").forEach(function (file) {
+//     require(__dirname + "/api/models/" + file);
+//   });
 
-//     app.get("/api", function (req, res) {
-//       res.status(200).send({
-//         message: "Express backend server",
-//       });
+//   // in case you want to serve images
+//   app.use(express.static("public"));
+
+//   app.get("/api", function (req, res) {
+//     res.status(200).send({
+//       message: "Express backend server"
 //     });
+//   });
 
-//     // app.set('port', (process.env.PORT));
+//   app.set("port", process.env.PORT);
 
-//     app.use(accessControls);
-//     app.use(cors());
+//   app.use(accessControls);
+//   app.use(cors());
 
-//     const UsersRoutes = require("./api/routes/users.routes");
-//     const ProductsRoutes = require("./api/routes/products.routes");
-//     const CategoriesRoutes = require("./api/routes/categories.routes");
+//   const UsersRoutes = require("./api/routes/users.routes");
+//   const ProductsRoutes = require("./api/routes/products.routes");
+//   const Products_CategoriesRoutes = require("./api/routes/categories.routes");
 
-//     app.use("/api/users", UsersRoutes);
-//     app.use("/api/products", ProductsRoutes);
-//     app.use("/api/categories", CategoriesRoutes);
+//   app.use("/api/users", UsersRoutes);
+//   app.use("/api/products", ProductsRoutes);
+//   app.use("/api/categories", Products_CategoriesRoutes);
 
-//     app.get("*", (req, res) => {
-//       return handle(req, res);
-//     });
+//   app.get("*", (req, res) => {
+//     return handle(req, res);
+//   });
 
-//     app.use(errorHandler);
-//     app.use(errorMessage);
-//     server.listen(port);
-
-//     // app.listen(PORT, err => {
-//     //   if (err) throw err;
-//     //   console.log(`> ready on port ${PORT}`);
-//     // })
-
-//     console.log("listening on port", port);
-//   })
-//   .catch((ex) => {
+//   app.set("port", process.env.PORT);
+//   server.listen(app.get("port"));
+//   console.log("listening on port", app.get("port"));
+// })
+//   .catch(ex => {
 //     console.error(ex.stack);
 //   });
+
+
+
 
 
 const express = require("express");
 const next = require("next");
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -131,88 +124,99 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname);
   }
 });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true)
+  } else {
+    //reject file
+    cb({ message: 'Unsupported file format' }, false)
+  }
+}
 
 const upload = multer({
   storage: storage,
+  fileFilter: fileFilter
 });
 
-app.prepare().then(() => {
-  const app = express();
-  const http = require("http");
-  const server = http.createServer(app);
-  require("dotenv").config();
+app
+  .prepare()
+  .then(() => {
+    const app = express();
+    const http = require("http");
+    const server = http.createServer(app);
+    require("dotenv").config();
 
-  require("dotenv").config();
-  const errorHandler = require("./api/middleware/error-handler");
-  const errorMessage = require("./api//middleware/error-message");
-  const accessControls = require("./api//middleware/access-controls");
-  const mongoose = require("mongoose");
-  const cors = require("cors");
-  const bodyParser = require("body-parser");
-  app.use(
-    bodyParser.urlencoded({
-      extended: true
-    })
-  );
-  app.use(bodyParser.json());
+    require("dotenv").config();
+    const errorHandler = require("./api/middleware/error-handler");
+    const errorMessage = require("./api//middleware/error-message");
+    const accessControls = require("./api//middleware/access-controls");
+    const mongoose = require("mongoose");
+    const cors = require("cors");
+    const bodyParser = require("body-parser");
+    app.use(
+      bodyParser.urlencoded({
+        extended: true
+      })
+    );
+    app.use(bodyParser.json());
 
-  // for parsing multipart/form-data
-  app.use(upload.array('myImage'));
-  app.use(express.static("public"));
+    // for parsing multipart/form-data
+    app.use(upload.array('myImage'));
+    app.use(express.static("public"));
 
-  // connection to mongoose
-  const mongoCon = process.env.mongoCon;
+    // connection to mongoose
+    const mongoCon = process.env.mongoCon;
 
-  const connect = async function () {
-    return mongoose.connect(mongoCon, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true
+    const connect = async function () {
+      return mongoose.connect(mongoCon, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useUnifiedTopology: true
+      });
+    };
+
+    (async () => {
+      try {
+        const connected = await connect();
+      } catch (e) {
+        console.log("Error happend while connecting to the DB: ", e.message);
+      }
+    })();
+    const fs = require("fs");
+    fs.readdirSync(__dirname + "/api/models").forEach(function (file) {
+      require(__dirname + "/api/models/" + file);
     });
-  };
 
-  (async () => {
-    try {
-      const connected = await connect();
-    } catch (e) {
-      console.log("Error happend while connecting to the DB: ", e.message);
-    }
-  })();
-  const fs = require("fs");
-  fs.readdirSync(__dirname + "/api/models").forEach(function (file) {
-    require(__dirname + "/api/models/" + file);
-  });
+    // in case you want to serve images
+    app.use(express.static("public"));
 
-  // in case you want to serve images
-  app.use(express.static("public"));
-
-  app.get("/api", function (req, res) {
-    res.status(200).send({
-      message: "Express backend server"
+    app.get("/api", function (req, res) {
+      res.status(200).send({
+        message: "Express backend server"
+      });
     });
-  });
 
-  app.set("port", process.env.PORT);
+    app.set("port", process.env.PORT);
 
-  app.use(accessControls);
-  app.use(cors());
+    app.use(accessControls);
+    app.use(cors());
 
-  const UsersRoutes = require("./api/routes/users.routes");
-  const ProductsRoutes = require("./api/routes/products.routes");
-  const Products_CategoriesRoutes = require("./api/routes/categories.routes");
+    const UsersRoutes = require("./api/routes/users.routes");
+    const ProductsRoutes = require("./api/routes/products.routes");
+    const Products_CategoriesRoutes = require("./api/routes/categories.routes");
 
-  app.use("/api/users", UsersRoutes);
-  app.use("/api/products", ProductsRoutes);
-  app.use("/api/categories", Products_CategoriesRoutes);
+    app.use("/api/users", UsersRoutes);
+    app.use("/api/products", ProductsRoutes);
+    app.use("/api/categories", Products_CategoriesRoutes);
 
-  app.get("*", (req, res) => {
-    return handle(req, res);
-  });
+    app.get("*", (req, res) => {
+      return handle(req, res);
+    });
 
-  app.set("port", process.env.PORT);
-  server.listen(app.get("port"));
-  console.log("listening on port", app.get("port"));
-})
+    app.set("port", process.env.PORT);
+    server.listen(app.get("port"));
+    console.log("listening on port", app.get("port"));
+  })
   .catch(ex => {
     console.error(ex.stack);
   });

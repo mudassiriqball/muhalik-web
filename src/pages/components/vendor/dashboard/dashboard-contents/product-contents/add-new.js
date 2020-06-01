@@ -116,6 +116,7 @@ class AddNew extends Component {
             token: '',
             isUpdateProduct: this.props.isUpdateProduct,
             _id: this.props._id,
+            clearFields: false,
             isLoading: false,
             showToast: false,
             toastMessage: '',
@@ -215,14 +216,16 @@ class AddNew extends Component {
         };
         axios.post(url, formData, config)
             .then((response) => {
-                currentComponent.setState({ isLoading: false });
-                currentComponent.setState({ showToast: true, toastMessage: 'Product Uploaded Successfully' });
-                return true;
+                currentComponent.setState({
+                    isLoading: false,
+                    showToast: true,
+                    toastMessage: 'Product Uploaded Successfully',
+                    clearFields: true
+                });
             }).catch((error) => {
                 console.log('error:', error)
                 currentComponent.setState({ isLoading: false });
-                alert('Product Upload failed');
-                return false;
+                alert('Product Upload failed')
             });
 
         // } else {
@@ -410,14 +413,11 @@ class AddNew extends Component {
                         if (this.state.productSubCategory == '') {
                             this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
                         }
-
-                        setSubmitting(false);
                     } else if (values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
                         this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
                     } else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
                         this.setState({ showVariationsErrorAlert: true });
                     } else {
-                        setSubmitting(true);
                         this.setState({ isLoading: true });
                         setTimeout(() => {
                             let array = [];
@@ -445,8 +445,8 @@ class AddNew extends Component {
                                 })
                                 values.product_variations = array;
                             }
-
-                            if (this.uploadProduct(values, this)) {
+                            this.uploadProduct(values, this)
+                            if (this.state.clearFields) {
                                 resetForm();
                                 this.setState({
                                     showVariationsErrorAlert: false,
@@ -466,6 +466,7 @@ class AddNew extends Component {
                                     warrantyType: '',
                                     inputValue: '',
                                     files: [],
+                                    imagePreviewArray: [],
 
                                     variationsArray: [],
                                     isVariationsSaved: false,
@@ -475,6 +476,7 @@ class AddNew extends Component {
 
                                     // Dangerous Goods
                                     dangerousGoodsArray: [],
+                                    clearFields: false
                                 });
                             }
                             setSubmitting(false);

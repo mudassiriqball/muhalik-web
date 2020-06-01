@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 
 const Product = new Schema({
   vendor_id: {
-    type: String,
+    type: Schema.Types.ObjectId,
   },
   category_id: {
-    type: String
+    type: Schema.Types.ObjectId,
   },
   sub_category_id: {
-    type: String
+    type: Schema.Types.ObjectId,
   },
   product_name: {
     type: String,
@@ -92,7 +92,7 @@ const Product = new Schema({
   },
   product_image_link: [
     {
-      path: {
+      url: {
         type: String,
       },
     },
@@ -123,7 +123,7 @@ const Product = new Schema({
       stock: { type: Number },
       image_link: [
         {
-          path: { type: String },
+          url: { type: String },
         },
       ],
     },

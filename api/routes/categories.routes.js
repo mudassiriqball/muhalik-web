@@ -6,8 +6,8 @@ const categoriesController = require('../controllers/categories.controller');
 // Post Requests
 router.post("/category", categoriesController.add_category);
 router.post("/field", categoriesController.add_field);
+
 router.post("/field-request", checkAuth, categoriesController.add_field_request);
-router.post("/tag", categoriesController.add_tag);
 
 // Get Requests
 router.get("/categories", categoriesController.get_categories);

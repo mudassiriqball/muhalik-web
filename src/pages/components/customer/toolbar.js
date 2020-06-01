@@ -10,7 +10,7 @@ import {
     faSearch, faUserPlus, faLanguage, faPowerOff, faUser,
     faCartPlus, faHandsHelping, faPen, faSignOutAlt, faGlobe,
     faLuggageCart, faFileInvoiceDollar, faListAlt, faEdit,
-    faStoreAlt, faChevronDown, faChevronRight
+    faStoreAlt, faChevronDown, faChevronRight, faListUl
 } from '@fortawesome/free-solid-svg-icons'
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 import MuhalikConfig from '../../../sdk/muhalik.config'
@@ -38,6 +38,7 @@ function Toolbar(props) {
     const [searchType, setSearchType] = React.useState('All')
     const [isCategoryOpen, setIsCategoryOpen] = React.useState(false)
     const [isShops, setIsShops] = React.useState(false)
+    const [hover, setHover] = React.useState(false)
 
     const [category_id, setCategory_id] = React.useState('')
 
@@ -47,10 +48,12 @@ function Toolbar(props) {
 
     function onMouseEnter() {
         setIsCategoryOpen(true)
+        setHover(true)
     }
 
     function onMouseLeave() {
         setIsCategoryOpen(false)
+        setHover(false)
     }
 
     function categoryMouseEnter(index) {
@@ -65,15 +68,16 @@ function Toolbar(props) {
         <div>
             <Card >
                 <Card.Body className='p-0 m-0'>
-                    <Navbar className='w-100' style={{ padding: '0.35% 2.5%' }}>
-                        <Row className='d-inline-flex align-items-center w-100 p-0 m-0'>
-                            <Col lg='auto' md={12} sm={12} xs={12} className='d-inline-flex align-items-center'>
+                    <Navbar className='w-100 p-0 m-0'>
+                        <div className='row w-100 m-0'>
+                            <Col lg='auto' md={12} sm={12} xs={12} className='d-inline-flex align-items-center m-0 p-0'>
                                 <Navbar.Brand className='d-inline-flex align-items-center'>
                                     <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '50px', display: 'flex', margin: '0% 3%' }} />
                                     <h4 className=" text_animation">Muhalik<span style={{ fontSize: '15px' }}>@2020</span></h4>
+                                    <div className='pr-4'></div>
                                 </Navbar.Brand>
                             </Col>
-                            <Col className='align-items-center'>
+                            <Col className='align-items-center m-2 p-0'>
                                 <InputGroup className='d-inline-flex align-items-center'>
                                     <InputGroup.Prepend >
                                         <Dropdown as={ButtonGroup}>
@@ -93,7 +97,7 @@ function Toolbar(props) {
                                     </InputGroup.Append>
                                 </InputGroup>
                             </Col>
-                            <Col lg='auto' md='auto' sm={12} xs={12}>
+                            <Col lg='auto' md='auto' sm={0} xs={0} className='m-0 p-0'>
                                 <div className='categories_lg_md align-items-center'>
                                     <Nav className='d-inline-flex align-items-center w-100'>
                                         <div className='ml-5'></div>
@@ -145,7 +149,7 @@ function Toolbar(props) {
                                     </Nav>
                                 </div>
                             </Col>
-                        </Row>
+                        </div>
                     </Navbar>
 
 
@@ -233,16 +237,21 @@ function Toolbar(props) {
                             </div>
                         </div>
                         <Navbar.Collapse >
-                            <Nav className='w-100 d-flex align-items-center' style={{ border: '0.5px solid lightgray' }}>
+                            <Nav className='w-100 d-inline-flex align-items-center' style={{ border: '0.5px solid lightgray', padding: '0% 1%' }}>
                                 <div className='categories_lg_md'>
-                                    <Dropdown onMouseOver={onMouseEnter} onMouseLeave={onMouseLeave} show={isCategoryOpen} >
-                                        <Dropdown.Toggle as={Nav.Link} className="d-inline-flex align-items-center ml-5 mr-5">
-                                            <FontAwesomeIcon icon={faListAlt} style={styles.second_nav_fontawesome} />
-                                            <div className='second_nav_link_text'> Categories </div>
+                                    <Dropdown onMouseOver={onMouseEnter} onMouseLeave={onMouseLeave} show={isCategoryOpen}>
+                                        <Dropdown.Toggle as={Nav.Link} className="d-inline-flex align-items-center"
+                                            style={{
+                                                border: hover ? '1px solid lightgray' : null,
+                                                margin: hover ? '-1px' : '0px',
+                                                color: hover ? `${GlobalStyleSheet.primry_color}` : 'gray'
+                                            }}>
+                                            <FontAwesomeIcon icon={faListUl} style={hover ? styles.second_nav_fontawesome_hover : styles.second_nav_fontawesome} />
+                                            <div className='second_nav_link_text' style={{ color: hover ? `${GlobalStyleSheet.primry_color}` : 'gray' }}> Categories </div>
                                         </Dropdown.Toggle>
-                                        <Dropdown.Menu style={{ minWidth: category_id == '' ? '207px' : '400px', }} >
-                                            <Row noGutters onMouseLeave={() => categoryMouseLeave()} className='pl-2 pr-2'>
-                                                <Col style={{ border: '1px solid lightgray', maxHeight: '50vh', overflowY: 'auto' }} className='p-1'>
+                                        <Dropdown.Menu style={{ minWidth: category_id == '' ? '30vw' : '60vw' }} className='m-0 pt-3'>
+                                            <Row noGutters onMouseLeave={() => categoryMouseLeave()}>
+                                                <Col style={{ height: '80vh', overflowY: 'auto' }}>
                                                     {props.categories_list && props.categories_list.map((element, index) =>
                                                         <div key={index} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)}>
                                                             {element.value}
@@ -252,7 +261,7 @@ function Toolbar(props) {
                                                     )}
                                                 </Col>
                                                 {category_id ?
-                                                    <Col style={{ border: '1px solid lightgray', maxHeight: '50vh', overflowY: 'auto' }} className='ml-1 p-1'>
+                                                    <Col style={{ borderLeft: '1px solid lightgray', height: '80vh', overflowY: 'auto' }}>
                                                         {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
                                                             element.category_id == category_id ?
                                                                 <div key={index} className="category_list_item" >
@@ -325,6 +334,12 @@ function Toolbar(props) {
 
             <style jsx>
                 {`
+                    .row {
+                        display: inline-flex;
+                         align-items: center;
+                         width: 100%;
+                         padding: 0.4% 3%
+                    }
                     .text_animation{
                         animation: mymove 5s infinite;
                         color: ${GlobalStyleSheet.primry_color};
@@ -343,14 +358,16 @@ function Toolbar(props) {
                         margin-top: 1px;
                         color: gray
                     }
-                    .nav_link_text:hover, .second_nav_link_text:hover {
-                        color: green
-                    }
                     .second_nav_link_text {
                         white-space: nowrap;
                         font-size: 14px;
+                        margin-left: 5%;
                         color: ${GlobalStyleSheet.admin_primry_color}
                     }
+                    .nav_link_text:hover, .second_nav_link_text:hover {
+                        color: green
+                    }
+                    
 
                     .category_list_item {
                         cursor: pointer;
@@ -358,10 +375,15 @@ function Toolbar(props) {
                         display: inline-flex;
                         align-items: center;
                         font-size: 14px;
-                        padding: 2%;
+                        padding: 1.5% 6%;
+                        margin: 0%;
                         color: gray
                     }
                     .category_list_item:hover{
+                        border-top: 0.5px solid lightgray;
+                        border-bottom: 0.5px solid lightgray;
+                        overflow: auto;
+                        padding: 1.5% 2% 1.5% 6%;
                         color: #005ce6;
                         background: #e6f0ff
                     }
@@ -387,6 +409,9 @@ function Toolbar(props) {
                         }
                         .categories_lg_md {
                             display: none;
+                        }
+                        .row {
+                            padding: 0.3% 0%
                         }
                     }
                     @media (max-width: 450px) {
@@ -446,7 +471,13 @@ const styles = {
     },
     second_nav_fontawesome: {
         color: 'gray',
-        marginRight: '3%',
+        width: '22px',
+        height: '22px',
+        maxHeight: '22px',
+        maxWidth: '22px',
+    },
+    second_nav_fontawesome_hover: {
+        color: `${GlobalStyleSheet.primry_color}`,
         width: '22px',
         height: '22px',
         maxHeight: '22px',

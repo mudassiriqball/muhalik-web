@@ -10,7 +10,7 @@ import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 import VendorDashboard from './dashboard-contents/vendor-dashboard';
 import AllProducts from './dashboard-contents/product-contents/all-products';
 import AddNew from './dashboard-contents/product-contents/add-new';
-import AddCategory from './dashboard-contents/product-contents/add-category';
+// import AddCategory from './dashboard-contents/product-contents/add-category';
 import Inventory from './dashboard-contents/inventory';
 import Discounts from './dashboard-contents/discounts';
 import Reports from './dashboard-contents/reports';
@@ -73,13 +73,13 @@ const Dashboard = props => {
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                         </Nav.Link>
                                     </div>
-                                    <div className="product_submenu">
+                                    {/* <div className="product_submenu">
                                         <Nav.Link eventKey="AddCategory" style={styles.product_submenu_link}>
                                             <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
                                             <div className="mr-auto"> Add Category </div>
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                         </Nav.Link>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 : null}
                             <Nav.Item>
@@ -215,9 +215,9 @@ const Dashboard = props => {
                                         dangerousGoodsArray={[]}
                                     />
                                 </Tab.Pane>
-                                <Tab.Pane eventKey="AddCategory">
+                                {/* <Tab.Pane eventKey="AddCategory">
                                     <AddCategory />
-                                </Tab.Pane>
+                                </Tab.Pane> */}
                                 <Tab.Pane eventKey="Inventory">
                                     <Inventory />
                                 </Tab.Pane>

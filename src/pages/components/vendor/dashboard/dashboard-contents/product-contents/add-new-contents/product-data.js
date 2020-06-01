@@ -115,8 +115,8 @@ const ProductData = props => {
                                         </Nav.Item>
                                     </Nav>
                                 </Col>
-                                <Col style={{ padding: '2%' }}>
-                                    <Tab.Content>
+                                <Col style={{ padding: '2%', maxHeight: '80vh', overflow: 'auto' }}>
+                                    <Tab.Content >
                                         <Tab.Pane eventKey="General">
                                             {props.isVariableProduct ? null :
                                                 <>
@@ -265,7 +265,7 @@ const ProductData = props => {
 
                                         <Tab.Pane eventKey="Inventory">
                                             <Form.Row>
-                                                <Form.Group as={Col} lg={6} md={6} sm={12} xs={12} >
+                                                <Form.Group as={Col} lg={12} md={12} sm={12} xs={12} >
                                                     <Form.Label style={styles.label}>Product SKU</Form.Label>
                                                     <InputGroup>
                                                         <Form.Control
@@ -284,9 +284,6 @@ const ProductData = props => {
                                                 </Form.Group>
                                             </Form.Row>
                                         </Tab.Pane>
-
-
-
 
                                         <Tab.Pane eventKey="Shipping">
                                             <Form.Group as={Row} noGutters>
@@ -328,10 +325,10 @@ const ProductData = props => {
                                                         onChange={props.onChange}
                                                         isInvalid={props.dimension_width_errors}
                                                     />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {props.dimension_width_errors}
+                                                    </Form.Control.Feedback>
                                                     <InputGroup.Prepend>
-                                                        <Form.Control.Feedback type="invalid">
-                                                            {props.dimension_width_errors}
-                                                        </Form.Control.Feedback>
                                                         <Form.Control
                                                             type="number"
                                                             name="dimension_height"
@@ -401,7 +398,7 @@ const ProductData = props => {
                                         </Tab.Pane>
 
                                         <Tab.Pane eventKey="Variations">
-                                            <ProductVariations
+                                            <Variations
                                                 variationsArray={props.variationsArray}
                                                 setVariationsArray={props.setVariationsArray}
                                                 setVariationsSaved={props.setVariationsSaved}
@@ -410,22 +407,24 @@ const ProductData = props => {
                                         </Tab.Pane>
 
                                         <Tab.Pane eventKey="Advanced">
-                                            <Form.Row >
-                                                <Form.Label style={styles.label}>Purchase Note</Form.Label>
-                                                <InputGroup>
-                                                    <Form.Control
-                                                        type="text"
-                                                        size="sm"
-                                                        placeholder="Enter Purchase Notes"
-                                                        name="purchase_note"
-                                                        value={props.purchase_note_values}
-                                                        onChange={props.onChange}
-                                                        isInvalid={props.purchase_note_errors}
-                                                    />
-                                                    <Form.Control.Feedback type="invalid">
-                                                        {props.purchase_note_errors}
-                                                    </Form.Control.Feedback>
-                                                </InputGroup>
+                                            <Form.Row>
+                                                <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
+                                                    <Form.Label style={styles.label}>Purchase Note</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control
+                                                            type="text"
+                                                            size="sm"
+                                                            placeholder="Enter Purchase Notes"
+                                                            name="purchase_note"
+                                                            value={props.purchase_note_values}
+                                                            onChange={props.onChange}
+                                                            isInvalid={props.purchase_note_errors}
+                                                        />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {props.purchase_note_errors}
+                                                        </Form.Control.Feedback>
+                                                    </InputGroup>
+                                                </Form.Group>
                                             </Form.Row>
                                         </Tab.Pane>
                                         {/* <Tab.Pane eventKey="Commission">
@@ -594,12 +593,12 @@ function ProductAttributes(props) {
                     />
                 </Form.Group>
             </Form.Row>
-            <Row noGutters>
+            <Row noGutters className='w-100'>
                 <Form.Label style={styles.label}>
                     <span style={{ color: 'red' }}>{error}</span>
                 </Form.Label>
-
-                <div className='mr-auto'></div>
+            </Row>
+            <Row noGutters className='pt-2'>
                 <Button variant="outline-primary" size='sm' onClick={handleAddProductAttributeClick} style={{ marginRight: '2%' }}>Add</Button>
                 <Button variant="outline-success" size="sm" onClick={handleCreateVariationsClick}>Create Variations</Button>
             </Row>
@@ -646,7 +645,7 @@ const createOption = (label) => ({
 })
 
 
-function ProductVariations(props) {
+function Variations(props) {
     const [samePrice, setSamePrice] = React.useState('')
     const [samePriceError, setSamePriceError] = React.useState('')
 

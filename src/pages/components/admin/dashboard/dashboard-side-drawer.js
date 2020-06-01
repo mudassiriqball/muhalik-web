@@ -186,6 +186,7 @@ const DashboardSideDrawer = props => {
                             <Tab.Pane eventKey="AddProduct">
                                 <AddNew
                                     {...props}
+                                    title={' Admin Dashboard / Add New'}
                                     isUpdateProduct={false}
                                     productCategories={''}
                                     productSubCategories={''}

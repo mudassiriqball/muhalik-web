@@ -1,10 +1,12 @@
 import { Row } from 'react-bootstrap';
+import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const TitleRow = props => (
     <Row style={styles.title_row} noGutters>
         <FontAwesomeIcon icon={props.icon} style={styles.title_fontawesome} />
         <div className="mr-auto" style={styles.title}> Muhalik / {props.title} </div>
+        <Link href="/index"><a>Home</a></Link>
     </Row>
 )
 
