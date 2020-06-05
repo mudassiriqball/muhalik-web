@@ -57,9 +57,9 @@ const CarouselDiv = (props) => {
     }
     return (
         <>
-            <div className='rr'>
+            <div className='div'>
                 <Row className='w-100' noGutters>
-                    <Col lg={3} md={3} onMouseLeave={() => categoryMouseLeave()} style={{ boxShadow: '-1px 0px 10px 1px rgba(0,0,0,0.12) inset' }}>
+                    <div className='col-lg-3 col-md-3 block_sm' onMouseLeave={() => categoryMouseLeave()} style={{ boxShadow: '-1px 0px 10px 1px rgba(0,0,0,0.12) inset' }}>
                         {props.categories_list && props.categories_list.map((element, index) =>
                             <div key={index} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)}>
                                 {element.value}
@@ -67,7 +67,7 @@ const CarouselDiv = (props) => {
                                 <FontAwesomeIcon icon={faChevronRight} style={styles.faChevronRight} />
                             </div>
                         )}
-                    </Col>
+                    </div>
                     {category_id ?
                         <Col style={{ overflowY: 'auto', zIndex: 100 }}>
                             {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
@@ -88,7 +88,7 @@ const CarouselDiv = (props) => {
                 </Row>
             </div>
             <style jsx>{`
-                .rr{
+                .div{
                     margin: 1% 3%;
                     padding: 1% 2%;
                     background: white;
@@ -107,6 +107,18 @@ const CarouselDiv = (props) => {
                     color: #005ce6;
                     border-radius: 2px;                        
                     box-shadow: -1px 0px 10px 1px rgba(0,0,0,0.12);
+                }
+                .block_sm{
+                    display: block;
+                }
+                @media (max-width: 767px) {
+                    .block_sm{
+                        display: none;
+                    }
+                    .div{
+                        padding: 0%;
+                        margin: 0%;
+                    }
                 }
             `}</style>
         </>

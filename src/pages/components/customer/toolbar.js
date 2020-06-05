@@ -325,15 +325,6 @@ const Toolbar = (props) => {
                         right: 0;
                         z-index: 1000;
                     }
-                    .sticky .sticky-inner .row {
-                        padding: 0% 3%
-                    }
-                    .row {
-                        display: inline-flex;
-                         align-items: center;
-                         width: 100%;
-                         padding: 0.5% 3%
-                    }
                     .text_animation{
                         animation: mymove 5s infinite;
                         color: ${GlobalStyleSheet.primry_color};
@@ -386,6 +377,17 @@ const Toolbar = (props) => {
                     .vertical_bar {
                        color: ${GlobalStyleSheet.primry_color}
                     }
+                    @media (min-width: 767px) {
+                        .row {
+                            display: inline-flex;
+                            align-items: center;
+                            width: 100%;
+                            padding: 0.5% 3%
+                        }
+                        .sticky .sticky-inner .row {
+                            padding: 0% 3%;
+                        }
+                    }
                     @media (max-width: 767px) {
                         .vertical_bar {
                             display: none;
@@ -394,7 +396,10 @@ const Toolbar = (props) => {
                             display: none;
                         }
                         .row {
-                            padding: 0.2% 0%
+                            display: inline-flex;
+                            align-items: center;
+                            width: 100%;
+                            padding: 0%
                         }
                     }
                     @media (max-width: 450px) {
