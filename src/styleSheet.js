@@ -15,7 +15,7 @@ let GlobalStyleSheet = {
     // Body color
     // body_color: '#F1F1F1',
     body_color: '#F2F3F7',
-    // body_color: '#F0F0F0',
+    // body_color: '#e3edf7',
 
     // Fontsize for all the labels of any form control (input, textbox etc):
     form_label_fontsize: '13px',

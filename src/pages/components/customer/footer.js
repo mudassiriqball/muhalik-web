@@ -13,30 +13,26 @@ const Footer = () => (
                     <span style={{ fontSize: 'medium', fontWeight: 'bold', }}> Muhalik </span>
                 - Online Shopping Website
             </p>
-            <Card style={styles.card}>
-                <Card.Body>
-                    <Row>
-                        <div className='mr-auto'></div>
-                        <div className='flex_row' >
-                            <div style={{ marginBottom: '2%' }}>Follow Muhalik</div>
-                            <FontAwesomeIcon icon={faFacebook} onClick={() => { window.open('https://www.facebook.com/MUHALIK2020 ', "_blank") }} style={styles.fb_fontawesome} />
-                            <FontAwesomeIcon icon={faInstagram} onClick={() => { window.open('https://instagram.com/muhalik2020?igshid=sno76rv9kp60 ', "_blank") }} style={styles.instagram_fontawesome} />
-                            <FontAwesomeIcon icon={faTwitter} onClick={() => { window.open('https://twitter.com/muhalik2020?s=09 ', "_blank") }} style={styles.twitter_fontawesome} />
-                            <FontAwesomeIcon icon={faWhatsapp} onClick={() => { window.open('https://www.snapchat.com/add/muhalik2020', "_blank") }} style={styles.whatsapp_fontawesome} />
-                            <FontAwesomeIcon icon={faSnapchat} onClick={() => { window.open('https://www.snapchat.com/add/muhalik2020', "_blank") }} style={styles.snapchat_fontawesome} />
-                            {/* <Button style={{ background: 'linear-gradient(to right bottom, #7C48BD, #F15B40)', margin: '1% 2% 0% 0%' }}>Instagram</Button> */}
-                        </div>
-                        <div className='mr-auto width'></div>
-                        <div className='flex_row'>
-                            <div style={{ marginBottom: '1.5%' }}>Payment Methods</div>
-                            <FontAwesomeIcon icon={faCcVisa} style={styles.visa_fontawesome} />
-                            <FontAwesomeIcon icon={faCcMastercard} style={styles.master_card_fontawesome} />
-                            <FontAwesomeIcon icon={faCcPaypal} style={styles.paypal_fontawesome} />
-                        </div>
-                        <div className='mr-auto'></div>
-                    </Row>
-                </Card.Body>
-            </Card>
+            <Row style={styles.card} className='justify-content-center'>
+                <Col className='justify-content-center'>
+                    <h5>Follow Us</h5>
+                    <div className='social-media' >
+                        <a><FontAwesomeIcon icon={faFacebook} onClick={() => { window.open('https://www.facebook.com/MUHALIK2020 ', "_blank") }} style={styles.fb_fontawesome} /></a>
+                        <a><FontAwesomeIcon icon={faInstagram} onClick={() => { window.open('https://instagram.com/muhalik2020?igshid=sno76rv9kp60 ', "_blank") }} style={styles.instagram_fontawesome} /></a>
+                        <a><FontAwesomeIcon icon={faTwitter} onClick={() => { window.open('https://twitter.com/muhalik2020?s=09 ', "_blank") }} style={styles.twitter_fontawesome} /></a>
+                        <a><FontAwesomeIcon icon={faWhatsapp} onClick={() => { window.open('https://www.snapchat.com/add/muhalik2020', "_blank") }} style={styles.whatsapp_fontawesome} /></a>
+                        <a><FontAwesomeIcon icon={faSnapchat} onClick={() => { window.open('https://www.snapchat.com/add/muhalik2020', "_blank") }} style={styles.snapchat_fontawesome} /></a>
+                    </div>
+                </Col>
+                <Col className='justify-content-center'>
+                    <h5>Payment Method:</h5>
+                    <div className='social-media'>
+                        <a><FontAwesomeIcon icon={faCcVisa} style={styles.visa_fontawesome} /></a>
+                        <a><FontAwesomeIcon icon={faCcMastercard} style={styles.master_card_fontawesome} /></a>
+                        <a><FontAwesomeIcon icon={faCcPaypal} style={styles.paypal_fontawesome} /></a>
+                    </div>
+                </Col>
+            </Row>
             <Row noGutters style={{ padding: '4% 6%' }}>
                 <div className='mr-auto'>
                     <div className='list_header'>Services</div>
@@ -85,11 +81,38 @@ const Footer = () => (
                     color: white;
                     font-size: ${GlobalStyleSheet.form_label_fontsize}
                 }
-                .flex_row {
+                .social-media {
                     display: flex;
                     align-items: center;
-                    f
-                    lex-direction: row;
+                    justify-content: center;
+                    background: #e3edf7;
+                    border-radius: 5px
+                }
+                h5{
+                    color: #e3edf7;
+                }
+                a{
+                    display: flex;
+                    background: #e3edf7;
+                    border-radius: 5px;
+                    align-items: center;
+                    justify-content: center;
+                    text-decoration: none;
+                    padding: 1%;
+                    margin: 2%;
+                    box-shadow: 6px 6px 10px -1px rgba(0,0,0,0.30), -6px -6px 10px -1px rgba(255,255,255,0.30);
+                    border: 1px solid rgba(0,0,0,0);
+                    transition: transform 0.5s;
+
+                }
+                a:hover{
+                    box-shadow: inset 4px 4px 6px -1px rgba(0,0,0,0.2),
+                                inset -4px -4px 6px -1px rgba(255,255,255,0.7),
+                                -0.5px -0.5px 0px rgba(255,255,255,1),
+                                0.5px 0.5px 0px rgba(0,0,0,0.15),
+                                0px 12px 10px -10px rgba(0,0,0,0.05);
+                    border: 1px solid rgba(0,0,0,0.01);
+                    transition: translateY(2px);
                 }
                 @media (max-width: 768px) {
                     .width {

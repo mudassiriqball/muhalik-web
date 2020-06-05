@@ -88,7 +88,8 @@ class Index extends Component {
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
                 >
-                    <CarouselDiv />
+                    <CarouselDiv categories_list={this.state.categories_list}
+                        sub_categories_list={this.state.sub_categories_list} />
                     {animation}
                 </Layout>
 
@@ -99,7 +100,7 @@ class Index extends Component {
 
 const styles = {
     body: {
-        background: '#f1f3f4',
+        background: `${GlobalStyleSheet.body_color}`,
         position: 'absolute',
         top: '0',
         left: '0',

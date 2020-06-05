@@ -1,15 +1,24 @@
 import { Carousel, Col, Row, ListGroup } from 'react-bootstrap'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+    faSearch, faUserPlus, faLanguage, faPowerOff, faUser,
+    faCartPlus, faHandsHelping, faPen, faSignOutAlt, faGlobe,
+    faLuggageCart, faFileInvoiceDollar, faListAlt, faEdit,
+    faStoreAlt, faChevronDown, faChevronRight, faListUl, faShoppingCart, faSignLanguage
+} from '@fortawesome/free-solid-svg-icons'
+import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
+
 const images = [
     { img: 'carousel_img1.jpg' },
     { img: 'carousel_img2.jpg' },
     { img: 'carousel_img3.jpg' },
     { img: 'carousel_img4.jpg' },
+    { img: 'hassan.jpg' }
 ]
 
 function OnlyCarousel(props) {
     const [index, setIndex] = React.useState(0);
-
     const handleSelect = (selectedIndex, e) => {
         setIndex(selectedIndex);
     };
@@ -19,6 +28,7 @@ function OnlyCarousel(props) {
             {images && images.map((element, i) =>
                 <Carousel.Item key={i}>
                     <img
+                        style={{ maxHeight: '400px' }}
                         className="d-block w-100"
                         src={element.img}
                         alt='Slide {i}'
@@ -34,16 +44,89 @@ function OnlyCarousel(props) {
 }
 
 const CarouselDiv = (props) => {
+    const [hoverCategory, setHoverCategory] = React.useState(false)
+    const [isCategoryOpen, setIsCategoryOpen] = React.useState(false)
+    const [category_id, setCategory_id] = React.useState('')
 
+    function categoryMouseEnter(index) {
+        const copyArray = Object.assign([], props.categories_list)
+        setCategory_id(copyArray[index]._id)
+    }
+    function categoryMouseLeave() {
+        setCategory_id('')
+    }
     return (
         <>
-            <Row className='w-100 p-2 m-0 justify-content-center'>
-                <Col lg={6} md={6} sm={6} xs={12}>
-                    <OnlyCarousel />
-                </Col>
-            </Row>
+            <div className='rr'>
+                <Row className='w-100' noGutters>
+                    <Col lg={3} md={3} onMouseLeave={() => categoryMouseLeave()} style={{ boxShadow: '-1px 0px 10px 1px rgba(0,0,0,0.12) inset' }}>
+                        {props.categories_list && props.categories_list.map((element, index) =>
+                            <div key={index} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)}>
+                                {element.value}
+                                <div className='mr-auto'></div>
+                                <FontAwesomeIcon icon={faChevronRight} style={styles.faChevronRight} />
+                            </div>
+                        )}
+                    </Col>
+                    {category_id ?
+                        <Col style={{ overflowY: 'auto', zIndex: 100 }}>
+                            {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
+                                element.category_id == category_id ?
+                                    <div key={index} className="category_list_item" >
+                                        {element.value}
+                                    </div>
+                                    :
+                                    null
+                            )}
+                        </Col>
+                        :
+                        null
+                    }
+                    <Col lg={9} md={9} sm={12} xs={12} style={{ zIndex: 1 }}>
+                        <OnlyCarousel style={{ maxHeight: '30vh' }} />
+                    </Col>
+                </Row>
+            </div>
+            <style jsx>{`
+                .rr{
+                    margin: 1% 3%;
+                    padding: 1% 2%;
+                    background: white;
+                }
+                .category_list_item {
+                    cursor: pointer;
+                    width: 98%;
+                    display: inline-flex;
+                    align-items: center;
+                    font-size: 14px;
+                    padding: 4% 5%;                        
+                    color: gray;
+                }
+                .category_list_item:hover{
+                    z-index: 100;
+                    color: #005ce6;
+                    border-radius: 2px;                        
+                    box-shadow: -1px 0px 10px 1px rgba(0,0,0,0.12);
+                }
+            `}</style>
         </>
     )
 }
 
+const styles = {
+    categories_fontawesome: {
+        color: 'gray',
+        width: '15px',
+        height: '15px',
+        maxHeight: '15px',
+        maxWidth: '15px',
+    },
+    faChevronRight: {
+        color: 'gray',
+        width: '12px',
+        height: '12px',
+        maxHeight: '12px',
+        maxWidth: '12px',
+    },
+}
 export default CarouselDiv
