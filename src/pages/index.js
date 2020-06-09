@@ -23,6 +23,23 @@ let animation =
         />
     </h3>
 
+
+export async function getStaticProps() {
+    const url = MuhalikConfig.PATH + '/api/categories/categories';
+    const data = [];
+    await axios.get(url).then((response) => {
+        data = response.data.category.docs
+    }).catch((error) => {
+        console.log('Caterories Fetchig Error: ', error)
+    })
+
+    return {
+        props: {
+            data
+        }
+    }
+}
+
 class Index extends Component {
     constructor(props) {
         super(props);
@@ -30,7 +47,9 @@ class Index extends Component {
             token: '',
             jwt_token: '',
 
-            categories_list: [],
+            products_list: [],
+
+            categories_list: this.props.data,
             sub_categories_list: []
         }
     }
@@ -40,16 +59,16 @@ class Index extends Component {
         if (token !== null) {
             this.setState({ jwt_token: token.role })
         }
-        const url = MuhalikConfig.PATH + '/api/categories/categories';
-        const currentComponent = this;
-        await axios.get(url).then((response) => {
-            currentComponent.setState({
-                categories_list: response.data.category.docs,
-                sub_categories_list: response.data.sub_category.docs
-            });
-        }).catch((error) => {
-            console.log('Caterories Fetchig Error: ', error)
-        })
+        // const url = MuhalikConfig.PATH + '/api/categories/categories';
+        // const currentComponent = this;
+        // await axios.get(url).then((response) => {
+        //     currentComponent.setState({
+        //         categories_list: response.data.category.docs,
+        //         sub_categories_list: response.data.sub_category.docs
+        //     });
+        // }).catch((error) => {
+        //     console.log('Caterories Fetchig Error: ', error)
+        // })
     }
 
     logout = () => {

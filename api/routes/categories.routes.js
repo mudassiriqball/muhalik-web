@@ -20,9 +20,9 @@ router.get("/tags", categoriesController.get_tags);
 // router.put("/sub-category/:_id", categoriesController.update_sub_category);
 // router.put("/field/:_id", categoriesController.update_field);
 
-//  Delete Requests
-// router.delete("/sub-category/_id", categoriesController.delete_sub_category);
-// router.delete("/field/_id", categoriesController.delete_field);
-// router.delete("/field-request/_id", categoriesController.delete_field_request);
+// Delete Requests
+// router.delete("/sub-category/:_id", categoriesController.delete_sub_category);
+// router.delete("/field/:_id", categoriesController.delete_field);
+// router.delete("/field-request/:_id", categoriesController.delete_field_request);
 
 module.exports = router;
