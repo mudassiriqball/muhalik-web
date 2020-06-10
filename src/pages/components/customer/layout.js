@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import Toolbar from './toolbar';
 import Footer from './footer';
-
 import StickyBottomNavbar from './stick-bottom-navbar'
 
 const Layout = (props) => (
@@ -16,7 +15,7 @@ const Layout = (props) => (
         </div>
 
         <div className='display_in_sm_xs'>
-            <StickyBottomNavbar />
+            <StickyBottomNavbar {...props} />
         </div>
         <style jsx>{`
             @media (min-width: 767px) {

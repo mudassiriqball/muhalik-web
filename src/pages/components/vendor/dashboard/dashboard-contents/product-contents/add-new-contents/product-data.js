@@ -5,7 +5,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import CreatableSelect from 'react-select/creatable'
-import ReactSelectMaterialUi from "react-select-material-ui"
 import GlobalStyleSheet from '../../../../../../../styleSheet'
 import MuhalikConfig from '../../../../../../../sdk/muhalik.config'
 

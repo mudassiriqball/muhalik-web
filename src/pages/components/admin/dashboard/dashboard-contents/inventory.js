@@ -1,5 +1,4 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 
 import { Row, Col, Card, InputGroup, Button } from 'react-bootstrap'
 // american-sign-language-interpreting
@@ -83,7 +82,7 @@ class Inventory extends React.Component {
                             </Card>
                         </div>
                     </Col>
-                    <Col lg={3} md={3} sm={12} xs={12}  style={styles.col}>
+                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
                         <div className="hover">
                             <Card style={styles.card}>
                                 <Card.Header style={styles.card_header}> Header </Card.Header>
@@ -124,7 +123,7 @@ class Inventory extends React.Component {
 const styles = {
     row: {
         margin: '2%',
-         padding: '0px'
+        padding: '0px'
     },
     col: {
         padding: '0px',

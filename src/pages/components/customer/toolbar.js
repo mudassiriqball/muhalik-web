@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faSearch, faUserPlus, faLanguage, faPowerOff, faUser,
-    faCartPlus, faHandsHelping, faPen, faSignOutAlt, faGlobe,
+    faTachometerAlt, faHandsHelping, faPen, faSignOutAlt, faGlobe,
     faLuggageCart, faFileInvoiceDollar, faListAlt, faEdit,
     faStoreAlt, faChevronDown, faChevronRight, faListUl, faShoppingCart, faSignLanguage
 } from '@fortawesome/free-solid-svg-icons'
@@ -95,21 +95,21 @@ const Toolbar = (props) => {
                                     <div className='display_in_md_lg'>
                                         <InputGroup.Prepend >
                                             <Dropdown as={ButtonGroup}>
-                                                <Dropdown.Toggle as={Button} variant='success'>
+                                                <Dropdown.Toggle as={Button} className='btn-search' variant='success'>
                                                     {searchType}
                                                 </Dropdown.Toggle>
-                                                <Dropdown.Menu className="super-colors">
+                                                <Dropdown.Menu >
                                                     {categoryArray.map((element, index) =>
-                                                        <Dropdown.Item key={index} onClick={() => setSearchType(element.value)}>{element.value}</Dropdown.Item>
+                                                        <Dropdown.Item className='btn' key={index} onClick={() => setSearchType(element.value)}>{element.value}</Dropdown.Item>
                                                     )}
                                                 </Dropdown.Menu>
                                             </Dropdown>
                                         </InputGroup.Prepend>
                                     </div>
-                                    <FormControl placeholder="Search here" />
+                                    <FormControl className='search-bar' placeholder="Search here" />
                                     <InputGroup.Append>
-                                        <Button variant='success'>
-                                            <FontAwesomeIcon icon={faSearch} style={styles.search_fontawesome} />
+                                        <Button className='btn-search' variant='success'>
+                                            <FontAwesomeIcon className='serch-icon' icon={faSearch} style={styles.search_fontawesome} />
                                         </Button>
                                     </InputGroup.Append>
                                 </div>
@@ -121,56 +121,56 @@ const Toolbar = (props) => {
                                         {loggedIn ?
                                             null
                                             :
-                                            <Nav.Link href='./login' className='ml-2 align-items-center' style={styles.nav_link}>
-                                                <div className='fontawesome'>
+                                            <Nav.Link href='./login' className='nav_link'>
+                                                <div clasName='d-inline-flex'>
                                                     <FontAwesomeIcon icon={faUser} style={styles.nav_fontawesome} />
                                                     <FontAwesomeIcon icon={faUserPlus} style={styles.nav_fontawesome} />
                                                 </div>
-                                                <div className='nav_link_text'>Login/Join</div>
+                                                Login/Join
                                             </Nav.Link>
                                         }
-                                        <div href='#' className='ml-2 d-flex flex-column' style={{ zIndex: 1 }}>
-                                            <div className='fontawesome'>
-                                                <FontAwesomeIcon className='icons' icon={faLanguage} style={styles.nav_fontawesome} />
-                                            </div>
-                                            <Dropdown className='p-0 m-0'>
-                                                <Dropdown.Toggle as={Nav.Link} className='d-inline-flex m-0 p-0 align-items-center' style={{ color: 'gray' }}>
-                                                    <div className='nav_link_text p-0 m-0'>{selectedLang}</div>
+                                        <div href='#' className='nav_link' style={{ zIndex: 1 }}>
+                                            <FontAwesomeIcon icon={faLanguage} style={styles.nav_fontawesome} />
+                                            <Dropdown>
+                                                <Dropdown.Toggle as={Nav.Link} className='dropdown_togle'>
+                                                    {selectedLang}
                                                 </Dropdown.Toggle>
-                                                <Dropdown.Menu className="super-colors" style={{ zIndex: 100 }}>
-                                                    <Dropdown.Item onClick={() => setSelectedLang('En')}>English</Dropdown.Item>
-                                                    <Dropdown.Item onClick={() => setSelectedLang("Ar")}>
+                                                <Dropdown.Menu style={{ zIndex: 100 }}>
+                                                    <Dropdown.Item className='btn' onClick={() => setSelectedLang('En')}>English</Dropdown.Item>
+                                                    <Dropdown.Item className='btn' onClick={() => setSelectedLang("Ar")}>
                                                         {"العربية"}</Dropdown.Item>
                                                 </Dropdown.Menu>
                                             </Dropdown>
                                         </div>
-                                        <Nav.Link href="#" className='ml-2' style={styles.nav_link}>
-                                            <div className='fontawesome'>
-                                                <FontAwesomeIcon icon={faShoppingCart} style={styles.nav_fontawesome} />
-                                            </div>
-                                            <div className='nav_link_text'>Cart</div>
+                                        <Nav.Link href="#" className='nav_link'>
+                                            <FontAwesomeIcon icon={faShoppingCart} style={styles.nav_fontawesome} />
+                                            Cart
                                         </Nav.Link>
                                         {loggedIn ?
-                                            <NavDropdown title={<Image src="muhalik.jpg" roundedCircle fluid style={{ width: '35px', maxWidth: '35px' }} />}
-                                                className='ml-2' id="nav-dropdown" alignRight>
-                                                <NavDropdown.Item href={dashboard_href} className='d-inline-flex align-items-center'>
-                                                    <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
-                                                    <div>Dashboard</div>
-                                                </NavDropdown.Item>
-                                                <NavDropdown.Item href='./vendor' className='d-inline-flex align-items-center'>
-                                                    <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
-                                                    <div>Dashboard</div>
-                                                </NavDropdown.Item>
-                                                <NavDropdown.Item className='d-inline-flex align-items-center'>
-                                                    <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
-                                                    <div>Profile</div>
-                                                </NavDropdown.Item>
-                                                <NavDropdown.Divider />
-                                                <NavDropdown.Item onClick={props.logout} className='d-inline-flex align-items-center' >
-                                                    <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
-                                                    <div>Logout</div>
-                                                </NavDropdown.Item>
-                                            </NavDropdown>
+                                            <Dropdown className='d-flex flex-column ml-3'>
+                                                <Dropdown.Toggle as={Nav.Link} className='dropdown_togle align-self-end'>
+                                                    <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '25px', maxWidth: '25px' }} />
+                                                </Dropdown.Toggle>
+                                                <div className='dropdown_togle p-0 m-0' style={{ fontSize: '13px' }}>Mudassir</div>
+                                                <Dropdown.Menu style={{ zIndex: 100 }}>
+                                                    <Dropdown.Item className='btn' href={dashboard_href}>
+                                                        <FontAwesomeIcon icon={faTachometerAlt} style={styles.dropdown_fontawesome} />
+                                                            Dashboard
+                                                        </Dropdown.Item>
+                                                    <Dropdown.Item className='btn' href='./vendor'>
+                                                        <FontAwesomeIcon icon={faTachometerAlt} style={styles.dropdown_fontawesome} />
+                                                            Vendor
+                                                        </Dropdown.Item>
+                                                    <Dropdown.Item className='btn'>
+                                                        <FontAwesomeIcon icon={faUser} style={styles.dropdown_fontawesome} />
+                                                            Profile
+                                                        </Dropdown.Item>
+                                                    <Dropdown.Item onClick={props.logout} className='btn'>
+                                                        <FontAwesomeIcon icon={faPowerOff} style={styles.dropdown_fontawesome} />
+                                                            Logout
+                                                        </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
                                             :
                                             null
                                         }
@@ -310,7 +310,100 @@ const Toolbar = (props) => {
                     </Navbar>
                 </div>
             </Card >
+            <style type="text/css">{`
+                .btn-search{
+                    color: white;
+                    background: ${GlobalStyleSheet.primry_color};
+                }
+                .sticky .sticky-inner .btn-search{
+                    color:  ${GlobalStyleSheet.primry_color};
+                    background: white;
+                    border-color: white;
+                    border-radius: 0px;
+                }
+                .sticky .sticky-inner .serch-icon{
+                    color:  ${GlobalStyleSheet.primry_color};
+                }
 
+                .toogle-btn{
+                    align-items: center;
+                    display: inline-flex;
+                    margin: 0px;
+                    padding: 0px;
+                    color: gray;
+                }
+                .sticky .sticky-inner .toogle-btn{
+                    color: white;
+                }
+
+                .search-bar{
+                    border-color: ${GlobalStyleSheet.primry_color};
+                }
+                .sticky .sticky-inner .search-bar{
+                    border-color: white;
+                }
+
+                .account-dropdown{
+                    font-size: 14px;
+                    align-items: center;
+                    display: inline-flex;
+                    color: gray;
+                }
+                .account-dropdown:hover{
+                    color: ${GlobalStyleSheet.primry_color};
+                }
+                
+                .nav_link{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    font-size: 14px;
+                    margin-left: 20px;
+                    justify-content: center;
+                    color: gray;
+                }
+                .nav_link:hover{
+                    color: ${GlobalStyleSheet.primry_color};
+                }
+                .dropdown_togle{
+                    align-items: center;
+                    display: inline-flex;
+                    color: gray;
+                    padding: 0px;
+                    margin: 0px;
+                }
+                .dropdown_togle:hover{
+                    color: ${GlobalStyleSheet.primry_color};
+                }
+
+                .sticky .sticky-inner .nav_link {
+                    color: white;
+                }
+                .sticky .sticky-inner .dropdown_togle {
+                    color: white;
+                }
+
+                .sticky .sticky-inner .nav_link:hover {
+                    color: lightgray;
+                }
+                .sticky .sticky-inner .dropdown_togle:hover {
+                    color: lightgray;
+                }
+
+                .btn:hover{
+                    background: ${GlobalStyleSheet.primry_color};
+                    color: white;
+                }
+                .btn:focus{
+                    background: ${GlobalStyleSheet.primry_color};
+                    color: white;
+                }
+                .btn:active{
+                    background: ${GlobalStyleSheet.primry_color};
+                    color: white;
+                }
+            `}</style>
             <style jsx>
                 {`
                     .sticky-wrapper {
@@ -340,17 +433,6 @@ const Toolbar = (props) => {
                     .sticky .sticky-inner .nav_link_text:hover {
                         color: lightgray;
                     }
-                    .sticky .sticky-inner .fontawesome {
-                        color: white;
-                    }
-                    .sticky .sticky-inner .fontawesome:hover {
-                        color: lightgray;
-                    }
-
-                    .fontawesome {
-                        color: ${GlobalStyleSheet.primry_color};
-                    }
-
                     .text_animation{
                         animation: mymove 5s infinite;
                         color: ${GlobalStyleSheet.primry_color};
@@ -455,7 +537,6 @@ const styles = {
         fontSize: '13px',
     },
     search_fontawesome: {
-        color: 'white',
         width: '20px',
         height: '20px',
         maxHeight: '20px',
@@ -468,9 +549,8 @@ const styles = {
         maxHeight: '24px',
         maxWidth: '24px',
     },
-    dropDown_fontawesome: {
-        color: 'gray',
-        margin: '0px 20px 0px 0px',
+    dropdown_fontawesome: {
+        marginRight: '15px',
         width: '18px',
         height: '18px',
         maxHeight: '18px',

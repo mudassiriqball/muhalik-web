@@ -51,7 +51,11 @@ class ProducFields extends Component {
     async addField(fieldValue, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/categories/field';
         let data = [];
-        data = { label: fieldValue, value: fieldValue }
+        data = {
+            _id: null,
+            label: fieldValue,
+            value: fieldValue,
+        }
         await axios.post(url, {
             data
         }, {
@@ -113,6 +117,7 @@ class ProducFields extends Component {
         let copyArray = [];
         copyArray = Object.assign([], this.state.field_requests_list);
         var obj = {};
+        obj['_id'] = copyArray[index]._id;
         obj['value'] = copyArray[index].value;
         obj['entry_date'] = copyArray[index].entry_date;
         obj['label'] = false;
@@ -138,6 +143,7 @@ class ProducFields extends Component {
             copyArray[index].error = 'Enter Different Value';
             this.setState({ field_requests_list: copyArray });
         } else {
+            copyArray[index].label = copyArray[index].value;
             this.setState({
                 field_requests_list: copyArray,
                 showModalMessage: 'Product Field Updated Successfully',
@@ -153,7 +159,11 @@ class ProducFields extends Component {
         copyArray = Object.assign([], this.state.field_requests_list);
         const currentComponent = this
         let data = [];
-        data = { label: copyArray[index].value, value: copyArray[index].value }
+        data = {
+            _id: copyArray[index]._id,
+            label: copyArray[index].value,
+            value: copyArray[index].value,
+        }
         console.log('data:', data)
         await axios.post(url, {
             data
@@ -232,6 +242,7 @@ class ProducFields extends Component {
         let copyArray = [];
         copyArray = Object.assign([], this.state.fields_list);
         var obj = {};
+        obj['_id'] = copyArray[index]._id;
         obj['value'] = copyArray[index].value;
         obj['label'] = false;
         obj['prevVal'] = copyArray[index].value;

@@ -1,13 +1,10 @@
 // const productsController = {};
 // const Products = require("../models/product.model");
-// //const fs = require("fs");
+// const fs = require("fs");
 // const jwt = require("jsonwebtoken");
 // const util = require("util");
 
-// const cloudinary = require("cloudinary").v2;
-// const dotenv = require('dotenv');
-
-// dotenv.config();
+// const cloudinary = require("../../cloudinary");
 
 // //const xlsx = require("xlsx");
 // //var wb = xlsx.readFile("../prd_inv_template.xlsx");
@@ -32,30 +29,25 @@
 // }
 
 // productsController.addfile = async (req, res) => {
-//   console.log("111", req.files);
 // };
 
 // //Add product endpoint definition
 // productsController.addProduct = async (req, res) => {
+//   const urls = [];
+//   const uploader = async (path) => await cloudinary.uploads(path, "Images");
+//   const files = req.files;
+//   for (const file of files) {
+//     const imagepath = file.path;
+//     const newPath = await uploader(imagepath);
+//     urls.push(newPath);
+//     fs.unlinkSync(imagepath);
+//   }
 //   const body = req.body;
-//   console.log("body0", body);
 
 //   body.product_variations = JSON.parse(body.product_variations);
 //   body.custom_fields = JSON.parse(body.custom_fields);
 //   body.dangerous_goods = JSON.parse(body.dangerous_goods);
 //   body.product_tags = JSON.parse(body.product_tags);
-
-//   cloudinary.config({
-//     cloud_name: process.env.cloud_name,
-//     api_key: process.env.api_key,
-//     api_secret: process.env.api_secret,
-//   });
-
-//   for (let index = 0; index < req.files.length; index++) {
-//     cloudinary.uploader.upload(req.files[index].path, function (err, result) {
-//       console.log("Res", result.url);
-//     });
-//   }
 
 //   try {
 //     var datetime = new Date();
@@ -65,36 +57,19 @@
 //     const header = jwt.decode(req.headers.authorization);
 //     body.vendor_id = header.data._id;
 //     if (body.product_type === "simple-product") {
-//       const paths = [];
-//       for (let index = 0; index < req.files.length; index++) {
-//         paths.push({ path: req.files[index].path });
-//       }
-//       body.product_image_link = paths;
+//       body.product_image_link = urls;
 //     } else if (body.product_type === "variable-prouct") {
 //       body.product_image_link = null;
 //       var count = 0;
+//       console.log("I am in");
 //       for (let index = 0; index < body.product_variations.length; index++) {
-//         for (
-//           let k = 0;
-//           k < body.product_variations[index].image_link.length;
-//           k++
-//         ) {
-//           if (
-//             body.product_variations[index].image_link[k].name ===
-//             req.files[count].originalname
-//           ) {
-//             body.product_variations[index].image_link[k].path =
-//               req.files[count].path;
-//             console.log(
-//               "11",
-//               body.product_variations[index].image_link[k].path
-//             );
-//             count++;
-//           }
+//         for (let k = 0; k < body.product_variations[index].image_link.length; k++) {
+//           body.product_variations[index].image_link[k] = urls[count];
+//           console.log("11", body.product_variations[index].image_link[k].url);
+//           count++;
 //         }
 //       }
 //     }
-//     console.log("body1", body);
 //     const product = new Products(body);
 //     const result = await product.save();
 //     res.status(200).send({
@@ -173,13 +148,13 @@
 // //   var datetime = new Date();
 // //   var date=datetime.toISOString().slice(0,10);
 // //     // const body = req.body;
-// //     // req.body.entry_date=date;
+// //     // req.body.product_entry_date=date;
 // //   try {
 // //     var ws = wb.Sheets["Worksheet"];
 // //     var data = xlsx.utils.sheet_to_json(ws);
 
 // //     data.forEach(element => {
-// //       element.entry_date=date;
+// //       element.product_entry_date=date;
 // //       const product = new Products(element);
 // //       product.save();
 // //     });
@@ -407,11 +382,11 @@
 
 const productsController = {};
 const Products = require("../models/product.model");
-const fs = require("fs");
+//const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const util = require("util");
 
-const cloudinary = require("../../cloudinary");
+
 
 //const xlsx = require("xlsx");
 //var wb = xlsx.readFile("../prd_inv_template.xlsx");

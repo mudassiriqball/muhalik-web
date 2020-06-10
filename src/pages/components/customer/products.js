@@ -83,6 +83,79 @@ class Products extends Component {
                         </Card>
                     </Col>
                 </Row>
+                <Row noGutters>
+                    <Col className='m-2'>
+                        <Card style={{ border: 'none' }}>
+                            <Card.Header style={{ background: 'none', border: 'none' }}>
+                                <div>New Arrival</div>
+                            </Card.Header>
+                            <Card.Body>
+                                <Row>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                    <Col className='m-2'>
+                        <Card style={{ border: 'none' }}>
+                            <Card.Header style={{ background: 'none', border: 'none' }}>
+                                <div>New Arrival</div>
+                            </Card.Header>
+                            <Card.Body>
+                                <Row>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+                <Row noGutters>
+                    <Col className='m-2'>
+                        <Card style={{ border: 'none' }}>
+                            <Card.Header style={{ background: 'none', border: 'none' }}>
+                                <div>Recomended For You</div>
+                            </Card.Header>
+                            <Card.Body>
+                                <Row>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                    <Col style={styles.col}>
+                                        {1}
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
             </>
         );
     }

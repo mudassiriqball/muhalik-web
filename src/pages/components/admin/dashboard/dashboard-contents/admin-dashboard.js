@@ -1,5 +1,4 @@
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 
 import { Row, Col, Card, InputGroup, Button } from 'react-bootstrap'
 // american-sign-language-interpreting

@@ -24,21 +24,21 @@ let animation =
     </h3>
 
 
-export async function getStaticProps() {
-    const url = MuhalikConfig.PATH + '/api/categories/categories';
-    const data = [];
-    await axios.get(url).then((response) => {
-        data = response.data.category.docs
-    }).catch((error) => {
-        console.log('Caterories Fetchig Error: ', error)
-    })
+// export async function getStaticProps() {
+//     const url = MuhalikConfig.PATH + '/api/categories/categories';
+//     const data = [];
+//     await axios.get(url).then((response) => {
+//         data = response.data.category.docs
+//     }).catch((error) => {
+//         console.log('Caterories Fetchig Error: ', error)
+//     })
 
-    return {
-        props: {
-            data
-        }
-    }
-}
+//     return {
+//         props: {
+//             data
+//         }
+//     }
+// }
 
 class Index extends Component {
     constructor(props) {
@@ -59,16 +59,16 @@ class Index extends Component {
         if (token !== null) {
             this.setState({ jwt_token: token.role })
         }
-        // const url = MuhalikConfig.PATH + '/api/categories/categories';
-        // const currentComponent = this;
-        // await axios.get(url).then((response) => {
-        //     currentComponent.setState({
-        //         categories_list: response.data.category.docs,
-        //         sub_categories_list: response.data.sub_category.docs
-        //     });
-        // }).catch((error) => {
-        //     console.log('Caterories Fetchig Error: ', error)
-        // })
+        const url = MuhalikConfig.PATH + '/api/categories/categories';
+        const currentComponent = this;
+        await axios.get(url).then((response) => {
+            currentComponent.setState({
+                categories_list: response.data.category.docs,
+                sub_categories_list: response.data.sub_category.docs
+            });
+        }).catch((error) => {
+            console.log('Caterories Fetchig Error: ', error)
+        })
     }
 
     logout = () => {
@@ -84,19 +84,20 @@ class Index extends Component {
 
     render() {
         return (
-            <>
-                <div style={styles.body}>
-                    <Head>
-                        <title>Muhalik</title>
-                        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
-                        <meta charSet="utf-8" />
-                        <link rel="stylesheet"
-                            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-                            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-                            crossOrigin="anonymous"
-                        />
-                        <link rel="shortcut icon" href=""></link>
-                    </Head>
+            <div className='div'>
+                <Head>
+                    <title>Mahaalk</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
+                    <meta charSet="utf-8" />
+                    <link rel="stylesheet"
+                        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+                        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+                        crossOrigin="anonymous"
+                    />
+                    <link rel="icon" href="/favicon.ico" />
+                    {/* <link rel="shortcut icon" href=""></link> */}
+                </Head>
+                <main>
                     {animation}
                     <Layout
                         token={this.state.jwt_token}
@@ -108,20 +109,33 @@ class Index extends Component {
                         <CategoriesSlider categories_list={this.state.categories_list} sub_categories_list={this.state.sub_categories_list} />
                         <Products />
                     </Layout>
-                </div>
-            </>
+                </main>
+                <style jsx>{`
+                    .div {
+                        min-height: 100vh;
+                        background: ${GlobalStyleSheet.body_color};
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                    }
+                `}</style>
+                <style jsx global>{`
+                    html,
+                    body {
+                        padding: 0;
+                        margin: 0;
+                        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+                        Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+                    }
+
+                    * {
+                        box-sizing: border-box;
+                    }
+                `}</style>
+            </div>
         );
     }
 }
 
-const styles = {
-    body: {
-        background: `${GlobalStyleSheet.body_color}`,
-        position: 'absolute',
-        top: '0',
-        left: '0',
-        right: '0',
-        minHeight: '100vh',
-    },
-}
 export default Index;
