@@ -122,7 +122,7 @@ const Toolbar = (props) => {
                                             null
                                             :
                                             <Nav.Link href='./login' className='nav_link'>
-                                                <div clasName='d-inline-flex'>
+                                                <div className='d-inline-flex'>
                                                     <FontAwesomeIcon icon={faUser} style={styles.nav_fontawesome} />
                                                     <FontAwesomeIcon icon={faUserPlus} style={styles.nav_fontawesome} />
                                                 </div>

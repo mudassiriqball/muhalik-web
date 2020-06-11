@@ -31,7 +31,7 @@
 const express = require("express");
 const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
-const categoriesController = require('../controllers/categories.controllers');
+const categoriesController = require('../controllers/categories.controller');
 
 router.post("/category", categoriesController.add_Category);
 router.post("/field", categoriesController.add_fields);
