@@ -22,12 +22,10 @@ const CategoriesSlider = (props) => {
             <style jsx>{`
                 .category-container {
                     display: inline-flex;
-                    background: #e3edf7;
-                    box-shadow: -1px 0px 10px 1px ${GlobalStyleSheet.primry_color};
+                    background: ${GlobalStyleSheet.body_color};
                     width: 100%;
                     padding: 0.5%;
                     overflow-y: scroll;
-                    border-radius: 90px;
                 }
                 .category-container::-webkit-scrollbar {
                     display: none;
@@ -37,16 +35,17 @@ const CategoriesSlider = (props) => {
                 }
                 .item{
                     display: flex;
-                    background: #e3edf7;
-                    border-radius: 50%;
+                    background: ${GlobalStyleSheet.body_color};
+                    color: gray;
+                    border-radius: 10%;
+                    white-spaces: nowrap;
                     align-items: center;
                     justify-content: center;
+                    margin: 1%;
+                    padding: 0% 1%;
                     text-align: center;
-                    padding: 0.5%;
-                    margin: 0.5%;
-                    font-size: 14px;
-                    min-width: 100px;
-                    min-height: 100px;
+                    white-space: nowrap;
+                    font-size: 12px;
                     box-shadow: 6px 6px 10px -1px rgba(0,0,0,0.30), -6px -6px 10px -1px rgba(255,255,255,0.30);
                     border: 1px solid rgba(0,0,0,0);
                     transition: transform 0.5s;
@@ -61,7 +60,6 @@ const CategoriesSlider = (props) => {
                     cursor: pointer;
                     transition: translateY(2px);
                     color: blue;
-                    font-size: 15px;
                 }
             `}</style>
         </>

@@ -5,53 +5,78 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faUser, faHome, faTh, faStoreAlt
 } from '@fortawesome/free-solid-svg-icons'
+import {
+    faUserCircle
+} from '@fortawesome/free-regular-svg-icons'
+
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 const StickyBottomNavbar = () => {
     const [isProducts, setIsProducts] = React.useState(true)
-
+    const [curentHref, setCurentHref] = React.useState('')
+    React.useEffect(() => {
+        if (window.location.href == 'http://localhost:5000/' || window.location.href == 'http://localhost:5000/index') {
+            setCurentHref('index')
+        } else if (window.location.href == 'http://localhost:5000/categories') {
+            setCurentHref('categories')
+        } else if (window.location.href == 'http://localhost:5000/account') {
+            setCurentHref('account')
+        }
+    });
     return (
         <>
-            <Navbar bg="white" variant="dark" fixed="bottom" className='p-0 m-0'>
+            <Navbar bg="white" fixed="bottom" className='p-0 m-0'>
                 <Nav className="d-inline-flex align-items-center w-100">
                     <div className='mr-auto'></div>
-                    <Nav.Link href="#home" className='text-center mr-auto p-0 m-0'>
+                    <Nav.Link href="index" className='nav_link'
+                        style={{
+                            color: curentHref == 'index' ? `${GlobalStyleSheet.primry_color}` : 'gray'
+                        }}
+                    >
                         <FontAwesomeIcon icon={faHome} style={styles.fontawesome} />
-                        <div className='label'>Home</div>
+                        Home
                     </Nav.Link>
                     <div className='mr-auto'></div>
-                    <Nav.Link href="categories" className='text-center mr-auto p-0 m-0'>
+                    <Nav.Link href="categories" className='nav_link'
+                        style={{
+                            color: curentHref == 'categories' ? `${GlobalStyleSheet.primry_color}` : 'gray'
+                        }}
+                    >
                         <FontAwesomeIcon icon={faTh} style={styles.Categories_fontawesome} />
-                        <div className='label'>Categories</div>
+                        Categories
                     </Nav.Link>
                     <div className='mr-auto'></div>
                     {isProducts ?
-                        <Nav.Link href="#home" onClick={() => setIsProducts(false)} className='text-center mr-auto p-0 m-0'>
+                        <Nav.Link href="#home" onClick={() => setIsProducts(false)} className='nav_link' style={{ color: 'gray' }}>
                             <FontAwesomeIcon icon={faProductHunt} style={styles.fontawesome} />
-                            <div className='label'>Products</div>
+                            Products
                         </Nav.Link>
                         :
-                        <Nav.Link href="#home" onClick={() => setIsProducts(true)} className='text-center mr-auto p-0 m-0'>
+                        <Nav.Link href="#home" onClick={() => setIsProducts(true)} className='nav_link' style={{ color: 'gray' }}>
                             <FontAwesomeIcon icon={faStoreAlt} style={styles.fontawesome} />
-                            <div className='label'>Shops</div>
+                            Shops
                         </Nav.Link>
                     }
                     <div className='mr-auto'></div>
-                    <Nav.Link href="#home" className='text-center mr-auto p-0 m-0'>
-                        <FontAwesomeIcon icon={faUser} style={styles.fontawesome} />
-                        <div className='label'>Account</div>
+                    <Nav.Link href="account" className='nav_link'
+                        style={{
+                            color: curentHref == 'account' ? `${GlobalStyleSheet.primry_color}` : 'gray'
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faUserCircle} style={styles.fontawesome} />
+                        Account
                     </Nav.Link>
                 </Nav>
             </Navbar>
-            <style jsx>{`
-                .label {
-                    font-size: 13px;
-                    color: ${GlobalStyleSheet.admin_primry_color};
-                    p-0;
-                    m-0
-                }
-                .label:hover{
-                    color: ${GlobalStyleSheet.primry_color},
+            <style type="text/css">{`
+                .nav_link{
+                    margin-right: auto;
+                    font-size: 12px;
+                    padding: 1%;
+                    justify-content: center;
+                    align-items: center;
+                    display: flex;
+                    flex-direction: column;
                 }
             `}</style>
         </>
@@ -60,18 +85,16 @@ const StickyBottomNavbar = () => {
 
 const styles = {
     fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
+        width: '23px',
+        height: '23px',
+        maxHeight: '23px',
+        maxWidth: '23px',
+    },
+    Categories_fontawesome: {
         width: '20px',
         height: '20px',
         maxHeight: '20px',
         maxWidth: '20px',
-    },
-    Categories_fontawesome: {
-        color: `${GlobalStyleSheet.primry_color}`,
-        width: '18px',
-        height: '18px',
-        maxHeight: '18px',
-        maxWidth: '18px',
     },
 }
 export default StickyBottomNavbar

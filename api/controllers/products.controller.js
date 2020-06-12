@@ -1,10 +1,10 @@
 // const productsController = {};
 // const Products = require("../models/product.model");
-// const fs = require("fs");
+// //const fs = require("fs");
 // const jwt = require("jsonwebtoken");
 // const util = require("util");
 
-// const cloudinary = require("../../cloudinary");
+
 
 // //const xlsx = require("xlsx");
 // //var wb = xlsx.readFile("../prd_inv_template.xlsx");
@@ -382,7 +382,7 @@
 
 const productsController = {};
 const Products = require("../models/product.model");
-//const fs = require("fs");
+const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const util = require("util");
 
@@ -391,27 +391,9 @@ const util = require("util");
 //const xlsx = require("xlsx");
 //var wb = xlsx.readFile("../prd_inv_template.xlsx");
 
-productsController.get = async (req, res) => {
-  try {
-    const id = get_decoded_token(req);
-    console.log("2", id);
-  } catch (error) {
-    console.log("Error");
-  }
-};
 
-async function get_decoded_token(req) {
-  try {
-    const header = jwt.decode(req.headers.authorization);
-    console.log("1", header);
-    return header.data.id;
-  } catch (error) {
-    console.log("Error");
-  }
-}
 
-productsController.addfile = async (req, res) => {
-};
+
 
 //Add product endpoint definition
 productsController.addProduct = async (req, res) => {
@@ -466,23 +448,47 @@ productsController.addProduct = async (req, res) => {
   }
 };
 
+
+productsController.get_all_products = async (req, res) => {
+  try {
+    const products = await Products.aggregate([
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      {
+        $lookup: {
+          from: "sub_categories",
+          localField: "sub_category_id",
+          foreignField: "_id",
+          as: "sub-category",
+        },
+      },
+      { $unwind: "$sub-category" },
+    ]);
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: products,
+    });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
 //Get All Products of specific vendor endpoint definition
-productsController.getAll = async (req, res) => {
-  const header = jwt.decode(req.headers.authorization);
-  const id = header.data._id;
+productsController.get_vendor_products = async (req, res) => {
 
   try {
-    // products = await Products.find({ vendor_id: id ,isdeleted:false});
-    // category = await Category.find({ category_id: id});
-
-    // products= await Products.aggregate([{
-    //   $match:{vendor_id: id ,isdeleted:false}},
-    //   { $lookup: { from: "user",localField: "vendor_id", foreignField: "_id", as: "category "}
-    // }]);
     const products = await Products.aggregate([
       {
         $match: {
-          vendor_id: id,
+          vendor_id: req.params._id,
           isdeleted: false,
         },
       },
@@ -524,6 +530,9 @@ productsController.getAll = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+
+
+
 
 // productsController.bulkupload = async (req, res) => {
 //   console.log("Check:",req.body);

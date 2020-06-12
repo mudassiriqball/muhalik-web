@@ -44,7 +44,7 @@ export function checkAuth(rolee) {
         } else if (decodedToken.data.role !== rolee) {
             Router.replace('/index')
         } else {
-            return decodedToken.data.fullName;
+            return decodedToken.data.full_name;
         }
     } catch (error) {
         Router.replace('/index')

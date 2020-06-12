@@ -11,7 +11,6 @@ import SliderCarousel from './components/customer/slider-carousel'
 import CategoriesSlider from './components/customer/categories-slider'
 import Products from './components/customer/products'
 
-
 let animation =
     <h3 style={{ background: 'green', color: 'white', position: 'fixed', left: '1%', bottom: '1%', zIndex: 1000 }}>
         <Typical
@@ -105,7 +104,9 @@ class Index extends Component {
                         sub_categories_list={this.state.sub_categories_list}
                         carosuel={<SliderCarousel />}
                     >
-                        <CategoriesSlider categories_list={this.state.categories_list} sub_categories_list={this.state.sub_categories_list} />
+                        <div className='categories-slider'>
+                            <CategoriesSlider categories_list={this.state.categories_list} sub_categories_list={this.state.sub_categories_list} />
+                        </div>
                         <Products />
                     </Layout>
                 </main>
@@ -118,21 +119,28 @@ class Index extends Component {
                         left: 0;
                         right: 0;
                     }
+                    .categories-slider{
+                        display: none
+                    }
+                    @media (max-width: 767px){
+                        .categories-slider{
+                            display: block
+                        }
+                    }
                 `}</style>
                 <style jsx global>{`
                     html,
                     body {
                         padding: 0;
                         margin: 0;
-                        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-                        Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+                        font-family: Roboto, Helvetica Neue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
                     }
 
                     * {
                         box-sizing: border-box;
                     }
                 `}</style>
-            </div>
+            </div >
         );
     }
 }

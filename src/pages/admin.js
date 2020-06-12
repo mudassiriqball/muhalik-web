@@ -32,6 +32,12 @@ class Admin extends Component {
             sideDrawerOpen: false,
             showWrapper: true,
 
+            products_list: [],
+            vendors_list: [],
+            new_vendors_list: [],
+            restricted_vendors_list: [],
+
+
             categories_list: [],
             sub_categories_list: [],
 
@@ -75,26 +81,64 @@ class Admin extends Component {
             });
         }).catch(function (error) {
             console.log("Field Requests Fetching Error:", error)
-            alert('F error: ', error)
+            alert('field-requests: ', error)
         })
 
-        // function getCategories() {
-        //     return axios.get(MuhalikConfig.PATH + '/api/categories_list/categories_list');
-        // }
-        // function getFields() {
-        //     return axios.get(MuhalikConfig.PATH + '/api/categories_list/fields');
-        // }
+        const url_3 = MuhalikConfig.PATH + '/api/products/';
+        await axios.get(url_3).then(function (response) {
+            console.log("all products: ", response.data.data)
+            currentComponent.setState({
+                products_list: response.data.data,
+            });
+        }).catch(function (error) {
+            console.log("all products: Fetching Error:", error)
+            alert('all products error: ', error)
+        })
 
-        // axios.all([getCategories(), getFields()])
-        //     .then(axios.spread(function (response) {
-        //         this.setState({
-        //             categories_list: response[0].data.category.docs,
-        //             sub_categories_list: response[0].data.sub_category.docs,
-        //             fields: response[1].data.sub_category.docs
-        //         })
-        //     })).catch(function (error) {
-        //         console.log('ERRORR:', error);
-        //     });
+        const url_4 = MuhalikConfig.PATH + '/api/users/vendors';
+        await axios.get(url_4).then(function (response) {
+            console.log("vendors: ", response.data.data)
+            currentComponent.setState({
+                vendors_list: response.data.data,
+            });
+        }).catch(function (error) {
+            console.log("vendors Fetching Error:", error)
+            alert('vendors error: ', error)
+        })
+
+        const url_5 = MuhalikConfig.PATH + '/api/users/new-vendors';
+        await axios.get(url_5).then(function (response) {
+            console.log("new-vendors: ", response.data.data)
+            currentComponent.setState({
+                new_vendors_list: response.data.data,
+            });
+        }).catch(function (error) {
+            console.log("new-vendors Fetching Error:", error)
+            alert('new-vendors error: ', error)
+        })
+
+        const url_6 = MuhalikConfig.PATH + '/api/users/restricted-vendors';
+        await axios.get(url_6).then(function (response) {
+            console.log("restricted-vendors: ", response.data.data)
+            currentComponent.setState({
+                restricted_vendors_list: response.data.data,
+            });
+        }).catch(function (error) {
+            console.log("restricted_vendors Fetching Error:", error)
+            alert('restricted_vendors error: ', error)
+        })
+
+        const url_7 = MuhalikConfig.PATH + '/api/users/customers';
+        await axios.get(url_7).then(function (response) {
+            console.log("customers: ", response.data.data)
+            currentComponent.setState({
+                restricted_vendors_list: response.data.data,
+            });
+        }).catch(function (error) {
+            console.log("customers Fetching Error:", error)
+            alert('customers error: ', error)
+        })
+
     }
 
     async authUser() {
@@ -134,6 +178,10 @@ class Admin extends Component {
             <div style={styles.body}>
                 {/* <AdminLayout> */}
                 <Dashboard
+                    products_list={this.state.products_list}
+                    vendors_list={this.state.vendors_list}
+                    restricted_vendors_list={this.state.restricted_vendors_list}
+                    new_vendors_list={this.state.new_vendors_list}
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
                     fields_list={this.state.fields_list}
@@ -145,6 +193,10 @@ class Admin extends Component {
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
                     logout={this.logout} />
                 <DashboardSideDrawer
+                    products_list={this.state.products_list}
+                    vendors_list={this.state.vendors_list}
+                    new_vendors_list={this.state.new_vendors_list}
+                    restricted_vendors_list={this.state.restricted_vendors_list}
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
                     fields_list={this.state.fields_list}

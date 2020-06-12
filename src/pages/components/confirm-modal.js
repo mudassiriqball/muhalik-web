@@ -14,7 +14,7 @@ function ConfirmModal(props) {
                 border: '1px solid #ff3333', borderRadius: '5px'
             }}>
                 <Modal.Header closeButton style={{ color: '#ff3333', borderBottom: '1px solid #ff3333' }}>
-                    <FontAwesomeIcon icon={faTrash} style={{
+                    <FontAwesomeIcon icon={props.iconname} style={{
                         color: '#ff3333',
                         marginRight: '10px',
                         width: '35px',

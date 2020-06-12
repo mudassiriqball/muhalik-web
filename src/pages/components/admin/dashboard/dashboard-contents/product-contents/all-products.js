@@ -18,20 +18,17 @@ class AllProducts extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            productsArray: [],
+            products_list: [],
             viewProduct: false,
             data: {},
         }
     }
-    async componentDidMount() {
-        const url = MuhalikConfig.PATH + '/api/products/'
-        const currentComponent = this
 
-        await axios.get(url).then((response) => {
-            console.log('data:', response.data.data)
-            currentComponent.setState({ productsArray: response.data.data })
-        }).catch((error) => {
-            alert('Data Fetchig Error: ', error)
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({
+            products_list: nextProps.products_list,
+            token: nextProps.token
         });
     }
 
@@ -42,7 +39,7 @@ class AllProducts extends Component {
         if (index == -1) {
             element = this.state.data
         } else {
-            element = this.state.productsArray[index]
+            element = this.state.products_list[index]
         }
         if (element.product_type != 'simple-product') {
             let array = [];
@@ -63,8 +60,8 @@ class AllProducts extends Component {
     }
 
     async handleDeleteProduct(index) {
-        // const copyArray = Object.assign([], this.state.productsArray)
-        // const array = Object.assign([], this.state.productsArray)
+        // const copyArray = Object.assign([], this.state.products_list)
+        // const array = Object.assign([], this.state.products_list)
         // let _id = ''
         // if (index == -1) {
         //     _id = this.state.data._id;
@@ -77,7 +74,7 @@ class AllProducts extends Component {
         //         array.splice(i, 1)
         //     }
         // })
-        // this.setState({ productsArray: array })
+        // this.setState({ products_list: array })
         // await axios.delete(url, {
         //     headers: { 'authorization': await getUncodededTokenFromStorage() }
         // }).then(function (response) {
@@ -169,7 +166,7 @@ class AllProducts extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.state.productsArray && this.state.productsArray.map((element, index) =>
+                                {this.state.products_list && this.state.products_list.map((element, index) =>
                                     <>
                                         {this.isVariableProduct(element) ?
                                             <tr key={index}>

@@ -25,7 +25,6 @@ const Dashboard = props => {
     if (props.show) {
         wprapper_Casses = "wrapper open";
     }
-
     const [show_product, setShow_product] = React.useState(false);
 
     return (
@@ -61,7 +60,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="two" style={styles.nav_link} onClick={() => setShow_product(false)}>
+                                    <Nav.Link eventKey="Customers" style={styles.nav_link} onClick={() => setShow_product(false)}>
                                         <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
                                         <div className="mr-auto">Customers</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -221,10 +220,10 @@ const Dashboard = props => {
                                     <AdminDashboard />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Vendors">
-                                    <Vendors />
+                                    <Vendors {...props} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Customers">
-                                    <Customers />
+                                    <Customers {...props} />
                                 </Tab.Pane>
                                 {/* Product */}
                                 <Tab.Pane eventKey="AllProducts">

@@ -9,7 +9,7 @@ const User = new Schema({
         unique: true,
         sparse: true
     },
-    fullName: {
+    full_name: {
         type: String,
         required: true
     },
@@ -22,13 +22,12 @@ const User = new Schema({
         type: String,
         required: true
     },
-    country: {
+    countary: {
         type: String,
         required: true
     },
     gender: {
         type: String,
-        required: true
     },
     role: {
         type: String,
@@ -36,19 +35,15 @@ const User = new Schema({
     },
     address: {
         type: String,
-        required: true
     },
     shop_name: {
         type: String,
-        required: true
     },
-    category: {
+    shop_category: {
         type: String,
-        required: true
     },
-    shopAddress: {
+    shop_address: {
         type: String,
-        required: true
     },
     city: {
         type: String,
@@ -57,12 +52,15 @@ const User = new Schema({
     avatar: {
         type: String
     },
-    date: {
+    entry_date: {
         type: Date
     },
     is_deleted: {
         type: Number,
         default: 0
+    },
+    status: {
+        type: String,
     }
 });
 
@@ -72,11 +70,6 @@ User.methods.toJSON = function () {
     var obj = this.toObject();
     delete obj.password;
     return obj;
-
-
-    //     git remote add origin https://github.com/mudassiriqball/mysouqapi.git
-    // git push -u origin master
 }
-// User.index({'$**': 'text'});
 
-module.exports = mongoose.model("Users", User);
+module.exports = mongoose.model("User", User);

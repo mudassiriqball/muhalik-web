@@ -11,6 +11,7 @@ import ShowToast from './components/toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import { getTokenFromStorage } from '../sdk/core/authentication-service'
 
 import GlobalStyleSheet from '../styleSheet';
 
@@ -21,11 +22,11 @@ const schema = yup.object({
     mobile: yup.string().required("Enter Mobile Number")
         .matches(phoneRegExp, "Phone number is not valid"),
 
-    fullName: yup.string().required("Enter Full Name")
+    full_name: yup.string().required("Enter Full Name")
         .min(5, "Full Name must have at least 5 characters")
         .max(25, "Can't be longer than 25 characters"),
 
-    verificationCode: yup.string().required("Enter Verification Code"),
+    verification_code: yup.string().required("Enter Verification Code"),
 
     email: yup.string().email("Must be a valid email address")
         .max(100, "Can't be longer than 100 characters"),
@@ -34,7 +35,7 @@ const schema = yup.object({
         .min(8, "Must have at least 8 characters")
         .max(20, "Can't be longer than 20 characters"),
 
-    confirmPassword: yup.string().required("Enter Confirm Password").when("password", {
+    confirm_password: yup.string().required("Enter Confirm Password").when("password", {
         is: val => (val && val.length > 0 ? true : false),
         then: yup.string().oneOf(
             [yup.ref("password")],
@@ -42,13 +43,13 @@ const schema = yup.object({
         )
     }),
 
-    shopName: yup.string().required("Enter Shop Name")
+    shop_name: yup.string().required("Enter Shop Name")
         .min(3, "Must have at least 3 characters")
         .max(50, "Can't be longer than 50 characters"),
 
-    category: yup.string().required("Enter Category"),
+    shop_category: yup.string().required("Enter Category"),
 
-    shopAddress: yup.string().required("Enter Shop Address")
+    shop_address: yup.string().required("Enter Shop Address")
         .min(5, "Must have at least 5 characters")
         .max(200, "Can't be longer than 200 characters"),
 
@@ -57,7 +58,6 @@ const schema = yup.object({
         .min(3, "Must have at least 3 characters")
         .max(30, "Can't be longer than 30 characters"),
     role: yup.string(),
-
 });
 
 class VendorSignup extends Component {
@@ -72,10 +72,12 @@ class VendorSignup extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    userRegister(data, currentComponent) {
+    async userRegister(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/register';
         axios.post(url, {
             data
+        }, {
+            headers: { 'authorization': await getTokenFromStorage() }
         }).then(function (response) {
             console.log('response:', response)
             if (response.status == '200') {
@@ -86,9 +88,11 @@ class VendorSignup extends Component {
             }
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
+
             if (error.response.status == '500') {
                 currentComponent.setState({ serverErrorMsg: 'This User already exists.' })
             } else {
+                console.log("Registration Failed Error:", error)
                 alert('ERROR:' + error.response.data.message)
             }
             return false;
@@ -107,8 +111,8 @@ class VendorSignup extends Component {
             <Formik
                 validationSchema={schema}
                 initialValues={{
-                    mobile: '', fullName: '', verificationCode: '', email: '', password: '', confirmPassword: '',
-                    shopName: '', category: '', shopAddress: '', countary: 'KSA', city: '', role: 'vendor'
+                    mobile: '', full_name: '', verification_code: '', email: '', password: '', confirm_password: '',
+                    shop_name: '', shop_category: '', shop_address: '', countary: 'KSA', city: '', role: 'vendor'
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     this.setState({ isLoading: true });
@@ -177,14 +181,14 @@ class VendorSignup extends Component {
                                                             <Form.Control
                                                                 type="text"
                                                                 placeholder="Full Name"
-                                                                aria-describedby="fullName"
-                                                                name="fullName"
-                                                                value={values.fullName}
+                                                                aria-describedby="full_name"
+                                                                name="full_name"
+                                                                value={values.full_name}
                                                                 onChange={handleChange}
-                                                                isInvalid={touched.fullName && errors.fullName}
+                                                                isInvalid={touched.full_name && errors.full_name}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.fullName}
+                                                                {errors.full_name}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Form.Group>
@@ -197,13 +201,13 @@ class VendorSignup extends Component {
                                                         <Form.Control
                                                             type="text"
                                                             placeholder="Verification Code"
-                                                            name="verificationCode"
-                                                            value={values.verificationCode}
+                                                            name="verification_code"
+                                                            value={values.verification_code}
                                                             onChange={handleChange}
-                                                            isInvalid={touched.verificationCode && errors.verificationCode}
+                                                            isInvalid={touched.verification_code && errors.verification_code}
                                                         />
                                                         <Form.Control.Feedback type="invalid">
-                                                            {errors.verificationCode}
+                                                            {errors.verification_code}
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
                                                     <Form.Group as={Col} md="6" controlId="validationEmail">
@@ -251,11 +255,11 @@ class VendorSignup extends Component {
                                                             <Form.Control
                                                                 type={hide ? 'password' : 'text'}
                                                                 placeholder="Re-enter Password"
-                                                                aria-describedby="confirmPassword"
-                                                                name="confirmPassword"
-                                                                value={values.confirmPassword}
+                                                                aria-describedby="confirm_password"
+                                                                name="confirm_password"
+                                                                value={values.confirm_password}
                                                                 onChange={handleChange}
-                                                                isInvalid={touched.confirmPassword && errors.confirmPassword}
+                                                                isInvalid={touched.confirm_password && errors.confirm_password}
                                                             />
                                                             <InputGroup.Prepend>
                                                                 <Button id="confirmPasswordEyeBtn" onClick={this.showPassword} style={styles.buttons}>
@@ -263,7 +267,7 @@ class VendorSignup extends Component {
                                                                 </Button>
                                                             </InputGroup.Prepend>
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.confirmPassword}
+                                                                {errors.confirm_password}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Form.Group>
@@ -277,35 +281,36 @@ class VendorSignup extends Component {
                                                             <Form.Control
                                                                 type="text"
                                                                 placeholder="Shop Name"
-                                                                aria-describedby="shopName"
-                                                                name="shopName"
-                                                                value={values.shopName}
+                                                                aria-describedby="shop_name"
+                                                                name="shop_name"
+                                                                value={values.shop_name}
                                                                 onChange={handleChange}
-                                                                isInvalid={touched.shopName && errors.shopName}
+                                                                isInvalid={touched.shop_name && errors.shop_name}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.shopName}
+                                                                {errors.shop_name}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Form.Group>
-                                                    <Form.Group as={Col} lg={3} md={3} controlId="category">
+                                                    <Form.Group as={Col} lg={3} md={3} controlId="shop_category">
                                                         <Form.Label style={styles.label}>Category
                                                             <span> * </span>
                                                         </Form.Label>
                                                         <Form.Control
                                                             as="select"
-                                                            aria-describedby="category"
-                                                            name="category"
-                                                            value={values.category}
+                                                            aria-describedby="shop_category"
+                                                            name="shop_category"
+                                                            value={values.shop_category}
                                                             onChange={handleChange}
-                                                            isInvalid={touched.category && errors.category}
+                                                            isInvalid={touched.shop_category && errors.shop_category}
                                                         >
                                                             <option>Select</option>
-                                                            <option> KSA </option>
-                                                            <option> Pak </option>
+                                                            <option> Garmants </option>
+                                                            <option> Electronics </option>
+                                                            <option> Farniture </option>
                                                         </Form.Control>
                                                         <Form.Control.Feedback type="invalid">
-                                                            {errors.category}
+                                                            {errors.shop_category}
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
                                                     <Form.Group as={Col} lg={6} md={6}>
@@ -316,14 +321,14 @@ class VendorSignup extends Component {
                                                             <Form.Control
                                                                 type="text"
                                                                 placeholder="Shop Address"
-                                                                aria-describedby="shopAddress"
-                                                                name="shopAddress"
-                                                                value={values.shopAddress}
+                                                                aria-describedby="shop_address"
+                                                                name="shop_address"
+                                                                value={values.shop_address}
                                                                 onChange={handleChange}
-                                                                isInvalid={touched.shopAddress && errors.shopAddress}
+                                                                isInvalid={touched.shop_address && errors.shop_address}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.shopAddress}
+                                                                {errors.shop_address}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Form.Group>

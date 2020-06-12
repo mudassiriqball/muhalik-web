@@ -21,11 +21,11 @@ const schema = yup.object({
     mobile: yup.string().required("Enter Mobile Number")
         .matches(phoneRegExp, "Phone number is not valid"),
 
-    fullName: yup.string().required("Enter Full Name")
+    full_name: yup.string().required("Enter Full Name")
         .min(5, "Must have at least 5 characters")
         .max(25, "Can't be longer than 25 characters"),
 
-    verificationCode: yup.string().required("Enter Verification Code"),
+    verification_code: yup.string().required("Enter Verification Code"),
 
     email: yup.string().email("Must be a valid email address")
         .max(100, "Can't be longer than 100 characters"),
@@ -34,7 +34,7 @@ const schema = yup.object({
         .min(8, "Password must have at least 8 characters")
         .max(20, "Can't be longer than 20 characters"),
 
-    confirmPassword: yup.string().required("Enter Confirm Password").when("password", {
+    confirm_password: yup.string().required("Enter Confirm Password").when("password", {
         is: val => (val && val.length > 0 ? true : false),
         then: yup.string().oneOf(
             [yup.ref("password")],
@@ -97,7 +97,7 @@ class Signup extends Component {
             <Formik
                 validationSchema={schema}
                 initialValues={{
-                    mobile: '', fullName: '', verificationCode: '', email: '', password: '', confirmPassword: '',
+                    mobile: '', full_name: '', verification_code: '', email: '', password: '', confirm_password: '',
                     countary: 'KSA', city: '', role: 'customer'
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -167,13 +167,13 @@ class Signup extends Component {
                                                             <Form.Control
                                                                 type="text"
                                                                 placeholder="Full Name"
-                                                                name="fullName"
-                                                                value={values.fullName}
+                                                                name="full_name"
+                                                                value={values.full_name}
                                                                 onChange={handleChange}
-                                                                isInvalid={touched.fullName && errors.fullName}
+                                                                isInvalid={touched.full_name && errors.full_name}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.fullName}
+                                                                {errors.full_name}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Form.Group>
@@ -186,13 +186,13 @@ class Signup extends Component {
                                                         <Form.Control
                                                             type="text"
                                                             placeholder="Verification Code"
-                                                            name="verificationCode"
-                                                            value={values.verificationCode}
+                                                            name="verification_code"
+                                                            value={values.verification_code}
                                                             onChange={handleChange}
-                                                            isInvalid={touched.verificationCode && errors.verificationCode}
+                                                            isInvalid={touched.verification_code && errors.verification_code}
                                                         />
                                                         <Form.Control.Feedback type="invalid">
-                                                            {errors.verificationCode}
+                                                            {errors.verification_code}
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
                                                     <Form.Group as={Col} md="6" controlId="validationEmail">
@@ -240,11 +240,11 @@ class Signup extends Component {
                                                             <Form.Control
                                                                 type={hide ? 'password' : 'text'}
                                                                 placeholder="Re-enter Password"
-                                                                aria-describedby="confirmPassword"
-                                                                name="confirmPassword"
-                                                                value={values.confirmPassword}
+                                                                aria-describedby="confirm_password"
+                                                                name="confirm_password"
+                                                                value={values.confirm_password}
                                                                 onChange={handleChange}
-                                                                isInvalid={touched.confirmPassword && errors.confirmPassword}
+                                                                isInvalid={touched.confirm_password && errors.confirm_password}
                                                             />
                                                             <InputGroup.Prepend>
                                                                 <Button id="confirmPasswordEyeBtn" onClick={this.showPassword} style={styles.buttons}>
@@ -252,7 +252,7 @@ class Signup extends Component {
                                                                 </Button>
                                                             </InputGroup.Prepend>
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.confirmPassword}
+                                                                {errors.confirm_password}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Form.Group>

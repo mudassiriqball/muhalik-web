@@ -1,6 +1,6 @@
 import { Form, Row, Accordion, Col, Card, InputGroup, Button, Spinner } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faListAlt, faSlidersH } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faListAlt, faSlidersH, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons'
 import React, { Component } from 'react';
 import MuhalikConfig from '../../../../../../sdk/muhalik.config'
@@ -340,6 +340,7 @@ class ProducFields extends Component {
                 <ConfirmModal
                     onHide={() => this.setState({ showConfirmDeleteModal: false })}
                     show={this.state.showConfirmDeleteModal}
+                    iconname={faTrash}
                     title={'Delete Add Field Request ?'}
                     _id={this.state.delete_field_id}
                     name={this.state.delete_field_name}

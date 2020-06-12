@@ -174,10 +174,10 @@ const DashboardSideDrawer = props => {
                                 <AdminDashboard />
                             </Tab.Pane>
                             <Tab.Pane eventKey="Vendors">
-                                <Vendors />
+                                <Vendors {...props} />
                             </Tab.Pane>
                             <Tab.Pane eventKey="Customers">
-                                <Customers />
+                                <Customers {...props} />
                             </Tab.Pane>
                             {/* Product */}
                             <Tab.Pane eventKey="AllProducts">
