@@ -163,11 +163,7 @@ class VendorSignup extends Component {
     async userRegister(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/register';
         if (this.state.isCodeVerified && this.state.isCodeSended) {
-            axios.post(url, {
-                data
-            }, {
-                headers: { 'authorization': await getTokenFromStorage() }
-            }).then(function (response) {
+            axios.post(url, data).then(function (response) {
                 console.log('response:', response)
                 if (response.status == '200') {
                     currentComponent.setState({

@@ -52,9 +52,7 @@ class Login extends Component {
     async login(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/login';
 
-        await axios.post(url, {
-            data
-        }).then(function (response) {
+        await axios.post(url, data).then(function (response) {
             if (response.status == '200') {
                 saveTokenToStorage(response.data.token);
                 const decodedToken = decode(response.data.token);

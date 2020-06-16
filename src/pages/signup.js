@@ -161,9 +161,7 @@ class Signup extends Component {
     userRegister(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/register';
         if (this.state.isCodeVerified && this.state.isCodeSended) {
-            axios.post(url, {
-                data
-            }).then(function (response) {
+            axios.post(url, data).then(function (response) {
                 console.log('response:', response)
                 currentComponent.setState({
                     isLoading: false,
