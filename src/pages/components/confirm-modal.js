@@ -11,11 +11,12 @@ function ConfirmModal(props) {
             centered
         >
             <div style={{
-                border: '1px solid #ff3333', borderRadius: '5px'
+                border: `1px solid ${props.color}`, borderRadius: '5px'
             }}>
-                <Modal.Header closeButton style={{ color: '#ff3333', borderBottom: '1px solid #ff3333' }}>
+                {/* '#ff3333' */}
+                <Modal.Header closeButton style={{ color: `${props.color}`, borderBottom: `1px solid ${props.color}` }}>
                     <FontAwesomeIcon icon={props.iconname} style={{
-                        color: '#ff3333',
+                        color: `${props.color}`,
                         marginRight: '10px',
                         width: '35px',
                         height: '35px',
@@ -38,7 +39,8 @@ function ConfirmModal(props) {
                     </Form.Label>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button size="sm" variant='outline-danger' className='mr-auto' onClick={props.confirm}>Confirm</Button>
+                    <Button size="sm" className='mr-auto' onClick={props.confirm}
+                        variant={props.color == 'red' ? 'outline-danger' : props.color == 'blue' ? 'outline-primary' : 'outline-success'}>Confirm</Button>
                     <Button size="sm" variant='outline-primary' onClick={props.onHide}>Cancel</Button>
                 </Modal.Footer>
             </div>

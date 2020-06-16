@@ -14,6 +14,8 @@ import { faEye, faEyeSlash, faMobileAlt, faLock } from '@fortawesome/free-solid-
 import GlobalStyleSheet from '../styleSheet';
 import { saveTokenToStorage } from '../sdk/core/authentication-service';
 
+import { checkAuth } from '../sdk/core/authentication-service'
+
 // RegEx for phone number validation
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
 
@@ -37,7 +39,12 @@ class Login extends Component {
             serverErrorMsg: ''
         }
     }
-
+    async componentDidMount() {
+        this.authUser()
+    }
+    async authUser() {
+        await checkAuth('/login')
+    }
     showPassword = ev => {
         this.setState({ hide: !this.state.hide })
     }
@@ -64,15 +71,8 @@ class Login extends Component {
             }
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false })
-            try {
-                if (error.response.status == 401) {
-                    currentComponent.setState({ serverErrorMsg: 'Mobile Number or Pasword Incorect' })
-                } else {
-                    alert('ERROR:' + error.response.data.message)
-                }
-            } catch (err) {
-                alert(err)
-            }
+            currentComponent.setState({ serverErrorMsg: error.response.data.messag })
+            alert('ERROR:' + error.response.data.message)
         });
     }
 
@@ -113,122 +113,146 @@ class Login extends Component {
                         handleBlur,
                         isSubmitting
                     }) => (
-                            <div style={styles.body}>
+                            <div className='login'>
                                 <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
                                     <Navbar.Brand href="/" className="mr-auto" > Muhalik </Navbar.Brand>
                                 </Navbar>
-                                <Container>
-                                    <Row className="justify-content-md-center" noGutters>
-                                        <Col lg={4} md="auto" sm="auto" xs="auto" style={styles.form_col}>
-                                            <p>
-                                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
-                                            </p>
-                                            <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Login To Muhalik</h6>
-                                            <Form noValidate onSubmit={handleSubmit}>
-                                                <Form.Row>
-                                                    <Form.Group as={Col} controlId="validationMobile">
-                                                        <Form.Label style={styles.label}>Enter Your Mobile Number
+                                <Row className='row'>
+                                    <Col lg="auto" md="auto" sm="auto" xs="auto" className='form_col'>
+                                        <p>
+                                            <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
+                                        </p>
+                                        <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Login To Muhalik</h6>
+                                        <hr />
+                                        <Form noValidate onSubmit={handleSubmit}>
+                                            <Form.Row>
+                                                <Form.Group as={Col} controlId="validationMobile">
+                                                    <Form.Label style={styles.label}>Enter Your Mobile Number
                                                             <span> * </span>
-                                                        </Form.Label>
+                                                    </Form.Label>
 
-                                                        <InputGroup>
-                                                            <InputGroup.Prepend>
-                                                                <Button id="mobileIcon" style={styles.fontawesome_btn}>
-                                                                    <FontAwesomeIcon icon={faMobileAlt} style={styles.fontawesome} />
-                                                                </Button>
-                                                            </InputGroup.Prepend>
-                                                            <Form.Control
-                                                                type="text"
-                                                                placeholder="+966590911891"
-                                                                aria-describedby="mobile"
-                                                                name="mobile"
-                                                                value={values.mobile}
-                                                                onChange={handleChange}
-                                                                isInvalid={touched.mobile && errors.mobile}
-                                                            />
-                                                            <Form.Control.Feedback type="invalid">
-                                                                {errors.mobile}
-                                                            </Form.Control.Feedback>
-                                                        </InputGroup>
-                                                    </Form.Group>
-                                                </Form.Row>
-                                                <Form.Row>
-                                                    <Form.Group as={Col} controlId="validationPassword">
-                                                        <Form.Label style={styles.label}>Password <span>*</span></Form.Label>
-                                                        <InputGroup>
-                                                            <InputGroup.Prepend>
-                                                                <Button id="lockIcon" style={styles.fontawesome_btn}>
-                                                                    <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
-                                                                </Button>
-                                                            </InputGroup.Prepend>
-                                                            <Form.Control
-                                                                type={hide ? 'password' : 'text'}
-                                                                placeholder="Enter Password"
-                                                                aria-describedby="inputGroup"
-                                                                name="password"
-                                                                value={values.password}
-                                                                onChange={handleChange}
-                                                                isInvalid={touched.password && errors.password}
-                                                            />
-                                                            <InputGroup.Prepend>
-                                                                <Button id="passwordEyeBtn" onClick={this.showPassword} style={styles.buttons}>
-                                                                    {eyeBtn}
-                                                                </Button>
-                                                            </InputGroup.Prepend>
-                                                            <Form.Control.Feedback type="invalid">
-                                                                {errors.password}
-                                                            </Form.Control.Feedback>
-                                                        </InputGroup>
-                                                    </Form.Group>
-                                                </Form.Row>
-                                                <Form.Row>
-                                                    <Form.Label className="text-right" style={styles.label}>
-                                                        <Link href="forgot-password"><a>Forgot Password</a></Link>
-                                                    </Form.Label>
-                                                </Form.Row>
-                                                <Form.Row>
-                                                    <Form.Label className="text-center" style={styles.label}>
-                                                        Don't have an account..??
+                                                    <InputGroup>
+                                                        <InputGroup.Prepend>
+                                                            <Button style={{ cursor: 'default' }} variant='success' className='Button'>
+                                                                <FontAwesomeIcon icon={faMobileAlt} style={styles.fontawesome} />
+                                                            </Button>
+                                                        </InputGroup.Prepend>
+                                                        <Form.Control
+                                                            type="text"
+                                                            placeholder="+966590911891"
+                                                            aria-describedby="mobile"
+                                                            name="mobile"
+                                                            value={values.mobile}
+                                                            onChange={handleChange}
+                                                            isInvalid={touched.mobile && errors.mobile}
+                                                        />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.mobile}
+                                                        </Form.Control.Feedback>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Form.Group as={Col} controlId="validationPassword">
+                                                    <Form.Label style={styles.label}>Password <span>*</span></Form.Label>
+                                                    <InputGroup>
+                                                        <InputGroup.Prepend>
+                                                            <Button style={{ cursor: 'default' }} variant='success' className='Button'>
+                                                                <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
+                                                            </Button>
+                                                        </InputGroup.Prepend>
+                                                        <Form.Control
+                                                            type={hide ? 'password' : 'text'}
+                                                            placeholder="Enter Password"
+                                                            aria-describedby="inputGroup"
+                                                            name="password"
+                                                            value={values.password}
+                                                            onChange={handleChange}
+                                                            isInvalid={touched.password && errors.password}
+                                                        />
+                                                        <InputGroup.Append>
+                                                            <Button id="passwordEyeBtn" variant='success' onClick={this.showPassword} className='Button'>
+                                                                {eyeBtn}
+                                                            </Button>
+                                                        </InputGroup.Append>
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.password}
+                                                        </Form.Control.Feedback>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Form.Label className="text-right" style={styles.label}>
+                                                    <Link href="forgot-password"><a>Forgot Password</a></Link>
+                                                </Form.Label>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Form.Label className="text-center" style={styles.label}>
+                                                    Don't have an account..??
                                                         <span>
-                                                            <Link href="signup"><a> Signup</a></Link>
-                                                        </span>
-                                                    </Form.Label>
-                                                    <Form.Label className="text-center" style={styles.label}>
-                                                        <span>
-                                                            <Link href="vendor-signup"><a> Sell on Muhalik? Signup</a></Link>
-                                                        </span>
-                                                    </Form.Label>
-                                                </Form.Row>
-                                                <Form.Row>
-                                                    <Form.Label className="text-center" style={styles.errorMsg}>
-                                                        {this.state.serverErrorMsg}
-                                                    </Form.Label>
-                                                </Form.Row>
-                                                <Form.Row>
-                                                    <Button type="submit" onSubmit={handleSubmit} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                                                        {this.state.isLoading ? 'Logging' : 'Login'}
-                                                        {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
-                                                    </Button>
-                                                </Form.Row>
+                                                        <Link href="signup"><a> Signup</a></Link>
+                                                    </span>
+                                                </Form.Label>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Form.Label className="text-center" style={styles.errorMsg}>
+                                                    {this.state.serverErrorMsg}
+                                                </Form.Label>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Button type="submit" variant='success' onSubmit={handleSubmit} disabled={this.state.isLoading} block>
+                                                    {this.state.isLoading ? 'Logging' : 'Login'}
+                                                    {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
+                                                </Button>
+                                            </Form.Row>
 
-                                                <Form.Row>
-                                                    <Form.Label className="text-center" style={styles.term_condition_label}>
-                                                        By logingin, you agree to Muhalik's
+                                            <Form.Row>
+                                                <Form.Label className="text-center" style={styles.term_condition_label}>
+                                                    By logingin, you agree to Muhalik's
                                                         <span>
-                                                            <Link href="./help/terms-and-conditions"><a>Terms & Conditions</a></Link>
-                                                        </span>
+                                                        <Link href="./help/terms-and-conditions"><a>Terms & Conditions</a></Link>
+                                                    </span>
                                                         and
                                                             <span>
-                                                            <Link href="./help/privacy-statement"><a>Privacy Statement</a></Link>
-                                                        </span>
-                                                    </Form.Label>
-                                                </Form.Row>
-                                            </Form>
-                                        </Col>
-                                    </Row>
-                                </Container>
+                                                        <Link href="./help/privacy-statement"><a>Privacy Statement</a></Link>
+                                                    </span>
+                                                </Form.Label>
+                                            </Form.Row>
+                                        </Form>
+                                    </Col>
+                                </Row>
+                                <style type="text/css">{`
+                                     .login .row{
+                                        align-items: center;
+                                        justify-content: center;
+                                        margin: 0%;
+                                        padding: 0%;
+                                    }
+                                    .login .form_col{
+                                        width: 400px;
+                                        background: white;
+                                        margin: 5%;
+                                        padding: 2%;
+                                    }
+                                    @media (max-width: 574px) {
+                                        .login .form_col{
+                                            width: 94%;
+                                            margin: 3%;
+                                            padding: 3%;
+                                        }
+                                    }
+
+                                `}</style>
                                 <style jsx>
                                     {`
+                                        .login {
+                                            min-height: 100vh;
+                                            background: ${GlobalStyleSheet.body_color};
+                                            position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            right: 0;
+                                        }
                                         span {
                                             color: red;
                                         }
@@ -238,35 +262,15 @@ class Login extends Component {
                                         }
                                     `}
                                 </style>
-                            </div>
-                        )}
+                            </div >
+                        )
+                }
             </Formik>
         );
     }
 }
 
 const styles = {
-    body: {
-        background: `${GlobalStyleSheet.body_color}`,
-        position: 'absolute',
-        height: '100vh',
-        width: '100%'
-    },
-    buttons: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        border: 'none',
-        fontSize: '10px',
-    },
-    submit_btn: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        padding: 'auto'
-    },
-    form_col: {
-        background: 'white',
-        // border: `0.5px solid ${GlobalStyleSheet.primry_color}`,
-        padding: '20px 30px',
-        margin: '5% 0%',
-    },
     side_column: {
         margin: '0 3%',
     },
@@ -283,10 +287,6 @@ const styles = {
         width: '100%',
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
         padding: '10px',
-    },
-    fontawesome_btn: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        border: 'none',
     },
     fontawesome: {
         color: `${GlobalStyleSheet.primary_text_color}`,

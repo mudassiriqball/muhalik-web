@@ -7,7 +7,7 @@ const Field_Request = require("../models/field-request.model");
 const jwt = require("jsonwebtoken");
 
 categoriesController.add_Category = async (req, res) => {
-  const body = req.body.data;
+  const body = req.body;
   try {
     var datetime = new Date();
     var date = datetime.toISOString().slice(0, 10);
@@ -55,7 +55,7 @@ categoriesController.add_Category = async (req, res) => {
 };
 
 categoriesController.add_fields = async (req, res) => {
-  const body = req.body.data;
+  const body = req.body;
   if (body._id === null) {
     try {
       var datetime = new Date();
@@ -188,7 +188,7 @@ categoriesController.get_tags = async (req, res) => {
 };
 
 categoriesController.add_field_request = async (req, res) => {
-  const body = req.body.data;
+  const body = req.body;
   const header = jwt.decode(req.headers.authorization);
   body.name = header.data.fullName;
   try {
@@ -249,7 +249,7 @@ categoriesController.delete_field = async (req, res) => {
 };
 
 categoriesController.update_field = async (req, res) => {
-  const body = req.body.data;
+  const body = req.body;
   if (!req.params._id) {
     Fu;
     res.status(500).send({

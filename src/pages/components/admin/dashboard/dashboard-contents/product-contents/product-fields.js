@@ -56,9 +56,7 @@ class ProducFields extends Component {
             label: fieldValue,
             value: fieldValue,
         }
-        await axios.post(url, {
-            data
-        }, {
+        await axios.post(url, data, {
             headers: { 'authorization': this.state.token }
         }).then(function (response) {
             currentComponent.setState({ isLoading: false })
@@ -165,9 +163,7 @@ class ProducFields extends Component {
             value: copyArray[index].value,
         }
         console.log('data:', data)
-        await axios.post(url, {
-            data
-        }, {
+        await axios.post(url, data, {
             headers: {
                 '_id': copyArray[index]._id,
                 'authorization': this.state.token
@@ -274,9 +270,7 @@ class ProducFields extends Component {
                 label: copyArray[index].value
             }
             const url = MuhalikConfig.PATH + `/api/categories/field/${copyArray[index]._id}`
-            await axios.put(url, {
-                data
-            }, {
+            await axios.put(url, data, {
                 headers: { 'authorization': this.state.token }
             }).then(function (response) {
                 copyArray[index].label = copyArray[index].value;
@@ -341,6 +335,7 @@ class ProducFields extends Component {
                     onHide={() => this.setState({ showConfirmDeleteModal: false })}
                     show={this.state.showConfirmDeleteModal}
                     iconname={faTrash}
+                    color={'red'}
                     title={'Delete Add Field Request ?'}
                     _id={this.state.delete_field_id}
                     name={this.state.delete_field_name}

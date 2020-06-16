@@ -24,7 +24,7 @@ const StickyBottomNavbar = () => {
         }
     });
     return (
-        <>
+        <div className='stick_bottom_navbar'>
             <Navbar bg="white" fixed="bottom" className='p-0 m-0'>
                 <Nav className="d-inline-flex align-items-center w-100">
                     <div className='mr-auto'></div>
@@ -69,7 +69,7 @@ const StickyBottomNavbar = () => {
                 </Nav>
             </Navbar>
             <style type="text/css">{`
-                .nav_link{
+                .stick_bottom_navbar .nav_link{
                     margin-right: auto;
                     font-size: 12px;
                     padding: 1%;
@@ -79,7 +79,7 @@ const StickyBottomNavbar = () => {
                     flex-direction: column;
                 }
             `}</style>
-        </>
+        </div>
     )
 }
 

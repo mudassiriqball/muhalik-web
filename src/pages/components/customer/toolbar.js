@@ -1,7 +1,7 @@
 import {
     Navbar, Nav, Form, InputGroup, FormControl, Image, Button,
     NavDropdown, DropdownButton, Card, Dropdown, ButtonGroup,
-    Row, Col, OverlayTrigger, Popover
+    Row, Col, OverlayTrigger, Popover, Tooltip
 } from 'react-bootstrap'
 import GlobalStyleSheet from '../../../styleSheet'
 import Link from 'next/link'
@@ -14,7 +14,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 import MuhalikConfig from '../../../sdk/muhalik.config'
-import axios from 'axios'
 import { removeTokenFromStorage } from '../../../sdk/core/authentication-service'
 import React from 'react';
 
@@ -23,15 +22,15 @@ const Toolbar = (props) => {
 
     let loggedIn = false
     let dashboard_href = ''
-    if (props.token == '') {
+    if (props.role == '') {
         loggedIn = false
-    } else if (props.token == 'customer') {
+    } else if (props.role == 'customer') {
         loggedIn = true
         dashboard_href = './index'
-    } else if (props.token == 'vendor') {
+    } else if (props.role == 'vendor') {
         loggedIn = true
         dashboard_href = './vendor'
-    } else if (props.token == 'admin') {
+    } else if (props.role == 'admin') {
         loggedIn = true
         dashboard_href = './admin'
     }
@@ -77,7 +76,7 @@ const Toolbar = (props) => {
     }
 
     return (
-        <div>
+        <div className='customer_toolar'>
             <Card>
                 <div className={`sticky-wrapper${isSticky ? ' sticky' : ''}`} ref={ref}>
                     <div className='navbar w-100 p-0 m-0 sticky-inner'>
@@ -95,7 +94,7 @@ const Toolbar = (props) => {
                                     <div className='display_in_md_lg'>
                                         <InputGroup.Prepend >
                                             <Dropdown as={ButtonGroup}>
-                                                <Dropdown.Toggle as={Button} className='btn-search' variant='success'>
+                                                <Dropdown.Toggle as={Button} className='btn_search' variant='success'>
                                                     {searchType}
                                                 </Dropdown.Toggle>
                                                 <Dropdown.Menu >
@@ -108,15 +107,15 @@ const Toolbar = (props) => {
                                     </div>
                                     <FormControl className='search-bar' placeholder="Search here" />
                                     <InputGroup.Append>
-                                        <Button className='btn-search' variant='success'>
+                                        <Button className='btn_search' variant='success'>
                                             <FontAwesomeIcon className='serch-icon' icon={faSearch} style={styles.search_fontawesome} />
                                         </Button>
                                     </InputGroup.Append>
                                 </div>
                             </Col>
-                            <Col lg='auto' md='auto' sm={0} xs={0} className='m-0 p-0'>
+                            <Col lg="auto" md="auto" sm={0} xs={0} className='m-0 p-0 align-items-center'>
                                 <div className='display_in_md_lg'>
-                                    <Nav className='d-inline-flex align-items-center w-100'>
+                                    <Nav className='d-flex flex-row align-items-center w-100'>
                                         {loggedIn ?
                                             null
                                             :
@@ -146,11 +145,23 @@ const Toolbar = (props) => {
                                             Cart
                                         </Nav.Link>
                                         {loggedIn ?
-                                            <Dropdown className='d-flex flex-column ml-2' alignRight>
+                                            <Dropdown className='nav_link' alignRight>
                                                 <Dropdown.Toggle as={Nav.Link} className='dropdown_togle align-self-end'>
-                                                    <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '25px', maxWidth: '25px' }} />
+                                                    <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '27px', maxWidth: '27px' }} />
                                                 </Dropdown.Toggle>
-                                                <div className='dropdown_togle p-0 m-0' style={{ fontSize: '13px' }}>Mudassir</div>
+
+
+                                                <OverlayTrigger placement='bottom-end' overlay={<Tooltip id="tooltip-disabled">{props.name}</Tooltip>}>
+                                                    <span className="d-inline-block">
+                                                        <label className='dropdown_togle p-0 m-0' style={{ fontSize: '14px' }}>
+                                                            {props.name.slice(0, 6) + (props.name.length > 6 ? "..." : "") || ''}
+                                                        </label>
+                                                    </span>
+                                                </OverlayTrigger>
+
+
+
+
                                                 <Dropdown.Menu style={{ zIndex: 100 }}>
                                                     <Dropdown.Item className='dropdown_item' href={dashboard_href}>
                                                         <FontAwesomeIcon icon={faTachometerAlt} style={styles.dropdown_fontawesome} />
@@ -312,116 +323,120 @@ const Toolbar = (props) => {
                 </div>
             </Card >
             <style type="text/css">{`
-                .btn-search{
-                    color: white;
-                    background: ${GlobalStyleSheet.primry_color};
-                }
-                .sticky .sticky-inner .btn-search{
+                .customer_toolar .sticky .sticky-inner .btn_search{
                     color:  ${GlobalStyleSheet.primry_color};
                     background: white;
                     border-color: white;
                     border-radius: 0px;
                 }
-                .sticky .sticky-inner .serch-icon{
+                .customer_toolar .sticky .sticky-inner .btn_search:hover{
+                    color:  green;
+                    border-right: 1px solid green;
+                    border-left: 1px solid green
+                }
+                .customer_toolar .sticky .sticky-inner .serch-icon{
                     color:  ${GlobalStyleSheet.primry_color};
                 }
 
-                .toogle-btn{
+                .customer_toolar .toogle-btn{
                     align-items: center;
                     display: inline-flex;
                     margin: 0px;
                     padding: 0px;
                     color: gray;
                 }
-                .sticky .sticky-inner .toogle-btn{
+                .customer_toolar .sticky .sticky-inner .toogle-btn{
                     color: white;
                 }
 
-                .search-bar{
+                .customer_toolar .search-bar{
                     border-color: ${GlobalStyleSheet.primry_color};
                 }
-                .sticky .sticky-inner .search-bar{
+                .customer_toolar .sticky .sticky-inner .search-bar{
                     border-color: white;
                 }
 
-                .account-dropdown{
+                .customer_toolar .account-dropdown{
                     font-size: 14px;
                     align-items: center;
                     display: inline-flex;
                     color: gray;
                 }
-                .account-dropdown:hover{
+                .customer_toolar .account-dropdown:hover{
                     color: ${GlobalStyleSheet.primry_color};
                 }
                 
-                .nav_link{
+                .customer_toolar .nav_link{
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     text-align: center;
                     font-size: 14px;
-                    margin-left: 20px;
+                    margin: 0% 0% 0% 20px;
+                    padding: 5px 0% 0% 0%;
                     justify-content: center;
                     color: gray;
                 }
-                .nav_link:hover{
+                .customer_toolar .nav_link:hover{
                     color: ${GlobalStyleSheet.primry_color};
                 }
-                .dropdown_togle{
+                .customer_toolar .dropdown_togle{
                     align-items: center;
                     display: inline-flex;
                     color: gray;
                     padding: 0px;
                     margin: 0px;
                 }
-                .dropdown_togle:hover{
+                .customer_toolar .dropdown_togle:hover{
                     color: ${GlobalStyleSheet.primry_color};
                 }
 
-                .sticky .sticky-inner .nav_link {
+                .customer_toolar .sticky .sticky-inner .nav_link {
                     color: white;
                 }
-                .sticky .sticky-inner .dropdown_togle {
+                .customer_toolar .sticky .sticky-inner .dropdown_togle {
                     color: white;
                 }
 
-                .sticky .sticky-inner .nav_link:hover {
+                .customer_toolar .sticky .sticky-inner .nav_link:hover {
                     color: lightgray;
                 }
-                .sticky .sticky-inner .dropdown_togle:hover {
+                .customer_toolar .sticky .sticky-inner .dropdown_togle:hover {
                     color: lightgray;
                 }
 
-                .dropdown_item{
+                .customer_toolar .dropdown_item{
                     font-size: 13px;
                     color: gray;
                     display: flex;
                     align-items: center;
                 }
 
-                .btn:hover, .dropdown_item:hover{
+                .customer_toolar .btn:hover, .dropdown_item:hover{
                     background: ${GlobalStyleSheet.primry_color};
                     color: white;
                 }
-                .btn:focus, .dropdown_item:hover{
+                .customer_toolar .btn:focus, .dropdown_item:hover{
                     background: ${GlobalStyleSheet.primry_color};
                     color: white;
                 }
-                .btn:active, .dropdown_item:hover{
+                .customer_toolar .btn:active, .dropdown_item:hover{
                     background: ${GlobalStyleSheet.primry_color};
                     color: white;
                 }
-
-                
-
+                @media (max-width: 992px) {
+                    .customer_toolar .nav_link{
+                        margin-left: 4px;
+                    }
+                }
             `}</style>
             <style jsx>
                 {`
-                    .sticky-wrapper {
+                    .customer_toolar .sticky-wrapper {
                         position: relative;
                     }
 
-                    .sticky .sticky-inner {
+                    .customer_toolar .sticky .sticky-inner {
                         background: white;
                         position: fixed;
                         top: 0;
@@ -430,21 +445,21 @@ const Toolbar = (props) => {
                         z-index: 1000;
                     }
 
-                    .sticky .sticky-inner .row {
+                    .customer_toolar .sticky .sticky-inner .row {
                         padding: 5px 4%;
                         background: ${GlobalStyleSheet.primry_color}
                     }
-                    .sticky .sticky-inner .text_animation {
+                    .customer_toolar .sticky .sticky-inner .text_animation {
                         color: white;
                     }
 
-                    .sticky .sticky-inner .nav_link_text {
+                    .customer_toolar .sticky .sticky-inner .nav_link_text {
                         color: white;
                     }
-                    .sticky .sticky-inner .nav_link_text:hover {
+                    .customer_toolar .sticky .sticky-inner .nav_link_text:hover {
                         color: lightgray;
                     }
-                    .text_animation{
+                    .customer_toolar .text_animation{
                         animation: mymove 5s infinite;
                         color: ${GlobalStyleSheet.primry_color};
                         font-family: Verdana, Geneva, sans-serif;
@@ -455,23 +470,23 @@ const Toolbar = (props) => {
                         50% {text-shadow: 10px 10px 10px green;}
                     }
 
-                    .nav_link_text {
+                    .customer_toolar .nav_link_text {
                         white-space: nowrap;
                         font-size: 13px;
                         padding: 0px;
                         margin: 0px;
                         color: gray
                     }
-                    .second_nav_link_text {
+                    .customer_toolar .second_nav_link_text {
                         white-space: nowrap;
                         font-size: 14px;
                         color: white;
                     }
-                    .nav_link_text:hover, .second_nav_link_text:hover {
+                    .customer_toolar .nav_link_text:hover, .second_nav_link_text:hover {
                         color: lightgray;
                     }
                     
-                    .category_list_item {
+                    .customer_toolar .category_list_item {
                         cursor: pointer;
                         width: 98%;
                         display: inline-flex;
@@ -481,28 +496,29 @@ const Toolbar = (props) => {
                         margin: 1% -2% 0% 2%;
                         color: gray;
                     }
-                    .category_list_item:hover{
+                    .customer_toolar .category_list_item:hover{
                         z-index: 100;
                         color: #005ce6;
                         border-radius: 2px;
                         box-shadow: -1px 0px 10px 1px rgba(0,0,0,0.12);
                     }
-                    .row {
+                    .customer_toolar .row {
                             display: inline-flex;
                             align-items: center;
                             width: 100%;
                             padding: 10px 4%;
                     }
-                    .input-group{
+                    .customer_toolar .input-group{
                         align-items: center;
                         display: inline-flex;
-                        padding-left: 7%;
-                        padding-right: 12%;
+                        padding-left: 6%;
+                        padding-right: 9%;
                     }
 
-                    @media (max-width: 992px) {
-                        .input-group{
-                            padding: 0%;
+                    @media (max-width: 1200px) {
+                        .customer_toolar .input-group{
+                            padding-left: 2%;
+                            padding-right: 0%;
                         }
                     }
                     @media (min-width: 767px) {
@@ -511,7 +527,7 @@ const Toolbar = (props) => {
                         // }
                     }
                     @media (max-width: 767px) {
-                        .display_in_md_lg {
+                        .customer_toolar .display_in_md_lg {
                             display: none;
                         }
                         // .row {
@@ -555,10 +571,10 @@ const styles = {
         fontWeight: 'normal'
     },
     nav_fontawesome: {
-        minWidth: '24px',
-        minHeight: '24px',
-        maxHeight: '24px',
-        maxWidth: '24px',
+        minWidth: '26px',
+        minHeight: '26px',
+        maxHeight: '26px',
+        maxWidth: '26px',
     },
     dropdown_fontawesome: {
         marginRight: '15px',

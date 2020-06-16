@@ -37,6 +37,8 @@ class Admin extends Component {
             new_vendors_list: [],
             restricted_vendors_list: [],
 
+            customers_list: [],
+            restricted_customers_list: [],
 
             categories_list: [],
             sub_categories_list: [],
@@ -132,11 +134,21 @@ class Admin extends Component {
         await axios.get(url_7).then(function (response) {
             console.log("customers: ", response.data.data)
             currentComponent.setState({
-                restricted_vendors_list: response.data.data,
+                customers_list: response.data.data,
             });
         }).catch(function (error) {
             console.log("customers Fetching Error:", error)
             alert('customers error: ', error)
+        })
+        const url_8 = MuhalikConfig.PATH + '/api/users/restricted-customers';
+        await axios.get(url_8).then(function (response) {
+            console.log("customers: ", response.data.data)
+            currentComponent.setState({
+                restricted_customers_list: response.data.data,
+            });
+        }).catch(function (error) {
+            console.log("restricted customers Fetching Error:", error)
+            alert('restricted customers error: ', error)
         })
 
     }
@@ -179,13 +191,20 @@ class Admin extends Component {
                 {/* <AdminLayout> */}
                 <Dashboard
                     products_list={this.state.products_list}
+
                     vendors_list={this.state.vendors_list}
-                    restricted_vendors_list={this.state.restricted_vendors_list}
                     new_vendors_list={this.state.new_vendors_list}
+                    restricted_vendors_list={this.state.restricted_vendors_list}
+
+                    customers_list={this.state.customers_list}
+                    restricted_customers_list={this.state.restricted_customers_list}
+
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
+
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
+
                     token={this.state.token}
                     user_name={this.state.user_name}
                     show={this.state.showWrapper}
@@ -194,13 +213,20 @@ class Admin extends Component {
                     logout={this.logout} />
                 <DashboardSideDrawer
                     products_list={this.state.products_list}
+
                     vendors_list={this.state.vendors_list}
                     new_vendors_list={this.state.new_vendors_list}
                     restricted_vendors_list={this.state.restricted_vendors_list}
+
+                    customers_list={this.state.customers_list}
+                    restricted_customers_list={this.state.restricted_customers_list}
+
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
+
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
+
                     token={this.state.token}
                     user_name={this.state.user_name}
                     show={this.state.sideDrawerOpen}

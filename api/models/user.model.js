@@ -61,6 +61,9 @@ const User = new Schema({
     },
     status: {
         type: String,
+    },
+    rank: {
+        type: String,
     }
 });
 

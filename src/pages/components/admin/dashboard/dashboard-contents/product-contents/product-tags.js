@@ -41,9 +41,7 @@
 //         const url = MuhalikConfig.PATH + '/api/categories/tag';
 //         let data = []
 //         data = { label: tagValue, value: tagValue }
-//         await axios.post(url, {
-//             data
-//         }, {
+//         await axios.post(url,data, {
 //             headers: { 'authorization': this.state.token }
 //         }).then(function (response) {
 //             currentComponent.setState({ isLoading: false })

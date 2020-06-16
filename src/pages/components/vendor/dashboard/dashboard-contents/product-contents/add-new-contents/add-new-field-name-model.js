@@ -19,9 +19,7 @@ function AddNewFieldNameModal(props) {
                 value: value,
                 label: value
             }
-            await axios.post(url, {
-                data
-            }, {
+            await axios.post(url, data, {
                 headers: { 'authorization': props.token }
             }).then((response) => {
                 setIsLoading(false)

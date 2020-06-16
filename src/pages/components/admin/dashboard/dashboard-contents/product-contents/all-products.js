@@ -115,8 +115,8 @@ class AllProducts extends Component {
                     view={() => this.setState({ viewProduct: 'view' })}
                     delete={() => this.handleDeleteProduct(-1)}
 
-                    productCategories={this.state.data.product_category}
-                    productSubCategories={this.state.data.product_sub_category}
+                    productCategory={this.state.data.category}
+                    // productSubCategories={this.state.data.sub_category}
 
                     productTags={this.state.data.product_tags}
                     warrantyType={this.state.data.warranty_type}
@@ -172,34 +172,47 @@ class AllProducts extends Component {
                                             <tr key={index}>
                                                 <td align="center" style={styles.label}><Form.Check type="checkbox" /></td>
                                                 <td className="td">
-                                                    {element.product_name}
+                                                    {element.product_name || '-'}
                                                     <div className="mr-auto"></div>
                                                     <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}> View </Nav.Link>
                                                     <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
                                                     <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
                                                 </td>
-                                                <td align="center" style={styles.label}>{element.product_type}</td>
-                                                <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
+                                                <td align="center" style={styles.label}>{element.product_type || '-'}</td>
+                                                <td align="center" style={styles.label}>{element.sku || '-'}</td>
                                                 <td align="center" style={styles.label}>
-                                                    {element.product_variations.map(e =>
-                                                        e.stock + ','
+                                                    {element.product_variations.map((e, i) =>
+                                                        <>
+                                                            {i >= 3 ? null : e.stock}
+                                                            {i < 2 ? ', ' : null}
+                                                            {i == 2 ? ' ...' : null}
+                                                        </>
                                                     )}
                                                 </td>
                                                 <td align="center" style={styles.label}>
-                                                    {element.product_variations.map(e =>
-                                                        e.price + ','
+                                                    {element.product_variations.map((e, i) =>
+                                                        <>
+                                                            {i >= 3 ? null : e.price}
+                                                            {i < 2 ? ', ' : null}
+                                                            {i == 2 ? ' ...' : null}
+                                                        </>
                                                     )}
                                                 </td>
                                                 <td align="center" style={styles.label}>
-                                                    {element.product_category.value + ' => ' + element.product_sub_category.value}
+                                                    {element.category.value || '-'}
+                                                    {/* {element.category.value + ' => ' + element.sub_category.value} */}
                                                 </td>
                                                 <td align="center" style={styles.label}>
-                                                    {element.product_tags && element.product_tags.map(e =>
-                                                        e.value + ','
+                                                    {element.product_tags && element.product_tags.map((e, i) =>
+                                                        <>
+                                                            {i >= 3 ? null : e.value}
+                                                            {i < 2 ? ', ' : null}
+                                                            {i == 2 ? ' ...' : null}
+                                                        </>
                                                     )}
                                                 </td>
                                                 <td align="center" style={styles.label}>
-                                                    {element.product_entry_date}
+                                                    {element.entry_date || '-'}
                                                 </td>
                                             </tr>
                                             :
@@ -209,30 +222,31 @@ class AllProducts extends Component {
                                                         <Form.Check type="checkbox" />
                                                     </td>
                                                     <td className="td">
-                                                        {element.product_name}
+                                                        {element.product_name || '-'}
                                                         <div className="mr-auto"></div>
                                                         <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}>View</Nav.Link>
                                                         <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
                                                         <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
                                                     </td>
-                                                    <td align="center" style={styles.label}>{element.product_type}</td>
-                                                    <td align="center" style={styles.label}>{element.sku ? element.sku : '-'}</td>
+                                                    <td align="center" style={styles.label}>{element.product_type || '-'}</td>
+                                                    <td align="center" style={styles.label}>{element.sku || '-'}</td>
                                                     <td align="center" style={styles.label}>
-                                                        {element.product_in_stock}
+                                                        {element.product_in_stock || '-'}
                                                     </td>
                                                     <td align="center" style={styles.label}>
-                                                        {element.product_price}
+                                                        {element.product_price || '-'}
                                                     </td>
                                                     <td align="center" style={styles.label}>
-                                                        {element.product_category.value + ' => ' + element.product_sub_category.value}
+                                                        {element.category.value || '-'}
+                                                        {/* {element.category.value + ' => ' + element.sub_category.value} */}
                                                     </td>
                                                     <td align="center" style={styles.label}>
-                                                        {element.product_tags && element.product_tags.map(e =>
+                                                        {element.product_tags && element.product_tags.forEach(e =>
                                                             e.value + ','
                                                         )}
                                                     </td>
                                                     <td align="center" style={styles.label}>
-                                                        {element.product_entry_date}
+                                                        {element.entry_date || '-'}
                                                     </td>
                                                 </tr>
                                             </>
@@ -271,9 +285,9 @@ class AllProducts extends Component {
 const ViewProduct = props => {
     const [imgPreview, setImgPreview] = React.useState(false);
     const [index, setIndex] = React.useState('')
-    const [imgData, setImgData] = React.useState('')
+    const [imgData, setImgData] = React.useState([])
 
-    const len = props.data.product_image_link.length;
+    // const len = props.data.product_image_link.length;
 
     function prevImage() {
         if (index > 0) {
@@ -282,7 +296,7 @@ const ViewProduct = props => {
     }
 
     function nextImage() {
-        if (index < (len - 1)) {
+        if (index < (imgData.length - 1)) {
             setIndex(index + 1)
         }
     }
@@ -290,30 +304,30 @@ const ViewProduct = props => {
     return (
         <>
             <TitleRow icon={faPlus} title={` Vendor Dashboard / All Products / ${props.data.product_name}`} />
-            <Form.Row style={{ margin: ' 0% 2%', display: 'flex', alignItems: 'center' }} >
-                <Nav.Link style={{ fontSize: '14px' }} className="mr-auto" onClick={props.back}>Back</Nav.Link>
-                <div className="mr-auto" style={{ fontSize: '14px' }}> {props.data.product_name}</div>
-                <Nav.Link style={{ fontSize: '14px' }} onClick={props.edit}> Edit </Nav.Link>
-                <Nav.Link style={{ fontSize: '14px' }} onClick={props.delete}> Delete </Nav.Link>
+            <Form.Row style={{ margin: ' 1% 2%', display: 'flex', alignItems: 'center' }} >
+                <Button variant='outline-primary' size='sm' className="mr-auto" onClick={props.back}>Back</Button>
+                <div className="mr-auto" style={{ fontSize: '14px' }}> {props.data.product_name || '-'}</div>
+                <Button variant='outline-primary' size='sm' className="mr-3" onClick={props.edit}>Edit</Button>
+                <Button variant='outline-danger' size='sm' onClick={props.delete}>Delete</Button>
             </Form.Row>
             <CardAccordion title={'General Info'}>
                 <Row>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Product Name:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_name || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Brand Name:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_brand_name} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_brand_name || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>SKU:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.sku} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.sku || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
@@ -323,13 +337,13 @@ const ViewProduct = props => {
                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                 <Form.Label style={styles.label}>Price:</Form.Label>
                                 <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.product_price} disabled={true} />
+                                    <Form.Control type="text" size="sm" value={props.data.product_price || '-'} disabled={true} />
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                 <Form.Label style={styles.label}>Product In Stock:</Form.Label>
                                 <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.product_in_stock} disabled={true} />
+                                    <Form.Control type="text" size="sm" value={props.data.product_in_stock || '-'} disabled={true} />
                                 </InputGroup>
                             </Form.Group>
                         </>
@@ -339,33 +353,33 @@ const ViewProduct = props => {
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Warranty (month):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_warranty} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_warranty || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Warranty Type:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.warranty_type} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.warranty_type || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Discount (%):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_discount} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_discount || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Purchase Note(s):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.purchase_note} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.purchase_note || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
                     <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                         <Form.Label style={styles.label}>Description:</Form.Label>
                         <InputGroup>
-                            <Form.Control as="textarea" row="5" size="sm" value={props.data.product_description} disabled={true} />
+                            <Form.Control as="textarea" row="5" size="sm" value={props.data.product_description || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                 </Row>
@@ -373,24 +387,24 @@ const ViewProduct = props => {
 
             {props.isVariableProduct ?
                 <CardAccordion title={'Product Variations'}>
-                    {props.data.product_variations && props.data.product_variations.map(element =>
+                    {props.data.product_variations && props.data.product_variations.map((element, index) =>
                         <>
-                            <Row >
+                            <Row key={index}>
                                 <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
                                     <Form.Label style={styles.label}>Price</Form.Label>
                                     <InputGroup>
-                                        <Form.Control type="text" size="sm" value={element.price} disabled={true} />
+                                        <Form.Control type="text" size="sm" value={element.price || '-'} disabled={true} />
                                     </InputGroup>
                                 </Form.Group>
                                 <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
                                     <Form.Label style={styles.label}>Stock</Form.Label>
                                     <InputGroup>
-                                        <Form.Control type="text" size="sm" value={element.stock} disabled={true} />
+                                        <Form.Control type="text" size="sm" value={element.stock || '-'} disabled={true} />
                                     </InputGroup>
                                 </Form.Group>
-                                {element.item && element.item.map(e =>
+                                {element.item && element.item.map((e, i) =>
                                     <>
-                                        <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
+                                        <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={12}>
                                             <Form.Label style={styles.label}>{e.name}</Form.Label>
                                             <InputGroup>
                                                 <Form.Control type="text" size="sm" value={e.value} disabled={true} />
@@ -398,9 +412,9 @@ const ViewProduct = props => {
                                         </Form.Group>
                                     </>
                                 )}
-                                {element.custom_fields && element.custom_fields.map(e =>
+                                {element.custom_fields && element.custom_fields.map((e, i) =>
                                     <>
-                                        <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
+                                        <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={12}>
                                             <Form.Label style={styles.label}>{e.name}</Form.Label>
                                             <InputGroup>
                                                 <Form.Control type="text" size="sm" value={e.value} disabled={true} />
@@ -408,12 +422,12 @@ const ViewProduct = props => {
                                         </Form.Group>
                                     </>
                                 )}
-                                {/* {element.image_link && element.image_link.map((img, i) =>
+                                {element.image_link && element.image_link.map((img, i) =>
                                     <Row>
-                                        <Image thumbnail fluid style={{ minWidth: '100px', maxWidth: '100px' }} src={`https://drive.google.com/uc?export=view&id= ${img.value}`} alt="Product Image"
-                                            onClick={() => { setImgPreview(true), setIndex(i), setImgData(e.img_link) }} />
+                                        <Image thumbnail fluid style={{ minWidth: '100px', maxWidth: '100px' }} src={img.url} alt="Product Image"
+                                            onClick={() => { setImgPreview(true), setIndex(i), setImgData(element.image_link) }} />
                                     </Row>
-                                )} */}
+                                )}
                             </Row>
                             <hr />
                         </>
@@ -422,8 +436,8 @@ const ViewProduct = props => {
                 :
                 <>
                     <CardAccordion title={'Custom Fields'}>
-                        {props.data.custom_fields && props.data.custom_fields.map(element =>
-                            <Row>
+                        {props.data.custom_fields && props.data.custom_fields.map((element, index) =>
+                            <Row key={index}>
                                 <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
                                     <Form.Label style={styles.label}>{element.name}</Form.Label>
                                     <InputGroup>
@@ -435,7 +449,7 @@ const ViewProduct = props => {
                     </CardAccordion>
                     <CardAccordion title={'Product Images'}>
                         {props.data.product_image_link && props.data.product_image_link.map((element, index) =>
-                            <Image thumbnail fluid style={{ minWidth: '200px', maxWidth: '200px' }} src={`https://drive.google.com/uc?export=view&id=${element.value}`}
+                            <Image thumbnail fluid key={index} style={{ minWidth: '200px', maxWidth: '200px' }} src={element.url}
                                 alt="Product Image" onClick={() => { setImgPreview(true), setIndex(index), setImgData(props.data.product_image_link) }} />
                         )}
                     </CardAccordion>
@@ -446,38 +460,38 @@ const ViewProduct = props => {
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Length (cm):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.dimension_length} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.dimension_length || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Width (cm):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.dimension_width} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.dimension_width || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Height (cm):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.dimension_height} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.dimension_height || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Weight (kg):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_weight} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_weight || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Shipping Charges:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.shipping_charges} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.shipping_charges || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label style={styles.label}>Handlink Fee:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.handling_fee} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.handling_fee || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                 </Row>
@@ -487,7 +501,8 @@ const ViewProduct = props => {
                     <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Product Categories:</Form.Label>
                     <InputGroup>
                         <Form.Label style={styles.label}>
-                            {props.data.product_category.value + ' => ' + props.data.product_sub_category.value}
+                            {props.data.category.value || '-'}
+                            {/* {props.data.category.value + ' => ' + props.data.sub_category.value} */}
                         </Form.Label>
                     </InputGroup>
                 </Form.Group >
@@ -495,8 +510,8 @@ const ViewProduct = props => {
                 <Form.Group>
                     <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Product Tags:</Form.Label>
                     <InputGroup>
-                        {props.data.product_tags && props.data.product_tags.map(element =>
-                            <Form.Label style={styles.label}>{element.value}</Form.Label>
+                        {props.data.product_tags && props.data.product_tags.map((element, index) =>
+                            <Form.Label key={index} style={styles.label}>{element.value}</Form.Label>
                         )}
                     </InputGroup>
                 </ Form.Group >
@@ -504,8 +519,8 @@ const ViewProduct = props => {
                 <Form.Group>
                     <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Dangerous Goods:</Form.Label>
                     <InputGroup>
-                        {props.data.dangerous_goods && props.data.dangerous_goods.map(element =>
-                            <Form.Label style={styles.label}>{element.value}</Form.Label>
+                        {props.data.dangerous_goods && props.data.dangerous_goods.map((element, index) =>
+                            <Form.Label key={index} style={styles.label}>{element.value}</Form.Label>
                         )}
                     </InputGroup>
                 </Form.Group>
@@ -520,7 +535,7 @@ const ViewProduct = props => {
                                 <div className="mr-auto"></div>
                                 <div className="mr-auto"></div>
                                 <FontAwesomeIcon className="mr-auto" icon={faChevronLeft} style={styles.img_preview_fontawesome}
-                                    onClick={() => prevImage} />
+                                    onClick={prevImage} />
                                 <FontAwesomeIcon className="mr-auto" icon={faChevronRight} style={styles.img_preview_fontawesome}
                                     onClick={nextImage} />
                                 <div className="mr-auto"></div>
@@ -529,7 +544,7 @@ const ViewProduct = props => {
                             </div>
                             <div className="image-container">
                                 <img
-                                    src={imgData[index].value}
+                                    src={imgData[index].url}
                                     style={{ maxWidth: '100%', maxHeight: '90vh', margin: 'auto' }}
                                 />
                             </div>

@@ -1,6 +1,6 @@
 import { Form, Row, Accordion, Col, Card, InputGroup, Button, Spinner, Dropdown, ButtonGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faListAlt, faSlidersH } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faListAlt, faSlidersH, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons'
 import React, { Component } from 'react';
 import MuhalikConfig from '../../../../../../sdk/muhalik.config'
@@ -62,9 +62,7 @@ class ProducCategories extends React.Component {
             sub_category: { value: this.state.subCategoryValue, label: this.state.subCategoryValue }
         }
         const url = MuhalikConfig.PATH + '/api/categories/category';
-        await axios.post(url, {
-            data
-        }, {
+        await axios.post(url, data, {
             headers: { 'authorization': this.state.token }
         }).then(function (response) {
             currentComponent.setState({ isLoading: false })
@@ -257,9 +255,7 @@ class ProducCategories extends React.Component {
                 category: { value: copyArray[index].value, label: copyArray[index].value },
             }
             const url = MuhalikConfig.PATH + `/api/categories/category/${copyArray[index]._id}`
-            await axios.put(url, {
-                data
-            }, {
+            await axios.put(url, data, {
                 headers: { 'authorization': this.state.token }
             }).then(function (response) {
                 copyArray[index].label = copyArray[index].value;
@@ -336,9 +332,7 @@ class ProducCategories extends React.Component {
                 category_id: copyArray[index].category_id
             }
             const url = MuhalikConfig.PATH + `/api/categories/sub-category/${copyArray[index]._id}`
-            await axios.put(url, {
-                data
-            }, {
+            await axios.put(url, data, {
                 headers: { 'authorization': this.state.token }
             }).then(function (response) {
                 copyArray[index].label = copyArray[index].value;
@@ -401,6 +395,8 @@ class ProducCategories extends React.Component {
                 <ConfirmModal
                     onHide={() => this.setState({ showConfirmDeleteModal: false })}
                     show={this.state.showConfirmDeleteModal}
+                    iconname={faTrash}
+                    color={'red'}
                     title={'Delete Sub Category'}
                     _id={this.state.delete_category_id}
                     name={this.state.delete_category_name}

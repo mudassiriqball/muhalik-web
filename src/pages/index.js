@@ -44,7 +44,6 @@ class Index extends Component {
         super(props);
         this.state = {
             token: '',
-            jwt_token: '',
 
             products_list: [],
 
@@ -54,9 +53,9 @@ class Index extends Component {
     }
 
     async componentDidMount() {
-        const token = await getDecodedTokenFromStorage()
-        if (token !== null) {
-            this.setState({ jwt_token: token.role })
+        const _token = await getDecodedTokenFromStorage()
+        if (_token !== null) {
+            this.setState({ token: _token })
         }
         const url = MuhalikConfig.PATH + '/api/categories/categories';
         const currentComponent = this;
@@ -72,8 +71,7 @@ class Index extends Component {
 
     logout = () => {
         if (removeTokenFromStorage()) {
-            this.setState({ jwt_token: '' })
-            // window.location.reload(true);
+            this.setState({ token: '' })
             Router.reload('/index');
             Router.replace('/index');
         } else {
@@ -98,7 +96,8 @@ class Index extends Component {
                 <main>
                     {animation}
                     <Layout
-                        token={this.state.jwt_token}
+                        role={this.state.token.role || ''}
+                        name={this.state.token.full_name || ''}
                         logout={this.logout}
                         categories_list={this.state.categories_list}
                         sub_categories_list={this.state.sub_categories_list}

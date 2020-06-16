@@ -32,9 +32,7 @@
 //         const url = MuhalikConfig.PATH + '/api/products/'
 //         const currentComponent = this
 
-//         await axios.get(url, {
-//             headers: { 'authorization': await getUncodededTokenFromStorage() }
-//         }).then((response) => {
+//         await axios.get(url).then((response) => {
 //             console.log('data:', response.data.data)
 //             currentComponent.setState({ productsArray: response.data.data })
 //         }).catch((error) => {

@@ -63,11 +63,11 @@ const schema = yup.object({
         .max(40, "Can't be longer than 40 characters"),
     product_image_link: yup.string(),
     product_warranty: yup.number().integer("Enter Only Numbers")
-        .positive('Enter Between 1-1000')
+        .min(0, 'Enter Between 0-1000')
         .max(1000, 'Enter Between 0-1000'),
     warranty_type: yup.string(),
     product_discount: yup.number().integer("Enter Only Numbers")
-        .positive('Enter Between 0-100')
+        .min(0, 'Enter Between 0-100')
         .max(100, 'Enter Between 0-100'),
     // => Attributes (Variable Product)
     purchase_note: yup.string(),
@@ -168,44 +168,73 @@ class AddNew extends Component {
     }
 
     async uploadProduct(values, currentComponent) {
-        console.log('values: ', values)
         const formData = new FormData();
-        formData.append('product_name', values.product_name)
-        formData.append('product_description', values.product_description)
-        formData.append('product_type', values.product_type)
-        formData.append('sku', values.sku)
-        formData.append('product_price', values.product_price)
-        formData.append('product_in_stock', values.product_in_stock)
-        formData.append('product_brand_name', values.product_brand_name)
-        formData.append('product_image_link', '')
-        values.product_image_link && values.product_image_link.forEach(element => {
-            formData.append('myImage', element)
-        })
-        values.product_variations && values.product_variations.forEach((element, index) => {
-            let array = [];
-            element.image_link && element.image_link.forEach(file => {
-                formData.append('myImage', file)
-                array.push({ name: file.name })
+        console.log('values: ', values)
+        if (values.product_name != '') {
+            formData.append('product_name', values.product_name)
+        }
+        if (values.product_description != '') {
+            formData.append('product_description', values.product_description)
+        }
+        if (values.product_type != '') {
+            formData.append('product_type', values.product_type)
+        }
+        if (values.sku != '') {
+            formData.append('sku', values.sku)
+        }
+        if (values.purchase_note != '') {
+            formData.append('purchase_note', values.purchase_note)
+        }
+        if (values.product_weight != '') {
+            formData.append('product_weight', values.product_weight)
+        }
+        if (values.dimension_length != '') {
+            formData.append('dimension_length', values.dimension_length)
+        }
+        if (values.dimension_width != '') {
+            formData.append('dimension_width', values.dimension_width)
+        }
+        if (values.dimension_height != '') {
+            formData.append('dimension_height', values.dimension_height)
+        }
+        if (values.shipping_charges != '') {
+            formData.append('shipping_charges', values.shipping_charges)
+        }
+        if (values.handling_fee != '') {
+            formData.append('handling_fee', values.handling_fee)
+        }
+        if (values.product_brand_name != '') {
+            formData.append('product_brand_name', values.product_brand_name)
+        }
+        if (values.product_type == 'simple-product') {
+            formData.append('product_price', values.product_price)
+            formData.append('product_in_stock', values.product_in_stock)
+            values.product_image_link && values.product_image_link.forEach(element => {
+                formData.append('myImage', element)
             })
-            element.image_link = array
-        })
-        formData.append('product_warranty', values.product_warranty)
-        formData.append('warranty_type', values.warranty_type)
-        formData.append('product_discount', values.product_discount)
-        formData.append('purchase_note', values.purchase_note)
-        formData.append('product_variations', JSON.stringify(values.product_variations))
-        formData.append('product_weight', values.product_weight)
-        formData.append('dimension_length', values.dimension_length)
-        formData.append('dimension_width', values.dimension_width)
-        formData.append('dimension_height', values.dimension_height)
-        formData.append('shipping_charges', values.shipping_charges)
-        formData.append('handling_fee', values.handling_fee)
-        formData.append('custom_fields', JSON.stringify(values.custom_fields))
+            if (values.custom_fields != []) {
+                formData.append('custom_fields', JSON.stringify(values.custom_fields))
+            }
+            formData.append('product_warranty', values.product_warranty)
+            formData.append('warranty_type', values.warranty_type)
+            formData.append('product_discount', values.product_discount)
+        } else {
+            values.product_variations && values.product_variations.forEach((element, index) => {
+                let array = [];
+                element.image_link && element.image_link.forEach(file => {
+                    formData.append('myImage', file)
+                    array.push({ name: file.name })
+                })
+                element.image_link = array
+            })
+            formData.append('product_variations', JSON.stringify(values.product_variations))
+        }
+
         formData.append('category_id', values.category_id)
         formData.append('sub_category_id', values.sub_category_id)
+
         formData.append('dangerous_goods', JSON.stringify(values.dangerous_goods))
         formData.append('product_tags', JSON.stringify(values.product_tags))
-
         // if (this.state.isUpdateProduct == false) {
         const url = MuhalikConfig.PATH + '/api/products/add'
         const config = {
@@ -387,9 +416,9 @@ class AddNew extends Component {
                             sku: '',
                             product_brand_name: '',
                             product_image_link: '',
-                            product_warranty: '',
-                            warranty_type: '',
-                            product_discount: '',
+                            product_warranty: 0,
+                            warranty_type: 'No Warranty',
+                            product_discount: 0,
                             purchase_note: '',
                             product_variations: [],
                             product_weight: '',
@@ -406,6 +435,7 @@ class AddNew extends Component {
                         }
                 }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
+                    //  Category & Sub-Category Checking
                     if (this.state.productCategory == '' || this.state.productSubCategory == '') {
                         if (this.state.productCategory == '') {
                             this.setState({ categoryErrorDiv: 'RedBorderDiv' });
@@ -413,13 +443,16 @@ class AddNew extends Component {
                         if (this.state.productSubCategory == '') {
                             this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
                         }
-                    } else if (values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
+                    } // Product Price/Stock/Imgages Checking for Simple Product
+                    else if (values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
                         this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
-                    } else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
+                    } // Variation saved Check for variable product
+                    else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
                         this.setState({ showVariationsErrorAlert: true });
                     } else {
                         this.setState({ isLoading: true });
                         setTimeout(() => {
+
                             let array = [];
                             values.category_id = this.state.category_id;
                             values.sub_category_id = this.state.sub_category_id;
@@ -445,6 +478,7 @@ class AddNew extends Component {
                                 })
                                 values.product_variations = array;
                             }
+
                             this.uploadProduct(values, this)
                             if (this.state.clearFields) {
                                 resetForm();
@@ -482,6 +516,18 @@ class AddNew extends Component {
                             setSubmitting(false);
                         }, 500);
                     }
+
+
+
+
+
+
+
+
+
+
+
+
                 }}>
                 {({
                     handleSubmit, handleChange, values, touched, isValid, errors, handleBlur, isSubmitting
@@ -489,11 +535,11 @@ class AddNew extends Component {
                         <div>
                             <TitleRow icon={faPlus} title={this.props.title} />
                             {this.props.isUpdateProduct ?
-                                <Form.Row style={{ margin: ' 0% 2%', display: 'flex', alignItems: 'center' }} >
-                                    <Nav.Link style={{ fontSize: '14px' }} className="mr-auto" onClick={this.props.back}>Back</Nav.Link>
-                                    <div className="mr-auto" style={{ fontSize: '14px' }}> {this.props.product_name}</div>
-                                    <Nav.Link style={{ fontSize: '14px' }} onClick={this.props.view}> View </Nav.Link>
-                                    <Nav.Link style={{ fontSize: '14px' }} onClick={this.props.delete}> Delete </Nav.Link>
+                                <Form.Row style={{ margin: ' 1% 2%', display: 'flex', alignItems: 'center' }} >
+                                    <Button variant='outline-primary' size='sm' className="mr-auto" onClick={this.props.back}>Back</Button>
+                                    <div className="mr-auto" style={{ fontSize: '14px' }}> {this.props.product_name || '-'}</div>
+                                    <Button variant='outline-primary' size='sm' className="mr-3" onClick={this.props.edit}>Edit</Button>
+                                    <Button variant='outline-danger' size='sm' onClick={this.props.delete}>Delete</Button>
                                 </Form.Row>
                                 :
                                 null

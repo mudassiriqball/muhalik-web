@@ -39,15 +39,17 @@ export function checkAuth(rolee) {
     try {
         const token = reactLocalStorage.get('token');
         const decodedToken = decode(token);
-        if (decodedToken.data.role == 'admin') {
-            return decodedToken.data.fullName;
-        } else if (decodedToken.data.role !== rolee) {
-            Router.replace('/index')
-        } else {
+        if (decodedToken.data.role == rolee) {
             return decodedToken.data.full_name;
+        } else {
+            Router.replace('/index')
         }
     } catch (error) {
-        Router.replace('/index')
+        if (rolee == '/login' || rolee == '/signup' || rolee == '/vendor-signup') {
+            Router.replace(rolee)
+        } else {
+            Router.replace('/index')
+        }
     }
 }
 
