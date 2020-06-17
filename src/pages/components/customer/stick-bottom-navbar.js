@@ -9,17 +9,18 @@ import {
     faUserCircle
 } from '@fortawesome/free-regular-svg-icons'
 
-import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
+import { faProductHunt, faBuromobelexperte } from '@fortawesome/free-brands-svg-icons';
 
 const StickyBottomNavbar = () => {
     const [isProducts, setIsProducts] = React.useState(true)
     const [curentHref, setCurentHref] = React.useState('')
     React.useEffect(() => {
-        if (window.location.href == 'http://localhost:5000/' || window.location.href == 'http://localhost:5000/index') {
+        if (window.location.href == 'http://mahaalk.com/' || window.location.href == 'http://mahaalk.com/index'
+            || window.location.href == 'https://mahaalk.netlify.app/') {
             setCurentHref('index')
-        } else if (window.location.href == 'http://localhost:5000/categories') {
+        } else if (window.location.href == 'http://mahaalk.com/categories' || window.location.href == 'https://mahaalk.netlify.app/categories') {
             setCurentHref('categories')
-        } else if (window.location.href == 'http://localhost:5000/account') {
+        } else if (window.location.href == 'http://mahaalk.com/account' || window.location.href == 'https://mahaalk.netlify.app/account') {
             setCurentHref('account')
         }
     });
@@ -42,7 +43,7 @@ const StickyBottomNavbar = () => {
                             color: curentHref == 'categories' ? `${GlobalStyleSheet.primry_color}` : 'gray'
                         }}
                     >
-                        <FontAwesomeIcon icon={faTh} style={styles.Categories_fontawesome} />
+                        <FontAwesomeIcon icon={faBuromobelexperte} style={styles.Categories_fontawesome} />
                         Categories
                     </Nav.Link>
                     <div className='mr-auto'></div>

@@ -10,7 +10,7 @@
     "next": "next -p 5000",
     "dev": "nodemon app.js",
     "build": "next build",
-    "prod": "npm run build && cross-env NODE_ENV=production node app.js",
+    "prod": "npm run build && cross-env NODE_ENV=production nodemon app.js",
     "start": "npm run build && node app.js",
     "export": "npm run build && next export"
   },

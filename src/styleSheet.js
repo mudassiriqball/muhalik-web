@@ -23,6 +23,8 @@ let GlobalStyleSheet = {
     card_header_background: 'lightgray',
 
     react_select_styles: {
+        menuPortal: base => ({ ...base, zIndex: 9999 }),
+        menu: provided => ({ ...provided, zIndex: 9999 }),
         control: (base) => ({
             ...base,
             fontSize: '13px',

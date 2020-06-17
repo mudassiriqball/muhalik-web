@@ -198,7 +198,7 @@ class Customers extends React.Component {
                         </Row>
 
                         <CustomerTable
-                            header={'All Vendors'}
+                            header={'All Customers'}
                             list={this.state.customers_list}
                             rank={true}
                             setView={(index) => this.setState({
@@ -212,7 +212,7 @@ class Customers extends React.Component {
                             })}
                         />
                         <CustomerTable
-                            header={'Restricted Vendors'}
+                            header={'Restricted Customers'}
                             list={this.state.restricted_customers_list}
                             rank={true}
                             setView={(index) => this.setState({
@@ -225,7 +225,7 @@ class Customers extends React.Component {
                     </div>
                     :
                     <div>
-                        <TitleRow icon={faPersonBooth} title={`Admin Dashboard / Vendors / ${this.state.single_customer.full_name}`} />
+                        <TitleRow icon={faPersonBooth} title={`Admin Dashboard / Customers / ${this.state.single_customer.full_name}`} />
                         <Form.Row style={{ margin: ' 0% 2%', display: 'flex', alignItems: 'center' }} >
                             <Button size='sm' variant='outline-primary' className="mr-auto m-2" onClick={() => this.setState({ isViewVendor: false })}> Back </Button>
                             {this.state.single_customer.status != 'restricted' ?

@@ -23,21 +23,33 @@ let animation =
     </h3>
 
 
-// export async function getStaticProps() {
-//     const url = MuhalikConfig.PATH + '/api/categories/categories';
-//     const data = [];
-//     await axios.get(url).then((response) => {
-//         data = response.data.category.docs
-//     }).catch((error) => {
-//         console.log('Caterories Fetchig Error: ', error)
-//     })
+export async function getServerSideProps(context) {
+    const url = MuhalikConfig.PATH + '/api/categories/categories';
+    let categories_list = []
+    let sub_categories_list = []
+    let products_list = []
+    await axios.get(url).then((response) => {
+        categories_list = response.data.category.docs,
+            sub_categories_list = response.data.sub_category.docs
+    }).catch((error) => {
+        console.log('Caterories Fetchig Error: ', error)
+    })
 
-//     return {
-//         props: {
-//             data
-//         }
-//     }
-// }
+    const url_3 = MuhalikConfig.PATH + '/api/products/';
+    await axios.get(url_3).then((response) => {
+        products_list = response.data.data
+    }).catch((error) => {
+    })
+
+
+    return {
+        props: {
+            products_list,
+            categories_list,
+            sub_categories_list
+        },
+    }
+}
 
 class Index extends Component {
     constructor(props) {
@@ -47,26 +59,25 @@ class Index extends Component {
 
             products_list: [],
 
-            categories_list: this.props.data,
-            sub_categories_list: []
+            // categories_list: [],
+            // sub_categories_list: []
         }
     }
-
     async componentDidMount() {
         const _token = await getDecodedTokenFromStorage()
         if (_token !== null) {
             this.setState({ token: _token })
         }
-        const url = MuhalikConfig.PATH + '/api/categories/categories';
-        const currentComponent = this;
-        await axios.get(url).then((response) => {
-            currentComponent.setState({
-                categories_list: response.data.category.docs,
-                sub_categories_list: response.data.sub_category.docs
-            });
-        }).catch((error) => {
-            console.log('Caterories Fetchig Error: ', error)
-        })
+        // const url = MuhalikConfig.PATH + '/api/categories/categories';
+        // const currentComponent = this;
+        // await axios.get(url).then((response) => {
+        //     currentComponent.setState({
+        //         categories_list: response.data.category.docs,
+        //         sub_categories_list: response.data.sub_category.docs
+        //     });
+        // }).catch((error) => {
+        //     console.log('Caterories Fetchig Error: ', error)
+        // })
     }
 
     logout = () => {
@@ -99,14 +110,13 @@ class Index extends Component {
                         role={this.state.token.role || ''}
                         name={this.state.token.full_name || ''}
                         logout={this.logout}
-                        categories_list={this.state.categories_list}
+                        categories_list={this.props.categories_list}
                         sub_categories_list={this.state.sub_categories_list}
-                        carosuel={<SliderCarousel />}
+                    // carosuel={<SliderCarousel />}
                     >
-                        <div className='categories-slider'>
-                            <CategoriesSlider categories_list={this.state.categories_list} sub_categories_list={this.state.sub_categories_list} />
-                        </div>
-                        <Products />
+                        <SliderCarousel categories_list={this.props.categories_list} />
+
+                        <Products products_list={this.props.products_list} />
                     </Layout>
                 </main>
                 <style jsx>{`
@@ -118,13 +128,8 @@ class Index extends Component {
                         left: 0;
                         right: 0;
                     }
-                    .categories-slider{
-                        display: none
-                    }
                     @media (max-width: 767px){
-                        .categories-slider{
-                            display: block
-                        }
+                        
                     }
                 `}</style>
                 <style jsx global>{`

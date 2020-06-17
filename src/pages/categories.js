@@ -13,7 +13,6 @@ import StickyBottomNavbar from './components/customer/stick-bottom-navbar'
 
 
 function Categories({ categories_list, sub_categories_list }) {
-    console.log('cataffa:', sub_categories_list)
     return (
         <div className='div'>
             <Navbar bg="success" expand="lg" className='navbar'>
@@ -142,7 +141,7 @@ function Categories({ categories_list, sub_categories_list }) {
     )
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     const url = MuhalikConfig.PATH + '/api/categories/categories';
     let categories_list = []
     let sub_categories_list = []
@@ -159,6 +158,7 @@ export async function getStaticProps() {
         },
     }
 }
+
 
 const styles = {
     fontawesome: {

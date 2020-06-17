@@ -6,7 +6,6 @@ import StickyBottomNavbar from './stick-bottom-navbar'
 const Layout = (props) => (
     <>
         <Toolbar {...props} />
-        {props.carosuel}
         <div className='childrens'>
             {props.children}
         </div>
@@ -25,9 +24,6 @@ const Layout = (props) => (
                 .display_in_sm_xs{
                     display: none
                 }
-                .childrens{
-                    padding: 1% 3% 5% 3%;
-                }
             }
             @media (max-width: 767px) {
                 .display_in_md_lg{
@@ -35,9 +31,6 @@ const Layout = (props) => (
                 }
                 .display_in_sm_xs{
                     display: block
-                }
-                .childrens{
-                    padding: 0.5%;
                 }
             }
         `}</style>
