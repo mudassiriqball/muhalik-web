@@ -10,7 +10,6 @@ import Typical from 'react-typical'
 import SliderCarousel from './components/customer/slider-carousel'
 import CategoriesSlider from './components/customer/categories-slider'
 import Products from './components/customer/products'
-
 let animation =
     <h3 style={{ background: 'green', color: 'white', position: 'fixed', left: '1%', bottom: '1%', zIndex: 1000 }}>
         <Typical

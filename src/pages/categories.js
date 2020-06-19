@@ -14,7 +14,7 @@ import StickyBottomNavbar from './components/customer/stick-bottom-navbar'
 
 function Categories({ categories_list, sub_categories_list }) {
     return (
-        <div className='div'>
+        <div className='categories'>
             <Navbar bg="success" expand="lg" className='navbar'>
                 <Nav.Link onClick={() => Router.back()} className='d-flex align-items-center'>
                     <FontAwesomeIcon icon={faArrowAltCircleLeft} style={styles.fontawesome} />
@@ -48,50 +48,50 @@ function Categories({ categories_list, sub_categories_list }) {
                 <StickyBottomNavbar />
             </div>
             <style type="text/css">{`
-                ._row{
+                .categories ._row{
                     padding: 2%;
                     margin: 3% 10%;
                     background: white;
                 }
-                .col{
+                .categories .col{
                     padding: 2%;
                     display: flex;
                     flex-direction: column;
                 }
-                .hr{
+                .categories .hr{
                     margin: 0% 0% 1% 0%;
                     padding: 1% 0% 0% 0%;
                 }
 
-                .home-link{
+                .categories .home-link{
                     font-size: 14px;
                     color: white;
                 }
-                .home-link:hover{
+                .categories .home-link:hover{
                     color: lightgray;
                 }
 
-                .category{
+                .categories .category{
                     color: blue;
                 }
-                .category:hover{
+                .categories .category:hover{
                     cursor: pointer;
                     color: ${GlobalStyleSheet.primry_color};
                     text-decoration: underline;
                 }
 
-                .sub-category{
+                .categories .sub-category{
                     font-size: 13px;
                     padding: 1% 0%;
                     color: #808080;
                 }
-                .sub-category:hover{
+               .categories  .sub-category:hover{
                     cursor: pointer;
                     color: ${GlobalStyleSheet.primry_color};
                     text-decoration: underline;
                 }
 
-                .div{
+                .categories{
                     min-height: 100vh;
                     background: ${GlobalStyleSheet.body_color};
                     position: absolute;
@@ -99,40 +99,40 @@ function Categories({ categories_list, sub_categories_list }) {
                     left: 0;
                     right: 0;
                 }
-                .navbar{
+                .categories .navbar{
                     margin: 0px;
                     padding: 0px;
                     align-items: center;
                     display: flex;
                 }
 
-                .sticy-bottom-navbar{
+                .categories .sticy-bottom-navbar{
                     display: none
                 }
-                .footer{
+                .categories .footer{
                     display: block;
                 }
                 @media (main-width: 767px){
-                    ._row{
+                    .categories ._row{
                         margin: 0%;
                         padding: 5%;
                     }
-                    .sticy-bottom-navbar{
+                    .categories .sticy-bottom-navbar{
                         display: block;
                     }
-                    .footer{
+                    .categories .footer{
                         display: none;
                     }
                 }
                 @media (max-width: 767px){
-                    ._row{
+                    .categories ._row{
                         margin: 0%;
                         padding: 5%;
                     }
-                    .sticy-bottom-navbar{
+                    .categories .sticy-bottom-navbar{
                         display: block;
                     }
-                    .footer{
+                    .categories .footer{
                         display: none;
                     }
                 }

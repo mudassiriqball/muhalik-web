@@ -15,7 +15,7 @@ import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { getTokenFromStorage } from '../sdk/core/authentication-service'
 
 import GlobalStyleSheet from '../styleSheet';
-
+import Toolbar from './components/toolbar';
 import { checkAuth } from '../sdk/core/authentication-service'
 
 // RegEx for phone number validation
@@ -238,9 +238,7 @@ class VendorSignup extends Component {
                                     iconname={faThumbsUp}
                                     color={'green'}
                                 />
-                                <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
-                                    <Navbar.Brand href="/" className="mr-auto" > Muhalik </Navbar.Brand>
-                                </Navbar>
+                                <Toolbar />
 
                                 <Row className="row ">
                                     <Col lg="auto" md="auto" sm="auto" xs="auto" className='form_col'>
@@ -650,6 +648,14 @@ class VendorSignup extends Component {
                                         }
                                     `}
                                 </style>
+                                <style jsx global>{`
+                                    html,
+                                    body {
+                                        padding: 0;
+                                        margin: 0;
+                                        font-family: Roboto, Helvetica Neue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+                                    }
+                                `}</style>
                             </div>
                         )
                 }

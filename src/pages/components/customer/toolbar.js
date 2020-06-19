@@ -79,7 +79,7 @@ const Toolbar = (props) => {
     return (
         <div className='customer_toolar'>
             <Card>
-                <Navbar className='m-0 p-0 display_in_md_lg' bg='light'>
+                <Navbar className='m-0 p-1 display_in_md_lg' bg='light'>
                     <Nav className="ml-auto mr-auto">
                     </Nav>
 
@@ -104,16 +104,14 @@ const Toolbar = (props) => {
                         <Nav.Link href='' className='first_nav_link'>
                             Help
                         </Nav.Link>
-                        <Dropdown>
-                            <Dropdown.Toggle as={Nav.Link} className='d-inline-flex align-items-center'>
-                                <Nav.Link className='first_nav_link'>
-                                    {selectedLang == 'English' ?
-                                        <Image src="pk-flag.svg.png" fluid style={{ width: '25px', maxWidth: '25px', marginRight: '5px' }} />
-                                        :
-                                        <Image src="ksa-flag.svg.png" fluid style={{ width: '25px', maxWidth: '25px', marginRight: '5px' }} />
-                                    }
-                                    {selectedLang}
-                                </Nav.Link>
+                        <Dropdown className='d-flex align-items-center'>
+                            <Dropdown.Toggle as={Nav.Link} className='d-inline-flex align-items-center first_nav_link'>
+                                {selectedLang == 'English' ?
+                                    <Image src="pk-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
+                                    :
+                                    <Image src="ksa-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
+                                }
+                                {selectedLang}
                             </Dropdown.Toggle>
                             <Dropdown.Menu style={{ zIndex: 100 }}>
                                 <Dropdown.Item className='dropdown_item' onClick={() => setSelectedLang('English')}>English</Dropdown.Item>
@@ -397,17 +395,21 @@ const Toolbar = (props) => {
                     color: white;
                 }
                 
-                    .customer_toolar .sticky .sticky-inner .text_animation {
-                        color: white;
-                    }
+                    
                     .customer_toolar .text_animation{
                         animation: mymove 5s infinite;
                         color: ${GlobalStyleSheet.primry_color};
-                        font-family: Verdana, Geneva, sans-serif;
                         margin: 0%;
                     }
+                    .customer_toolar .sticky .sticky-inner .text_animation {
+                        animation: mymmove 5s infinite;
+                        color: white;
+                    }
                     @keyframes mymove {
-                        50% {text-shadow: 10px 10px 10px green;}
+                        50% {text-shadow: 10px 15px 3px green;}
+                    }
+                    @keyframes mymmove {
+                        50% {text-shadow: 10px 15px 3px white;}
                     }
 
                     .customer_toolar .third_nav_link {

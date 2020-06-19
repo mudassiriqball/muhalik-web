@@ -15,7 +15,7 @@ import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import AlertModal from './components/alert-modal';
 import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config';
-
+import Toolbar from './components/toolbar';
 import { checkAuth } from '../sdk/core/authentication-service'
 
 // RegEx for phone number validation
@@ -230,9 +230,7 @@ class Signup extends Component {
                                     color={'green'}
                                 />
 
-                                <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
-                                    <Navbar.Brand href="/" className="mr-auto" > Mahaalk </Navbar.Brand>
-                                </Navbar>
+                                <Toolbar />
 
                                 {/* <Container className='container'> */}
                                 <Row className="row">
@@ -248,12 +246,6 @@ class Signup extends Component {
                                                 </Col>
                                             </Form.Row>
                                             <hr className='pt-0 mt-0' />
-
-
-
-
-
-
 
                                             <Form.Row>
                                                 <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
@@ -310,10 +302,6 @@ class Signup extends Component {
 
                                                     </InputGroup>
                                                 </Form.Group>
-
-
-
-
 
 
                                                 <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
@@ -630,6 +618,14 @@ class Signup extends Component {
                                         }
                                     `}
                                 </style>
+                                <style jsx global>{`
+                                    html,
+                                    body {
+                                        padding: 0;
+                                        margin: 0;
+                                        font-family: Roboto, Helvetica Neue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+                                    }
+                                `}</style>
                             </div >
                         )
                 }

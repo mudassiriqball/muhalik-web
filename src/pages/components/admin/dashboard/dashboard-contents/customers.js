@@ -117,7 +117,7 @@ class Customers extends React.Component {
 
     render() {
         return (
-            <div className='vendors'>
+            <div className='customers'>
                 <AlertModal
                     onHide={(e) => this.setState({ showAlertModal: false })}
                     show={this.state.showAlertModal}
@@ -299,10 +299,10 @@ class Customers extends React.Component {
                 }
                 <style type="text/css">
                     {`
-                        .vendors .Card{
+                        .customers .Card{
                             margin: 2%;
                         }
-                        .vendors .p {
+                        .customers .p {
                             width: 100%;
                             text-align: center;
                             border-bottom: 1px solid lightgray;
@@ -310,34 +310,34 @@ class Customers extends React.Component {
                             margin: 20px 20px;
                         }
 
-                        .vendors .p span {
+                        .customers .p span {
                             font-size: 13px;
                             color: gray;
                             background: white;
                             padding:0 10px;
                         }
-                        .vendors .form_label{
+                        .customers .form_label{
                             color: gray;
                             font-size: ${GlobalStyleSheet.form_label_fontsize};
                         }
-                        .vendors .hover {
+                        .customers .hover {
                             margin: 5px 15px
                         }
-                        .vendors .hover:hover {
+                        .customers .hover:hover {
                             margin: 0px 10px;
                             cursor: pointer
                         }
 
-                        .vendors .card_header {
+                        .customers .card_header {
                             font-size: ${GlobalStyleSheet.card_header_fontsize};
                             border: none;
                         }
-                        .vendors .card_text {
+                        .customers .card_text {
                             color: ${GlobalStyleSheet.admin_primry_color};
                             font-size: 17px;
                         }
                         @media (max-width: 767px) {
-                            .vendors. hover:hover {
+                            .customers. hover:hover {
                                 margin: 0px 10px 10px 10px ;
                                 cursor: pointer
                             }

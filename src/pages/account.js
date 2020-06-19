@@ -20,7 +20,7 @@ import StickyBottomNavbar from './components/customer/stick-bottom-navbar'
 function Account({ categories_list, sub_categories_list }) {
 
     return (
-        <div className='div'>
+        <div className='account'>
             <Navbar bg="success" expand="lg" className='navbar'>
                 <Nav.Link onClick={() => Router.back()} className='d-flex align-items-center'>
                     <FontAwesomeIcon icon={faArrowAltCircleLeft} style={styles.nav_fontawesome} />
@@ -76,7 +76,7 @@ function Account({ categories_list, sub_categories_list }) {
             </div>
 
             <style type="text/css">{`
-                .div{
+                .account{
                     min-height: 100vh;
                     background: ${GlobalStyleSheet.body_color};
                     position: absolute;
@@ -84,21 +84,21 @@ function Account({ categories_list, sub_categories_list }) {
                     left: 0;
                     right: 0;
                 }
-                .home-link{
+                .account .home-link{
                     font-size: 14px;
                     color: white;
                     margin-right: 0%;
                 }
-                .label{
+                .account .label{
                     align-self: center;
                     font-size: 14px;
                     color: gray;
                 }
-                .sticy-bottom-navbar{
+                .account .sticy-bottom-navbar{
                     display: none
                 }
                 @media (max-width: 767px){
-                    .sticy-bottom-navbar{
+                    .account. sticy-bottom-navbar{
                         display: block;
                     }
                 }

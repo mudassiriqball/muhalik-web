@@ -46,7 +46,8 @@ const SliderCarousel = (props) => {
             <style type="text/css">{`
                 .slider_carousel .row{
                     padding: 0% 5%;
-                    background: ${GlobalStyleSheet.primry_color}
+                    background: ${GlobalStyleSheet.primry_color};
+                    background: linear-gradient(180deg, ${GlobalStyleSheet.primry_color} 0%, #d4f3d0 100%);
                 }
                  @media (max-width: 767px) {
                     .slider_carousel .row{

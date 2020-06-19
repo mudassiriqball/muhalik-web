@@ -234,6 +234,14 @@ class Admin extends Component {
                     logout={this.logout} />
                 {backdrop}
                 {/* </AdminLayout> */}
+                <style jsx global>{`
+                    html,
+                    body {
+                        padding: 0;
+                        margin: 0;
+                        font-family: Roboto, Helvetica Neue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+                    }
+                `}</style>
             </div>
         );
     }

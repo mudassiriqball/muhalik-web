@@ -7,7 +7,7 @@ import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner }
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import MuhalikConfig from '../sdk/muhalik.config';
-
+import Toolbar from './components/toolbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash, faMobileAlt, faLock } from '@fortawesome/free-solid-svg-icons';
 
@@ -112,9 +112,7 @@ class Login extends Component {
                         isSubmitting
                     }) => (
                             <div className='login'>
-                                <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
-                                    <Navbar.Brand href="/" className="mr-auto" > Muhalik </Navbar.Brand>
-                                </Navbar>
+                                <Toolbar />
                                 <Row className='row'>
                                     <Col lg="auto" md="auto" sm="auto" xs="auto" className='form_col'>
                                         <p>
@@ -260,6 +258,14 @@ class Login extends Component {
                                         }
                                     `}
                                 </style>
+                                <style jsx global>{`
+                                    html,
+                                    body {
+                                        padding: 0;
+                                        margin: 0;
+                                        font-family: Roboto, Helvetica Neue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+                                    }
+                                `}</style>
                             </div >
                         )
                 }
