@@ -17,12 +17,14 @@ export default function useInfiniteScroll(query, pageNumber) {
         let cancle
         axios({
             method: 'GET',
-            url: MuhalikConfig + '/api/products/get-products',
+            url: 'http://openlibrary.org/search.json',
+            // url: MuhalikConfig + '/api/products/get-products',
             params: { q: query, page: pageNumber },
             cancelToken: new axios.CancelToken(c => cancle = c)
         }).then(res => {
             setProducts(prevProducts => {
-                return [...new Set([...prevProducts, ...res.data.data])]
+                return [...new Set([...prevProducts, ...res.data.docs.map(p => p.title)])]
+                // return [...new Set([...prevProducts, ...res.data.data])]
             })
             setHasMore(res.data.docs.length > 0)
             setLoading(false)

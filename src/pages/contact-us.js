@@ -1,11 +1,3 @@
-// import Layout from './components/customer/layout';
-// const ContactUs = () => (
-//     <Layout>
-//         <h3 className="text-center">Mahaalk's Contact Us</h3>
-//     </Layout>
-// )
-
-// export default ContactUs;
 import React, { useState, useRef, useCallback } from 'react'
 import useInfiniteScroll from '../useInfiniteScroll'
 
@@ -15,7 +7,6 @@ export default function ContactUs() {
     const [pageNumber, setPageNumber] = useState(1)
 
     const { loading, error, products, hasMore } = useInfiniteScroll(query, pageNumber)
-
 
     const observer = useRef()
     const lastProducrRef = useCallback((node) => {
@@ -35,13 +26,15 @@ export default function ContactUs() {
     }
 
     return (
-        <div>
+        <div className='m-5'>
             <input type='text' value={query} onChange={handleSearch}></input>
             {products && products.map((element, index) => {
                 if (products.length === index + 1) {
                     return <div ref={lastProducrRef} key={index}>{element}</div>
+                    // return <div ref={lastProducrRef} className='w-100 m-5 p-5' key={index}>Product Name: {element.product_name}</div>
                 } else {
-                    return <div className='w-100 m-5 p-5' key={index}>Product Name: {element.product_name}</div>
+                    return <div key={index}>Name: {element}</div>
+                    // return <div className='w-100 m-5 p-5' key={index}>Product Name: {element.product_name}</div>
                 }
             })}
             <div>{loading && 'Loading...'}</div>
@@ -49,3 +42,4 @@ export default function ContactUs() {
         </div>
     )
 }
+
