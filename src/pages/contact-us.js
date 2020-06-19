@@ -37,11 +37,11 @@ export default function ContactUs() {
     return (
         <div>
             <input type='text' value={query} onChange={handleSearch}></input>
-            {products && products.map((product, index) => {
+            {products && products.map((element, index) => {
                 if (products.length === index + 1) {
-                    return <div ref={lastProducrRef} key={index}>{product}</div>
+                    return <div ref={lastProducrRef} key={index}>{element}</div>
                 } else {
-                    return <div key={index}>{product}</div>
+                    return <div className='w-100 m-5 p-5' key={index}>Product Name: {element.product_name}</div>
                 }
             })}
             <div>{loading && 'Loading...'}</div>

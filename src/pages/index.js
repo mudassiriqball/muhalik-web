@@ -55,11 +55,7 @@ class Index extends Component {
         super(props);
         this.state = {
             token: '',
-
             products_list: [],
-
-            // categories_list: [],
-            // sub_categories_list: []
         }
     }
     async componentDidMount() {
@@ -110,7 +106,7 @@ class Index extends Component {
                         name={this.state.token.full_name || ''}
                         logout={this.logout}
                         categories_list={this.props.categories_list}
-                        sub_categories_list={this.state.sub_categories_list}
+                        sub_categories_list={this.props.sub_categories_list}
                     // carosuel={<SliderCarousel />}
                     >
                         <SliderCarousel categories_list={this.props.categories_list} />

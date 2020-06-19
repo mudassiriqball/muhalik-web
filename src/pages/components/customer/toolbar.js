@@ -75,7 +75,6 @@ const Toolbar = (props) => {
     function categoryMouseLeave() {
         setCategory_id('')
     }
-
     return (
         <div className='customer_toolar'>
             <Card>

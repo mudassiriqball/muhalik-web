@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-
+import MuhalikConfig from '../sdk/muhalik.config'
 
 export default function useInfiniteScroll(query, pageNumber) {
     const [loading, setLoading] = useState('')
@@ -17,12 +17,12 @@ export default function useInfiniteScroll(query, pageNumber) {
         let cancle
         axios({
             method: 'GET',
-            url: 'http://openlibrary.org/search.json',
+            url: MuhalikConfig + '/api/products/get-products',
             params: { q: query, page: pageNumber },
             cancelToken: new axios.CancelToken(c => cancle = c)
         }).then(res => {
             setProducts(prevProducts => {
-                return [...new Set([...prevProducts, ...res.data.docs.map(p => p.title)])]
+                return [...new Set([...prevProducts, ...res.data.data])]
             })
             setHasMore(res.data.docs.length > 0)
             setLoading(false)
