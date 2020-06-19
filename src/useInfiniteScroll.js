@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import MuhalikConfig from '../sdk/muhalik.config'
+import MuhalikConfig from './sdk/muhalik.config'
 
 export default function useInfiniteScroll(query, pageNumber) {
     const [loading, setLoading] = useState('')

@@ -7,7 +7,7 @@
 
 // export default ContactUs;
 import React, { useState, useRef, useCallback } from 'react'
-import useInfiniteScroll from './useInfiniteScroll'
+import useInfiniteScroll from '../useInfiniteScroll'
 
 
 export default function ContactUs() {
