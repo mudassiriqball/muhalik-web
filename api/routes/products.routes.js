@@ -6,7 +6,7 @@ const checkAuth = require('../middleware/check-auth');
 const productController = require('../controllers/products.controller');
 
 
-
+//router.get("/get-products", productController.get_products);
 router.get("/", productController.get_all_products);
 router.get("/:id", productController.get_vendor_products);
 
