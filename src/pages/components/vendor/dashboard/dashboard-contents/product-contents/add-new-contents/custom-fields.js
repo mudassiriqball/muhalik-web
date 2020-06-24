@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { Accordion, Form, InputGroup, Col, Button, Row, Card, Modal, Nav } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import GlobalStyleSheet from '../../../../../../../styleSheet';
 import Select, { components } from 'react-select';
 import AddNewFieldNameModal from './add-new-field-name-model';
+import AlertModal from '../../../../../alert-modal'
+
+
 const groupStyles = {
     border: `1px solid ${GlobalStyleSheet.admin_primry_color}`,
     borderRadius: '5px',
@@ -24,6 +27,8 @@ const CustomFields = props => {
     const [fieldName, setFieldName] = React.useState('');
     const [fieldValue, setFieldValue] = React.useState('');
     const [error, setError] = React.useState('');
+    const [userStatusAlert, setUserStatusAlert] = React.useState(false);
+    const [statusAlertMessage, setStatusAlertMessage] = React.useState('');
 
     function handleAddCustomFieldBtnClick() {
         if (fieldName != '' && fieldValue != '') {
@@ -57,9 +62,28 @@ const CustomFields = props => {
             setError('Add Fields First');
         }
     }
+    function handleShowModal() {
+        if (props.user_status == 'disapproved') {
+            setUserStatusAlert(true)
+            setStatusAlertMessage('You can\'t upload product, Your account is not approved yet')
+        } else if (props.user_status == 'restricted') {
+            setUserStatusAlert(true)
+            setStatusAlertMessage('You can\'t upload product, Your account has blocked, Contact to Admin')
+        } else {
+            setModalShow(true)
+        }
+    }
 
     return (
         <>
+            <AlertModal
+                onHide={(e) => setUserStatusAlert(false)}
+                show={userStatusAlert}
+                header={'Error'}
+                message={statusAlertMessage}
+                iconname={faExclamationTriangle}
+                color={"#ff3333"}
+            />
             {props.hideCustomFields ?
                 <Form.Label style={styles.label}> Please First Create Variations </Form.Label>
                 :
@@ -77,7 +101,7 @@ const CustomFields = props => {
                                 value={fieldName}
                                 onChange={(e) => setFieldName(e)}
                             />
-                            <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={() => setModalShow(true)}>
+                            <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={handleShowModal}>
                                 Add New
                         </Nav.Link>
                             <AddNewFieldNameModal

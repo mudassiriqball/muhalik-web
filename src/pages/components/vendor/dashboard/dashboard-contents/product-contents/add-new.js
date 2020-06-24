@@ -113,6 +113,8 @@ class AddNew extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            userStatusAlert: false,
+            statusAlertMessage: '',
             token: '',
             isUpdateProduct: this.props.isUpdateProduct,
             _id: this.props._id,
@@ -435,98 +437,100 @@ class AddNew extends Component {
                         }
                 }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    //  Category & Sub-Category Checking
-                    if (this.state.productCategory == '' || this.state.productSubCategory == '') {
-                        if (this.state.productCategory == '') {
-                            this.setState({ categoryErrorDiv: 'RedBorderDiv' });
-                        }
-                        if (this.state.productSubCategory == '') {
-                            this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
-                        }
-                    } // Product Price/Stock/Imgages Checking for Simple Product
-                    else if (values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
-                        this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
-                    } // Variation saved Check for variable product
-                    else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
-                        this.setState({ showVariationsErrorAlert: true });
+                    if (this.props.user_status == 'disapproved') {
+                        this.setState({
+                            userStatusAlert: true,
+                            statusAlertMessage: 'You can\'t upload product, Your account is not approved yet'
+                        })
+                    } else if (this.props.user_status == 'restricted') {
+                        this.setState({
+                            userStatusAlert: true,
+                            statusAlertMessage: 'You can\'t upload product, Your account has blocked, Contact to Admin'
+                        })
                     } else {
-                        this.setState({ isLoading: true });
-                        setTimeout(() => {
-
-                            let array = [];
-                            values.category_id = this.state.category_id;
-                            values.sub_category_id = this.state.sub_category_id;
-                            values.product_tags = this.state.productTags;
-
-                            values.dangerous_goods = this.state.dangerousGoodsArray;
-
-                            if (!this.state.isVariableProduct) {
-                                values.product_image_link = this.state.files;
-                                values.custom_fields = this.state.customFieldsArray;
-                            } else {
-                                array = [];
-                                this.state.variationsArray.forEach((element, index) => {
-                                    let item = []
-                                    element.item.forEach(e => {
-                                        item.push({ name: e.name, value: e.value })
-                                    });
-                                    let item_1 = []
-                                    element.custom_fields.forEach(e => {
-                                        item_1.push({ name: e.name, value: e.value })
-                                    });
-                                    array.push({ item: item, custom_fields: item_1, price: element.price, stock: element.stock, image_link: element.image_link })
-                                })
-                                values.product_variations = array;
+                        //  Category & Sub-Category Checking
+                        if (this.state.productCategory == '' || this.state.productSubCategory == '') {
+                            if (this.state.productCategory == '') {
+                                this.setState({ categoryErrorDiv: 'RedBorderDiv' });
                             }
-
-                            this.uploadProduct(values, this)
-                            if (this.state.clearFields) {
-                                resetForm();
-                                this.setState({
-                                    showVariationsErrorAlert: false,
-                                    showSimpleProductPriceImgLinkErrorrAlert: false,
-                                    isVariableProduct: false,
-
-                                    productCategory: '',
-                                    productSubCategory: '',
-
-                                    subCategoryDisabled: true,
-                                    subSubCategoryDisabled: true,
-
-                                    categoryErrorDiv: 'BorderDiv',
-                                    subCategoryErrorDiv: 'BorderDiv',
-                                    productTags: [],
-
-                                    warrantyType: '',
-                                    inputValue: '',
-                                    files: [],
-                                    imagePreviewArray: [],
-
-                                    variationsArray: [],
-                                    isVariationsSaved: false,
-
-                                    // Custom Fields
-                                    customFieldsArray: [],
-
-                                    // Dangerous Goods
-                                    dangerousGoodsArray: [],
-                                    clearFields: false
-                                });
+                            if (this.state.productSubCategory == '') {
+                                this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
                             }
-                            setSubmitting(false);
-                        }, 500);
+                        } // Product Price/Stock/Imgages Checking for Simple Product
+                        else if (values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
+                            this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
+                        } // Variation saved Check for variable product
+                        else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
+                            this.setState({ showVariationsErrorAlert: true });
+                        } else {
+                            this.setState({ isLoading: true });
+                            setTimeout(() => {
+
+                                let array = [];
+                                values.category_id = this.state.category_id;
+                                values.sub_category_id = this.state.sub_category_id;
+                                values.product_tags = this.state.productTags;
+
+                                values.dangerous_goods = this.state.dangerousGoodsArray;
+
+                                if (!this.state.isVariableProduct) {
+                                    values.product_image_link = this.state.files;
+                                    values.custom_fields = this.state.customFieldsArray;
+                                } else {
+                                    array = [];
+                                    this.state.variationsArray.forEach((element, index) => {
+                                        let item = []
+                                        element.item.forEach(e => {
+                                            item.push({ name: e.name, value: e.value })
+                                        });
+                                        let item_1 = []
+                                        element.custom_fields.forEach(e => {
+                                            item_1.push({ name: e.name, value: e.value })
+                                        });
+                                        array.push({ item: item, custom_fields: item_1, price: element.price, stock: element.stock, image_link: element.image_link })
+                                    })
+                                    values.product_variations = array;
+                                }
+
+                                this.uploadProduct(values, this)
+                                if (this.state.clearFields) {
+                                    resetForm();
+                                    this.setState({
+                                        showVariationsErrorAlert: false,
+                                        showSimpleProductPriceImgLinkErrorrAlert: false,
+                                        isVariableProduct: false,
+
+                                        productCategory: '',
+                                        productSubCategory: '',
+
+                                        subCategoryDisabled: true,
+                                        subSubCategoryDisabled: true,
+
+                                        categoryErrorDiv: 'BorderDiv',
+                                        subCategoryErrorDiv: 'BorderDiv',
+                                        productTags: [],
+
+                                        warrantyType: '',
+                                        inputValue: '',
+                                        files: [],
+                                        imagePreviewArray: [],
+
+                                        variationsArray: [],
+                                        isVariationsSaved: false,
+
+                                        // Custom Fields
+                                        customFieldsArray: [],
+
+                                        // Dangerous Goods
+                                        dangerousGoodsArray: [],
+                                        clearFields: false
+                                    });
+                                }
+                                setSubmitting(false);
+                            }, 500);
+                        }
+
                     }
-
-
-
-
-
-
-
-
-
-
-
 
                 }}>
                 {({
@@ -544,7 +548,29 @@ class AddNew extends Component {
                                 :
                                 null
                             }
+                            {this.props.user_status == 'disapproved' ?
+                                <Alert variant='danger' style={{ fontSize: '14px' }}>
+                                    You can't upload product, Your account is not approved yet
+                                </Alert>
+                                :
+                                null
+                            }
+                            {this.props.user_status == 'restricted' ?
+                                <Alert variant='danger' style={{ fontSize: '14px' }}>
+                                    You can't upload product, Your account is blocked, Contact to Admin
+                                </Alert>
+                                :
+                                null
+                            }
                             <Form noValidate onSubmit={handleSubmit}>
+                                <AlertModal
+                                    onHide={(e) => this.setState({ userStatusAlert: false })}
+                                    show={this.state.userStatusAlert}
+                                    header={'Error'}
+                                    message={this.state.statusAlertMessage}
+                                    iconname={faExclamationTriangle}
+                                    color={"#ff3333"}
+                                />
                                 <AlertModal
                                     onHide={(e) => this.setState({ showToast: false })}
                                     show={this.state.showToast}

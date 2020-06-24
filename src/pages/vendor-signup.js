@@ -164,26 +164,24 @@ class VendorSignup extends Component {
         const url = MuhalikConfig.PATH + '/api/users/register';
         if (this.state.isCodeVerified && this.state.isCodeSended) {
             axios.post(url, data).then(function (response) {
-                console.log('response:', response)
-                if (response.status == '200') {
-                    currentComponent.setState({
-                        isLoading: false,
-                        showToast: true,
-                        isCodeSended: false,
-                        isCodeVerified: false,
-                        isResendCode: false,
-                    });
-                    Router.push('/login');
-                    return true;
-                }
+                console.log('response signup:', response)
+                currentComponent.setState({
+                    isLoading: false,
+                    showToast: true,
+                    isCodeSended: false,
+                    isCodeVerified: false,
+                    isResendCode: false,
+                });
+                Router.push('/login');
+                return true;
             }).catch(function (error) {
-                currentComponent.setState({ isLoading: false });
-
-                if (error.response.status == '500') {
+                console.log('response error signup:', error.response)
+                try {
+                    currentComponent.setState({ isLoading: false, serverErrorMsg: error.response.data.message });
                     currentComponent.setState({ serverErrorMsg: 'This User already exists.' })
-                } else {
-                    console.log("Registration Failed Error:", error)
-                    alert('ERROR:' + error.response.data.message)
+                } catch (err) {
+                    console.log("Registration Failed Error:", err)
+                    alert('User Registration Failed, Try again later')
                 }
                 return false;
             });
@@ -537,7 +535,7 @@ class VendorSignup extends Component {
 
                                             <Form.Row>
                                                 <Form.Label className="text-center" style={styles.label}>
-                                                    By creating acount, you agree to Muhalik's
+                                                    By creating acount, you agree to Mahaalk's
                                                         <span>
                                                         <Link href="./help/terms-and-conditions"><a> Terms & Conditions </a></Link>
                                                     </span>

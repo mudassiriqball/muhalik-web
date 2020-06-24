@@ -40,7 +40,7 @@ export function checkAuth(rolee) {
         const token = reactLocalStorage.get('token');
         const decodedToken = decode(token);
         if (decodedToken.data.role == rolee) {
-            return decodedToken.data.full_name;
+            return decodedToken.data;
         } else {
             Router.replace('/index')
         }

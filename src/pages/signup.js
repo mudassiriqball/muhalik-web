@@ -505,7 +505,7 @@ class Signup extends Component {
                                             </Form.Row>
                                             <Form.Row>
                                                 <Form.Label className="text-center" style={styles.label}>
-                                                    By creating acount, you agree to Muhalik's
+                                                    By creating acount, you agree to Mahaalk's
                                                         <span>
                                                         <Link href="./help/terms-and-conditions"><a> Terms & Conditions </a></Link>
                                                     </span>

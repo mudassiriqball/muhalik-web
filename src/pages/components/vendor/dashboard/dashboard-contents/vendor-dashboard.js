@@ -1,5 +1,5 @@
 
-import { Row, Col, Card, InputGroup, Button } from 'react-bootstrap'
+import { Row, Col, Card, InputGroup, Button, Alert } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faStoreAlt, faUserPlus, faCheckDouble, faDollarSign, faTachometerAlt,
@@ -35,7 +35,20 @@ class VendorDashboard extends React.Component {
         return (
             <div>
                 <TitleRow icon={faTachometerAlt} title={'Vendor Dashboard'} />
-
+                {this.props.user_status == 'disapproved' ?
+                    <Alert variant='danger' style={{ fontSize: '14px' }}>
+                        {'Your account is not approved yet'}
+                    </Alert>
+                    :
+                    null
+                }
+                {this.props.user_status == 'restricted' ?
+                    <Alert variant='danger' style={{ fontSize: '14px' }}>
+                        {' Your account is blocked, Contact to Admin'}
+                    </Alert>
+                    :
+                    null
+                }
                 <Row noGutters style={{ padding: '0% 1%' }}>
                     <Col lg={4} md={4} sm={12} xs={12} style={styles.product_card_col}>
                         <Card>

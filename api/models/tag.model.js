@@ -10,7 +10,7 @@ const tags = new Schema({
     type: String
   },
   entry_date: {
-    type: String
+    type: Date
   }
 });
 

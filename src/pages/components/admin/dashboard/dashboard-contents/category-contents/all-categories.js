@@ -4,7 +4,7 @@ import { faPlus, faListAlt, faSlidersH, faTrash } from '@fortawesome/free-solid-
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons'
 import React, { Component } from 'react';
 import MuhalikConfig from '../../../../../../sdk/muhalik.config'
-import GlobalStyleSheet from '../../../../.././../styleSheet'
+import GlobalStyleSheet from '../../../../../../styleSheet'
 import axios from 'axios';
 import AlertModal from '../../../../alert-modal';
 import ConfirmModal from '../../../../confirm-modal'
@@ -14,7 +14,7 @@ import CardAccordion from '../../../../card_accordion';
 import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
 
 let categoryArray = [];
-class ProducCategories extends React.Component {
+class AllCategories extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -55,44 +55,7 @@ class ProducCategories extends React.Component {
         categoryArray = nextProps.categories_list
     }
 
-    async addCategory(currentComponent) {
-        let data = [];
-        data = {
-            category: { value: this.state.categoryValue, label: this.state.categoryValue },
-            sub_category: { value: this.state.subCategoryValue, label: this.state.subCategoryValue }
-        }
-        const url = MuhalikConfig.PATH + '/api/categories/category';
-        await axios.post(url, data, {
-            headers: { 'authorization': this.state.token }
-        }).then(function (response) {
-            currentComponent.setState({ isLoading: false })
-            currentComponent.setState({ showModalMessage: 'Product Category Added Successfully' })
-            currentComponent.setState({ showModal: true })
-            return true;
-        }).catch(function (error) {
-            currentComponent.setState({ isLoading: false });
-            try {
-                alert('Error: ', error.response.data.message);
-            } catch (err) {
-                console.log('Request Failed:', error)
-            }
-            return false;
-        });
-    }
 
-    async handleSubmit() {
-        if (this.state.categoryValue == '' || this.state.subCategoryValue == '') {
-            if (this.state.categoryValue == '') {
-                this.setState({ categoryError: 'Enter Value First' });
-            }
-            if (this.state.subCategoryValue == '') {
-                this.setState({ subCategoryError: 'Enter Value First' });
-            }
-        } else {
-            this.setState({ isLoading: true })
-            this.addCategory(this)
-        }
-    }
 
 
 
@@ -408,51 +371,7 @@ class ProducCategories extends React.Component {
 
 
                 {/* Add New Category */}
-                <CardAccordion title={'Add New Category'}>
-                    <Form.Row>
-                        <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
-                            <Form.Label style={styles.label}>Category</Form.Label>
-                            <InputGroup>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    placeholder="Enter Category Value"
-                                    name="sku"
-                                    value={this.state.categoryValue}
-                                    onChange={(e) => this.setState({ categoryValue: e.target.value, categoryError: '' })}
-                                    isInvalid={this.state.categoryError}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.categoryError}
-                                </Form.Control.Feedback>
-                            </InputGroup>
-                        </Form.Group>
-                        <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
-                            <Form.Label style={styles.label}>Sub Category</Form.Label>
-                            <InputGroup>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    placeholder="Enter Category Value"
-                                    name="sku"
-                                    value={this.state.subCategoryValue}
-                                    onChange={(e) => this.setState({ subCategoryValue: e.target.value, subCategoryError: '' })}
-                                    isInvalid={this.state.subCategoryError}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.subCategoryError}
-                                </Form.Control.Feedback>
-                            </InputGroup>
-                        </Form.Group>
-                        <Form.Group as={Col}>
-                            <Button type="submit" size="sm" onClick={this.handleSubmit.bind(this)} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                                {this.state.isLoading ? 'Uploading' : 'Add Category'}
-                                {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
-                            </Button>
-                        </Form.Group>
-                    </Form.Row>
 
-                </CardAccordion>
 
                 {/* Add Category Requests */}
                 {/* <CardAccordion title={'Add Category Requests'}>
@@ -695,4 +614,4 @@ const styles = {
         maxWidth: '15px',
     },
 }
-export default ProducCategories
+export default AllCategories

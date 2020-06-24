@@ -35,7 +35,7 @@ const CategoriesSlider = (props) => {
                  .category_container {
                     -ms-overflow-style: none;
                 }
-                 .item{
+                .category_container .item{
                     display: flex;
                     background: ${GlobalStyleSheet.body_color};
                     color: gray;
@@ -45,6 +45,7 @@ const CategoriesSlider = (props) => {
                     margin: 0.5%;
                     padding: 0% 1%;
                     width: 100px;
+                    minWidth: 100px;
                     height: 100px;
                     text-align: center;
                     font-size: 13px;
@@ -52,7 +53,7 @@ const CategoriesSlider = (props) => {
                     border: 1px solid rgba(0,0,0,0);
                     transition: transform 0.5s;
                 }
-                 .item:hover{
+                .category_container .item:hover{
                     box-shadow: inset 4px 4px 6px -1px rgba(0,0,0,0.2),
                                 inset -4px -4px 6px -1px rgba(255,255,255,0.7),
                                 -0.5px -0.5px 0px rgba(255,255,255,1),
@@ -67,9 +68,9 @@ const CategoriesSlider = (props) => {
                     .category_container {
                         border-radius: 5px;
                     }
-                    .item{
+                    .category_container .item{
                         border-radius: 10%;
-                        white-spaces: nowrap;
+                        white-space: nowrap;
                         width: auto;
                         height: auto;
                     }

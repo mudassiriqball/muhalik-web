@@ -192,7 +192,7 @@ const Dashboard = props => {
                         <div className="tab_content">
                             <Tab.Content style={{ height: `calc(100vh - 65px)`, overflowY: 'auto' }}>
                                 <Tab.Pane eventKey="Dashboard">
-                                    <VendorDashboard />
+                                    <VendorDashboard user_status={props.user_status} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AllProducts">
                                     <AllProducts />

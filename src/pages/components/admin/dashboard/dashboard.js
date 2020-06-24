@@ -1,7 +1,7 @@
 import { Image, Nav, Navbar, Dropdown, NavDropdown, ButtonGroup, Form, FormControl, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faBars, faPowerOff, faChevronRight, faPlusCircle, faChevronDown, faChevronUp, faTachometerAlt, faPersonBooth, faHandsHelping, faUser, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBars, faPowerOff, faChevronRight, faPlusCircle, faChevronDown, faChevronUp, faTachometerAlt, faPersonBooth, faHandsHelping, faUser, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar, faTh } from '@fortawesome/free-solid-svg-icons';
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 import AdminDashboard from './dashboard-contents/admin-dashboard';
@@ -10,10 +10,12 @@ import Customers from './dashboard-contents/customers';
 // Products 
 import AllProducts from './dashboard-contents/product-contents/all-products';
 import AddNew from '../../vendor/dashboard/dashboard-contents/product-contents/add-new';
-import ProducCategories from './dashboard-contents/product-contents/product-categories'
-import ProductTags from './dashboard-contents/product-contents/product-tags'
 import ProductFields from './dashboard-contents/product-contents/product-fields'
-// 
+// Category
+import AddCategory from './dashboard-contents/category-contents/add-category'
+import AllCategories from './dashboard-contents/category-contents/all-categories'
+
+
 import Inventory from './dashboard-contents/inventory';
 import Discounts from './dashboard-contents/discount';
 import Commision from './dashboard-contents/commision';
@@ -26,6 +28,7 @@ const Dashboard = props => {
         wprapper_Casses = "wrapper open";
     }
     const [show_product, setShow_product] = React.useState(false);
+    const [show_category, setShow_category] = React.useState(false);
 
     return (
         <div>
@@ -67,6 +70,24 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                             <Nav.Item>
                                 <div className="nav_link">
                                     <Nav.Link style={styles.nav_link} onClick={() => setShow_product(!show_product)}>
@@ -93,20 +114,6 @@ const Dashboard = props => {
                                         </Nav.Link>
                                     </div>
                                     <div className="product_submenu">
-                                        <Nav.Link eventKey="ProductCategories" style={styles.product_submenu_link}>
-                                            <FontAwesomeIcon size="xs" icon={faListAlt} style={styles.fontawesome} />
-                                            <div className="mr-auto"> Product Categories </div>
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                        </Nav.Link>
-                                    </div>
-                                    <div className="product_submenu">
-                                        <Nav.Link eventKey="ProductTags" style={styles.product_submenu_link} disabled={true}>
-                                            <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
-                                            <div className="mr-auto"> Product Tags </div>
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                        </Nav.Link>
-                                    </div>
-                                    <div className="product_submenu">
                                         <Nav.Link eventKey="ProductFields" style={styles.product_submenu_link}>
                                             <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
                                             <div className="mr-auto"> Product Fields </div>
@@ -116,6 +123,67 @@ const Dashboard = props => {
                                 </div>
                                 : null
                             }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            <Nav.Item>
+                                <div className="nav_link">
+                                    <Nav.Link style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                        <FontAwesomeIcon size="xs" icon={faTh} style={styles.fontawesome} />
+                                        <div className="mr-auto"> Category </div>
+                                        <FontAwesomeIcon icon={show_category ? faChevronUp : faChevronDown} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
+                            {show_category ?
+                                <div>
+                                    <div className="product_submenu">
+                                        <Nav.Link eventKey="AddCategory" style={styles.product_submenu_link} >
+                                            <FontAwesomeIcon size="xs" icon={faPlusCircle} style={styles.fontawesome} />
+                                            <div className="mr-auto"> Add Category</div>
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                    <div className="product_submenu">
+                                        <Nav.Link eventKey="AllCategories" style={styles.product_submenu_link} >
+                                            <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                            <div className="mr-auto"> All Categories</div>
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </div>
+                                : null
+                            }
+
+
+
+
+
+
+
+
+
+
+
+
+
                             <Nav.Item>
                                 <div className="nav_link">
                                     <Nav.Link eventKey="Inventory" style={styles.nav_link} onClick={() => setShow_product(false)}>
@@ -244,11 +312,13 @@ const Dashboard = props => {
                                         dangerousGoodsArray={[]}
                                     />
                                 </Tab.Pane>
-                                <Tab.Pane eventKey="ProductCategories">
-                                    <ProducCategories {...props} />
+
+                                {/* Category */}
+                                <Tab.Pane eventKey="AddCategory">
+                                    <AddCategory {...props} />
                                 </Tab.Pane>
-                                <Tab.Pane eventKey="ProductTags">
-                                    <ProductTags />
+                                <Tab.Pane eventKey="AllCategories">
+                                    <AllCategories {...props} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="ProductFields">
                                     <ProductFields {...props} />
@@ -281,6 +351,14 @@ const Dashboard = props => {
                 .show_product.open {
                     display: flex;
                 }
+
+                .show_category {
+                    display: none;
+                }
+                .show_category.open {
+                    display: flex;
+                }
+
                 .wrapper {
                     display: none;
                 }

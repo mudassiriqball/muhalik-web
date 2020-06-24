@@ -142,7 +142,7 @@ const DashboardSideDrawer = props => {
                     <Col sm={"auto"} style={{ padding: '0px' }}>
                         <Tab.Content>
                             <Tab.Pane eventKey="Dashboard">
-                                <VendorDashboard />
+                                <VendorDashboard user_status={props.user_status} />
                             </Tab.Pane>
                             <Tab.Pane eventKey="AllProducts">
                                 <AllProducts />

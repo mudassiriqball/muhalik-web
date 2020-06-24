@@ -68,6 +68,11 @@ function Account({ categories_list, sub_categories_list }) {
                     <FontAwesomeIcon icon={faDownload} style={styles.fontawesome} />
                     <div className='label'>Get Mahaalk's App</div>
                 </ListGroup.Item>
+                <div className='w-100 p-1'></div>
+                <ListGroup.Item className='d-inline-flex align-items-center'>
+                    <FontAwesomeIcon icon={faLanguage} style={styles.fontawesome} />
+                    <Nav.Link href='/vendor-signup' className='label'><a>Sell on Mahaalk</a></Nav.Link>
+                </ListGroup.Item>
             </ListGroup>
 
 

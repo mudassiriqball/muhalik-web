@@ -37,7 +37,7 @@ class Vendor extends Component {
             field_requests_list: [],
 
             token: '',
-            user_name: '',
+            decodedToken: '',
         }
     }
 
@@ -67,7 +67,7 @@ class Vendor extends Component {
     }
 
     async authUser() {
-        this.setState({ user_name: await checkAuth('vendor') })
+        this.setState({ decodedToken: await checkAuth('vendor') })
     }
 
     drawerToggleClickHandler = () => {
@@ -87,7 +87,7 @@ class Vendor extends Component {
 
     logout = () => {
         if (removeTokenFromStorage()) {
-            this.setState({ token: '', user_name: '', })
+            this.setState({ token: '', decodedToken: '', })
             Router.replace('/index');
         } else {
             alert('Logout Failed')
@@ -109,7 +109,8 @@ class Vendor extends Component {
                     field_requests_list={this.state.field_requests_list}
                     fields_list={this.state.fields_list}
                     token={this.state.token}
-                    user_name={this.state.user_name}
+                    user_name={this.state.decodedToken.full_name}
+                    user_status={this.state.decodedToken.status}
                     show={this.state.showWrapper}
                     drawerClickHandler={this.drawerToggleClickHandler}
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
@@ -121,7 +122,8 @@ class Vendor extends Component {
                     field_requests_list={this.state.field_requests_list}
                     fields_list={this.state.fields_list}
                     token={this.state.token}
-                    user_name={this.state.user_name}
+                    user_name={this.state.decodedToken.full_name}
+                    user_status={this.state.decodedToken.status}
                     show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler}
                     logoutClickHandler={this.logout} />

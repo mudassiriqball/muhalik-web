@@ -118,7 +118,7 @@ class Login extends Component {
                                         <p>
                                             <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
                                         </p>
-                                        <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Login To Muhalik</h6>
+                                        <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Login To Mahaalk</h6>
                                         <hr />
                                         <Form noValidate onSubmit={handleSubmit}>
                                             <Form.Row>
@@ -204,13 +204,13 @@ class Login extends Component {
 
                                             <Form.Row>
                                                 <Form.Label className="text-center" style={styles.term_condition_label}>
-                                                    By logingin, you agree to Muhalik's
+                                                    By logging in, you agree to Mahaalk's
                                                         <span>
-                                                        <Link href="./help/terms-and-conditions"><a>Terms & Conditions</a></Link>
+                                                        <Link href="./help/terms-and-conditions"><a> Terms & Conditions </a></Link>
                                                     </span>
                                                         and
                                                             <span>
-                                                        <Link href="./help/privacy-statement"><a>Privacy Statement</a></Link>
+                                                        <Link href="./help/privacy-statement"><a> Privacy Statement </a></Link>
                                                     </span>
                                                 </Form.Label>
                                             </Form.Row>

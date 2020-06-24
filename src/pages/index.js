@@ -111,7 +111,11 @@ class Index extends Component {
                     >
                         <SliderCarousel categories_list={this.props.categories_list} />
 
-                        <Products products_list={this.props.products_list} />
+                        <Products
+                            products_list={this.props.products_list}
+                            categories_list={this.props.categories_list}
+                            sub_categories_list={this.props.sub_categories_list}
+                        />
                     </Layout>
                 </main>
                 <style jsx>{`

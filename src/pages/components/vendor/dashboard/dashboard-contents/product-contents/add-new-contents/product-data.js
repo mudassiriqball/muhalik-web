@@ -1,7 +1,7 @@
 import { Form, Col, Row, Card, InputGroup, Button, Toast, Tab, Nav, Tabs, Accordion, Spinner, Dropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faPlus, faKey, faSlidersH, faStoreAlt, faTruck, faTools, faDollarSign, faListAlt, faArrowAltCircleDown,
+    faExclamationTriangle, faKey, faSlidersH, faStoreAlt, faTruck, faTools, faDollarSign, faListAlt, faArrowAltCircleDown,
 } from '@fortawesome/free-solid-svg-icons'
 
 import CreatableSelect from 'react-select/creatable'
@@ -10,6 +10,7 @@ import MuhalikConfig from '../../../../../../../sdk/muhalik.config'
 
 import Select, { components } from 'react-select'
 import AddNewFieldNameModal from './add-new-field-name-model'
+import AlertModal from '../../../../../alert-modal'
 
 const groupStyles = {
     border: `1px solid ${GlobalStyleSheet.admin_primry_color}`,
@@ -483,6 +484,9 @@ function ProductAttributes(props) {
     const [message, setMessage] = React.useState('')
     const [attributesArray, setAttributesArray] = React.useState([])
 
+    const [userStatusAlert, setUserStatusAlert] = React.useState(false);
+    const [statusAlertMessage, setStatusAlertMessage] = React.useState('');
+
     function handleAddProductAttributeClick() {
         setMessage('')
         if (attributeName != '' && attributeValue != '') {
@@ -553,8 +557,44 @@ function ProductAttributes(props) {
         }
     }
 
+    function handleAddCustomFieldBtnClick() {
+        if (fieldName != '' && fieldValue != '') {
+            const copyArray = Object.assign([], props.customFieldsArray)
+            copyArray.push({
+                name: fieldName.value,
+                value: fieldValue,
+            })
+            props.setFieldsArrayHandler(copyArray)
+            setError('');
+            setFieldName('');
+            setFieldValue('');
+        } else {
+            setError('Enter Field Name and Value');
+        }
+    }
+
+    function handleShowModal() {
+        if (props.user_status == 'disapproved') {
+            setUserStatusAlert(true)
+            setStatusAlertMessage('You can\'t upload product, Your account is not approved yet')
+        } else if (props.user_status == 'restricted') {
+            setUserStatusAlert(true)
+            setStatusAlertMessage('You can\'t upload product, Your account has blocked, Contact to Admin')
+        } else {
+            setModalShow(true)
+        }
+    }
+
     return (
         <>
+            <AlertModal
+                onHide={(e) => setUserStatusAlert(false)}
+                show={userStatusAlert}
+                header={'Error'}
+                message={statusAlertMessage}
+                iconname={faExclamationTriangle}
+                color={"#ff3333"}
+            />
             <Form.Row >
                 <Form.Group as={Col} lg={5} md={5} sm={12} xs={12} style={{ marginBottom: '0%', paddingBottom: '0%' }}>
                     <Form.Label style={styles.label}>Field Name</Form.Label>
@@ -568,7 +608,7 @@ function ProductAttributes(props) {
                         value={attributeName}
                         onChange={(e) => setAttributeName(e)}
                     />
-                    <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={() => setModalShow(true)}>
+                    <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={handleShowModal}>
                         Add New
                     </Nav.Link>
                     <AddNewFieldNameModal

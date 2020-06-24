@@ -130,7 +130,7 @@ const Product = new Schema({
   ],
 
   entry_date: {
-    type: String,
+    type: Date,
   },
 
   isdeleted: {

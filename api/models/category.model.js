@@ -6,7 +6,7 @@ const Product_Categories = new Schema({
   label: { type: String },
   value: { type: String },
   entry_date: {
-    type: String,
+    type: Date,
   },
 });
 
