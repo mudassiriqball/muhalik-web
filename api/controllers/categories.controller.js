@@ -304,50 +304,52 @@ const Field_Request = require("../models/field-request.model");
 const jwt = require("jsonwebtoken");
 
 categoriesController.add_Category = async (req, res) => {
+  console.log('body:', req.body.category)
+  console.log('bddody:', req.files)
   const body = req.body;
-  try {
-    var datetime = new Date();
-    body.entry_date = datetime;
+  // try {
+  //   var datetime = new Date();
+  //   body.entry_date = datetime;
 
-    const search = await Categories.findOne({
-      "label": body.category.label,
-    });
-    if (search === null) {
-      const category = new Categories(body.category);
-      const result = await category.save();
-      console.log(category._id);
-      body.sub_category.category_id = category._id;
-      const sub_category = new Sub_Categories(body.sub_category);
-      const result1 = await sub_category.save();
-      res.status(200).send({
-        code: 200,
-        message: "Category Added Successfully",
-      });
-    } else if (search.label === body.category.label) {
-      const search1 = await Sub_Categories.find({
-        category_id: search._id,
-        "label": body.sub_category.label,
-      });
-      if (!search1.length) {
-        body.sub_category.category_id = search._id;
-        const sub_category = new Sub_Categories(body.sub_category);
-        const result1 = await sub_category.save();
-        res.status(200).send({
-          code: 200,
-          message: "Category Added Successfully",
-        });
-      } else {
-        res
-          .send({
-            message: "Already exists",
-            code: 500,
-          })
-          .status(500);
-      }
-    }
-  } catch (error) {
-    console.log("error", error);
-  }
+  //   const search = await Categories.findOne({
+  //     "label": body.category.label,
+  //   });
+  //   if (search === null) {
+  //     const category = new Categories(body.category);
+  //     const result = await category.save();
+  //     console.log(category._id);
+  //     body.sub_category.category_id = category._id;
+  //     const sub_category = new Sub_Categories(body.sub_category);
+  //     const result1 = await sub_category.save();
+  //     res.status(200).send({
+  //       code: 200,
+  //       message: "Category Added Successfully",
+  //     });
+  //   } else if (search.label === body.category.label) {
+  //     const search1 = await Sub_Categories.find({
+  //       category_id: search._id,
+  //       "label": body.sub_category.label,
+  //     });
+  //     if (!search1.length) {
+  //       body.sub_category.category_id = search._id;
+  //       const sub_category = new Sub_Categories(body.sub_category);
+  //       const result1 = await sub_category.save();
+  //       res.status(200).send({
+  //         code: 200,
+  //         message: "Category Added Successfully",
+  //       });
+  //     } else {
+  //       res
+  //         .send({
+  //           message: "Already exists",
+  //           code: 500,
+  //         })
+  //         .status(500);
+  //     }
+  //   }
+  // } catch (error) {
+  //   console.log("error", error);
+  // }
 };
 
 categoriesController.add_fields = async (req, res) => {

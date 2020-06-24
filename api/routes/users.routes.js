@@ -48,6 +48,7 @@ router.post("/register", UserController.registerUser);
 router.get("/:_id", UserController.getSingleUser);
 // router.post("/",UserController.addUser);
 router.put("/:_id", UserController.updateUser);
+// router.put("/reset-password", UserController.reset_password);
 router.delete("/:_id", UserController.deleteUser);
 
 router.post("/avatar", checkAuth, UserController.set_avatar);

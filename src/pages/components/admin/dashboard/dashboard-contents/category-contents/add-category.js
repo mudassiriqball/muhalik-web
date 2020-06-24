@@ -7,7 +7,6 @@ import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons'
 import MuhalikConfig from '../../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../../styleSheet'
 import AlertModal from '../../../../alert-modal';
-import ConfirmModal from '../../../../confirm-modal'
 import TitleRow from '../../../../title-row';
 import CardAccordion from '../../../../card_accordion';
 
@@ -37,7 +36,10 @@ class AddCategory extends Component {
 
         const url = MuhalikConfig.PATH + '/api/categories/category';
         await axios.post(url, formData, {
-            headers: { 'authorization': this.state.token }
+            headers: {
+                'content-type': 'multipart/form-data',
+                'authorization': this.props.token,
+            }
         }).then(function (response) {
             currentComponent.setState({ isLoading: false, showToast })
             return true;
@@ -80,6 +82,7 @@ class AddCategory extends Component {
                     iconname={faThumbsUp}
                     color={"#00b300"}
                 />
+                <TitleRow icon={faListAlt} title={' Admin Dashboard / Add Category'} />
                 <CardAccordion title={'Add New Category'}>
                     <Form.Row>
                         <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
@@ -123,9 +126,8 @@ class AddCategory extends Component {
                                     className="position-relative"
                                     required
                                     name="file"
-                                    onChange={''}
-                                    // isInvalid={!!imgError}
-                                    // feedback={imgError}
+                                    onChange={(e) => this.setState({ img: e.target.files[0] })}
+                                    isInvalid={!!this.state.imgError}
                                     id="validationFormik07"
                                 />
                                 <Form.Control.Feedback type="invalid">

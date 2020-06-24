@@ -146,10 +146,8 @@ class Signup extends Component {
             })
         }).catch(function (error) {
             currentComponent.setState({
-                isCodeVerified: false,
                 verificationCodeError: 'Invalid Code, Try again',
                 feedback: '',
-                isResendCode: true,
             })
         });
     }
@@ -225,7 +223,7 @@ class Signup extends Component {
                                     onHide={(e) => this.setState({ showToast: false })}
                                     show={this.state.showToast}
                                     header={'Success'}
-                                    message={this.state.toastMessage}
+                                    message={'Account Created Successfully'}
                                     iconname={faThumbsUp}
                                     color={'green'}
                                 />
@@ -250,10 +248,13 @@ class Signup extends Component {
                                             <Form.Row>
                                                 <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
                                                     <Form.Label style={styles.label}>Mobile Number <span>*</span>
-                                                        {this.state.isCodeSended && !this.state.isResendCode ?
-                                                            <span style={{ color: 'gray', float: 'right', marginRight: '4%' }}> 00 : {this.state.intervalTime}</span>
-                                                            :
+                                                        {this.state.isCodeVerified ?
                                                             null
+                                                            :
+                                                            this.state.isCodeSended && !this.state.isResendCode ?
+                                                                <span style={{ color: 'gray', float: 'right', marginRight: '4%' }}> 00 : {this.state.intervalTime}</span>
+                                                                :
+                                                                null
                                                         }
                                                     </Form.Label>
                                                     <InputGroup>
@@ -275,7 +276,7 @@ class Signup extends Component {
                                                                         :
                                                                         this.handleSenVerificationCode(values.mobile)
                                                                 }}
-                                                                disabled={this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
+                                                                disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
                                                                 className='append_button' variant='success' >
                                                                 {this.state.isCodeSended ? 'Resend' : 'Send Code'}
                                                             </Button>

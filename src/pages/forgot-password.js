@@ -1,35 +1,158 @@
 import React, { Component } from 'react';
+import Router from 'next/router';
 import Link from 'next/link';
-
-import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image } from 'react-bootstrap';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faEyeSlash, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import firebase from '../sdk/custom/firebase'
+import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner } from 'react-bootstrap';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+
+import AlertModal from './components/alert-modal';
 import GlobalStyleSheet from '../styleSheet';
+import MuhalikConfig from '../sdk/muhalik.config';
+import Toolbar from './components/toolbar';
+import { checkAuth } from '../sdk/core/authentication-service'
 
 // RegEx for phone number validation
-const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
+const phoneRegExp = /^\+(?:[0-9]?){6,14}[0-9]$/;
+
+// /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
 
 const schema = yup.object({
-    mobile: yup.string().required("Enter Mobile Number")
-        .matches(phoneRegExp, "Phone number is not valid"),
+    mobile: yup.string().required("Enter Mobile Number"),
+
+    verification_code: yup.string(),
 
     password: yup.string().required("Enter Password")
         .min(8, "Password must have at least 8 characters")
-        .max(20, "Password can't be longer than 20 characters"),
+        .max(20, "Can't be longer than 20 characters"),
+
+    confirm_password: yup.string().required("Enter Confirm Password").when("password", {
+        is: val => (val && val.length > 0 ? true : false),
+        then: yup.string().oneOf(
+            [yup.ref("password")],
+            "Passwords must match"
+        )
+    }),
+
 });
 
 class ForgotPassword extends Component {
-
     state = {
-        hide: true
+        hide: true,
+        isLoading: false,
+        showToast: false,
+        serverErrorMsg: '',
+
+        isCodeSended: false,
+        isCodeVerified: false,
+
+        mobileError: '',
+        verificationCodeError: '',
+        feedback: '',
+        intervalTime: 60,
     };
+
+    componentDidMount() {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container",
+            {
+                size: "invisible"
+            });
+    }
+
+    handleSenVerificationCode = (mobileNumber) => {
+        const currentComponent = this
+        this.setState({
+            intervalTime: 60,
+            isResendCode: false,
+            feedback: ''
+        });
+        let interval = null
+        this.setState({ mobileError: '' })
+        if (phoneRegExp.test(mobileNumber)) {
+            var appVerifier = window.recaptchaVerifier;
+            firebase.auth().signInWithPhoneNumber(mobileNumber, appVerifier)
+                .then(function (confirmationResult) {
+                    window.confirmationResult = confirmationResult;
+                    currentComponent.setState({
+                        isCodeSended: true,
+                        mobileError: '',
+                        feedback: 'Code Sended, Check your number',
+                    })
+                    let delay = 1000
+                    interval = setInterval(() => {
+                        currentComponent.setState({ intervalTime: currentComponent.state.intervalTime - 1 });
+                        if (currentComponent.state.intervalTime == 0) {
+                            currentComponent.setState({ isResendCode: true });
+                            clearInterval(interval)
+                        }
+                    }, delay)
+                }).catch(function (error) {
+                    currentComponent.setState({
+                        mobileError: 'Error: Code not sended',
+                        feedback: '',
+                        isCodeSended: false,
+                        isCodeVerified: false,
+                    })
+                });
+        } else {
+            this.setState({
+                isCodeSended: false,
+                mobileError: 'Enter valid number with countary code',
+                feedback: '',
+                isCodeVerified: false,
+            })
+        }
+    }
+
+    handleVerifyVarificationCode = (code) => {
+        const currentComponent = this
+        this.setState({ verificationCodeError: '' })
+        confirmationResult.confirm(code).then(function (result) {
+            currentComponent.setState({
+                isCodeVerified: true,
+                feedback: 'Number Verified',
+                verificationCodeError: '',
+                isResendCode: false,
+            })
+        }).catch(function (error) {
+            currentComponent.setState({
+                verificationCodeError: 'Invalid Code, Try again',
+                feedback: '',
+            })
+        });
+    }
+
     showPassword = ev => {
         this.setState({ hide: !this.state.hide })
+    }
+
+    userRegister(data, currentComponent) {
+        const url = MuhalikConfig.PATH + '/api/users/reset-password';
+        if (this.state.isCodeVerified && this.state.isCodeSended) {
+            axios.post(url, data).then(function (response) {
+                currentComponent.setState({
+                    isLoading: false,
+                    showToast: true,
+                    isCodeSended: false,
+                    isCodeVerified: false,
+                    isResendCode: false,
+                });
+                Router.push('/login');
+                return true;
+            }).catch(function (error) {
+                currentComponent.setState({ isLoading: false });
+                currentComponent.setState({ serverErrorMsg: error.response.data.message })
+                return false;
+            })
+        } else {
+            alert('Please first varify your mobile number!')
+        }
     }
 
     render() {
@@ -44,21 +167,16 @@ class ForgotPassword extends Component {
         return (
             <Formik
                 validationSchema={schema}
-                // onSubmit={console.log}
                 initialValues={{
-                    mobile: '', password: ''
+                    mobile: '', verification_code: '', password: '', confirm_password: '',
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    // When button submits form and form is in the process of submitting, submit button is disabled
+                    this.setState({ isLoading: true });
                     setSubmitting(true);
-                    // Resets form after submission is complete
-                    resetForm();
-                    // Sets setSubmitting to false after form is reset
-                    setSubmitting(false);
-
                     setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
-                        resetForm();
+                        if (this.userRegister(values, this)) {
+                            resetForm();
+                        }
                         setSubmitting(false);
                     }, 500);
                 }}
@@ -74,136 +192,298 @@ class ForgotPassword extends Component {
                         handleBlur,
                         isSubmitting
                     }) => (
-                            <div style={styles.body}>
-                                <Navbar variant="dark" style={{ background: `${GlobalStyleSheet.primry_color}` }}>
-                                    <Navbar.Brand href="/" className="mr-auto" > Muhalik </Navbar.Brand>
-                                </Navbar>
+                            <div className='forgot-password'>
+                                <AlertModal
+                                    onHide={(e) => this.setState({ showToast: false })}
+                                    show={this.state.showToast}
+                                    header={'Success'}
+                                    message={'Password Changed Successfully'}
+                                    iconname={faThumbsUp}
+                                    color={'green'}
+                                />
 
-                                <Container>
-                                    <Row>
-                                        <Col lg={3} md={2} sm={1} xs={0} style={styles.side_column}></Col>
-                                        <Col style={styles.center_column}>
-                                            <p>
-                                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
-                                            </p>
-                                            <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Forgot Password</h6>
-                                            <Form noValidate onSubmit={handleSubmit}>
-                                                <Form.Row>
-                                                    <Form.Group as={Col} controlId="validationMobile">
-                                                        <Form.Label style={styles.label}>Enter Your Mobile Number</Form.Label>
+                                <Toolbar />
 
-                                                        <InputGroup>
-                                                            <InputGroup.Prepend>
-                                                                <Button id="eyeBtn" style={styles.fontawesome_btn}>
-                                                                    <FontAwesomeIcon icon={faMobileAlt} style={styles.fontawesome} />
-                                                                </Button>
-                                                            </InputGroup.Prepend>
-                                                            <Form.Control
-                                                                type="text"
-                                                                placeholder="+966590911891"
-                                                                aria-describedby="mobile"
-                                                                name="mobile"
-                                                                value={values.mobile}
-                                                                onChange={handleChange}
-                                                                isInvalid={touched.mobile && errors.mobile}
-                                                            />
-                                                            <Form.Control.Feedback type="invalid">
-                                                                {errors.mobile}
-                                                            </Form.Control.Feedback>
-                                                        </InputGroup>
-                                                    </Form.Group>
-                                                </Form.Row>
+                                {/* <Container className='container'> */}
+                                <Row className="row">
+                                    <Col lg="auto" md="auto" sm="auto" xs="auto" className='form_col'>
+                                        <Form noValidate onSubmit={handleSubmit}>
+                                            <Form.Row>
+                                                <Col lg={12} md={12} sm={12} xs={12} className='mahaalk_col'>
+                                                    <Image src="muhalik.jpg" roundedCircle fluid style={styles.image} />
+                                                    <div className='d-flex flex-column ml-3'>
+                                                        <div className="text-center welcome_note" >Welcome To Mahaalk </div>
+                                                        <div className="text-center welcome_note" >Change Password</div>
+                                                    </div>
+                                                </Col>
+                                            </Form.Row>
+                                            <hr className='pt-0 mt-0' />
 
-                                                <Form.Row>
-                                                    <Form.Label className="text-center" style={styles.term_condition_label}>
-                                                        <span>
-                                                            <Link href="login"> Login </Link>
-                                                        </span>
-                                                        or
-                                                        <span>
-                                                            <Link href="signup"> Signup </Link>
-                                                        </span>
+                                            <Form.Row>
+                                                <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                    <Form.Label style={styles.label}>Mobile Number <span>*</span>
+                                                        {this.state.isCodeVerified ?
+                                                            null
+                                                            :
+                                                            this.state.isCodeSended && !this.state.isResendCode ?
+                                                                <span style={{ color: 'gray', float: 'right', marginRight: '4%' }}> 00 : {this.state.intervalTime}</span>
+                                                                :
+                                                                null
+                                                        }
                                                     </Form.Label>
-                                                </Form.Row>
+                                                    <InputGroup>
+                                                        <Form.Control
+                                                            type="text"
+                                                            placeholder="+966590911891"
+                                                            aria-describedby="mobile"
+                                                            name="mobile"
+                                                            value={values.mobile}
+                                                            onChange={handleChange}
+                                                            isInvalid={this.state.mobileError}
+                                                            disabled={this.state.isCodeSended}
+                                                        />
+                                                        <InputGroup.Append>
+                                                            <Button id="recaptcha-container"
+                                                                onClick={() => {
+                                                                    this.state.isCodeSended ?
+                                                                        this.handleSenVerificationCode(values.mobile)
+                                                                        :
+                                                                        this.handleSenVerificationCode(values.mobile)
+                                                                }}
+                                                                disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
+                                                                className='append_button' variant='success' >
+                                                                {this.state.isCodeSended ? 'Resend' : 'Send Code'}
+                                                            </Button>
+                                                        </InputGroup.Append>
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {this.state.mobileError}
+                                                        </Form.Control.Feedback>
+                                                        <div className='feedback'>
+                                                            <div className='mr-auto'>{this.state.feedback}</div>
+                                                            {this.state.isCodeSended ?
+                                                                <a onClick={() =>
+                                                                    this.setState({
+                                                                        isCodeSended: false,
+                                                                        isCodeVerified: false,
+                                                                        feedback: '',
+                                                                        mobileError: '',
+                                                                        verificationCodeError: '',
+                                                                    })
+                                                                }>Change Number</a>
+                                                                :
+                                                                null
+                                                            }
+                                                        </div>
 
-                                                <Form.Row>
-                                                    <Button type="submit" onSubmit={handleSubmit} block style={styles.submit_btn}>Continue</Button>
-                                                </Form.Row>
+                                                    </InputGroup>
+                                                </Form.Group>
 
-                                                <Form.Row>
-                                                    <Form.Label className="text-center" style={styles.term_condition_label}>
-                                                        By continueing, you agree to Muhalik's
-                                                        <span>
-                                                            <Link href="./help/terms-and-conditions"> Terms & Conditions </Link>
-                                                        </span>
-                                                        and
-                                                        <span>
-                                                            <Link href="./help/privacy-statement"> Privacy Statement </Link>
-                                                        </span>
-                                                    </Form.Label>
-                                                </Form.Row>
-                                            </Form>
-                                        </Col>
-                                        <Col lg={3} md={2} sm={1} xs={0} style={styles.side_column}></Col>
-                                    </Row>
-                                </Container>
+
+                                                <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                    <Form.Label style={styles.label}>Verification Code <span> * </span></Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control
+                                                            type="text"
+                                                            placeholder="Verification Code"
+                                                            name="verification_code"
+                                                            value={values.verification_code}
+                                                            onChange={handleChange}
+                                                            isInvalid={this.state.verificationCodeError}
+                                                            disabled={!this.state.isCodeSended || this.state.isCodeVerified}
+                                                        />
+                                                        {this.state.isCodeSended ?
+                                                            <InputGroup.Append>
+                                                                <Button className='append_button'
+                                                                    onClick={() => this.handleVerifyVarificationCode(values.verification_code)}
+                                                                    disabled={this.state.isCodeVerified}
+                                                                    variant='success'>{this.state.isCodeVerified ? 'Verified' : 'Verify'}</Button>
+                                                            </InputGroup.Append>
+                                                            : null
+                                                        }
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {this.state.verificationCodeError}
+                                                        </Form.Control.Feedback>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            </Form.Row>
+
+
+
+
+
+                                            {/* <hr className='mt-0 pt-0' /> */}
+
+                                            {this.state.isCodeVerified ?
+                                                <>
+                                                    <Form.Row>
+                                                        <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                            <Form.Label style={styles.label}>New Password <span>*</span></Form.Label>
+                                                            <InputGroup>
+                                                                <Form.Control
+                                                                    type={hide ? 'password' : 'text'}
+
+                                                                    placeholder="Enter New Password"
+                                                                    aria-describedby="inputGroup"
+                                                                    name="password"
+                                                                    value={values.password}
+                                                                    onChange={handleChange}
+                                                                    isInvalid={touched.password && errors.password}
+                                                                />
+                                                                <InputGroup.Append>
+                                                                    <Button variant='success' onClick={this.showPassword} className='append_button'>
+                                                                        {eyeBtn}
+                                                                    </Button>
+                                                                </InputGroup.Append>
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.password}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Form.Group>
+                                                        <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                            <Form.Label style={styles.label}>Confirm Password <span>*</span></Form.Label>
+                                                            <InputGroup>
+                                                                <Form.Control
+                                                                    type={hide ? 'password' : 'text'}
+                                                                    placeholder="Re-enter Password"
+                                                                    aria-describedby="confirm_password"
+                                                                    name="confirm_password"
+                                                                    value={values.confirm_password}
+                                                                    onChange={handleChange}
+                                                                    isInvalid={touched.confirm_password && errors.confirm_password}
+                                                                />
+                                                                <InputGroup.Append>
+                                                                    <Button variant='success' onClick={this.showPassword} className='append_button'>
+                                                                        {eyeBtn}
+                                                                    </Button>
+                                                                </InputGroup.Append>
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.confirm_password}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Form.Group>
+                                                    </Form.Row>
+                                                    <Form.Row>
+                                                        <Form.Group as={Col} controlId="loginGrop">
+                                                            <Button type="submit"
+                                                                onSubmit={handleSubmit}
+                                                                variant='success'
+                                                                disabled={this.state.isLoading || !this.state.isCodeVerified} block>
+                                                                {this.state.isLoading ? 'Continue' : 'Continue'}
+                                                                {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
+                                                            </Button>
+                                                        </Form.Group>
+                                                    </Form.Row>
+                                                </>
+                                                :
+                                                null
+                                            }
+
+                                        </Form>
+                                    </Col>
+                                </Row>
+                                {/* </Container > */}
+                                <style type="text/css">{`
+                                    .forgot-password .row{
+                                        align-items: center;
+                                        justify-content: center;
+                                        margin: 0%;
+                                        padding: 0%;
+                                    }
+                                    .forgot-password .form_col{
+                                        width: 400px;
+                                        background: white;
+                                        padding: 2%;
+                                        margin: 5%;
+                                    }
+                                    .forgot-password .mahaalk_col{
+                                        display: flex;
+                                        flex-direction: row;
+                                        align-items: center;
+                                        justify-content: center;
+                                        color: ${GlobalStyleSheet.primry_color} 
+                                    }
+                                    .forgot-password .welcome_note{
+                                        font-size: 15px;
+                                    }
+                                    .forgot-password .append_button{
+                                        font-size: 13px;
+                                    }
+                                    @media (max-width: 574px) {
+                                        .forgot-password .append_button {
+                                            font-size: 10px;
+                                        }
+                                        .forgot-password .welcome_note {
+                                            font-size: 15px;
+                                        }
+                                        .forgot-password .form_col{
+                                            width: 94%;
+                                            margin: 3%;
+                                            padding: 3%;
+                                        }
+                                    }
+
+                                `}</style>
                                 <style jsx>
                                     {`
-                                        span {
+                                        .forgot-password {
+                                            min-height: 100vh;
+                                            background: ${GlobalStyleSheet.body_color};
+                                            position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            right: 0;
+                                        }
+                                        .forgot-password span {
                                             color: red;
                                         }
-                                        p {
-                                            text-align: center; 
-                                            margin: 0px;
+                                        
+                                        .forgot-password .feedback{
+                                            display: flex;
+                                            width: 100%;
+                                            font-size: 12.8px;
+                                            color: ${GlobalStyleSheet.primry_color};
+                                        }
+                                        .forgot-password .feedback a{
+                                            font-size: 12.8px;
+                                            color: blue;
+                                            cursor: pointer;
                                         }
                                     `}
                                 </style>
-                            </div>
-                        )}
+                                <style jsx global>{`
+                                    html,
+                                    body {
+                                        padding: 0;
+                                        margin: 0;
+                                        font-family: Roboto, Helvetica Neue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+                                    }
+                                `}</style>
+                            </div >
+                        )
+                }
             </Formik>
         );
     }
 }
 
 const styles = {
-    body: {
-        background: `${GlobalStyleSheet.body_color}`,
-        position: 'absolute',
-        top: '0',
-        left: '0',
-        right: '0',
-        bottom: '0',
-
-    },
-    buttons: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        border: 'none',
-        fontSize: '10px',
-    },
     submit_btn: {
         background: `${GlobalStyleSheet.primry_color}`,
+        marginTop: '5px'
     },
-    center_column: {
-        background: 'white',
-        // border: `0.5px solid ${GlobalStyleSheet.primry_color}`,
-        padding: '20px 30px',
-        margin: '3% 3%',
+    image: {
+        width: '100px',
+        height: '100px',
+        marginBottom: '2%',
     },
-    side_column: {
-        margin: '0 3%',
+    errorMsg: {
+        color: 'red',
+        width: '100%',
+        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
     },
     label: {
         width: '100%',
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
-    },
-    term_condition_label: {
-        width: '100%',
-        fontSize: `${GlobalStyleSheet.form_label_fontsize}`,
-        padding: '10px',
-    },
-    fontawesome_btn: {
-        background: `${GlobalStyleSheet.primry_color}`,
-        border: 'none',
     },
     fontawesome: {
         color: `${GlobalStyleSheet.primary_text_color}`,
