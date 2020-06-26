@@ -7,7 +7,7 @@ import { faThumbsUp, faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 
 import GlobalStyleSheet from '../../../../../styleSheet'
 import TitleRow from '../../../title-row';
-import CardAccordion from '../../../card_accordion'
+import CardAccordion from '../../../card-accordion'
 import ConfirmModal from '../../../confirm-modal'
 import AlertModal from '../../../alert-modal'
 import MuhalikConfig from '../../../../../sdk/muhalik.config'

@@ -27,6 +27,8 @@ export async function getServerSideProps(context) {
     let categories_list = []
     let sub_categories_list = []
     let products_list = []
+    let new_products_list = []
+
     await axios.get(url).then((response) => {
         categories_list = response.data.category.docs,
             sub_categories_list = response.data.sub_category.docs
@@ -40,12 +42,26 @@ export async function getServerSideProps(context) {
     }).catch((error) => {
     })
 
+    const _url = MuhalikConfig.PATH + `/api/products/get`
+    axios({
+        method: 'GET',
+        url: _url,
+        params: { q: "Date", page: '1', limit: '8' },
+    }).then(res => {
+        console.log('New Products', res)
+        new_products_list = res.data.data
+    }).catch(err => {
+        console.log('New products getting error:', err)
+    })
+
+
 
     return {
         props: {
             products_list,
             categories_list,
-            sub_categories_list
+            sub_categories_list,
+            new_products_list
         },
     }
 }
@@ -112,6 +128,7 @@ class Index extends Component {
                         <SliderCarousel categories_list={this.props.categories_list} />
 
                         <Products
+                            new_products_list={this.props.new_products_list}
                             products_list={this.props.products_list}
                             categories_list={this.props.categories_list}
                             sub_categories_list={this.props.sub_categories_list}

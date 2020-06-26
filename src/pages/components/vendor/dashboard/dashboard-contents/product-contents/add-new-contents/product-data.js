@@ -634,7 +634,7 @@ function ProductAttributes(props) {
             </Form.Row>
             <Row noGutters className='w-100'>
                 <Form.Label style={styles.label}>
-                    <span style={{ color: 'red' }}>{error}</span>
+                    <span style={{ color: '#DC3545' }}>{error}</span>
                 </Form.Label>
             </Row>
             <Row noGutters className='pt-2'>

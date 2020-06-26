@@ -7,7 +7,7 @@ import Router from 'next/router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faArrowLeft, faTimes, faChevronLeft, faChevronRight, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { faArrowAltCircleLeft } from '@fortawesome/free-regular-svg-icons';
-import CardAccordion from '../../../../card_accordion';
+import CardAccordion from '../../../../card-accordion';
 import MuhalikConfig from '../../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../../styleSheet'
 import TitleRow from '../../../../title-row';

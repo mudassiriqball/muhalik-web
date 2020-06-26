@@ -53,11 +53,12 @@ class Admin extends Component {
 
     async componentDidMount() {
         this.authUser()
+        const currentComponent = this;
+        this.setState({ token: await getTokenFromStorage() })
 
         const url = MuhalikConfig.PATH + '/api/categories/categories';
-        this.setState({ token: await getTokenFromStorage() })
-        const currentComponent = this;
         await axios.get(url).then((response) => {
+            console.log("all categories: ", response.data.category.docs)
             currentComponent.setState({
                 categories_list: response.data.category.docs,
                 sub_categories_list: response.data.sub_category.docs
@@ -175,11 +176,25 @@ class Admin extends Component {
     logout = () => {
         if (removeTokenFromStorage()) {
             this.setState({ token: '', decodedToken: '', })
-            Router.reload('/index');
             Router.replace('/index');
+            Router.reload();
         } else {
             alert('Logout Failed')
         }
+    }
+
+    async reloadCategories() {
+        let currentComponent = this
+        const url = MuhalikConfig.PATH + '/api/categories/categories';
+        await axios.get(url).then((response) => {
+            console.log("all categories: ", response.data.category.docs)
+            currentComponent.setState({
+                categories_list: response.data.category.docs,
+                sub_categories_list: response.data.sub_category.docs
+            });
+        }).catch((error) => {
+            console.log('Caterories Fetchig Error: ', error)
+        })
     }
 
     render() {
@@ -202,16 +217,18 @@ class Admin extends Component {
 
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
+                    categoriesReloadHandler={this.reloadCategories.bind(this)}
 
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
 
                     token={this.state.token}
-                    user_name={this.state.decodedToken.full_name}
+                    user_name={this.state.decodedToken.full_name || ''}
                     show={this.state.showWrapper}
                     drawerClickHandler={this.drawerToggleClickHandler}
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
-                    logout={this.logout} />
+                    logout={this.logout}
+                />
                 <DashboardSideDrawer
                     products_list={this.state.products_list}
 
@@ -224,12 +241,13 @@ class Admin extends Component {
 
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
+                    categoriesReloadHandler={this.reloadCategories.bind(this)}
 
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
 
                     token={this.state.token}
-                    user_name={this.state.decodedToken.full_name}
+                    user_name={this.state.decodedToken.full_name || ''}
                     show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler}
                     logout={this.logout} />

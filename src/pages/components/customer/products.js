@@ -59,7 +59,7 @@ const Products = (props) => {
                                 infinite={true}
                                 removeArrowOnDeviceType={["mobile"]}
                             >
-                                {props.products_list && props.products_list.map((element, index) =>
+                                {props.new_products_list && props.new_products_list.map((element, index) =>
                                     <Card key={element._id} className="product_card">
                                         {element.product_type == "simple-product" ?
                                             <div className='card_div'>

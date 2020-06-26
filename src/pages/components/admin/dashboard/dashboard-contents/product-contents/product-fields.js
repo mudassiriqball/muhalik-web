@@ -9,7 +9,7 @@ import axios from 'axios';
 import AlertModal from '../../../../alert-modal';
 import ConfirmModal from '../../../../confirm-modal'
 import TitleRow from '../../../../title-row';
-import CardAccordion from '../../../../card_accordion';
+import CardAccordion from '../../../../card-accordion';
 import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
 
 let fieldsArray = [];

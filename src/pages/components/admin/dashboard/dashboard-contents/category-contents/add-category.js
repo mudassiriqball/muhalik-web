@@ -8,41 +8,62 @@ import MuhalikConfig from '../../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../../styleSheet'
 import AlertModal from '../../../../alert-modal';
 import TitleRow from '../../../../title-row';
-import CardAccordion from '../../../../card_accordion';
+import CardAccordion from '../../../../card-accordion';
+
+import { Formik } from 'formik';
+import * as yup from 'yup';
+import CreatableSelect from 'react-select/creatable';
+
+const schema = yup.object({
+    sub_category: yup.string().required("Enter Category")
+        .min(5, "Must have at least 5 characters")
+        .max(25, "Can't be longer than 25 characters"),
+});
 
 
 class AddCategory extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            token: '',
-            isLoading: false,
-            showToast: false,
+    state = {
+        token: '',
+        isLoading: false,
+        showToast: false,
 
-            categoryValue: '',
-            subCategoryValue: '',
-            img: '',
+        categories_list: [],
+        category: '',
+        isCategoryNew: false,
+        categoryError: '',
+        img: '',
+        imgError: '',
+    };
 
-            categoryError: '',
-            subCategoryError: '',
-            imgError: '',
-        }
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({
+            categories_list: nextProps.categories_list,
+            token: nextProps.token
+        });
     }
-    async addCategory(currentComponent) {
+
+    async addCategory(values, currentComponent) {
         let formData = new FormData()
-        formData.append('category', this.state.categoryValue)
-        formData.append('sub_category', this.state.subCategoryValue)
+        formData.append('category', this.state.category)
+        formData.append('sub_category', values.sub_category)
         formData.append('myImage', this.state.img)
 
         const url = MuhalikConfig.PATH + '/api/categories/category';
         await axios.post(url, formData, {
             headers: {
                 'content-type': 'multipart/form-data',
-                'authorization': this.props.token,
+                'authorization': currentComponent.state.token,
             }
         }).then(function (response) {
-            currentComponent.setState({ isLoading: false, showToast })
-            return true;
+            currentComponent.categoriesReloadHandler
+            currentComponent.setState({
+                isLoading: false,
+                showToast: true,
+                isCategoryNew: false,
+                category: '',
+                imgError: '',
+            })
+            return true
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
             try {
@@ -50,147 +71,174 @@ class AddCategory extends Component {
             } catch (err) {
                 console.log('Request Failed:', error)
             }
-            return false;
+            return false
         });
     }
+    handleCategoryChange = (e) => {
+        let ccc
+        if (e != null) {
+            ccc = this.state.categories_list.filter(element => element.value == e.value)
+        }
 
-    async handleSubmit() {
-        if (this.state.categoryValue == '' || this.state.subCategoryValue == '' || this.state.img == '') {
-            if (this.state.categoryValue == '') {
-                this.setState({ categoryError: 'Enter Value First' });
-            }
-            if (this.state.subCategoryValue == '') {
-                this.setState({ subCategoryError: 'Enter Value First' });
-            }
-            if (this.state.img == '') {
-                this.setState({ imgError: 'Select First' });
-            }
+        if (ccc == null) {
+            this.setState({ isCategoryNew: false })
         } else {
-            this.setState({ isLoading: true })
-            this.addCategory(this)
+            this.setState({ category: e.value, isCategoryNew: true })
         }
     }
 
     render() {
         return (
-            <div>
-                <AlertModal
-                    onHide={(e) => this.setState({ showToast: false })}
-                    show={this.state.showToast}
-                    header={'Success'}
-                    message={'Category Added Successfully'}
-                    iconname={faThumbsUp}
-                    color={"#00b300"}
-                />
-                <TitleRow icon={faListAlt} title={' Admin Dashboard / Add Category'} />
-                <CardAccordion title={'Add New Category'}>
-                    <Form.Row>
-                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                            <Form.Label style={styles.label}>Category</Form.Label>
-                            <InputGroup>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    placeholder="Enter Category Value"
-                                    name="sku"
-                                    value={this.state.categoryValue}
-                                    onChange={(e) => this.setState({ categoryValue: e.target.value, categoryError: '' })}
-                                    isInvalid={this.state.categoryError}
+            <Formik
+                validationSchema={schema}
+                initialValues={{ sub_category: '' }}
+                onSubmit={(values, { setSubmitting, resetForm }) => {
+                    if (this.state.category == '') {
+                        this.setState({ categoryError: 'Select/Enter Value' })
+                    } else if (this.state.category.length < 5 || this.state.category.length > 24) {
+                        this.setState({ categoryError: 'Must be 5-25 caracters' })
+                    } else if (this.state.isCategoryNew == true && this.state.img == '') {
+                        this.setState({ imgError: 'Select Image' })
+                    }
+                    else {
+                        this.setState({ isLoading: true });
+                        setSubmitting(true);
+                        setTimeout(() => {
+                            if (this.addCategory(values, this)) {
+                                resetForm()
+                                this.props.categoriesReloadHandler()
+                            }
+                            setSubmitting(false);
+                        }, 500);
+                    }
+                }}
+            >
+                {
+                    ({
+                        handleSubmit,
+                        handleChange,
+                        values,
+                        touched,
+                        isValid,
+                        errors,
+                        handleBlur,
+                        isSubmitting
+                    }) => (
+                            <div className='add_category'>
+                                <AlertModal
+                                    onHide={(e) => this.setState({ showToast: false })}
+                                    show={this.state.showToast}
+                                    header={'Success'}
+                                    message={'Category Added Successfully'}
+                                    iconname={faThumbsUp}
+                                    color={"#00b300"}
                                 />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.categoryError}
-                                </Form.Control.Feedback>
-                            </InputGroup>
-                        </Form.Group>
-                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                            <Form.Label style={styles.label}>Sub Category</Form.Label>
-                            <InputGroup>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    placeholder="Enter Category Value"
-                                    name="sku"
-                                    value={this.state.subCategoryValue}
-                                    onChange={(e) => this.setState({ subCategoryValue: e.target.value, subCategoryError: '' })}
-                                    isInvalid={this.state.subCategoryError}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.subCategoryError}
-                                </Form.Control.Feedback>
-                            </InputGroup>
-                        </Form.Group>
-                        <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
-                            <Form.Label style={styles.label}>Image</Form.Label>
-                            <InputGroup>
-                                <Form.File
-                                    className="position-relative"
-                                    required
-                                    name="file"
-                                    onChange={(e) => this.setState({ img: e.target.files[0] })}
-                                    isInvalid={!!this.state.imgError}
-                                    id="validationFormik07"
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {this.state.imgError}
-                                </Form.Control.Feedback>
-                            </InputGroup>
-                        </Form.Group>
-
-                        <Form.Group as={Col}>
-                            <Button type="submit" size="sm" onClick={this.handleSubmit.bind(this)} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                                {this.state.isLoading ? 'Uploading' : 'Add Category'}
-                                {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
-                            </Button>
-                        </Form.Group>
-                    </Form.Row>
-
-                </CardAccordion>
-            </div >
-        )
+                                <TitleRow icon={faListAlt} title={' Admin Dashboard / Add Category'} />
+                                <Card>
+                                    <Card.Header>
+                                        Add New
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <Form.Row>
+                                            <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
+                                                <Form.Label style={styles.label}> Category <span> * </span></Form.Label>
+                                                <CreatableSelect
+                                                    isClearable
+                                                    onChange={this.handleCategoryChange}
+                                                    options={this.state.categories_list}
+                                                />
+                                                <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
+                                                    {this.state.categoryError}
+                                                </Form.Row>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
+                                                <Form.Label style={styles.label}> Sub Category <span> * </span></Form.Label>
+                                                <InputGroup>
+                                                    <Form.Control
+                                                        type="text"
+                                                        placeholder="Enter Category Value"
+                                                        name="sub_category"
+                                                        value={values.sub_category}
+                                                        onChange={handleChange}
+                                                        isInvalid={touched.sub_category && errors.sub_category}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {errors.sub_category}
+                                                    </Form.Control.Feedback>
+                                                </InputGroup>
+                                            </Form.Group>
+                                        </Form.Row>
+                                        {this.state.isCategoryNew ?
+                                            <Form.Row>
+                                                <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                    <Form.Label style={styles.label}>Image <span> * </span></Form.Label>
+                                                    <InputGroup>
+                                                        <Form.File
+                                                            className="position-relative"
+                                                            style={{ color: 'gray' }}
+                                                            required
+                                                            name="file"
+                                                            onChange={(e) => this.setState({ img: e.target.files[0] })}
+                                                            isInvalid={this.state.imgError}
+                                                        />
+                                                        <Form.Row style={{ fontSize: '13px', color: '#DC3545', marginLeft: '2px', width: '100%' }}>
+                                                            {this.state.imgError}
+                                                        </Form.Row>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            </Form.Row>
+                                            :
+                                            null
+                                        }
+                                        <Form.Row>
+                                            <Form.Group as={Col}>
+                                                <Button type="submit"
+                                                    onClick={handleSubmit}
+                                                    disabled={this.state.isLoading} block className='mt-5'>
+                                                    {this.state.isLoading ? 'Uploading' : 'Add Category'}
+                                                    {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
+                                                </Button>
+                                            </Form.Group>
+                                        </Form.Row>
+                                    </Card.Body>
+                                </Card>
+                                <style type="text/css">{`
+                                    .add_category .card{
+                                        margin: 2%;
+                                    }
+                                    .add_category .card_header{
+                                        background: ${GlobalStyleSheet.card_header_background};
+                                        font-size: ${GlobalStyleSheet.card_header_fontsize};
+                                    }
+                                    .add_category .card-body{
+                                        height: 70vh;
+                                    }
+                                `}</style>
+                                <style jsx>{`
+                                   
+                                    .add_category p{
+                                        font-size: 13px;
+                                        text-align: center;
+                                        align-self: center;
+                                        width: 100%;
+                                        margin-top: 5px;
+                                    }
+                                    .add_category span{
+                                        color: red;
+                                    }
+                                `}</style>
+                            </div >
+                        )
+                }
+            </Formik>
+        );
     }
 }
 
 export default AddCategory;
 
 const styles = {
-    title_row: {
-        borderBottom: '1px solid gray',
-        padding: '1.5% 4%'
-    },
-    title_fontawesome: {
-        color: 'gray',
-        marginRight: '3%',
-        width: '26px',
-        height: '26px',
-        maxHeight: '26px',
-        maxWidth: '26px',
-    },
-    title: {
-        color: 'gray'
-    },
-
-    card: {
-        // width: '100%',
-        margin: '2%'
-    },
-    card_body: {
-        // padding: '5%'
-    },
     label: {
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`
-    },
-    error: {
-        width: '100%',
-        textAlign: 'center',
-        color: '#DC3545',
-        fontSize: '14px',
-    },
-    accordin_fontawesome: {
-        color: `${GlobalStyleSheet.admin_primry_color}`,
-        marginRight: '10%',
-        width: '15px',
-        height: '15px',
-        maxHeight: '15px',
-        maxWidth: '15px',
     },
 }

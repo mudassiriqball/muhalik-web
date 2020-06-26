@@ -9,7 +9,7 @@ import axios from 'axios';
 import AlertModal from '../../../../alert-modal';
 import ConfirmModal from '../../../../confirm-modal'
 import TitleRow from '../../../../title-row';
-import CardAccordion from '../../../../card_accordion';
+import CardAccordion from '../../../../card-accordion';
 
 import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
 
@@ -29,13 +29,12 @@ class AllCategories extends React.Component {
 
             categoryValue: '',
             subCategoryValue: '',
-            img: '',
 
             categoryError: '',
             subCategoryError: '',
 
-            categories_list: [],
-            sub_categories_list: [],
+            categories_list: this.props.categories_list,
+            sub_categories_list: this.props.sub_categories_list,
 
             editRequestedCategory: '',
             showModalMessage: '',
@@ -183,7 +182,7 @@ class AllCategories extends React.Component {
     handleCategoryImgChange = (e, index) => {
         let copyArray = [];
         copyArray = Object.assign([], this.state.categories_list);
-        copyArray[index].img = e.target.files[0];
+        copyArray[index].url = e.target.files[0];
 
         this.setState({ categories_list: copyArray })
     }
@@ -197,9 +196,11 @@ class AllCategories extends React.Component {
         obj['value'] = copyArray[index].value;
         obj['prevVal'] = copyArray[index].value;
 
-        obj['img'] = copyArray[index].img;
+        obj['url'] = copyArray[index].url;
+        obj['prevUrl'] = copyArray[index].url;
 
         obj['error'] = '';
+        obj['isLoading'] = false;
         obj['imgError'] = '';
 
         copyArray[index] = obj
@@ -210,49 +211,53 @@ class AllCategories extends React.Component {
         let copyArray = [];
         copyArray = Object.assign([], this.state.categories_list);
         copyArray[index].value = copyArray[index].prevVal;
+        copyArray[index].url = copyArray[index].prevUrl;
         copyArray[index].error = '';
         copyArray[index].label = true;
         this.setState({ categories_list: copyArray })
     }
     //  => Update
-    async handleUpdateCategoryClick() {
+    async handleUpdateCategoryClick(index) {
         let copyArray = [];
-        let index = this.state.index
         copyArray = Object.assign([], this.state.categories_list);
-        if (copyArray[index].value == copyArray[index].prevVal) {
-            copyArray[index].error = 'Enter Different Value';
-            this.setState({ categories_list: copyArray });
-        } else {
-            const currentComponent = this
+        copyArray[index].isLoading = true;
+        this.setState({
+            categories_list: copyArray,
+        });
+        const currentComponent = this
+        let formData = new FormData()
+        formData.append('category', copyArray[index].value)
+        formData.append('myImage', copyArray[index].url)
 
-            let formData = new FormData()
-            formData.append('category', copyArray[index].value)
-            formData.append('myImage', copyArray[index].img)
-
-            const url = MuhalikConfig.PATH + `/api/categories/category/${copyArray[index]._id}`
-            await axios.put(url, formData, {
-                headers: {
-                    'content-type': 'multipart/form-data',
-                    'authorization': this.state.token,
-                }
-            }).then(function (response) {
-                copyArray[index].label = copyArray[index].value;
-                copyArray[index].prevVal = copyArray[index].value;
-                currentComponent.setState({
-                    categories_list: copyArray,
-                    showModalMessage: 'Product Category Updated Successfully',
-                    showModal: true
-                });
-                categoryArray = copyArray
-            }).catch(function (error) {
-                try {
-                    alert('Error: ', error.response.data.message);
-                } catch (err) {
-                    alert('Category Update Failed');
-                    console.log('Request Failed:', error)
-                }
+        const url = MuhalikConfig.PATH + `/api/categories/category/${copyArray[index]._id}`
+        await axios.put(url, formData, {
+            headers: {
+                'content-type': 'multipart/form-data',
+                'authorization': this.state.token,
+            }
+        }).then(function (response) {
+            copyArray[index].label = copyArray[index].value;
+            copyArray[index].prevVal = copyArray[index].value;
+            copyArray[index].isLoading = false;
+            currentComponent.setState({
+                categories_list: copyArray,
+                showModalMessage: 'Category Updated Successfully',
+                showModal: true
             });
-        }
+            categoryArray = copyArray
+            currentComponent.props.categoriesReloadHandler()
+        }).catch(function (error) {
+            copyArray[index].isLoading = false;
+            currentComponent.setState({
+                categories_list: copyArray,
+            });
+            try {
+                alert('Error: ', error.response.data.message);
+            } catch (err) {
+                alert('Category Update Failed');
+                console.log('Request Failed:', error)
+            }
+        });
     }
 
 
@@ -263,10 +268,10 @@ class AllCategories extends React.Component {
         copyArray = Object.assign([], this.state.sub_categories_list);
         copyArray[index].value = e.target.value;
 
-        if (e.target.value != '' && e.target.value.length <= 20 && e.target.value.length >= 3) {
+        if (e.target.value != '' && e.target.value.length <= 25 && e.target.value.length >= 5) {
             copyArray[index].error = ''
         } else {
-            copyArray[index].error = 'Value must be 3-20 characters'
+            copyArray[index].error = 'Value must be 5-25 characters'
         }
         this.setState({ sub_categories_list: copyArray })
     }
@@ -279,8 +284,11 @@ class AllCategories extends React.Component {
         obj['_id'] = copyArray[index]._id;
         obj['category_id'] = copyArray[index].category_id;
         obj['value'] = copyArray[index].value;
-        obj['label'] = false;
         obj['prevVal'] = copyArray[index].value;
+        obj['label'] = false;
+
+        obj['isUpdateLoading'] = false;
+        obj['isDeleteLoading'] = false;
         obj['error'] = '';
         copyArray[index] = obj
         await this.setState({ sub_categories_list: copyArray })
@@ -300,28 +308,34 @@ class AllCategories extends React.Component {
         copyArray = Object.assign([], this.state.sub_categories_list);
         if (copyArray[index].value == copyArray[index].prevVal) {
             copyArray[index].error = 'Enter Different Value';
-            this.setState({ categories_list: copyArray });
+            this.setState({ sub_categories_list: copyArray });
         } else {
+            copyArray[index].isUpdateLoading = true;
+            this.setState({
+                sub_categories_list: copyArray,
+            });
             const currentComponent = this
             let data = [];
             data = {
-                value: copyArray[index].value,
-                label: copyArray[index].value,
-                category_id: copyArray[index].category_id
+                sub_category: copyArray[index].value,
             }
             const url = MuhalikConfig.PATH + `/api/categories/sub-category/${copyArray[index]._id}`
             await axios.put(url, data, {
                 headers: { 'authorization': this.state.token }
             }).then(function (response) {
+                copyArray[index].isUpdateLoading = false;
                 copyArray[index].label = copyArray[index].value;
                 copyArray[index].prevVal = copyArray[index].value;
                 currentComponent.setState({
-                    sub_categories_list: copyArray,
                     showModalMessage: 'Product Sub Category Updated Successfully',
                     showModal: true
                 });
-                categoryArray = copyArray
+                currentComponent.props.categoriesReloadHandler()
             }).catch(function (error) {
+                copyArray[index].isUpdateLoading = false;
+                currentComponent.setState({
+                    sub_categories_list: copyArray,
+                });
                 try {
                     alert('Error: ', error.response.data.message);
                 } catch (err) {
@@ -334,15 +348,19 @@ class AllCategories extends React.Component {
     async handleDeleteSubCategoryClick() {
         this.setState({ showConfirmDeleteModal: false })
         let copyArray = [];
-        const index = this.state.index
+        let index = this.state.index
         const currentComponent = this
         copyArray = Object.assign([], this.state.sub_categories_list);
-
+        copyArray[index].isDeleteLoading = true;
+        this.setState({
+            sub_categories_list: copyArray,
+        });
         const url = MuhalikConfig.PATH + `/api/categories/sub-category/${copyArray[index]._id}`
         await axios.delete(url, {
             headers: { 'authorization': this.state.token }
         }).then(function (response) {
             copyArray.splice(index, 1);
+            copyArray[index].isDeleteLoading = false;
             currentComponent.setState({
                 sub_categories_list: copyArray,
                 showModalMessage: 'Category Deleted Successfully',
@@ -350,6 +368,10 @@ class AllCategories extends React.Component {
             })
             categoryArray = copyArray
         }).catch(function (error) {
+            copyArray[index].isDeleteLoading = false;
+            currentComponent.setState({
+                sub_categories_list: copyArray,
+            });
             try {
                 alert('Error: ', error.response.data.message);
             } catch (err) {
@@ -361,7 +383,7 @@ class AllCategories extends React.Component {
 
     render() {
         return (
-            <>
+            <div className='all_categories'>
                 <AlertModal
                     onHide={(e) => this.setState({ showModal: false })}
                     show={this.state.showModal}
@@ -456,153 +478,167 @@ class AllCategories extends React.Component {
                 </CardAccordion> */}
 
                 {/* All Categories */}
-                <CardAccordion title={'All Categories'}>
-                    <Form.Row style={{ margin: '0% 5%' }}>
-                        <Form.Group as={Col}>
-                            <InputGroup>
-                                <InputGroup.Prepend >
-                                    <Form.Control as="select" variant="primary" size='sm'
-                                        value={this.state.searchType} onChange={(e) => this.setState({ searchType: e.target.value })}>
-                                        <option>Category</option>
-                                        <option>Sub Category</option>
-                                    </Form.Control>
-                                </InputGroup.Prepend>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    placeholder="Search Here"
-                                    name="search"
-                                    value={this.state.filterStr}
-                                    onChange={(e) => this.handleFilterStrChange(e)}
-                                />
-                            </InputGroup>
-                        </Form.Group>
-                    </Form.Row>
-                    <hr />
-                    {this.state.categories_list && this.state.categories_list.map((element, index) =>
-                        <div key={index}>
-
-
-                            <Form.Row>
-
-                                <Col>
-                                    <Form.Group as={Form.Row}>
-                                        <Form.Control
-                                            type="text"
-                                            size="sm"
-                                            name="sku"
-                                            value={element.value}
-                                            disabled={element.label}
-                                            onChange={(e) => this.handleCategoryChange(e, index)}
-                                            isInvalid={element.error}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {element.error}
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
-                                    {!element.label ?
+                <Card>
+                    <Card.Header>
+                        All Categories
+                    </Card.Header>
+                    <Card.Body>
+                        <Form.Row style={{ margin: '0% 5%' }}>
+                            <Form.Group as={Col}>
+                                <InputGroup>
+                                    <InputGroup.Prepend >
+                                        <Form.Control as="select" variant="primary" size='sm'
+                                            value={this.state.searchType} onChange={(e) => this.setState({ searchType: e.target.value })}>
+                                            <option>Category</option>
+                                            <option>Sub Category</option>
+                                        </Form.Control>
+                                    </InputGroup.Prepend>
+                                    <Form.Control
+                                        type="text"
+                                        size="sm"
+                                        placeholder="Search Here"
+                                        name="search"
+                                        value={this.state.filterStr}
+                                        onChange={(e) => this.handleFilterStrChange(e)}
+                                    />
+                                </InputGroup>
+                            </Form.Group>
+                        </Form.Row>
+                        <hr />
+                        {this.state.categories_list && this.state.categories_list.map((element, index) =>
+                            <div key={index}>
+                                <Form.Row>
+                                    <Col>
                                         <Form.Group as={Form.Row}>
-                                            <InputGroup>
-                                                <Form.File
-                                                    className="position-relative"
-                                                    required
-                                                    style={{ fontSize: '13px' }}
-                                                    name="file"
-                                                    onChange={(e) => this.handleCategoryImgChange(e, index)}
-                                                    isInvalid={!!this.state.imgError}
-                                                    id="validationFormik07"
-                                                />
-                                            </InputGroup>
+                                            <Form.Control
+                                                type="text"
+                                                size="sm"
+                                                name="sku"
+                                                value={element.value}
+                                                disabled={element.label}
+                                                onChange={(e) => this.handleCategoryChange(e, index)}
+                                                isInvalid={element.error}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {element.error}
+                                            </Form.Control.Feedback>
                                         </Form.Group>
+                                        {!element.label ?
+                                            <Form.Group as={Form.Row}>
+                                                <InputGroup>
+                                                    <Form.File
+                                                        className="position-relative"
+                                                        required
+                                                        style={{ fontSize: '13px' }}
+                                                        name="file"
+                                                        onChange={(e) => this.handleCategoryImgChange(e, index)}
+                                                        isInvalid={!!this.state.imgError}
+                                                        id="validationFormik07"
+                                                    />
+                                                </InputGroup>
+                                            </Form.Group>
+                                            :
+                                            null
+                                        }
+                                        <Row>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                                <Button type="submit" className='d-inline-flex' variant={element.label ? "outline-primary" : "outline-success"} size="sm"
+                                                    onClick={element.label ? () => this.handleEditCategoryClick(index) : () => this.handleUpdateCategoryClick(index)}
+                                                    disabled={element.label ? false : element.error}
+                                                >
+                                                    {element.label ? ' Edit ' : ' Update '}
+                                                    {element.label ? null : element.isLoading ? <Spinner animation="grow" size="sm" /> : null}
+                                                </Button>
+                                            </Form.Group>
+
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                                <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"}
+                                                    size="sm" block style={styles.submit_btn}
+                                                    onClick={element.label ? null : () => this.handleCancelCategoryClick(index)}
+                                                    disabled={element.label ? true : false}
+                                                >
+                                                    {element.label ? ' Delete ' : ' Cancel '}
+                                                </Button>
+                                            </Form.Group>
+                                        </Row>
+                                    </Col>
+                                    <Col>
+                                        <Image src={element.url} fluid style={{ width: '100%', maxHeight: '150px', borderRadius: '5px' }} />
+                                    </Col>
+                                </Form.Row>
+                                <hr className='pb-0 pt-0 mt-0' />
+
+
+
+
+
+                                <Form.Row >
+                                    {this.state.sub_categories_list.map((e, i) => (element._id == e.category_id) ?
+                                        <Col lg={6} md={6} sm={12} xs={12} key={e._id}>
+                                            <Form.Row>
+                                                <Form.Group as={Col} lg="auto" md="auto" sm={8} xs={12}>
+                                                    <Form.Control
+                                                        type="text"
+                                                        size="sm"
+                                                        name="sku"
+                                                        value={e.value}
+                                                        disabled={e.label}
+                                                        onChange={(event) => this.handleSubCategoryChange(event, i)}
+                                                        isInvalid={e.error}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {e.error}
+                                                    </Form.Control.Feedback>
+                                                </Form.Group>
+                                                <div className='mr-auto'></div>
+                                                <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                                    <Button type="submit" className='d-inline-flex' variant={e.label ? "outline-primary" : "outline-success"} size="sm" block
+                                                        onClick={e.label ? () => this.handleEditSubCategoryClick(i) : () => this.handleUpdateSubCategoryClick(i)}
+                                                        disabled={e.label ? false : e.error}
+                                                    >
+                                                        {e.label ? ' Edit ' : ' Update '}
+                                                        {e.label ? null : e.isUpdateLoading ? <Spinner animation="grow" size="sm" /> : null}
+                                                    </Button>
+                                                </Form.Group>
+                                                <div className='sm_xs_show mr-auto'></div>
+                                                <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                                    <Button type="submit" className='d-inline-flex' variant={e.label ? "outline-danger" : "outline-primary"} size="sm" block
+                                                        disabled={e.label ? true : false}
+                                                        onClick={
+                                                            e.label ?
+                                                                () => this.setState({
+                                                                    showConfirmDeleteModal: true,
+                                                                    delete_category_id: e._id,
+                                                                    delete_category_name: e.value,
+                                                                    index: i
+                                                                })
+                                                                :
+                                                                () => this.handleCancelSubCategoryClick(i)}
+                                                    >
+                                                        {e.label ? ' Delete ' : ' Cancel '}
+                                                        {e.label ? e.isDeleteLoading ? <Spinner animation="grow" size="sm" /> : null : null}
+                                                    </Button>
+                                                </Form.Group>
+                                            </Form.Row>
+                                        </Col>
                                         :
                                         null
-                                    }
-                                    <Row>
-                                        <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                            <Button type="submit" variant={element.label ? "outline-primary" : "outline-success"} size="sm" block style={styles.submit_btn}
-                                                onClick={element.label ? () => this.handleEditCategoryClick(index) : () => this.handleUpdateCategoryClick(index)}
-                                                disabled={element.label ? false : element.error}
-                                            >
-                                                <div>{element.label ? 'Edit' : 'Update'}</div>
-                                            </Button>
-                                        </Form.Group>
-
-                                        <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                            <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"}
-                                                size="sm" block style={styles.submit_btn}
-                                                onClick={element.label ? null : () => this.handleCancelCategoryClick(index)}
-                                                disabled={element.label ? true : false}
-                                            >
-                                                <div>{element.label ? 'Delete' : 'Cancel'}</div>
-                                            </Button>
-                                        </Form.Group>
-                                    </Row>
-                                </Col>
-                                <Col>
-                                    <Image src="electronics.jpg" fluid style={{ width: '100%', maxHeight: '150px' }} />
-                                </Col>
-                            </Form.Row>
-                            <hr className='pb-0 pt-0 mt-0' />
-
-
-
-
-
-                            <Form.Row >
-                                {this.state.sub_categories_list.map((e, i) => (element._id == e.category_id) ?
-                                    <Col lg={6} md={6} sm={12} xs={12} key={e._id}>
-                                        <Form.Row>
-                                            <Form.Group as={Col} lg="auto" md="auto" sm={8} xs={12}>
-                                                <Form.Control
-                                                    type="text"
-                                                    size="sm"
-                                                    name="sku"
-                                                    value={e.value}
-                                                    disabled={e.label}
-                                                    onChange={(event) => this.handleSubCategoryChange(event, i)}
-                                                    isInvalid={e.error}
-                                                />
-                                                <Form.Control.Feedback type="invalid">
-                                                    {e.error}
-                                                </Form.Control.Feedback>
-                                            </Form.Group>
-                                            <div className='mr-auto'></div>
-                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                                <Button type="submit" variant={e.label ? "outline-primary" : "outline-success"} size="sm" block style={styles.submit_btn}
-                                                    onClick={e.label ? () => this.handleEditSubCategoryClick(i) : () => this.handleUpdateSubCategoryClick(i)}
-                                                    disabled={e.label ? false : e.error}
-                                                >
-                                                    <div>{e.label ? 'Edit' : 'Update'}</div>
-                                                </Button>
-                                            </Form.Group>
-                                            <div className='sm_xs_show mr-auto'></div>
-                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                                <Button type="submit" variant={e.label ? "outline-danger" : "outline-primary"} size="sm" block style={styles.submit_btn}
-                                                    onClick={
-                                                        e.label ?
-                                                            () => this.setState({
-                                                                showConfirmDeleteModal: true,
-                                                                delete_category_id: e._id,
-                                                                delete_category_name: e.value,
-                                                                index: index
-                                                            })
-                                                            :
-                                                            () => this.handleCancelSubCategoryClick(i)}
-                                                >
-                                                    <div>{e.label ? 'Delete' : 'Cancel'}</div>
-                                                </Button>
-                                            </Form.Group>
-                                        </Form.Row>
-                                    </Col>
-                                    :
-                                    null
-                                )}
-                            </Form.Row>
-                            <hr className='mb-0' />
-                            <hr className='pb-0 pt-0 mt-0' />
-                        </div>
-                    )}
-                </CardAccordion>
+                                    )}
+                                </Form.Row>
+                                <div className='w-100 mt-5 mb-2' style={{ background: 'lightgray', minHeight: '5px' }}></div>
+                            </div>
+                        )}
+                    </Card.Body>
+                </Card>
+                <style type="text/css">{`
+                    .all_categories .card{
+                        margin: 2%;
+                    }
+                    .all_categories .card_header{
+                        background: ${GlobalStyleSheet.card_header_background};
+                        font-size: ${GlobalStyleSheet.card_header_fontsize};
+                    }
+                `}</style>
                 <style jsx>
                     {`
                         @media only screen and (min-width: 768px){
@@ -612,51 +648,14 @@ class AllCategories extends React.Component {
                         }
                     `}
                 </style>
-            </>
+            </div>
         )
     }
 }
 
 const styles = {
-    title_row: {
-        borderBottom: '1px solid gray',
-        padding: '1.5% 4%'
-    },
-    title_fontawesome: {
-        color: 'gray',
-        marginRight: '3%',
-        width: '26px',
-        height: '26px',
-        maxHeight: '26px',
-        maxWidth: '26px',
-    },
-    title: {
-        color: 'gray'
-    },
-
-    card: {
-        // width: '100%',
-        margin: '2%'
-    },
-    card_body: {
-        // padding: '5%'
-    },
     label: {
         fontSize: `${GlobalStyleSheet.form_label_fontsize}`
-    },
-    error: {
-        width: '100%',
-        textAlign: 'center',
-        color: '#DC3545',
-        fontSize: '14px',
-    },
-    accordin_fontawesome: {
-        color: `${GlobalStyleSheet.admin_primry_color}`,
-        marginRight: '10%',
-        width: '15px',
-        height: '15px',
-        maxHeight: '15px',
-        maxWidth: '15px',
     },
 }
 export default AllCategories

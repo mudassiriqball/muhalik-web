@@ -45,7 +45,7 @@ const CategoriesSlider = (props) => {
                     margin: 0.5%;
                     padding: 0% 1%;
                     width: 100px;
-                    minWidth: 100px;
+                    min-width: 100px;
                     height: 100px;
                     text-align: center;
                     font-size: 13px;

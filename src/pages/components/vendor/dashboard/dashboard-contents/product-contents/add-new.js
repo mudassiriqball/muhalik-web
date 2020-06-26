@@ -17,7 +17,7 @@ import AlertModal from '../../../../alert-modal';
 
 import GlobalStyleSheet from '../../../../../../styleSheet';
 import TitleRow from '../../../../title-row';
-import CardAccordion from '../../../../card_accordion';
+import CardAccordion from '../../../../card-accordion';
 
 import MuhalikConfig from '../../../../../../sdk/muhalik.config';
 import CustomFields from './add-new-contents/custom-fields';

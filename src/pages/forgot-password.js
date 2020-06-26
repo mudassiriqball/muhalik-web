@@ -46,12 +46,14 @@ class ForgotPassword extends Component {
     state = {
         hide: true,
         isLoading: false,
+        sendCodeLoading: false,
         showToast: false,
         serverErrorMsg: '',
 
         isCodeSended: false,
         isCodeVerified: false,
 
+        _id: '',
         mobileError: '',
         verificationCodeError: '',
         feedback: '',
@@ -65,41 +67,62 @@ class ForgotPassword extends Component {
             });
     }
 
-    handleSenVerificationCode = (mobileNumber) => {
+
+
+
+
+
+    handleSenVerificationCode = (mobile) => {
         const currentComponent = this
-        this.setState({
-            intervalTime: 60,
-            isResendCode: false,
-            feedback: ''
-        });
-        let interval = null
-        this.setState({ mobileError: '' })
-        if (phoneRegExp.test(mobileNumber)) {
-            var appVerifier = window.recaptchaVerifier;
-            firebase.auth().signInWithPhoneNumber(mobileNumber, appVerifier)
-                .then(function (confirmationResult) {
-                    window.confirmationResult = confirmationResult;
-                    currentComponent.setState({
-                        isCodeSended: true,
-                        mobileError: '',
-                        feedback: 'Code Sended, Check your number',
-                    })
-                    let delay = 1000
-                    interval = setInterval(() => {
-                        currentComponent.setState({ intervalTime: currentComponent.state.intervalTime - 1 });
-                        if (currentComponent.state.intervalTime == 0) {
-                            currentComponent.setState({ isResendCode: true });
-                            clearInterval(interval)
-                        }
-                    }, delay)
-                }).catch(function (error) {
-                    currentComponent.setState({
-                        mobileError: 'Error: Code not sended',
-                        feedback: '',
-                        isCodeSended: false,
-                        isCodeVerified: false,
-                    })
+
+        if (phoneRegExp.test(mobile)) {
+            this.setState({ sendCodeLoading: true, mobileError: '' })
+            const url = MuhalikConfig.PATH + `/api/users/check-mobile/${mobile}`;
+
+            axios.get(url).then(function (response) {
+                let interval = null
+                currentComponent.setState({
+                    intervalTime: 60,
+                    isResendCode: false,
+                    feedback: '',
+                    _id: response.data.data._id
                 });
+
+                var appVerifier = window.recaptchaVerifier;
+                firebase.auth().signInWithPhoneNumber(mobile, appVerifier)
+                    .then(function (confirmationResult) {
+                        window.confirmationResult = confirmationResult;
+                        currentComponent.setState({
+                            isCodeSended: true,
+                            mobileError: '',
+                            feedback: 'Code Sended, Check your number',
+                            sendCodeLoading: false,
+                        })
+                        let delay = 1000
+                        interval = setInterval(() => {
+                            currentComponent.setState({ intervalTime: currentComponent.state.intervalTime - 1 });
+                            if (currentComponent.state.intervalTime == 0) {
+                                currentComponent.setState({ isResendCode: true });
+                                clearInterval(interval)
+                            }
+                        }, delay)
+                    }).catch(function (error) {
+                        currentComponent.setState({
+                            mobileError: 'Error: Code not sended',
+                            sendCodeLoading: false,
+                            feedback: '',
+                            isCodeSended: false,
+                            isCodeVerified: false,
+                        })
+                    });
+
+            }).catch(function (error) {
+                console.log('error:', error)
+                currentComponent.setState({
+                    mobileError: error.response.data.message,
+                    sendCodeLoading: false,
+                })
+            })
         } else {
             this.setState({
                 isCodeSended: false,
@@ -108,6 +131,7 @@ class ForgotPassword extends Component {
                 isCodeVerified: false,
             })
         }
+
     }
 
     handleVerifyVarificationCode = (code) => {
@@ -132,8 +156,8 @@ class ForgotPassword extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    userRegister(data, currentComponent) {
-        const url = MuhalikConfig.PATH + '/api/users/reset-password';
+    resetPassword(data, currentComponent) {
+        const url = MuhalikConfig.PATH + `/api/users/reset-password/${this.state._id}`;
         if (this.state.isCodeVerified && this.state.isCodeSended) {
             axios.post(url, data).then(function (response) {
                 currentComponent.setState({
@@ -174,7 +198,7 @@ class ForgotPassword extends Component {
                     this.setState({ isLoading: true });
                     setSubmitting(true);
                     setTimeout(() => {
-                        if (this.userRegister(values, this)) {
+                        if (this.resetPassword(values, this)) {
                             resetForm();
                         }
                         setSubmitting(false);
@@ -253,6 +277,7 @@ class ForgotPassword extends Component {
                                                                 disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
                                                                 className='append_button' variant='success' >
                                                                 {this.state.isCodeSended ? 'Resend' : 'Send Code'}
+                                                                {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                             </Button>
                                                         </InputGroup.Append>
                                                         <Form.Control.Feedback type="invalid">
@@ -368,7 +393,7 @@ class ForgotPassword extends Component {
                                                                 onSubmit={handleSubmit}
                                                                 variant='success'
                                                                 disabled={this.state.isLoading || !this.state.isCodeVerified} block>
-                                                                {this.state.isLoading ? 'Continue' : 'Continue'}
+                                                                {this.state.isLoading ? ' Continue ' : ' Continue '}
                                                                 {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                             </Button>
                                                         </Form.Group>
