@@ -46,6 +46,8 @@ class Admin extends Component {
             fields_list: [],
             field_requests_list: [],
 
+            sliders_list: [],
+
             token: '',
             decodedToken: '',
         }
@@ -58,7 +60,6 @@ class Admin extends Component {
 
         const url = MuhalikConfig.PATH + '/api/categories/categories';
         await axios.get(url).then((response) => {
-            console.log("all categories: ", response.data.category.docs)
             currentComponent.setState({
                 categories_list: response.data.category.docs,
                 sub_categories_list: response.data.sub_category.docs
@@ -89,7 +90,6 @@ class Admin extends Component {
 
         const url_3 = MuhalikConfig.PATH + '/api/products/';
         await axios.get(url_3).then(function (response) {
-            console.log("all products: ", response.data.data)
             currentComponent.setState({
                 products_list: response.data.data,
             });
@@ -100,7 +100,6 @@ class Admin extends Component {
 
         const url_4 = MuhalikConfig.PATH + '/api/users/vendors';
         await axios.get(url_4).then(function (response) {
-            console.log("vendors: ", response.data.data)
             currentComponent.setState({
                 vendors_list: response.data.data,
             });
@@ -111,7 +110,6 @@ class Admin extends Component {
 
         const url_5 = MuhalikConfig.PATH + '/api/users/new-vendors';
         await axios.get(url_5).then(function (response) {
-            console.log("new-vendors: ", response.data.data)
             currentComponent.setState({
                 new_vendors_list: response.data.data,
             });
@@ -122,7 +120,6 @@ class Admin extends Component {
 
         const url_6 = MuhalikConfig.PATH + '/api/users/restricted-vendors';
         await axios.get(url_6).then(function (response) {
-            console.log("restricted-vendors: ", response.data.data)
             currentComponent.setState({
                 restricted_vendors_list: response.data.data,
             });
@@ -133,7 +130,6 @@ class Admin extends Component {
 
         const url_7 = MuhalikConfig.PATH + '/api/users/customers';
         await axios.get(url_7).then(function (response) {
-            console.log("customers: ", response.data.data)
             currentComponent.setState({
                 customers_list: response.data.data,
             });
@@ -143,7 +139,6 @@ class Admin extends Component {
         })
         const url_8 = MuhalikConfig.PATH + '/api/users/restricted-customers';
         await axios.get(url_8).then(function (response) {
-            console.log("customers: ", response.data.data)
             currentComponent.setState({
                 restricted_customers_list: response.data.data,
             });
@@ -152,6 +147,16 @@ class Admin extends Component {
             alert('restricted customers error: ', error)
         })
 
+        const url_9 = MuhalikConfig.PATH + '/api/sliders/';
+        await axios.get(url_9).then(function (response) {
+            console.log('sliderimh:', response.data.data)
+            currentComponent.setState({
+                sliders_list: response.data.data,
+            });
+        }).catch(function (error) {
+            console.log("sliders_list Fetching Error:", error)
+            alert('sliders_list error: ', error)
+        })
     }
 
     async authUser() {
@@ -174,20 +179,13 @@ class Admin extends Component {
     };
 
     logout = () => {
-        if (removeTokenFromStorage()) {
-            this.setState({ token: '', decodedToken: '', })
-            Router.replace('/index');
-            Router.reload();
-        } else {
-            alert('Logout Failed')
-        }
+        removeTokenFromStorage()
     }
 
     async reloadCategories() {
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/categories/categories';
         await axios.get(url).then((response) => {
-            console.log("all categories: ", response.data.category.docs)
             currentComponent.setState({
                 categories_list: response.data.category.docs,
                 sub_categories_list: response.data.sub_category.docs
@@ -222,8 +220,10 @@ class Admin extends Component {
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
 
+                    sliders_list={this.state.sliders_list}
+
                     token={this.state.token}
-                    user_name={this.state.decodedToken.full_name || ''}
+                    user_name={this.state.decodedToken.full_name}
                     show={this.state.showWrapper}
                     drawerClickHandler={this.drawerToggleClickHandler}
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
@@ -246,8 +246,9 @@ class Admin extends Component {
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
 
+                    sliders_list={this.state.sliders_list}
                     token={this.state.token}
-                    user_name={this.state.decodedToken.full_name || ''}
+                    user_name={this.state.decodedToken.full_name}
                     show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler}
                     logout={this.logout} />

@@ -86,13 +86,7 @@ class Vendor extends Component {
     }
 
     logout = () => {
-        if (removeTokenFromStorage()) {
-            this.setState({ token: '', decodedToken: '', })
-            Router.replace('/index');
-            Router.reload();
-        } else {
-            alert('Logout Failed')
-        }
+        removeTokenFromStorage()
     }
 
     render() {

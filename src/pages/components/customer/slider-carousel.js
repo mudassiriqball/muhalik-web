@@ -7,11 +7,11 @@ import CategoriesSlider from './categories-slider'
 
 
 const images = [
-    { img: 'carousel_img1.jpg' },
-    { img: 'carousel_img2.jpg' },
-    { img: 'carousel_img3.jpg' },
-    { img: 'carousel_img4.jpg' },
-    { img: 'hassan.jpg' }
+    { img: '/carousel_img1.jpg' },
+    { img: '/carousel_img2.jpg' },
+    { img: '/carousel_img3.jpg' },
+    { img: '/carousel_img4.jpg' },
+    { img: '/hassan.jpg' }
 ]
 
 const SliderCarousel = (props) => {
@@ -40,7 +40,7 @@ const SliderCarousel = (props) => {
                     )}
                 </Carousel>
 
-                <CategoriesSlider categories_list={props.categories_list} />
+                <CategoriesSlider id={props.id} categories_list={props.categories_list} />
 
             </Row>
             <style type="text/css">{`
@@ -53,7 +53,6 @@ const SliderCarousel = (props) => {
                     .slider_carousel .row{
                         padding: 0%;
                     }
-                    
                 }
             `}</style>
         </div>

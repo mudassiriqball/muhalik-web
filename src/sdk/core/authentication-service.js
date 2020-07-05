@@ -28,12 +28,17 @@ export function getTokenFromStorage() {
 export function removeTokenFromStorage() {
     try {
         reactLocalStorage.remove('token');
-        return true
+        Router.replace('/index')
+        return <div></div>
     } catch (error) {
         console.log("error:", error)
-        return false
+        alert('Logout Failed')
+        return null
     }
 }
+
+
+
 
 export function checkAuth(rolee) {
     try {

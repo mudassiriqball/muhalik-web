@@ -7,6 +7,7 @@ import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 import AdminDashboard from './dashboard-contents/admin-dashboard';
 import Vendors from './dashboard-contents/vendors';
 import Customers from './dashboard-contents/customers';
+import Slider from './dashboard-contents/slider'
 // Products 
 import AllProducts from './dashboard-contents/product-contents/all-products';
 import AddNew from '../../vendor/dashboard/dashboard-contents/product-contents/add-new';
@@ -70,24 +71,15 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                            <Nav.Item>
+                                <div className="nav_link">
+                                    <Nav.Link eventKey="Slider" style={styles.nav_link} onClick={() => setShow_product(false)}>
+                                        <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
+                                        <div className="mr-auto">Slider</div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
                                     <Nav.Link style={styles.nav_link} onClick={() => setShow_product(!show_product)}>
@@ -124,25 +116,6 @@ const Dashboard = props => {
                                 : null
                             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                             <Nav.Item>
                                 <div className="nav_link">
                                     <Nav.Link style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
@@ -171,18 +144,6 @@ const Dashboard = props => {
                                 </div>
                                 : null
                             }
-
-
-
-
-
-
-
-
-
-
-
-
 
                             <Nav.Item>
                                 <div className="nav_link">
@@ -275,8 +236,8 @@ const Dashboard = props => {
                                     <NavDropdown.Divider />
                                     <NavDropdown.Item onClick={props.logout}>
                                         <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
-                                        Logout
-                                </NavDropdown.Item>
+                                        {"Logout"}
+                                    </NavDropdown.Item>
                                 </NavDropdown>
                             </div>
                         </Navbar>
@@ -292,6 +253,9 @@ const Dashboard = props => {
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Customers">
                                     <Customers {...props} />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="Slider">
+                                    <Slider {...props} />
                                 </Tab.Pane>
                                 {/* Product */}
                                 <Tab.Pane eventKey="AllProducts">

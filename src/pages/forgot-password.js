@@ -118,10 +118,14 @@ class ForgotPassword extends Component {
 
             }).catch(function (error) {
                 console.log('error:', error)
-                currentComponent.setState({
-                    mobileError: error.response.data.message,
-                    sendCodeLoading: false,
-                })
+                try {
+                    currentComponent.setState({
+                        mobileError: error.response.data.message,
+                        sendCodeLoading: false,
+                    })
+                } catch (err) {
+
+                }
             })
         } else {
             this.setState({
@@ -156,10 +160,10 @@ class ForgotPassword extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    resetPassword(data, currentComponent) {
+    async resetPassword(data, currentComponent) {
         const url = MuhalikConfig.PATH + `/api/users/reset-password/${this.state._id}`;
         if (this.state.isCodeVerified && this.state.isCodeSended) {
-            axios.post(url, data).then(function (response) {
+            await axios.put(url, data).then(function (response) {
                 currentComponent.setState({
                     isLoading: false,
                     showToast: true,
@@ -167,7 +171,6 @@ class ForgotPassword extends Component {
                     isCodeVerified: false,
                     isResendCode: false,
                 });
-                Router.push('/login');
                 return true;
             }).catch(function (error) {
                 currentComponent.setState({ isLoading: false });
@@ -200,6 +203,7 @@ class ForgotPassword extends Component {
                     setTimeout(() => {
                         if (this.resetPassword(values, this)) {
                             resetForm();
+                            Router.push('/login');
                         }
                         setSubmitting(false);
                     }, 500);

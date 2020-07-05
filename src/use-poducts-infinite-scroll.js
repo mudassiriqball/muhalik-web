@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import MuhalikConfig from './sdk/muhalik.config'
 
-export default function useInfiniteScroll(query, pageNumber) {
+export default function useProductsInfiniteScroll(fieldName, query, pageNumber, limit) {
     const [loading, setLoading] = useState('')
     const [error, setError] = useState('')
     const [products, setProducts] = useState([])
@@ -12,20 +12,21 @@ export default function useInfiniteScroll(query, pageNumber) {
         setProducts([])
     }, [query])
     useEffect(() => {
+        getData()
+    }, [query, pageNumber])
+
+    async function getData() {
         setLoading(true)
         setError(false)
         let cancle
-
-        const _url = MuhalikConfig.PATH + `/api/products/get-products`
-        axios({
+        const _url = MuhalikConfig.PATH + `/api/products/get`
+        await axios({
             method: 'GET',
-            // url: 'http://openlibrary.org/search.json',
             url: _url,
-            params: { q: query, page: pageNumber },
+            params: { field: fieldName, q: query, page: pageNumber, limit: limit },
             cancelToken: new axios.CancelToken(c => cancle = c)
         }).then(res => {
             setProducts(prevProducts => {
-                // return [...new Set([...prevProducts, ...res.data.docs.map(p => p.title)])]
                 return [...new Set([...prevProducts, ...res.data.data])]
             })
             setHasMore(res.data.data.length > 0)
@@ -33,9 +34,9 @@ export default function useInfiniteScroll(query, pageNumber) {
         }).catch(err => {
             if (axios.isCancel(err)) return
             setError(true)
+            console.log('Error---->:', err)
         })
         return () => cancle()
-    }, [query, pageNumber])
+    }
     return { loading, error, products, hasMore }
 }
-

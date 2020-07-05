@@ -1,6 +1,7 @@
 const express = require("express");
 const next = require("next");
-
+const aws = require('aws-sdk')
+const multerS3 = require('multer-s3')
 const PORT = process.env.PORT || 5000;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -8,28 +9,49 @@ const handle = app.getRequestHandler();
 const multer = require("multer");
 const path = require("path");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'images/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname);
-  }
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'images/')
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname);
+//   }
+// });
+// const fileFilter = (req, file, cb) => {
+//   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+//     cb(null, true)
+//   } else {
+//     //reject file
+//     cb({ message: 'Unsupported file format' }, false)
+//   }
+// }
+
+// const upload = multer({
+//   storage: storage,
+//   fileFilter: fileFilter
+// });
+
+aws.config.update({
+  secretAccessKey: 'nKZSmn0MFET9TEtEy4kUrksDjzkMFBQdt+x6+aPc',
+  accessKeyId: 'AKIAIYECX324S27WGWFQ',
+  region: 'me-south-1'
+
 });
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-    cb(null, true)
-  } else {
-    //reject file
-    cb({ message: 'Unsupported file format' }, false)
-  }
-}
+const s3 = new aws.S3()
 
 const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter
-});
-
+  storage: multerS3({
+    s3: s3,
+    bucket: 'slider-images',
+    acl: 'public-read',
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: 'TESTING_ME' });
+    },
+    key: function (req, file, cb) {
+      cb(null, Date.now().toString())
+    }
+  })
+})
 app
   .prepare()
   .then(() => {
@@ -94,10 +116,12 @@ app
     const UsersRoutes = require("./api/routes/users.routes");
     const ProductsRoutes = require("./api/routes/products.routes");
     const Products_CategoriesRoutes = require("./api/routes/categories.routes");
+    const Sliders_Routes = require("./api/routes/sliders.routes");
 
     app.use("/api/users", UsersRoutes);
     app.use("/api/products", ProductsRoutes);
     app.use("/api/categories", Products_CategoriesRoutes);
+    app.use("/api/sliders", Sliders_Routes);
 
     app.get("*", (req, res) => {
       return handle(req, res);

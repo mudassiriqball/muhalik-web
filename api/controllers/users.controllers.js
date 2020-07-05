@@ -36,21 +36,20 @@ usersController.getAll = async (req, res) => {
 usersController.check_mobile = async (req, res) => {
   let user;
   try {
-    user = await Users.findOne({ mobile: req.params._mobile }, { _id: 1 });
-    if (user) {
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: user,
-      });
-    }
-    else {
-      res.status(500).send({
-        code: 500,
-        message: "does not exist",
-      });
-    }
-  } catch (error) {
+    user = await Users.findOne({ mobile: req.params._mobile },{_id:1});
+    if(user){
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: user,
+    });
+  }
+  else{
+    res.status(500).send({
+      code: 500,
+      message: "does not exist",
+  });
+  }} catch (error) {
     return res.status(500).send(error);
   }
 };
@@ -93,20 +92,19 @@ usersController.get_customers = async (req, res) => {
   let user;
   try {
     user = await Users.find({ role: "customer" });
-    if (user) {
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: user,
-      });
-    }
-    else {
-      res.status(500).send({
-        code: 500,
-        message: "does not exits"
-      });
+    if(user){
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: user,
+    });
+  }
+  else{
+    res.status(500).send({
+      code: 500,
+      message: "does not exits"});
 
-    }
+  }
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -117,19 +115,18 @@ usersController.get_vendors = async (req, res) => {
   let user;
   try {
     user = await Users.find({ role: "vendor" });
-    if (user) {
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: user,
-      });
-    }
-    else {
-      res.status(500).send({
-        code: 500,
-        message: "does not exits"
-      });
-    }
+    if(user){
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: user,
+    });
+  }
+  else{
+    res.status(500).send({
+      code: 500,
+      message: "does not exits"});
+  }
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -140,19 +137,18 @@ usersController.get_admins = async (req, res) => {
   let user;
   try {
     user = await Users.find({ role: "admin" });
-    if (user) {
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: user,
-      });
-    }
-    else {
-      res.status(500).send({
-        code: 500,
-        message: "does not exits"
-      });
-    }
+    if(user){
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: user,
+    });
+  }
+  else{
+    res.status(500).send({
+      code: 500,
+      message: "does not exits"});
+  }
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -163,18 +159,17 @@ usersController.get_new_vendors = async (req, res) => {
   let user;
   try {
     user = await Users.find({ status: "disapproved", role: "vendor" });
-    if (user) {
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: user,
-      });
-    } else {
-      res.status(500).send({
-        code: 500,
-        message: "does not exits"
-      });
-    }
+    if(user){
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: user,
+    });
+  }else{
+    res.status(500).send({
+      code: 500,
+      message: "does not exits"});
+  }
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -185,18 +180,17 @@ usersController.get_restricted_vendors = async (req, res) => {
   let user;
   try {
     user = await Users.find({ status: "restricted", role: "vendor" });
-    if (user) {
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: user,
-      });
-    } else {
-      res.status(500).send({
-        code: 500,
-        message: "does not exits"
-      });
-    }
+    if(user){
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: user,
+    });
+  }else{
+    res.status(500).send({
+      code: 500,
+      message: "does not exits"});
+  }
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -207,18 +201,16 @@ usersController.get_restricted_customers = async (req, res) => {
   let user;
   try {
     user = await Users.find({ status: "restricted", role: "customer" });
-    if (user) {
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: user,
-      });
-    }
-    else {
+    if(user){
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: user,
+    });}
+    else{
       res.status(500).send({
         code: 500,
-        message: "does not exits"
-      });
+        message: "does not exits"});
     }
   } catch (error) {
     return res.status(500).send(error);
@@ -255,21 +247,59 @@ usersController.update_status = async (req, res) => {
   }
 };
 
-usersController.getSingleUser = async (req, res) => {
-  let user;
+// Forgot Password Method
+
+usersController.reset_password = async (req, res) => {
+  const body=req.body;
+  if (!req.params._id) {
+    Fu;
+    res.status(500).send({
+      message: "ID missing",
+    });
+  }
+  const password = body.password;
+  var salt = bcrypt.genSaltSync(10);
+  var hash = bcrypt.hashSync(password, salt);
+  body.password = hash;
   try {
     const _id = req.params._id;
-    user = await Users.findOne({ _id: _id });
-    res.status(200).send({
-      code: 200,
-      message: "Successful",
-      user,
-    });
+    Users.findOneAndUpdate(
+      { _id: _id },
+      {
+        $set: { password: body.password },
+      },
+      {
+        returnNewDocument: true,
+      },
+      function (error, result) {
+        res.status(200).send({
+          code: 200,
+          message: "Updated Successfully",
+        });
+      }
+    );
   } catch (error) {
     console.log("error", error);
     return res.status(500).send(error);
   }
 };
+
+
+// usersController.getSingleUser = async (req, res) => {
+//   let user;
+//   try {
+//     const _id = req.params._id;
+//     user = await Users.findOne({ _id: _id });
+//     res.status(200).send({
+//       code: 200,
+//       message: "Successful",
+//       user,
+//     });
+//   } catch (error) {
+//     console.log("error", error);
+//     return res.status(500).send(error);
+//   }
+// };
 
 usersController.registerUser = async (req, res) => {
   try {
@@ -281,7 +311,7 @@ usersController.registerUser = async (req, res) => {
         message: "1111 This email or mobile number has been registered already",
         code: 500,
       });
-    } else {
+    } else{
       var datetime = new Date();
       body.entry_date = datetime;
       const password = body.password;

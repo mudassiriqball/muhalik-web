@@ -232,8 +232,8 @@ class AddNew extends Component {
             formData.append('product_variations', JSON.stringify(values.product_variations))
         }
 
-        formData.append('category_id', values.category_id)
-        formData.append('sub_category_id', values.sub_category_id)
+        formData.append('category', values.category_id)
+        formData.append('sub_category', values.sub_category_id)
 
         formData.append('dangerous_goods', JSON.stringify(values.dangerous_goods))
         formData.append('product_tags', JSON.stringify(values.product_tags))
@@ -617,7 +617,7 @@ class AddNew extends Component {
                                         {/* End of Product Name */}
 
                                         {/* Product Discription */}
-                                        <CardAccordion title={'Product Discruption'}>
+                                        <CardAccordion title={'Product Description'}>
                                             <Form.Group>
                                                 <Form.Control
                                                     as="textarea"

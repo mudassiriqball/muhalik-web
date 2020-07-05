@@ -1,16 +1,27 @@
-// import App from 'next/app'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-multi-carousel/lib/styles.css";
 
-// function MyApp({ Component, pageProps }) {
-//   return <Component {...pageProps} />
-// }
 import '../styles.css'
 
 // This default export is required in a new `pages/_app.js` file.
 export default function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />
 }
+
+
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import "react-multi-carousel/lib/styles.css";
+// import { Provider } from 'react-redux'
+// import store from '../redux/store'
+
+// import '../styles.css'
+
+// // This default export is required in a new `pages/_app.js` file.
+// export default function MyApp({ Component, pageProps }) {
+//   return <Provider store={store}>
+//     <Component {...pageProps} />
+//   </Provider>
+// }
 
 // Only uncomment this method if you have blocking data requirements for
 // every single page in your application. This disables the ability to

@@ -27,7 +27,6 @@ class AddCategory extends Component {
         isLoading: false,
         showToast: false,
 
-        categories_list: [],
         category: '',
         isCategoryNew: false,
         categoryError: '',
@@ -37,13 +36,13 @@ class AddCategory extends Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
-            categories_list: nextProps.categories_list,
             token: nextProps.token
         });
     }
 
     async addCategory(values, currentComponent) {
         let formData = new FormData()
+        console.log('jjjjj:', this.state.category)
         formData.append('category', this.state.category)
         formData.append('sub_category', values.sub_category)
         formData.append('myImage', this.state.img)
@@ -75,15 +74,16 @@ class AddCategory extends Component {
         });
     }
     handleCategoryChange = (e) => {
-        let ccc
+        let search = null
         if (e != null) {
-            ccc = this.state.categories_list.filter(element => element.value == e.value)
-        }
-
-        if (ccc == null) {
-            this.setState({ isCategoryNew: false })
+            search = this.props.categories_list.filter(element => element._id == e._id)
+            if (search.length == 0) {
+                this.setState({ isCategoryNew: true })
+            } else {
+                this.setState({ category: e.value, isCategoryNew: false })
+            }
         } else {
-            this.setState({ category: e.value, isCategoryNew: true })
+            this.setState({ isCategoryNew: false })
         }
     }
 
@@ -145,7 +145,7 @@ class AddCategory extends Component {
                                                 <CreatableSelect
                                                     isClearable
                                                     onChange={this.handleCategoryChange}
-                                                    options={this.state.categories_list}
+                                                    options={this.props.categories_list}
                                                 />
                                                 <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
                                                     {this.state.categoryError}

@@ -1,6 +1,3 @@
-
-
-
 const productsController = {};
 const Products = require("../models/product.model");
 const fs = require("fs");
@@ -9,8 +6,8 @@ const util = require("util");
 const Category = require("../models/category.model");
 const Sub_Category = require("../models/sub-category.model");
 const User = require("../models/user.model");
-var cloudinary = require('../../src/sdk/custom/cloudinary');
-
+const mongoose = require("mongoose");
+const { object } = require("yup");
 //const xlsx = require("xlsx");
 //var wb = xlsx.readFile("../prd_inv_template.xlsx");
 
@@ -18,14 +15,10 @@ var cloudinary = require('../../src/sdk/custom/cloudinary');
 productsController.addProduct = async (req, res) => {
   const body = req.body;
 
+  var url;
   const urls = [];
-  const uploader = async (path) => await cloudinary.uploads(path, "Images");
-  const files = req.files;
-  for (const file of files) {
-    const imagepath = file.path;
-    const newPath = await uploader(imagepath);
-    urls.push(newPath);
-    fs.unlinkSync(imagepath);
+  for (const file of req.files) {
+    urls.push({ url: file.location });
   }
 
   try {
@@ -70,50 +63,50 @@ productsController.addProduct = async (req, res) => {
 
 productsController.get_products = async (req, res) => {
   let products;
-  let sub_category;
-  // req.query.field  sub_category_id
-  // req.query.q "23fh97769"
-  // req.query.page
-  // req.query.limit
   try {
-
-
-    if (req.query.q === "Date") {
+    if (req.query.q === "new-arrival") {
       var datetime = new Date();
       datetime.setMonth(datetime.getMonth() - 1);
-      products = await User.paginate(
+      products = await Products.paginate(
         { entry_date: { $gte: new Date(datetime) } },
         {
           limit: parseInt(req.query.limit),
           page: parseInt(req.query.page),
         }
       );
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: products,
-      });
-    }
-    else {
+      if (products) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: products.docs,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
+    } else {
       const field = req.query.field;
-      console.log("Field", field);
       const search = {};
       search[field] = req.query.q;
-      console.log("Search", search);
 
-      products = await Products.paginate(
-        search,
-        {
-          limit: parseInt(req.query.limit),
-          page: parseInt(req.query.page),
-        }
-      );
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: products,
+      products = await Products.paginate(search, {
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
       });
-
+      if (products) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: products.docs,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
     }
   } catch (error) {
     console.log("error", error);
@@ -127,7 +120,7 @@ productsController.get_all_products = async (req, res) => {
       {
         $lookup: {
           from: "categories",
-          localField: "category_id",
+          localField: "category",
           foreignField: "_id",
           as: "category",
         },
@@ -136,7 +129,7 @@ productsController.get_all_products = async (req, res) => {
       {
         $lookup: {
           from: "sub_categories",
-          localField: "sub_category_id",
+          localField: "sub_category",
           foreignField: "_id",
           as: "sub_category",
         },
@@ -153,20 +146,21 @@ productsController.get_all_products = async (req, res) => {
   }
 };
 
-//Get All Products of specific vendor endpoint definition
-productsController.get_vendor_products = async (req, res) => {
+productsController.get_product_by_id = async (req, res) => {
   try {
+    var ObjectId = mongoose.Types.ObjectId;
+    const _id = new ObjectId(req.params._id)
     const products = await Products.aggregate([
       {
         $match: {
-          vendor_id: req.params._id,
+          _id: _id,
           isdeleted: false,
         },
       },
       {
         $lookup: {
           from: "categories",
-          localField: "category_id",
+          localField: "category",
           foreignField: "_id",
           as: "category",
         },
@@ -175,7 +169,61 @@ productsController.get_vendor_products = async (req, res) => {
       {
         $lookup: {
           from: "sub_categories",
-          localField: "sub_category_id",
+          localField: "sub_category",
+          foreignField: "_id",
+          as: "sub_category",
+        },
+      },
+      { $unwind: "$sub_category" },
+
+    ]);
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: products,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
+
+
+// {
+//   $project: {
+//     product_name: 1,
+//     product_type: 1,
+//     product_weight: 1,
+//     value: "$category.value",
+//     label: "$category.label",
+//   },
+// },
+//Get All Products of specific vendor endpoint definition
+productsController.get_vendor_products = async (req, res) => {
+
+  try {
+    var ObjectId = mongoose.Types.ObjectId;
+    const _id = new ObjectId(req.params._id)
+    const products = await Products.aggregate([
+      {
+        $match: {
+          vendor_id: _id,
+          isdeleted: false,
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      {
+        $lookup: {
+          from: "sub_categories",
+          localField: "sub_category",
           foreignField: "_id",
           as: "sub_category",
         },

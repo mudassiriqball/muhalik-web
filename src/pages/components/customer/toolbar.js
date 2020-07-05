@@ -17,23 +17,24 @@ import MuhalikConfig from '../../../sdk/muhalik.config'
 import { removeTokenFromStorage } from '../../../sdk/core/authentication-service'
 import React from 'react';
 import { faHeart, faUserCircle } from '@fortawesome/free-regular-svg-icons'
+import Router from 'next/router'
+
 
 const categoryArray = [{ value: 'All' }, { value: 'Machinay' }, { value: 'Clothes' }]
 const Toolbar = (props) => {
-
     let loggedIn = false
     let dashboard_href = ''
     if (props.role == '') {
         loggedIn = false
     } else if (props.role == 'customer') {
         loggedIn = true
-        dashboard_href = './index'
+        dashboard_href = '/index'
     } else if (props.role == 'vendor') {
         loggedIn = true
-        dashboard_href = './vendor'
+        dashboard_href = '/vendor'
     } else if (props.role == 'admin') {
         loggedIn = true
-        dashboard_href = './admin'
+        dashboard_href = '/admin'
     }
 
     const [searchType, setSearchType] = React.useState('All')
@@ -88,14 +89,13 @@ const Toolbar = (props) => {
                                 Go To Dashboard
                             </Nav.Link>
                             :
-                            <Nav.Link href='./vendor-signup' className='first_nav_link'>
+                            <Nav.Link href='/vendor-signup' className='first_nav_link'>
                                 Sell On Mahaalk
                         </Nav.Link>
                         }
-                        <Nav.Link href='' className='first_nav_link' style={{ borderRight: 'none' }}>
+                        <Nav.Link href='' className='mr-auto first_nav_link' style={{ borderRight: 'none' }}>
                             Get The App
                         </Nav.Link>
-                        <div style={{ minWidth: '15%' }}></div>
 
                         <Nav.Link href='' className='first_nav_link'>
                             Services
@@ -106,9 +106,9 @@ const Toolbar = (props) => {
                         <Dropdown className='d-flex align-items-center'>
                             <Dropdown.Toggle as={Nav.Link} className='d-inline-flex align-items-center first_nav_link'>
                                 {selectedLang == 'English' ?
-                                    <Image src="pk-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
+                                    <Image src="/pk-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
                                     :
-                                    <Image src="ksa-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
+                                    <Image src="/ksa-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
                                 }
                                 {selectedLang}
                             </Dropdown.Toggle>
@@ -124,10 +124,10 @@ const Toolbar = (props) => {
                             null
                             :
                             <>
-                                <Nav.Link href='./login' className='first_nav_link'>
+                                <Nav.Link href='/login' className='first_nav_link'>
                                     Login
                                 </Nav.Link>
-                                <Nav.Link href='./signup' className='first_nav_link'>
+                                <Nav.Link href='/signup' className='first_nav_link'>
                                     Join now
                                 </Nav.Link>
                             </>
@@ -138,7 +138,6 @@ const Toolbar = (props) => {
                             <Dropdown className='first_nav_link' alignRight>
                                 <Dropdown.Toggle as={Nav.Link} className='first_nav_link align-self-end' style={{ borderRight: 'none' }}>
                                     Account
-                                    {/* <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '27px', maxWidth: '27px' }} /> */}
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu style={{ zIndex: 100 }}>
                                     <Dropdown.Item className='dropdown_item' href=''>
@@ -165,13 +164,14 @@ const Toolbar = (props) => {
                         }
                     </Nav>
                 </Navbar>
+
                 <div className={`sticky-wrapper${isSticky ? ' sticky' : ''}`} ref={ref}>
                     <Navbar className='sticky-inner'>
                         <Navbar.Brand className='d-inline-flex align-items-center'>
                             <div className='display_in_md_lg'>
-                                <Image src="muhalik.jpg" className='display_in_md_lg mr-2 ml-1' roundedCircle fluid style={{ width: '60px', minWidth: '60px', margin: '0%' }} />
+                                <Image src="/muhalik.jpg" className='display_in_md_lg mr-2 ml-1' roundedCircle fluid style={{ width: '60px', minWidth: '60px', margin: '0%' }} />
                             </div>
-                            <h4 className=" text_animation">Mahaalk<span className='display_in_md_lg mr-3' style={{ fontSize: '15px' }}>@2020</span></h4>
+                            <h4 className=" text_animation" onClick={() => Router.push('/')}>Mahaalk<span className='display_in_md_lg mr-3' style={{ fontSize: '15px' }}>@2020</span></h4>
                         </Navbar.Brand>
                         <InputGroup>
                             <InputGroup.Prepend className='display_in_md_lg'>
@@ -202,12 +202,9 @@ const Toolbar = (props) => {
                     </Navbar>
                 </div>
 
-
-
-                {/* Thirt Navbar */}
+                {/* Third Navbar */}
                 <Navbar className='display_in_md_lg m-0 p-0' bg="success" variant="dark">
-                    <div className='mr-auto'></div>
-                    <Nav className="mr-auto m-0 p-0">
+                    <Nav className="mr-auto ml-5">
                         <Dropdown
                             onMouseOver={() => { setIsCategoryOpen(true), setHoverCategory(true) }}
                             onMouseLeave={() => { setIsCategoryOpen(false), setHoverCategory(false) }}
@@ -227,31 +224,46 @@ const Toolbar = (props) => {
                                     Categories
                                     </div>
                             </Dropdown.Toggle>
-                            <Dropdown.Menu style={{ minWidth: category_id == '' ? '30.45vw' : '60vw', left: '-1px', borderTop: 'none', borderTopLeftRadius: '0px' }} className='m-0 p-0'>
+                            <Dropdown.Menu style={{ minWidth: '600px', minHeight: '500px', maxHeight: '500px', left: '-1px', borderTop: 'none', borderTopLeftRadius: '0px' }} className='m-0 p-0'>
                                 <Row noGutters onMouseLeave={() => categoryMouseLeave()} >
-                                    <Col style={{ height: '45vw', overflowY: 'auto', zIndex: 1 }}>
+                                    <Col style={{ overflowY: 'auto', zIndex: 1 }}>
                                         {props.categories_list && props.categories_list.map((element, index) =>
-                                            <div key={index} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)}>
-                                                {element.value}
-                                                <div className='mr-auto'></div>
-                                                <FontAwesomeIcon icon={faChevronRight} pull="right" style={styles.faChevronRight} />
-                                            </div>
+                                            // <div key={index} className="category_list_item" >
+                                            <Link href='/[name]/[id]' as={`/category/${element._id}`} key={index} >
+                                                {props.id == element._id ?
+                                                    <a style={{ color: 'blue' }} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)} onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
+                                                        {element.value}
+                                                    </a>
+                                                    :
+                                                    <a className="category_list_item" onMouseOver={() => categoryMouseEnter(index)} onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
+                                                        {element.value}
+                                                    </a>
+                                                }
+                                            </Link>
                                         )}
                                     </Col>
-                                    {category_id ?
-                                        <Col style={{ height: '45vwx', overflowY: 'auto', boxShadow: '-2px 0px 10px 1px rgba(0,0,0,0.12)' }}>
-                                            {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
-                                                element.category_id == category_id ?
-                                                    <div key={index} className="category_list_item" >
-                                                        {element.value}
-                                                    </div>
-                                                    :
-                                                    null
-                                            )}
-                                        </Col>
-                                        :
+                                    {/* {category_id ? */}
+                                    <Col style={{ minHeight: '500px', maxHeight: '500px', overflowY: 'auto', boxShadow: '-2px 0px 10px 1px rgba(0,0,0,0.12)' }}>
+                                        {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
+                                            element.category_id == category_id ?
+                                                <Link href='/[name]/[id]' as={`/sub_category/${element._id}`} key={index} >
+                                                    {props.id == element._id ?
+                                                        <a style={{ color: 'blue' }} className="category_list_item" onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
+                                                            {element.value}
+                                                        </a>
+                                                        :
+                                                        <a className="category_list_item" onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
+                                                            {element.value}
+                                                        </a>
+                                                    }
+                                                </Link>
+                                                :
+                                                null
+                                        )}
+                                    </Col>
+                                    {/* :
                                         null
-                                    }
+                                    } */}
                                 </Row>
                             </Dropdown.Menu>
                         </ Dropdown>
@@ -346,7 +358,7 @@ const Toolbar = (props) => {
                     top: 0;
                     left: 0;
                     right: 0;
-                    z-index: 1000;
+                    z-index: 1000000;
                 }
                 .customer_toolar .sticky-inner{
                     padding: 0.5% 10%;
@@ -399,6 +411,7 @@ const Toolbar = (props) => {
                         animation: mymove 5s infinite;
                         color: ${GlobalStyleSheet.primry_color};
                         margin: 0%;
+                        cursor: pointer;
                     }
                     .customer_toolar .sticky .sticky-inner .text_animation {
                         animation: mymmove 5s infinite;
@@ -452,7 +465,9 @@ const Toolbar = (props) => {
             `}</style>
             <style jsx>
                 {`
-                    
+                    a{
+                        color: gray;
+                    }
                 `}
             </style>
         </div >

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button } from 'react-bootstrap'
 import Router from 'next/router'
 import Head from 'next/head'
 import axios from 'axios'
@@ -8,8 +9,10 @@ import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config'
 import Typical from 'react-typical'
 import SliderCarousel from './components/customer/slider-carousel'
-import CategoriesSlider from './components/customer/categories-slider'
-import Products from './components/customer/products'
+import Home from './components/customer/home'
+// import { connect } from 'react-redux'
+// import { setCategories } from '../redux/actions/category-actions';
+
 let animation =
     <h3 style={{ background: 'green', color: 'white', position: 'fixed', left: '1%', bottom: '1%', zIndex: 1000 }}>
         <Typical
@@ -23,45 +26,40 @@ let animation =
 
 
 export async function getServerSideProps(context) {
-    const url = MuhalikConfig.PATH + '/api/categories/categories';
+    let new_products_list = []
     let categories_list = []
     let sub_categories_list = []
-    let products_list = []
-    let new_products_list = []
+    let top_ranking_products_list = []
 
+    const url = MuhalikConfig.PATH + '/api/categories/categories';
     await axios.get(url).then((response) => {
         categories_list = response.data.category.docs,
             sub_categories_list = response.data.sub_category.docs
     }).catch((error) => {
-        console.log('Caterories Fetchig Error: ', error)
     })
 
     const url_3 = MuhalikConfig.PATH + '/api/products/';
     await axios.get(url_3).then((response) => {
-        products_list = response.data.data
+        top_ranking_products_list = response.data.data
     }).catch((error) => {
     })
 
     const _url = MuhalikConfig.PATH + `/api/products/get`
-    axios({
+    await axios({
         method: 'GET',
         url: _url,
-        params: { q: "Date", page: '1', limit: '8' },
-    }).then(res => {
-        console.log('New Products', res)
-        new_products_list = res.data.data
+        params: { q: "new-arrival", page: 1, limit: 8 },
+    }).then((response) => {
+        new_products_list = response.data.data
     }).catch(err => {
-        console.log('New products getting error:', err)
     })
-
-
 
     return {
         props: {
-            products_list,
+            new_products_list,
+            top_ranking_products_list,
             categories_list,
-            sub_categories_list,
-            new_products_list
+            sub_categories_list
         },
     }
 }
@@ -71,24 +69,14 @@ class Index extends Component {
         super(props);
         this.state = {
             token: '',
-            products_list: [],
         }
     }
     async componentDidMount() {
+        // this.props.setCategories(this.props.categories)
         const _token = await getDecodedTokenFromStorage()
         if (_token !== null) {
             this.setState({ token: _token })
         }
-        // const url = MuhalikConfig.PATH + '/api/categories/categories';
-        // const currentComponent = this;
-        // await axios.get(url).then((response) => {
-        //     currentComponent.setState({
-        //         categories_list: response.data.category.docs,
-        //         sub_categories_list: response.data.sub_category.docs
-        //     });
-        // }).catch((error) => {
-        //     console.log('Caterories Fetchig Error: ', error)
-        // })
     }
 
     logout = () => {
@@ -123,13 +111,11 @@ class Index extends Component {
                         logout={this.logout}
                         categories_list={this.props.categories_list}
                         sub_categories_list={this.props.sub_categories_list}
-                    // carosuel={<SliderCarousel />}
                     >
                         <SliderCarousel categories_list={this.props.categories_list} />
-
-                        <Products
+                        <Home
                             new_products_list={this.props.new_products_list}
-                            products_list={this.props.products_list}
+                            top_ranking_products_list={this.props.top_ranking_products_list}
                             categories_list={this.props.categories_list}
                             sub_categories_list={this.props.sub_categories_list}
                         />
@@ -165,4 +151,20 @@ class Index extends Component {
     }
 }
 
-export default Index;
+// const mapStateToProps = (state) => {
+//     console.log('map store:', state)
+//     return {
+//         categories_list: state.CategoryReducer.categories_list,
+//         sub_categories_list: state.CategoryReducer.sub_categories_list
+//     }
+// }
+// const mapDispatchToProps = (dispatch) => {
+//     return {
+//         setCategories: (categories) => {
+//             dispatch(setCategories(categories))
+//         }
+//     }
+// }
+
+// export default connect(mapStateToProps, mapDispatchToProps)(Index);
+export default Index

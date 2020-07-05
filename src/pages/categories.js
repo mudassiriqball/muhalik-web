@@ -7,7 +7,7 @@ import {
     faArrowAltCircleLeft, faCommentsDollar
 } from '@fortawesome/free-solid-svg-icons'
 import GlobalStyleSheet from '../styleSheet'
-import CardAccordion from './components/card_accordion'
+import CardAccordion from './components/card-accordion'
 import Footer from './components/customer/footer'
 import StickyBottomNavbar from './components/customer/stick-bottom-navbar'
 

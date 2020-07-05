@@ -3,9 +3,9 @@ const mongoosePaginate = require("mongoose-paginate");
 const Schema = mongoose.Schema;
 
 const sub_category = new Schema({
-    category_id: {
-        type: String,
-    },
+  category_id: {
+    type: String,
+  },
     label: { type: String },
     value: { type: String },
 });

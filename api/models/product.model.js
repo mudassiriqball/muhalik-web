@@ -6,10 +6,10 @@ const Product = new Schema({
   vendor_id: {
     type: Schema.Types.ObjectId,
   },
-  category_id: {
+  category:{
     type: Schema.Types.ObjectId,
   },
-  sub_category_id: {
+  sub_category:{
     type: Schema.Types.ObjectId,
   },
   product_name: {

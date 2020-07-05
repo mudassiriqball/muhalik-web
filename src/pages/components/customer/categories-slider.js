@@ -1,6 +1,6 @@
 import { Row, Col, Image, Nav } from 'react-bootstrap'
 import GlobalStyleSheet from '../../../styleSheet'
-
+import Link from 'next/link'
 
 const CategoriesSlider = (props) => {
 
@@ -9,13 +9,18 @@ const CategoriesSlider = (props) => {
 
             {/* <Image src="muhalik.jpg" className='display_in_md_lg' roundedCircle fluid style={{ width: '50px', display: 'flex', margin: '0%' }} /> */}
             <div className='category_container'>
-                <div className='item'>
-                    <Nav.Link href='./catgories'>{'All'}</Nav.Link>
-                </div>
                 {props.categories_list && props.categories_list.map((element, index) =>
-                    <div key={index} className='item'>
-                        {element.value}
-                    </div>
+                    <Link href='/[name]/[id]' as={`/category/${element._id}`} key={index} >
+                        {props.id == element._id ?
+                            <a className='item' style={{ color: 'blue' }}>
+                                {element.value}
+                            </a>
+                            :
+                            <a className='item'>
+                                {element.value}
+                            </a>
+                        }
+                    </Link>
                 )}
             </div>
             <style jsx>{`
@@ -29,10 +34,10 @@ const CategoriesSlider = (props) => {
                     border-radius: 70px;
                     overflow-y: scroll;
                 }
-                 .category_container::-webkit-scrollbar {
+                .category_container::-webkit-scrollbar {
                     display: none;
                 }
-                 .category_container {
+                .category_container {
                     -ms-overflow-style: none;
                 }
                 .category_container .item{
@@ -74,6 +79,15 @@ const CategoriesSlider = (props) => {
                         width: auto;
                         height: auto;
                     }
+                }
+            `}</style>
+            <style jsx>{`
+                a{
+                    color: gray;
+                }
+                a:hover{
+                    color: blue;
+                    text-decoration: none;
                 }
             `}</style>
         </>

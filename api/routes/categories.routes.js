@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
-const categoriesController = require('../controllers/categories.controller');
+const categoriesController = require('../controllers/categories.controllers');
 
-router.post("/category", categoriesController.add_Category);
-router.post("/field", categoriesController.add_fields);
-router.post("/field-request", categoriesController.add_field_request);
+router.post("/category",categoriesController.add_Category);
+router.post("/field",categoriesController.add_fields);
+router.post("/field-request",categoriesController.add_field_request);
 
 
 router.get("/categories", categoriesController.get_categories);
@@ -21,7 +21,9 @@ router.put("/field/:_id", categoriesController.update_field);
 
 //  Delete Requests
 // router.delete("/sub-category/_id", categoriesController.delete_sub_category);
-router.delete("/field/:_id", categoriesController.delete_field);
-router.delete("/field-request/:_id", categoriesController.delete_field_request);
+ router.delete("/field/:_id", categoriesController.delete_field);
+ router.delete("/field-request/:_id", categoriesController.delete_field_request);
 
 module.exports = router;
+
+
