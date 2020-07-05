@@ -7,7 +7,6 @@ const Category = require("../models/category.model");
 const Sub_Category = require("../models/sub-category.model");
 const User = require("../models/user.model");
 const mongoose = require("mongoose");
-const { object } = require("yup");
 //const xlsx = require("xlsx");
 //var wb = xlsx.readFile("../prd_inv_template.xlsx");
 

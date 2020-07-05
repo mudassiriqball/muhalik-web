@@ -10,11 +10,12 @@ import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 import AdminDashboard from './dashboard-contents/admin-dashboard';
 import Vendors from './dashboard-contents/vendors';
 import Customers from './dashboard-contents/customers';
-// Products 
+import Slider from './dashboard-contents/slider'
+// Products
 import AllProducts from './dashboard-contents/product-contents/all-products';
 import AddNew from '../../vendor/dashboard/dashboard-contents/product-contents/add-new';
 import ProductFields from './dashboard-contents/product-contents/product-fields'
-// Category
+
 // Category
 import AddCategory from './dashboard-contents/category-contents/add-category'
 import AllCategories from './dashboard-contents/category-contents/all-categories'
@@ -74,7 +75,15 @@ const DashboardSideDrawer = props => {
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
-
+                        <Nav.Item>
+                            <div className="nav_link">
+                                <Nav.Link eventKey="Slider" onClick={props.click} style={styles.nav_link}>
+                                    <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
+                                    <div className="mr-auto">Slider</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                </Nav.Link>
+                            </div>
+                        </Nav.Item>
 
 
 
@@ -236,6 +245,9 @@ const DashboardSideDrawer = props => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="Customers">
                                 <Customers {...props} />
+                            </Tab.Pane>
+                            <Tab.Pane eventKey="Slider">
+                                <Slider {...props} />
                             </Tab.Pane>
                             {/* Product */}
                             <Tab.Pane eventKey="AllProducts">

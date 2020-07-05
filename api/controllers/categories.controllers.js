@@ -8,16 +8,9 @@ const jwt = require("jsonwebtoken");
 const fs = require("fs");
 
 categoriesController.add_Category = async (req, res) => {
-  // const uploader = async (path) =>
-  //   await cloudinary.uploads(path, "User-Images");
-  // const imagepath = req.files.path;
-  // const newPath = await uploader(imagepath);
-  // fs.unlinkSync(imagepath);
-
-    var url=req.files[0].location;
+  var url = req.files[0].location;
 
   const body = req.body;
-  console.log("1", body);
 
   try {
     var datetime = new Date();
@@ -33,7 +26,6 @@ categoriesController.add_Category = async (req, res) => {
 
       const category = new Categories(body);
       const result = await category.save();
-      console.log(category._id);
 
       body.label = body.sub_category;
       body.value = body.sub_category;
@@ -51,7 +43,6 @@ categoriesController.add_Category = async (req, res) => {
         label: body.sub_category,
       });
       if (!search1.length) {
-        console.log("Ab to aoo ga");
         body.label = body.sub_category;
         body.value = body.sub_category;
         body.category_id = search._id;
@@ -91,8 +82,7 @@ categoriesController.add_fields = async (req, res) => {
       console.log("error", error);
     }
   } else {
-    console.log("id", body._id);
-    Field_Request.findByIdAndDelete(body._id, function (err) {});
+    Field_Request.findByIdAndDelete(body._id, function (err) { });
     try {
       var datetime = new Date();
       body.entry_date = datetime;
@@ -341,7 +331,7 @@ categoriesController.update_category = async (req, res) => {
     // const imagepath = req.files[0].path;
     // const newPath = await uploader(imagepath);
     // fs.unlinkSync(imagepath);
-    var url=req.files[0].location;
+    var url = req.files[0].location;
     try {
       const _id = req.params._id;
       Categories.findOneAndUpdate(
@@ -364,7 +354,7 @@ categoriesController.update_category = async (req, res) => {
       return res.status(500).send(error);
     }
   } else if (body.category && req.files.length) {
-    var url=req.files[0].location;
+    var url = req.files[0].location;
     try {
       const _id = req.params._id;
       Categories.findOneAndUpdate(
@@ -403,7 +393,7 @@ categoriesController.update_sub_category = async (req, res) => {
       message: "ID missing",
     });
   }
-  else{
+  else {
     try {
       const _id = req.params._id;
       Sub_Categories.findOneAndUpdate(
@@ -426,7 +416,7 @@ categoriesController.update_sub_category = async (req, res) => {
       return res.status(500).send(error);
     }
   }
-    
+
 };
 
 module.exports = categoriesController;

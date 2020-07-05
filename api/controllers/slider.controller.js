@@ -1,22 +1,16 @@
 const sliderController = {};
 const Slider = require("../models/slider.model");
-var cloudinary = require('../../src/sdk/custom/cloudinary');
 const fs = require("fs");
 
 sliderController.add_slider = async (req, res) => {
-  const uploader = async (path) =>
-    await cloudinary.uploads(path, "Slider-Images");
-  const imagepath = req.files[0].path;
-  const newPath = await uploader(imagepath);
-  fs.unlinkSync(imagepath);
-
   const body = req.body;
+  var url = req.files[0].location;
+
 
   try {
     var datetime = new Date();
     body.entry_date = datetime;
-    body.url = newPath.url;
-    console.log("1", body);
+    body.url = url;
     const slider = new Slider(body);
     const result = await slider.save();
     res.status(200).send({
@@ -42,8 +36,8 @@ sliderController.get_slider = async (req, res) => {
     console.log("error", error);
     return res.status(500).send(error);
   }
-  
-  };
+
+};
 
 
 module.exports = sliderController;
