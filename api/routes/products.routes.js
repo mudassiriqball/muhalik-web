@@ -13,6 +13,9 @@ router.get("/", productController.get_all_products);
 router.get("/:_id", productController.get_vendor_products);
 
 
+// router.put("/review-rating", productController.add_rating_and_review);
+
+
 router.get("/total-products", productController.get_total_products);
 router.get("/total-Sold", productController.get_total_sold);
 router.get("/all", productController.geteverything);

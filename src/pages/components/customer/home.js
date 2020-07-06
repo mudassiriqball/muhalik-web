@@ -76,14 +76,9 @@ const Home = (props) => {
                                     <Card key={element._id} className="product_card">
                                         {element.product_type == "simple-product" ?
                                             <div className='card_div' onClick={() => Router.push('/[name]/[id]/[product]', `/products/new-arrival/${element._id}`)}>
-                                                {element.product_image_link.map((e, i) =>
-                                                    i == 0 ?
-                                                        <Image className='img' ref={ref}
-                                                            style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }}
-                                                            src={e.url} />
-                                                        :
-                                                        null
-                                                )}
+                                                <Image className='img' ref={ref}
+                                                    style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }}
+                                                    src={element.product_image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
                                                 <div className='d-inline-flex align-items-center'>
                                                     <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >Rs.</span>{element.product_price}</label>
@@ -129,19 +124,10 @@ const Home = (props) => {
                                     <Card key={element._id} className="product_card">
                                         {element.product_type == "simple-product" ?
                                             <div className='card_div' onClick={() => Router.push('/[name]/[id]/[product]', `/products/top-ranking/${element._id}`)}>
-                                                {index == 0 &&
-                                                    <Image className='img' ref={ref}
-                                                        style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }}
-                                                        src={element.product_image_link.url} />
-                                                }
-                                                {element.product_image_link.map((e, i) =>
-                                                    i == 0 ?
-                                                        <Image className='img' ref={ref}
-                                                            style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }}
-                                                            src={e.url} />
-                                                        :
-                                                        null
-                                                )}
+                                                <Image className='img' ref={ref}
+                                                    style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }}
+                                                    src={element.product_image_link[0].url} />
+
                                                 <label className='my_label'>{element.product_name}</label>
                                                 <div className='d-inline-flex align-items-center'>
                                                     <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >Rs.</span>{element.product_price}</label>
@@ -273,6 +259,14 @@ const Home = (props) => {
                     }
                 `}
             </style>
+            <style jsx global>{`
+                html,
+                body {
+                    padding: 0;
+                    margin: 0;
+                    font-family: Roboto, Helvetica Neue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+                }
+              `}</style>
         </div >
     );
 }
@@ -397,20 +391,16 @@ function CategoryProducts(props) {
     return (
         <Card as={Col} lg={2} md={3} sm={3} xs={4} className="category_product_card">
             {props.element.product_type == "simple-product" ?
-                <div className='category_card_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${props.element.sub_category.value}/${props.element._id}`)}>
-                    {props.element.product_image_link.map((e, i) =>
-                        i == 0 ?
-                            <Image ref={ref} className='category_product_img'
-                                style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
-                                src={e.url} />
-                            :
-                            null
-                    )}
+                <div className='category_card_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${props.element.sub_category}/${props.element._id}`)}>
+                    <Image ref={ref} className='category_product_img'
+                        style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
+                        src={props.element.product_image_link[0].url} />
+
                     <label className='my_label'>{props.element.product_name}</label>
                     <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{props.element.product_price}</label>
                 </div>
                 :
-                <div className='category_card_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${props.element.sub_category.value}/${props.element._id}`)}>
+                <div className='category_card_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${props.element.sub_category}/${props.element._id}`)}>
                     <Image ref={ref} className='category_product_img'
                         style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
                         src={props.element.product_variations[0].image_link[0].url} />
@@ -555,18 +545,16 @@ function OnlyProducts(props) {
                 {products && products.map((element, index) =>
                     <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                         {element.product_type == "simple-product" ?
-                            <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category.value}/${element._id}`)}>
-                                {element.product_image_link.map((e, i) =>
-                                    i == 0 ?
-                                        <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={e.url} />
-                                        :
-                                        null
-                                )}
+                            <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category._id}/${element._id}`)}>
+                                <Image ref={ref} className='only_product_img'
+                                    style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
+                                    src={element.product_image_link[0].url}
+                                />
                                 <label className='my_label'>{element.product_name}</label>
                                 <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
                             </div>
                             :
-                            <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category.value}/${element._id}`)}>
+                            <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category._id}/${element._id}`)}>
                                 <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                 <label className='my_label'>{element.product_name}</label>
                                 <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>

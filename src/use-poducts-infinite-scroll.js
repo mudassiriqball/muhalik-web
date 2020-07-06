@@ -3,7 +3,7 @@ import axios from 'axios'
 import MuhalikConfig from './sdk/muhalik.config'
 
 export default function useProductsInfiniteScroll(fieldName, query, pageNumber, limit) {
-    const [loading, setLoading] = useState('')
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [products, setProducts] = useState([])
     const [hasMore, setHasMore] = useState('')
