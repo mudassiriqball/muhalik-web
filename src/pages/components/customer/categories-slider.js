@@ -3,11 +3,8 @@ import GlobalStyleSheet from '../../../styleSheet'
 import Link from 'next/link'
 
 const CategoriesSlider = (props) => {
-
     return (
         <>
-
-            {/* <Image src="muhalik.jpg" className='display_in_md_lg' roundedCircle fluid style={{ width: '50px', display: 'flex', margin: '0%' }} /> */}
             <div className='category_container'>
                 {props.categories_list && props.categories_list.map((element, index) =>
                     <Link href='/[name]/[id]' as={`/category/${element._id}`} key={index} >
@@ -24,8 +21,7 @@ const CategoriesSlider = (props) => {
                 )}
             </div>
             <style jsx>{`
-
-             .category_container {
+                .category_container {
                     display: inline-flex;
                     background: ${GlobalStyleSheet.body_color};
                     width: 100%;

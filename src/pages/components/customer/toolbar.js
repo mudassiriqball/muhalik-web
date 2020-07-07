@@ -19,7 +19,6 @@ import React from 'react';
 import { faHeart, faUserCircle } from '@fortawesome/free-regular-svg-icons'
 import Router from 'next/router'
 
-
 const categoryArray = [{ value: 'All' }, { value: 'Machinay' }, { value: 'Clothes' }]
 const Toolbar = (props) => {
     let loggedIn = false

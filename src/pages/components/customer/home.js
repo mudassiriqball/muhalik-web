@@ -50,7 +50,6 @@ const responsive = {
 const Home = (props) => {
     const [ref, { x, y, width }] = useDimensions();
 
-
     return (
         <div className='home'>
             <Row noGutters style={{ marginBottom: '70px' }}>
@@ -584,7 +583,7 @@ function OnlyProducts(props) {
                     flex-direction: column;
                     border-radius: 3px;
                     margin: 3%;
-                    padding: 1%;
+                    padding: 2%;
                     cursor: pointer;
                     background: white;
                     border: 0.5px solid lightgray;

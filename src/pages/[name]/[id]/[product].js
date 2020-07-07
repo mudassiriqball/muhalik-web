@@ -62,7 +62,7 @@ function Product(props) {
 
     const [token, setToken] = useState({ role: '', full_name: '' })
     const { loading, products } = useProductsInfiniteScroll('sub_category', props.single_product.sub_category._id, '1', isMobile ? '6' : '7')
-    const [vendor, setVendor] = useState(null)
+    const [vendor, setVendor] = useState({})
     const [wish, setWish] = useState('gray')
 
     useLayoutEffect(() => {
@@ -115,26 +115,28 @@ function Product(props) {
                 sub_categories_list={props.sub_categories_list}
                 id={id}
             >
-                <Row noGutters className='main-row'>
-                    {props.single_product.product_type == "simple-product" ?
-                        <SimpleProduct
-                            single_product={props.single_product}
-                            vendor={vendor}
-                            token={token}
-                            wish={wish}
-                            addToWishlist={addToWishlist}
-                        />
-                        :
-                        <VariableProduct
-                            single_product={props.single_product}
-                            vendor={vendor}
-                            token={token}
-                            wish={wish}
-                            addToWishlist={addToWishlist}
-                        />
-                    }
-                </Row>
-                <RelatedProducts products={products} />
+                <div className='main-row'>
+                    <Row noGutters>
+                        {props.single_product.product_type == "simple-product" ?
+                            <SimpleProduct
+                                single_product={props.single_product}
+                                vendor={vendor}
+                                token={token}
+                                wish={wish}
+                                addToWishlist={addToWishlist}
+                            />
+                            :
+                            <VariableProduct
+                                single_product={props.single_product}
+                                vendor={vendor}
+                                token={token}
+                                wish={wish}
+                                addToWishlist={addToWishlist}
+                            />
+                        }
+                    </Row>
+                    <RelatedProducts products={products} />
+                </div>
             </Layout >
             <style type="text/css">{`
                 .single_product{
@@ -146,7 +148,7 @@ function Product(props) {
                     right: 0;
                 }
                 .single_product .main-row{
-                    padding: 1% 6% 2% 6%;
+                    padding: 2% 5%;
                 }
                 .single_product .single_product_img{
                     min-width: 100%;
@@ -158,18 +160,42 @@ function Product(props) {
                     background: ${GlobalStyleSheet.body_color};
                 }
 
-
+                .display_in_xs{
+                    display: none;
+                }
+                .display_in_lg_md_sm{
+                    display: block;
+                }
+                
+                .img_col{
+                    padding: 2%;
+                    background: white;
+                }
+                .vertical_align_img{
+                    min-width: 14.2857142857%;
+                    max-width: 14.2857142857%;
+                    margin: 0%;
+                    padding: 0%;
+                }
+                .larg_img{
+                    padding: 0%;
+                    margin: 0%;
+                }
                 .desc_col{
-                    padding: 0% 5% ;
+                    padding: 2% 4%;
+                    background: white;
                 }
                 .vendor_desc_col{
+                    padding: 2% 2% 2% 3%;
                     border-left: 0.5px solid lightgray;
-                    padding-left: 3%;
+                    background: white;
                 }
+
                 .price_label{
                     width: 100%;
                     margin: 2% 0%;
                 }
+
                 .slope{
                     width: 40%;
                     height:40px;
@@ -193,6 +219,7 @@ function Product(props) {
                     border-top: solid 40px ${GlobalStyleSheet.primry_color};
                     border-right: solid 30px transparent;
                 }
+
                 .stock{
                     font-size: 16px;
                     width: 100%;
@@ -213,20 +240,18 @@ function Product(props) {
                     margin: 5% 0%;
                 }
 
-
                 .rating_review_col{
                     font-size: 12px;
                     color: gray;
                     align-items: center;
                 }
-
-                
                 
                 .product_label{
                     font-size: 18px;
                     color: gray;
                     width: 100%;
                     margin: 10px 0%;
+                    text-align: center;
                 }
 
                 .add_to_wish_list{
@@ -250,7 +275,91 @@ function Product(props) {
                     cursor: pointer;
                 }
 
+                @media (max-width: 1199px) {
+                    .single_product .main-row{
+                        padding: 2% 3%;
+                    }
+                    .img_col{
+                        padding: 2% 0% 2% 2%;
+                    }
+                    .desc_col{
+                        padding: 2% 1% 2% 2%;
+                    }
+                    .vendor_desc_col{
+                        padding: 2%;
+                    }
+                }
+                @media (max-width: 991px) {
+                    .single_product .main-row{
+                        padding: 2%;
+                    }
+                    .img_col{
+                        padding: 2% 0% 2% 2%;
+                    }
+                    .desc_col{
+                        padding: 2% 1% 2% 2%;
+                    }
+                    .vendor_desc_col{
+                        padding: 2% 1% 2% 1%;
+                    }
+                }
                 @media (max-width: 767px) {
+                    .single_product .main-row{
+                        padding: 2%;
+                    }
+                    .img_col{
+                        padding: 2%;
+                    }
+                    .desc_col{
+                        padding: 2%;
+                    }
+                    .vendor_desc_col{
+                        margin: 2% 0%;
+                        border-radius: 5px;
+                        padding: %;
+                    }
+                }
+                @media (max-width: 575px) {
+                    .img_col{
+                        border-radius: 5px;
+                    }
+                    .larg_img{
+                        padding: 0.1%;
+                        margin: 0.1%;
+                    }
+                    .desc_col{
+                        margin: 2% 0%;
+                        border-radius: 5px;
+                    }
+                    .vendor_desc_col{
+                        margin-bottom: 2%;
+                    }
+
+                    .display_in_lg_md_sm{
+                        display: none;
+                    }
+                    .display_in_xs{
+                        display: block;
+                    }
+
+                    .disable_scroll{
+                        display: block;
+                        margin-top: 2%;
+                    }
+                    .disable_scroll {
+                        display: inline-flex;
+                        background: ${GlobalStyleSheet.body_color};
+                        width: 100%;
+                        padding: 0.5%;
+                        margin: 1% 0%;
+                        overflow-y: scroll;
+                    }
+                    .disable_scroll::-webkit-scrollbar {
+                        display: none;
+                    }
+                    .disable_scroll {
+                        -ms-overflow-style: none;
+                    }
                 }
             `}</style>
             <style jsx global>{`
@@ -268,35 +377,49 @@ function SimpleProduct(props) {
     const [ref, { x, y, width }] = useDimensions();
     const [activeImageIndex, setActiveImageIndex] = useState(0)
 
+
     return (
         <div className='simple_product'>
-            <Row>
-                <Col lg={4} md={4} sm={12} xs={12}>
-                    <Row>
-                        <Col lg={2} md={2} className='d-flex flex-column'>
+            <Row className='m-0 p-0'>
+                <Col lg={4} md={4} sm={6} xs={12} className='img_col'>
+                    <Row >
+                        <Col lg={3} md={3} sm={2} xs={12} className='display_in_lg_md_sm vertical_align_img'>
                             {props.single_product.product_image_link && props.single_product.product_image_link.map((element, index) =>
                                 <MyImages key={element._id}
                                     element={element}
                                     index={index == activeImageIndex}
-                                    plus={10}
+                                    plus={14}
                                     setData={() => setActiveImageIndex(index)}
                                 />
                             )}
                         </Col>
-                        <Col>
+                        <Col className='larg_img'>
                             <Image ref={ref} className='single_product_img'
                                 style={{ maxHeight: width + 60 || '200px', minHeight: width + 60 || '200px' }}
                                 src={props.single_product.product_image_link[activeImageIndex].url}
                             />
                         </Col>
+                        <Col xs={12} className='display_in_xs'>
+                            <div className='disable_scroll'>
+                                {props.single_product.product_image_link && props.single_product.product_image_link.map((element, index) =>
+                                    <Col xs={2} key={element._id} className='p-0 m-0'>
+                                        <MyImages key={element._id}
+                                            element={element}
+                                            index={index == activeImageIndex}
+                                            plus={10}
+                                            setData={() => setActiveImageIndex(index)}
+                                        />
+                                    </Col>
+                                )}
+                            </div>
+                        </Col>
                     </Row>
                 </Col>
-
-                <Col className='desc_col'>
+                <Col lg={5} md={5} sm={6} xs={12} className='desc_col'>
                     {props.single_product.product_name}
                     <div className='slope'>Rs. {props.single_product.product_price}</div>
                     <Row noGutters>
-                        <Col lg={6} md={6} sm={12} xs={12} className='rating_review_col'>
+                        <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
                                 <div className='product_rating'> Rating: </div>
                                 <Badge variant='info' style={{ fontSize: '13px', marginLeft: '5px' }}> 4.0 </Badge>
@@ -310,7 +433,7 @@ function SimpleProduct(props) {
                                 color2={"orange"}
                             />
                         </Col>
-                        <Col lg={6} md={6} sm={12} xs={12} className='rating_review_col'>
+                        <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div>Reviews </div>
                             <div>160</div>
                         </Col>
@@ -328,14 +451,9 @@ function SimpleProduct(props) {
 
                     <div className='cart'>
                         <Row noGutters>
-                            <Form.Group as={Col} lg='auto' md='auto' controlId="formGridState">
+                            <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
                                 <Form.Control as="select" defaultValue="Choose...">
                                     <option>Quantity</option>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
                                 </Form.Control>
                             </Form.Group>
                             <Col className='ml-1'>
@@ -349,7 +467,6 @@ function SimpleProduct(props) {
                     <VendorInfo vendor={props.vendor} />
                 </Col>
             </Row>
-            <hr />
             {/*  Overview / Specification / Review */}
             <TabComponent
                 single_product={props.single_product}
@@ -360,8 +477,6 @@ function SimpleProduct(props) {
             <style type="text/css">{`
                 .simple_product{
                     width: 100%;
-                    padding: 1.5%;
-                    background: white;
                 }
             `}</style>
         </div>
@@ -374,36 +489,49 @@ function VariableProduct(props) {
     const [activeImageIndex, setActiveImageIndex] = useState(0)
     const [activeVariationIndex, setActiveVariationIndex] = useState(0)
 
-
     return (
         <div className='variable_product'>
-            <Row>
-                <Col lg={4} md={4} sm={12} xs={12}>
-                    <Row>
-                        <Col lg={2} md={2} className='d-flex flex-column'>
+            <Row className='m-0 p-0'>
+                <Col lg={4} md={4} sm={6} xs={12} className='img_col'>
+                    <Row className='p-0 m-0'>
+                        <Col lg={3} md={3} sm={2} xs={12} className='display_in_lg_md_sm vertical_align_img'>
                             {activeVariation.image_link && activeVariation.image_link.map((element, index) =>
                                 <MyImages key={element._id}
                                     element={element}
                                     index={index == activeImageIndex}
-                                    plus={10}
-                                    setData={(index) => setActiveImageIndex(index)}
+                                    plus={14}
+                                    setData={() => setActiveImageIndex(index)}
                                 />
                             )}
                         </Col>
-                        <Col>
+                        <Col className='larg_img'>
                             <Image ref={ref} className='single_product_img'
                                 style={{ maxHeight: width + 60 || '200px', minHeight: width + 60 || '200px' }}
                                 src={activeVariation.image_link[activeImageIndex].url}
                             />
                         </Col>
+                        <Col xs={12} className='display_in_xs'>
+                            <div className='disable_scroll'>
+                                {activeVariation.image_link && activeVariation.image_link.map((element, index) =>
+                                    <Col xs={2} key={element._id} className='p-0 m-0'>
+                                        <MyImages key={element._id}
+                                            element={element}
+                                            index={index == activeImageIndex}
+                                            plus={10}
+                                            setData={() => setActiveImageIndex(index)}
+                                        />
+                                    </Col>
+                                )}
+                            </div>
+                        </Col>
                     </Row>
                 </Col>
 
-                <Col className='desc_col'>
+                <Col lg={5} md={5} sm={6} xs={12} className='desc_col'>
                     {props.single_product.product_name}
                     <div className='slope'>Rs. {activeVariation.price}</div>
                     <Row noGutters>
-                        <Col lg={6} md={6} sm={12} xs={12} className='rating_review_col'>
+                        <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
                                 <div className='product_rating'> Rating: </div>
                                 <Badge variant='info' style={{ fontSize: '13px', marginLeft: '5px' }}> 4.0 </Badge>
@@ -417,7 +545,7 @@ function VariableProduct(props) {
                                 color2={"orange"}
                             />
                         </Col>
-                        <Col lg={6} md={6} sm={12} xs={12} className='rating_review_col'>
+                        <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div>Reviews </div>
                             <div>160</div>
                         </Col>
@@ -435,14 +563,9 @@ function VariableProduct(props) {
 
                     <div className='cart'>
                         <Row noGutters>
-                            <Form.Group as={Col} lg='auto' md='auto' controlId="formGridState">
+                            <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
                                 <Form.Control as="select" defaultValue="Choose...">
                                     <option>Quantity</option>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
                                 </Form.Control>
                             </Form.Group>
                             <Col className='ml-1'>
@@ -452,12 +575,13 @@ function VariableProduct(props) {
                     </div>
                     <div className='variation_item'>
                         {activeVariation.item && activeVariation.item.map((element, index) =>
-                            <div className='item'>
+                            <div key={element._id} className='item'>
                                 <div className='item_name_div'>
-                                    {element.name}: <span style={{ color: 'black', fontSize: '16px' }}>{element.value}</span>
+                                    {element.name}:
+                                    {/* <span style={{ color: 'black', fontSize: '16px' }}>{element.value}</span> */}
                                 </div>
                                 <div>
-                                    <Button block size='sm' variant='primary' className='item_value_btn'> {element.value} </Button>
+                                    <Button block size='sm' variant='primary' disabled className='item_value_btn'> {element.value} </Button>
                                 </div>
                             </div>
                         )}
@@ -483,9 +607,26 @@ function VariableProduct(props) {
                         )} */}
                     </div>
                     <hr />
-                    <Row noGutters>
+                    <div className='display_in_lg_md_sm'>
+                        <Row noGutters className='d-flex flex-row'>
+                            {props.single_product.product_variations && props.single_product.product_variations.map((element, index) =>
+                                <Col lg={2} md={2} xs={2} sm={2} key={element._id} >
+                                    <MyImages index={index == activeVariationIndex}
+                                        element={element.image_link[0]}
+                                        plus={16}
+                                        setData={() => {
+                                            setActiveVariation(element),
+                                                setActiveVariationIndex(index),
+                                                setActiveImageIndex(0)
+                                        }}
+                                    />
+                                </Col>
+                            )}
+                        </Row>
+                    </div>
+                    <div className='display_in_xs disable_scroll'>
                         {props.single_product.product_variations && props.single_product.product_variations.map((element, index) =>
-                            <Col lg={2} md={2} key={element._id}>
+                            <Col lg={2} md={2} xs={2} sm={2} key={element._id} className='p-0 m-0'>
                                 <MyImages index={index == activeVariationIndex}
                                     element={element.image_link[0]}
                                     plus={16}
@@ -497,14 +638,12 @@ function VariableProduct(props) {
                                 />
                             </Col>
                         )}
-                    </Row>
+                    </div>
                 </Col>
                 <Col lg={3} md={3} sm={12} xs={12} className='vendor_desc_col'>
-                    <label className='product_label'>Shop Info</label>
-                    {props.single_product.vendor_id}
+                    <VendorInfo vendor={props.vendor} />
                 </Col>
             </Row>
-            <hr />
             {/*  Overview / Specification / Review */}
             <TabComponent
                 single_product={props.single_product}
@@ -517,8 +656,6 @@ function VariableProduct(props) {
             <style type="text/css">{`
                 .variable_product{
                     width: 100%;
-                    padding: 1.5%;
-                    background: white;
                 }
                 .variable_product .variation_item{
                     width: 100%;
@@ -560,7 +697,6 @@ function MyImages(props) {
             <style type="text/css">{`
                 .my_image{
                     margin: 5% 0%;
-                    background: white;
                 }
                 .my_image .my_image_img{
                     min-width: 90%;
@@ -570,50 +706,240 @@ function MyImages(props) {
                     padding: 5%;
                     border-radius: 2px;
                 }
+                @media (max-width: 575) {
+                    // .my_image{
+                    //     margin: 5% 1% 1% 1%;
+                    //     background: white;
+                    // }
+                    // .my_image .my_image_img{
+                    //     min-width: 200px;
+                    //     max-width: 200px;
+                    //     background: white;
+                    //     cursor: pointer;
+                    //     padding: 5%;
+                    //     border-radius: 2px;
+                    // }
+                }
             `}</style>
         </div>
     )
 }
 
 function VendorInfo(props) {
+    let rating = {
+        overall: 0,
+        one_star: 5,
+        two_star: 0,
+        three_star: 0,
+        four_star: 0,
+        five_star: 0
+    }
+    if ('rating' in props.vendor) {
+        rating = props.vendor.rating_review
+    }
+
+    let delivered = 0
+    let cancelled = 0
+    let returned = 0
+
+    if ('delivered' in props.vendor) {
+        rating = props.vendor.delivered
+    }
+    if ('cancelled' in props.vendor) {
+        rating = props.vendor.cancelled
+    }
+    if ('returned' in props.vendor) {
+        rating = props.vendor.returned
+    }
+
     return (
         <div className='vendor_info'>
             <label className='product_label'>Shop Info</label>
-            {/* {props.vendor.shop_name} */}
+            <label className='text-center w-100 pb-0 mb-0'>
+                {'shop_name' in props.vendor ? props.vendor.shop_name : '-'}
+            </label>
+            <hr className='pt-0 mt-1' />
             <Row noGutters className='_div'>
                 <div > Rating: </div>
-                <Badge variant='info' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}> 4.0 </Badge>
+                <Badge variant='info' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
+                    {rating.overall}
+                </Badge>
                 <ReactStars
                     count={5}
                     size={15}
                     half={true}
-                    value={4}
+                    value={rating.overall}
                     edit={false}
                     color2={"orange"}
                 />
             </Row>
-            <hr />
-            <Row noGutters className='_div'>
-                <div > Delivered: </div>
-                <Badge variant='success' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}> 100 </Badge>
-            </Row>
-            <Row noGutters className='_div'>
-                <div > Cancelled: </div>
-                <Badge variant='warning' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}> 50 </Badge>
-            </Row>
-            <Row noGutters className='_div'>
-                <div > Returned: </div>
-                <Badge variant='danger' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}> 10 </Badge>
-            </Row>
+            <div className='d-flex flex-column p-2 justify-content-center'>
+                <div className='vendor_rating five_stars_vendor_rating'>
+                    {'5:'} <span></span>
+                    <label>
+                        {rating.five_star}
+                    </label>
+                </div>
+                <div className='vendor_rating four_stars_vendor_rating'>
+                    {'4:'} <span></span>
+                    <label>
+                        {rating.four_star}
+                    </label>
+                </div>
+                <div className=' vendor_rating three_stars_vendor_rating'>
+                    {'3:'} <span></span>
+                    <label>
+                        {rating.three_star}
+                    </label>
+                </div>
+                <div className='vendor_rating two_stars_vendor_rating'>
+                    {'2:'} <span></span>
+                    <label>
+                        {rating.two_star}
+                    </label>
+                </div>
+                <div className='vendor_rating one_stars_vendor_rating'>
+                    {'1:'} <span></span>
+                    <label>
+                        {rating.one_star}
+                    </label>
+                </div>
+            </div>
 
+            <hr />
+            <div className='d-flex flex-column align-items-center justify-content-center' style={{ marginLeft: '-25px' }}>
+                <div className='delivered_slope'>
+                    <div > Delivered: </div>
+                    <Badge variant='success' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
+                        {delivered}
+                    </Badge>
+                </div>
+                <div className='cancelled_slope'>
+                    <div > Cancelled: </div>
+                    <Badge variant='warning' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
+                        {cancelled}
+                    </Badge>
+                </div>
+                <div className='returned_slope'>
+                    <div > Returned: </div>
+                    <Badge variant='danger' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
+                        {returned}
+                    </Badge>
+                </div>
+            </div>
             <style type="text/css">{`
-                .vendor_info ._div{
+                ._div{
                     font-size: 13px;
                     color: gray;
-                    margin: 4% 0%;
+                    display: inline-flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
                 }
-                .stars{
+
+                .vendor_rating {
+                    display: inline-flex;
+                    align-items: center;
+                    font-size: 14px;
+                    color: orange;
+                    justify-content: center;
                 }
+                .vendor_rating label{
+                     color: gray;
+                     padding: 0px;
+                     margin: 0px;
+                     font-size: 13px;
+                }
+                .vendor_rating span{
+                    width: 60%;
+                    min-height: 10px;
+                    max-height: 10px;
+                    border:1px solid lightgray;
+                    position:relative;
+                    margin: 0% 5px 0% 10px;
+                    border-radius: 2px;
+                }
+                .vendor_rating span:after {
+                    content:'';
+                    position:absolute;
+                    background: orange;
+                    top:0; bottom:0;
+                    left:0;
+                }
+                .one_stars_vendor_rating span:after{
+                    width: ${rating.one_star}%;
+                }
+                .two_stars_vendor_rating span:after{
+                    width: ${rating.two_star}%;
+                }
+                .three_stars_vendor_rating span:after{
+                    width: ${rating.three_star}%;
+                }
+                .four_stars_vendor_rating span:after{
+                    width: ${rating.four_star}%;
+                }
+                .five_stars_vendor_rating span:after{
+                    width: ${rating.five_star}%;
+                }
+                
+                .delivered_slope , .cancelled_slope, .returned_slope {
+                    width: 70%;
+                    height:30px;
+                    margin: 2% 0%;
+                    text-align:center;
+                    font-size:16px;
+                    color: black;
+                    vertical-align:middle;
+                    overflow: visible;
+                    position: relative;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .delivered_slope{
+                    background: #adebbb;
+                } 
+                .cancelled_slope{
+                    background: #ffe699;
+                }
+                .returned_slope {
+                    background: #ff9999;
+                }
+                .delivered_slope:after {
+                    content: "";
+                    position: absolute;
+                    display: block;
+                    right: -30px;
+                    top: 0px;
+                    width: 0px;
+                    height: 0px;
+                    border-top: solid 30px #adebbb;
+                    border-right: solid 30px transparent;
+                }
+                .cancelled_slope:after {
+                    content: "";
+                    position: absolute;
+                    display: block;
+                    right: -30px;
+                    top: 0px;
+                    width: 0px;
+                    height: 0px;
+                    border-top: solid 30px #ffe699;
+                    border-right: solid 30px transparent;
+                }
+                .returned_slope:after {
+                    content: "";
+                    position: absolute;
+                    display: block;
+                    right: -30px;
+                    top: 0px;
+                    width: 0px;
+                    height: 0px;
+                    border-top: solid 30px #ff9999;
+                    border-right: solid 30px transparent;
+                }
+
+
             `}</style>
         </div >
     )
@@ -624,6 +950,28 @@ function TabComponent(props) {
     const [rating, setRating] = useState('')
     const [review, setReview] = useState('')
     const [reviewError, setReviewError] = useState('')
+
+    let rating_review = {
+        rating: {
+            overall: 0,
+            one_star: 0,
+            two_star: 0,
+            three_star: 0,
+            four_star: 0,
+            five_star: 0
+        },
+        reviews: []
+    }
+
+    if (props.single_product.product_type == "simple-product") {
+        if ('rating_review' in props.single_product) {
+            rating_review = props.single_product.rating_review;
+        }
+    } else {
+        if ('rating_review' in props.activeVariation) {
+            rating_review = props.activeVariation.rating_review;
+        }
+    }
 
     function ratingChanged(newRating) {
         setRating(newRating)
@@ -640,7 +988,7 @@ function TabComponent(props) {
             method: 'PUT',
             url: _url,
             params: parameters,
-            data: { rating: rating, review: review }
+            data: { rating: rating, review: review, c_name: props.token.full_name }
         }).then(res => {
             alert('Add ho gya')
             console.log('response:', res.data)
@@ -649,162 +997,199 @@ function TabComponent(props) {
         })
     }
 
-
     function handleSetReview(e) {
         setReview(e.target.value)
         setReviewError('')
     }
-    // function handleGiveReview() {
-    //     if (review.length > 9 && review.length < 199) {
-    //         setReviewError('')
-    //     } else {
-    //         setReviewError('Must be 10-200')
-    //     }
-    // }
+
     return (
-        <Tab.Container id="left-tabs-example" className='tab_component' defaultActiveKey="Overview">
-            <Row className='mr-0 pr-0'>
-                <Col lg={3} md={3}>
-                    <Nav variant="pills" className="flex-column">
-                        <Nav.Item>
-                            <Nav.Link eventKey="Overview">
-                                Overview
-                                </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="Specifications">
-                                Specifications
-                                </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="Rating" className='d-flex align-items-center'>
-                                {'Rating '}
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="Reviews" className='d-flex align-items-center'>
-                                {'Reviews '}
-                            </Nav.Link>
-                        </Nav.Item>
-                    </Nav>
-                </Col>
-                <Col lg={9} md={9} className='m-0 p-0' style={{ border: '0.5px solid lightgray' }}>
-                    <Tab.Content>
-                        <Tab.Pane eventKey="Overview" className='p-3'>
-                            <div style={{ fontSize: '12px', color: 'gray' }}>
-                                {props.single_product.product_description}
-                            </div>
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="Specifications" className='p-3'>
-                            <Table borderless size="sm">
-                                <tbody>
-                                    {props.custom_fields && props.custom_fields.map((element, index) =>
-                                        <tr style={{ background: index % 2 == 0 ? '#F7F9FE' : 'white' }}>
-                                            <td>{element.name}</td>
-                                            <td>{element.value}</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </Table>
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="Rating" className='p-3'>
-                            <Row>
-                                <Col className='d-flex flex-column align-items-center p-3 justify-content-center' style={{ borderRight: '1px solid lightgray' }} lg={3} md={3} sm={12} xs={12}>
+        <div className='tab_component'>
+            <Tabs defaultActiveKey="Description" id="uncontrolled-tab-example" className='outer_tabs'>
+                <Tab eventKey="Description" title="Description" className='p-3'>
+                    {'product_description' in props.single_product ?
+                        <div style={{ fontSize: '12px', color: 'gray' }}>
+                            {props.single_product.product_description}
+                        </div>
+                        :
+                        <label className='text-center p-5 w-100' style={{ fontSize: '16px', color: 'gray' }}>No Description</label>
+                    }
+                </Tab>
+                <Tab eventKey="Specifications" title="Specifications" className='p-3'>
+                    {props.custom_fields.length == 0 ?
+                        <label className='text-center p-5 w-100' style={{ fontSize: '16px', color: 'gray' }}>No Specifications</label>
+                        :
+                        <Table borderless size="sm" >
+                            <tbody>
+                                {props.custom_fields.map((element, index) =>
+                                    <tr key={element._id} style={{ background: index % 2 == 0 ? '#F7F9FE' : 'white' }}>
+                                        <td>{element.name}</td>
+                                        <td>{element.value}</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </Table>
+                    }
+
+                </Tab>
+                <Tab eventKey="RatingAndReviews" title="Rating & Reviews" className='p-2'>
+                    <Tabs defaultActiveKey="Rating" id="uncontrolled-tab-example" className='inner_tabs'>
+                        <Tab eventKey="Rating" title="Rating">
+                            <Row className='pt-3 pb-3'>
+                                <Col className='d-flex flex-column align-items-center  justify-content-center' lg={3} md={3} sm={12} xs={12}>
                                     <div className='text-center' style={{ fontSize: '13px', color: 'gray', marginBottom: '5px' }}>Overall Rating</div>
-                                    <div className='text-center' style={{ fontSize: '20px', color: 'orange' }}>2.0</div>
+                                    <div className='text-center' style={{ fontSize: '20px', color: 'orange' }}>
+                                        {rating_review.rating.overall}
+                                    </div>
                                     <ReactStars
                                         count={5}
                                         size={24}
                                         half={true}
-                                        value={2}
+                                        value={rating_review.rating.overall}
                                         edit={false}
                                         color2={"orange"}
                                     />
                                 </Col>
-                                <Col className='d-flex flex-column p-3 justify-content-center'>
-                                    <div className='stars_rating'>5: <span></span><label>5</label></div>
-                                    <div className='stars_rating'>4: <span></span><label>5</label></div>
-                                    <div className='stars_rating'>3: <span></span><label>5</label></div>
-                                    <div className='stars_rating'>2: <span></span><label>5</label></div>
-                                    <div className='stars_rating'>1: <span></span><label>5</label></div>
+                                <Col>
+                                    <div className='d-flex flex-column p-2 justify-content-center w-100'>
+                                        <div className='star_rating five_stars_rating'>
+                                            {'5:'} <span></span>
+                                            <label>
+                                                {rating_review.rating.five_star}
+                                            </label>
+                                        </div>
+                                        <div className='star_rating four_stars_rating'>
+                                            {'4:'} <span></span>
+                                            <label>
+                                                {rating_review.rating.four_star}
+                                            </label>
+                                        </div>
+                                        <div className='star_rating three_stars_rating'>
+                                            {'3:'} <span></span>
+                                            <label>
+                                                {rating_review.rating.three_star}
+                                            </label>
+                                        </div>
+                                        <div className='star_rating two_stars_rating'>
+                                            {'2:'} <span></span>
+                                            <label>
+                                                {rating_review.rating.two_star}
+                                            </label>
+                                        </div>
+                                        <div className='star_rating one_stars_rating'>
+                                            {'1:'} <span></span>
+                                            <label>
+                                                {rating_review.rating.one_star}
+                                            </label>
+                                        </div>
+                                    </div>
                                 </Col>
                             </Row>
-                            <hr />
-                            {props.token.role != '' ?
-                                <Row className='d-inline-flex align-items-center pl-5'>
-                                    <div className='m-3' style={{ fontSize: '20px' }}>Rate Product</div>
-                                    <ReactStars
-                                        count={5}
-                                        value={rating}
-                                        half={false}
-                                        onChange={ratingChanged}
-                                        size={30}
-                                        color2={"orange"}
-                                    />
-                                    <div className='give_review'>
-                                        <InputGroup>
-                                            <Form.Control as="textarea" onChange={(e) => handleSetReview(e)} isInvalid={reviewError} placeholder='Type your review here' rows="3" />
-                                            <Form.Control.Feedback type="invalid">
-                                                {reviewError}
-                                            </Form.Control.Feedback>
-                                        </InputGroup>
+                        </Tab>
+                        <Tab eventKey="Reviews" title="Reviews">
+                            {rating_review.reviews == [] ?
+                                <label className='text-center p-5 w-100' style={{ fontSize: '16px', color: 'gray' }}>No Reviews</label>
+                                :
+                                rating_review.reviews && rating_review.reviews.map((element, index) =>
+                                    <div className='review'>
+                                        <div>
+                                            <label>{element.c_name}</label>
+                                            <span>{element.entry_date}</span>
+                                        </div>
+                                        {element.review}
+                                        <hr />
                                     </div>
-                                    <Button className='ml-5 pl-5 pr-5 float-right' size='sm' variant='outline-primary'
+                                )
+                            }
+                        </Tab>
+                        {props.token.role != '' ?
+                            <Tab eventKey="GiveReview" title="Give Review" >
+                                <Row className='pt-2 pb-2 pl-5 pr-5'>
+                                    <div className='d-inline-flex align-items-center'>
+                                        <div style={{ fontSize: '16px', marginRight: '10px' }}>Rate Product</div>
+                                        <ReactStars
+                                            count={5}
+                                            value={rating}
+                                            half={false}
+                                            onChange={ratingChanged}
+                                            size={26}
+                                            color2={"orange"}
+                                        />
+                                    </div>
+                                    <InputGroup className='mt-1 mb-3'>
+                                        <Form.Control as="textarea" onChange={(e) => handleSetReview(e)} isInvalid={reviewError} placeholder='Type your review here' rows="3" />
+                                        <Form.Control.Feedback type="invalid">
+                                            {reviewError}
+                                        </Form.Control.Feedback>
+                                    </InputGroup>
+                                    <Button block size='sm' variant='outline-primary'
                                         onClick={handleSetRating}
                                         disabled={rating == '' ? true : false}
                                     >Rate</Button>
 
                                 </Row>
-                                :
-                                null
-                            }
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="Reviews">
-                            <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" >
-                                <Tab eventKey="home" title="Reviews">
-                                    <div className='review'>
-                                        <div>
-                                            <label>Mudasir Iqbal</label>
-                                            <span>20-06-2020</span>
-                                        </div>
-                                        {'You are better off getting the regular airpods instead of this "wireless charging case" version. Both cases are able to charge your airpods, but this one allows the case to charge on a charging pad instead of being plugged in, which by the way is sold separately.'}
-                                        <hr />
-                                    </div>
-                                </Tab>
-
-                            </Tabs>
-
-                        </Tab.Pane>
-                    </Tab.Content>
-                </Col>
-            </Row>
+                            </Tab>
+                            :
+                            null
+                        }
+                    </Tabs>
+                </Tab>
+            </Tabs>
             <style type="text/css">{`
+                .tab_component{
+                    min-height: 200px;
+                    margin: 2% 0%;
+                    background: white;
+                }
                 td{
                     font-size: 12px;
                     padding: 0.5% 3%;
                     color: gray;
                 }
-                .stars_rating {
+
+                .star_rating {
                    display: inline-flex;
-                   align-items: center;
-                   font-size: 14px;
-                   color: black;
+                    align-items: center;
+                    font-size: 14px;
+                    color: orange;
+                    justify-content: center;
                 }
-                .stars_rating span{
-                    min-height: 10px;
-                    max-height: 10px;
-                    min-width: 60%;
-                    margin: 0% 5px 0% 10px;
-                    background: orange;
-                    border-radius: 2px;
-                }
-                .stars_rating label{
+                .star_rating  label{
                      color: gray;
                      padding: 0px;
                      margin: 0px;
                      font-size: 13px;
+                }                
+                .star_rating span{
+                    width: 40%;
+                    min-height: 10px;
+                    max-height: 10px;
+                    border:1px solid lightgray;
+                    position:relative;
+                    margin: 0% 5px 0% 10px;
+                    border-radius: 2px;
                 }
-
+                .star_rating span:after {
+                    content:'';
+                    position:absolute;
+                    background: orange;
+                    top:0; bottom:0;
+                    left:0;
+                }
+                .one_stars_rating span:after{
+                    width: ${rating_review.rating.one_star}%;
+                }
+                .two_stars_rating span:after{
+                    width: ${rating_review.rating.two_star}%;
+                }
+                .three_stars_rating span:after{
+                    width: ${rating_review.rating.three_star}%;
+                }
+                .four_stars_rating span:after{
+                    width: ${rating_review.rating.four_star}%;
+                }
+                .five_stars_rating span:after{
+                    width: ${rating_review.rating.five_star}%;
+                }
 
                 .review{
                     margin: 2%;
@@ -825,8 +1210,16 @@ function TabComponent(props) {
                     width: 100%;
                     margin: 2%;
                 }
+                @media (max-width: 575px) {
+                    .outer_tabs{
+                        font-size: 13px;
+                    }
+                    .inner_tabs{
+                        font-size: 12px;
+                    }
+                }
             `}</style>
-        </Tab.Container>
+        </div>
     )
 }
 
@@ -859,6 +1252,9 @@ function RelatedProducts(props) {
                 )}
             </Row>
             <style type="text/css">{`
+                .related_products{
+                    padding-bottom: 50px;
+                }
                 .related_products .header{
                     font-size: 18px;
                     margin-left: 0.5%;
@@ -866,22 +1262,27 @@ function RelatedProducts(props) {
                     padding: 0%;
                     color: gray;
                 }
-                .related_products{
-                    margin: 1% 5.5%;
-                    padding: 0%;
-                }
                 .related_products .only_products_card{
                     padding: 0.8% 0%;
                     background: none;
                     border: none;
                 }
-
+                .my_label{
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap; 
+                    display: block;
+                    padding: 0%;
+                    margin: 0% 1%;
+                    font-size: 13px;
+                    cursor: pointer;
+                } 
                 .related_products .only_products_div{
                     display: flex;
                     flex-direction: column;
                     border-radius: 3px;
                     margin: 3%;
-                    padding: 1%;
+                    padding: 2%;
                     cursor: pointer;
                     background: white;
                     border: 0.5px solid lightgray;
@@ -895,22 +1296,24 @@ function RelatedProducts(props) {
                 .related_products .only_product_img{
                     margin-bottom: 5px;
                 }    
-                @media (max-width: 767px) {
-                    .related_products .only_products_div{
-                        // border: 1.5px solid ${GlobalStyleSheet.primry_color};
-                    }
-                    .related_products .header{
-                        font-size: 16px;
-                    }
-                }     
                 @media (min-width: 1200px) {
                     .only_products_card{
                         max-width: 14.285714285714285714285714285714%;
                     }
                 }
+                @media (max-width: 767px) {
+                    .related_products .header{
+                        font-size: 16px;
+                    }
+                    .related_products{
+                        margin: 1%;
+                    }
+                }     
             `}</style>
         </div>
     )
 }
 
 export default Product
+
+
