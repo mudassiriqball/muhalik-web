@@ -72,14 +72,14 @@ class ForgotPassword extends Component {
 
 
 
-    handleSenVerificationCode = (mobile) => {
+    async handleSenVerificationCode(mobile) {
         const currentComponent = this
 
         if (phoneRegExp.test(mobile)) {
             this.setState({ sendCodeLoading: true, mobileError: '' })
             const url = MuhalikConfig.PATH + `/api/users/check-mobile/${mobile}`;
 
-            axios.get(url).then(function (response) {
+            await axios.get(url).then(function (response) {
                 let interval = null
                 currentComponent.setState({
                     intervalTime: 60,
@@ -115,9 +115,7 @@ class ForgotPassword extends Component {
                             isCodeVerified: false,
                         })
                     });
-
             }).catch(function (error) {
-                console.log('error:', error)
                 try {
                     currentComponent.setState({
                         mobileError: error.response.data.message,
@@ -266,7 +264,7 @@ class ForgotPassword extends Component {
                                                             aria-describedby="mobile"
                                                             name="mobile"
                                                             value={values.mobile}
-                                                            onChange={handleChange}
+                                                            onChange={(e) => { handleChange(e), this.setState({ mobileError: '' }) }}
                                                             isInvalid={this.state.mobileError}
                                                             disabled={this.state.isCodeSended}
                                                         />

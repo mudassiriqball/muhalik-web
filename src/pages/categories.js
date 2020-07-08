@@ -49,8 +49,8 @@ function Categories({ categories_list, sub_categories_list }) {
             </div>
             <style type="text/css">{`
                 .categories ._row{
-                    padding: 2%;
-                    margin: 3% 10%;
+                    margin: 2% 3.7%;
+                    padding: 0%;
                     background: white;
                 }
                 .categories .col{
@@ -126,8 +126,7 @@ function Categories({ categories_list, sub_categories_list }) {
                 }
                 @media (max-width: 767px){
                     .categories ._row{
-                        margin: 0%;
-                        padding: 5%;
+                        margin: 2% 2% 16% 2%;
                     }
                     .categories .sticy-bottom-navbar{
                         display: block;

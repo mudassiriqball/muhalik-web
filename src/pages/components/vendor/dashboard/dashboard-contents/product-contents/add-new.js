@@ -170,6 +170,7 @@ class AddNew extends Component {
     }
 
     async uploadProduct(values, currentComponent) {
+        currentComponent.setState({ clearFields: false });
         const formData = new FormData();
         console.log('values: ', values)
         if (values.product_name != '') {

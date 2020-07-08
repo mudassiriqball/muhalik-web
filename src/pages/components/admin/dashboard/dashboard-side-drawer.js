@@ -12,8 +12,6 @@ import Vendors from './dashboard-contents/vendors';
 import Customers from './dashboard-contents/customers';
 import Slider from './dashboard-contents/slider'
 // Products
-import AllProducts from './dashboard-contents/product-contents/all-products';
-import AddNew from '../../vendor/dashboard/dashboard-contents/product-contents/add-new';
 import ProductFields from './dashboard-contents/product-contents/product-fields'
 
 // Category
@@ -249,42 +247,18 @@ const DashboardSideDrawer = props => {
                             <Tab.Pane eventKey="Slider">
                                 <Slider {...props} />
                             </Tab.Pane>
-                            {/* Product */}
-                            <Tab.Pane eventKey="AllProducts">
-                                <AllProducts {...props} />
+                            <Tab.Pane eventKey="Inventory">
+                                <Inventory />
                             </Tab.Pane>
-                            <Tab.Pane eventKey="AddProduct">
-                                <AddNew
-                                    {...props}
-                                    title={' Admin Dashboard / Add New'}
-                                    isUpdateProduct={false}
-                                    productCategories={''}
-                                    productSubCategories={''}
-                                    productSubSubCategories={''}
-                                    subCategoryDisabled={true}
-                                    subSubCategoryDisabled={true}
-                                    productTags={[]}
-                                    warrantyType={''}
-                                    simple_product_image_link={[]}
-                                    variationsArray={[]}
-                                    dangerousGoodsArray={[]}
-                                />
+                            <Tab.Pane eventKey="ProductFields">
+                                <ProductFields {...props} />
                             </Tab.Pane>
-
                             {/* Category */}
                             <Tab.Pane eventKey="AddCategory">
                                 <AddCategory {...props} />
                             </Tab.Pane>
                             <Tab.Pane eventKey="AllCategories">
                                 <AllCategories {...props} />
-                            </Tab.Pane>
-
-                            <Tab.Pane eventKey="ProductFields">
-                                <ProductFields {...props} />
-                            </Tab.Pane>
-                            {/*  */}
-                            <Tab.Pane eventKey="Inventory">
-                                <Inventory />
                             </Tab.Pane>
                             <Tab.Pane eventKey="Discounts">
                                 <Discounts />

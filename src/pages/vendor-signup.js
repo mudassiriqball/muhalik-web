@@ -69,6 +69,7 @@ class VendorSignup extends Component {
     state = {
         hide: true,
         isLoading: false,
+        sendCodeLoading: false,
         showToast: false,
         serverErrorMsg: '',
 
@@ -91,41 +92,56 @@ class VendorSignup extends Component {
     async authUser() {
         await checkAuth('/vendor-signup')
     }
-    handleSenVerificationCode = (mobileNumber) => {
+    async handleSenVerificationCode(mobileNumber) {
         const currentComponent = this
-        this.setState({
-            intervalTime: 60,
-            isResendCode: false,
-            feedback: ''
-        });
-        let interval = null
-        this.setState({ mobileError: '' })
+
         if (phoneRegExp.test(mobileNumber)) {
-            var appVerifier = window.recaptchaVerifier;
-            firebase.auth().signInWithPhoneNumber(mobileNumber, appVerifier)
-                .then(function (confirmationResult) {
-                    window.confirmationResult = confirmationResult;
-                    currentComponent.setState({
-                        isCodeSended: true,
-                        mobileError: '',
-                        feedback: 'Code Sended, Check your number',
-                    })
-                    let delay = 1000
-                    interval = setInterval(() => {
-                        currentComponent.setState({ intervalTime: currentComponent.state.intervalTime - 1 });
-                        if (currentComponent.state.intervalTime == 0) {
-                            currentComponent.setState({ isResendCode: true });
-                            clearInterval(interval)
-                        }
-                    }, delay)
-                }).catch(function (error) {
-                    currentComponent.setState({
-                        mobileError: 'Error: Code not sended',
-                        feedback: '',
-                        isCodeSended: false,
-                        isCodeVerified: false,
-                    })
+            this.setState({ sendCodeLoading: true, mobileError: '' })
+
+            const url = MuhalikConfig.PATH + `/api/users/check-mobile/${mobileNumber}`;
+            await axios.get(url).then((response) => {
+                currentComponent.setState({
+                    mobileError: 'This number already exists',
+                    feedback: '',
+                    isCodeSended: false,
+                    isCodeVerified: false,
+                    sendCodeLoading: false,
+                })
+            }).catch((error) => {
+                this.setState({
+                    intervalTime: 60,
+                    isResendCode: false,
+                    feedback: ''
                 });
+                let interval = null
+                var appVerifier = window.recaptchaVerifier;
+                firebase.auth().signInWithPhoneNumber(mobileNumber, appVerifier)
+                    .then(function (confirmationResult) {
+                        window.confirmationResult = confirmationResult;
+                        currentComponent.setState({
+                            isCodeSended: true,
+                            mobileError: '',
+                            feedback: 'Code Sended, Check your number',
+                            sendCodeLoading: false,
+                        })
+                        let delay = 1000
+                        interval = setInterval(() => {
+                            currentComponent.setState({ intervalTime: currentComponent.state.intervalTime - 1 });
+                            if (currentComponent.state.intervalTime == 0) {
+                                currentComponent.setState({ isResendCode: true });
+                                clearInterval(interval)
+                            }
+                        }, delay)
+                    }).catch(function (error) {
+                        currentComponent.setState({
+                            mobileError: 'Error: Code not sended',
+                            feedback: '',
+                            isCodeSended: false,
+                            isCodeVerified: false,
+                            sendCodeLoading: false,
+                        })
+                    });
+            })
         } else {
             this.setState({
                 isCodeSended: false,
@@ -271,7 +287,7 @@ class VendorSignup extends Component {
                                                             aria-describedby="mobile"
                                                             name="mobile"
                                                             value={values.mobile}
-                                                            onChange={handleChange}
+                                                            onChange={(e) => { handleChange(e), this.setState({ mobileError: '' }) }}
                                                             isInvalid={this.state.mobileError}
                                                             disabled={this.state.isCodeSended}
                                                         />
@@ -286,6 +302,7 @@ class VendorSignup extends Component {
                                                                 disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
                                                                 className='append_button' variant='success' >
                                                                 {this.state.isCodeSended ? 'Resend' : 'Send Code'}
+                                                                {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                             </Button>
                                                         </InputGroup.Append>
                                                         <Form.Control.Feedback type="invalid">

@@ -663,9 +663,8 @@ function ProductAttributes(props) {
                             <Form.Control
                                 type="text"
                                 size="sm"
-                                placeholder="Enter Value"
                                 name="sku"
-                                value={element.attributeValue.forEach(e => (e.value))}
+                                value={element.attributeValue.map((e) => (e.value))}
                                 disabled
                             />
                             <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
@@ -747,9 +746,26 @@ function Variations(props) {
         copyArray.splice(index, 1)
         props.setVariationsArray(copyArray)
     }
+    function handleDeleteSingleAttribute(index, i) {
+        const copyArray = Object.assign([], props.variationsArray)
+        if (copyArray[index].item.length == 1) {
+            copyArray.splice(index, 1)
+        } else {
+            let obj = copyArray[index].item
+            obj.splice(i, 1)
+            copyArray[index].item = obj
+        }
+        props.setVariationsArray(copyArray)
+    }
+
     function handleDeleteCustomFieldClick(index, i) {
         const copyArray = Object.assign([], props.variationsArray)
         copyArray[index].custom_fields.splice(i, 1)
+        props.setVariationsArray(copyArray)
+    }
+    function handleCustomFieldValueChage(value, index, i) {
+        const copyArray = Object.assign([], props.variationsArray)
+        copyArray[index].custom_fields[i].value = value
         props.setVariationsArray(copyArray)
     }
 
@@ -919,33 +935,42 @@ function Variations(props) {
                     {props.variationsArray && props.variationsArray.map((element, index) =>
                         <div key={index}>
                             <Accordion>
-                                <Row noGutters style={{ border: handleVariationsErrorCheck(element) }}>
-                                    {element.item && element.item.map((e, i) =>
-                                        <Form.Group as={Col} lg={3} md={3} sm={6} xs={6} key={i} >
-                                            <Form.Control
-                                                type="text"
-                                                size="sm"
-                                                placeholder="Enter Value"
-                                                name="sku"
-                                                value={e.value}
-                                                onChange={(event) => handleItemValueChange(event, index, i)}
-                                            />
-                                        </Form.Group>
-                                    )}
-
-                                    <div className="mr-auto"></div>
-                                    <Accordion.Toggle as={Form.Group} eventKey="0">
+                                <Row noGutters className='d-inline-flex align-items-center w-100 p-2 mb-3' style={{ background: 'lightgray', borderRadius: '3px' }}>
+                                    <Form.Label className='mr-auto p-0 m-0'>
+                                        {index > 100 ? '' : index > 9 ? '0' : '00'}{index + 1}
+                                    </Form.Label>
+                                    <Accordion.Toggle as={Form.Group} eventKey="0" className='p-0 m-0'>
                                         <Button variant="outline-primary" size="sm" style={{ marginRight: '10px' }}>
                                             <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.slider_fontawesome} />
                                         </Button>
                                     </Accordion.Toggle>
-                                    <Form.Group style={{ float: 'right' }}>
-                                        <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
-                                            onClick={() => handleDeleteVariationClick(index)}> delete</Button>
-                                    </Form.Group>
+                                    <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
+                                        onClick={() => handleDeleteVariationClick(index)}> delete</Button>
+                                </Row>
+                                <Row noGutters style={{ border: handleVariationsErrorCheck(element) }}>
+                                    {element.item && element.item.map((e, i) =>
+                                        <Form.Group as={Col} lg={3} md={3} sm={4} xs={6} key={i} className='pr-1 variation_value_col'>
+                                            <InputGroup>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder="Enter Value"
+                                                    name="sku"
+                                                    value={e.value}
+                                                    onChange={(event) => handleItemValueChange(event, index, i)}
+                                                />
+                                                <InputGroup.Append>
+                                                    <Button size='sm' variant='outline-danger' onClick={() => handleDeleteSingleAttribute(index, i)}>
+                                                        Delete
+                                                    </Button>
+                                                </InputGroup.Append>
+                                            </InputGroup>
+                                        </Form.Group>
+                                    )}
                                 </Row>
                                 <Accordion.Collapse eventKey="0">
                                     <>
+
                                         <Form.Row>
                                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
                                                 <Form.Label style={styles.label}>Product Price <span> * </span></Form.Label>
@@ -1006,7 +1031,7 @@ function Variations(props) {
                                                             placeholder="Enter Value"
                                                             name="sku"
                                                             value={e.value}
-                                                            onChange={() => e.attributeValue}
+                                                            onChange={(e) => handleCustomFieldValueChage(e.target.value, index, i)}
                                                         />
                                                         <InputGroup.Prepend>
                                                             <Button variant="outline-danger" size="sm" style={{ marginLeft: '1%' }}
@@ -1026,6 +1051,20 @@ function Variations(props) {
                     <Button variant="outline-success" size="sm" block onClick={handleSaveVariationsClick}> Save Variations</Button>
                 </>
             }
+            <style type="text/css">{`
+                @media (max-width: 1299px){
+                    .variation_value_col{
+                        min-width: 33.33333333333333%;
+                        max-width: 33.33333333333333%;
+                    }
+                }
+                @media (max-width: 1100px){
+                    .variation_value_col{
+                        min-width: 50%;
+                        max-width: 50%;
+                    }
+                }
+            `}</style>
             <style jsx>
                 {`
                     span{

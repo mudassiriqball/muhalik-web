@@ -149,7 +149,6 @@ class Admin extends Component {
 
         const url_9 = MuhalikConfig.PATH + '/api/sliders/';
         await axios.get(url_9).then(function (response) {
-            console.log('sliderimh:', response.data.data)
             currentComponent.setState({
                 sliders_list: response.data.data,
             });
@@ -194,6 +193,19 @@ class Admin extends Component {
             console.log('Caterories Fetchig Error: ', error)
         })
     }
+    async reloadSlider() {
+        let currentComponent = this
+        const url = MuhalikConfig.PATH + '/api/sliders/';
+        await axios.get(url).then(function (response) {
+            currentComponent.setState({
+                sliders_list: response.data.data,
+            });
+        }).catch(function (error) {
+            console.log("sliders_list Fetching Error:", error)
+            alert('sliders_list error: ', error)
+        })
+    }
+
 
     render() {
         let backdrop;
@@ -215,7 +227,6 @@ class Admin extends Component {
 
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
-                    categoriesReloadHandler={this.reloadCategories.bind(this)}
 
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
@@ -228,6 +239,9 @@ class Admin extends Component {
                     drawerClickHandler={this.drawerToggleClickHandler}
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
                     logout={this.logout}
+
+                    categoriesReloadHandler={this.reloadCategories.bind(this)}
+                    sliderReloadHandler={this.reloadSlider.bind(this)}
                 />
                 <DashboardSideDrawer
                     products_list={this.state.products_list}
@@ -241,7 +255,6 @@ class Admin extends Component {
 
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
-                    categoriesReloadHandler={this.reloadCategories.bind(this)}
 
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
@@ -251,7 +264,11 @@ class Admin extends Component {
                     user_name={this.state.decodedToken.full_name}
                     show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler}
-                    logout={this.logout} />
+                    logout={this.logout}
+
+                    categoriesReloadHandler={this.reloadCategories.bind(this)}
+                    sliderReloadHandler={this.reloadSlider.bind(this)}
+                />
                 {backdrop}
                 {/* </AdminLayout> */}
                 <style jsx global>{`

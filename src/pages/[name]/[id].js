@@ -214,7 +214,7 @@ function Products(props) {
                     right: 0;
                 }
                 .id .main_row{
-                    padding: 1% 4.44% 2% 4.44%;
+                    padding: 2% 3.7%;
                 }
                 .id .products_col{
                     background: white;
@@ -282,7 +282,7 @@ function Products(props) {
                         max-width: 150px;
                     }
                     .id .main_row{
-                        padding: 2%;
+                        padding: 2% 2.7%;
                     }
                 }
                 @media (max-width: 991px) {
@@ -294,11 +294,11 @@ function Products(props) {
                     }
                 }
                 @media (max-width: 767px) {
-                    .id .main_row{
-                        padding: 1.5%;
-                    }
                     .id .only_products_card{
                         max-width: 25%;
+                    }
+                    .id .main_row{
+                        padding: 2% 2% 16% 2%;
                     }
                 }
                 @media (max-width: 575px) {

@@ -16,6 +16,12 @@ router.get("/restricted-customers", UserController.get_restricted_customers);
 router.get("/new-vendors", UserController.get_new_vendors);
 
 
+// router.put("/add-wish/:_id", checkAuth, UserController.add_to_wishlist);
+// router.put("/remove-wish/:_id", checkAuth, UserController.remove_from_wishlist);
+// router.put("/add-cart/:_id", checkAuth, UserController.add_to_cart);
+// router.put("/remove-cart/:_id", checkAuth, UserController.remove_from_cart);
+
+
 router.put("/status/:_id", checkAuth, UserController.update_status);
 router.post("/login", UserController.loginUser);
 router.post("/register", UserController.registerUser);

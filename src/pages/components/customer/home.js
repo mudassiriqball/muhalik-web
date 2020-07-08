@@ -52,9 +52,9 @@ const Home = (props) => {
 
     return (
         <div className='home'>
-            <Row noGutters style={{ marginBottom: '70px' }}>
+            <Row noGutters>
                 <Col lg={6} md={12} sm={12} xs={12} style={{ height: '100%' }}>
-                    <Card className='_card'>
+                    <Card className='first_card'>
                         <Card.Header className='card_header'>
                             <div className='mr-auto' >New Arrivals</div>
                             <Link href='/products/[component]' as={`/products/new-arrival`}><a>Show More</a></Link>
@@ -102,7 +102,7 @@ const Home = (props) => {
                     </Card>
                 </Col>
                 <Col lg={6} md={12} sm={12} xs={12} style={{ height: '100%' }}>
-                    <Card className='_card'>
+                    <Card className='second_card'>
                         <Card.Header className='card_header'>
                             <div className='mr-auto' >Top Ranking</div>
                             <Link href=''><a>Show More</a></Link>
@@ -166,9 +166,13 @@ const Home = (props) => {
             <style type="text/css">
                 {`
                     .home{
-                        padding: 0.5% 4%;
-                        margin-top: 10px;
                         z-index: 10;
+                    }
+                    .first_card {
+                        margin: 0% 1% 1% 0%;
+                    }
+                    .second_card {
+                        margin: 0% 0% 1% 1%;
                     }
                     .home .product_card{
                         border: none;
@@ -197,8 +201,7 @@ const Home = (props) => {
                         background: white;
                     }
 
-                    .home ._card{
-                        margin: 1%;
+                    .home ._card first-child{
                         border: none;
                         border-radius: 4px;
                     }
@@ -246,14 +249,12 @@ const Home = (props) => {
                     .home .only_products_row{
                         background: yellow;
                     }
-                    @media (max-width: 1199px) {
-                        .home{
-                            padding: 2%;
+                    @media (max-width: 767px){
+                        .first_card {
+                            margin: 0% 0% 2% 0%;
                         }
-                    }
-                    @media (max-width: 767px) {
-                        .home{
-                            padding: 1%;
+                        .second_card {
+                            margin: 0% 0% 2% 0%;
                         }
                     }
                 `}
@@ -330,8 +331,11 @@ function CategoryCard(props) {
             </Card>
 
             <style type="text/css">{`
+                .CategoryCard{
+                    margin: 2% 0%;
+                }
                 .CategoryCard .category_card{
-                    margin: 0% 0.5%;
+                    margin: 0.5% 0%;
                     border: none;
                     border-radius: 5px;
                     background: #adebbb;
@@ -563,21 +567,19 @@ function OnlyProducts(props) {
                 )}
             </Row>
             <style type="text/css">{`
+                .only_products{
+                    margin: 1% 0% 0% 00%;
+                }
                 .only_products .header{
                     font-size: 20px;
-                    margin-left: 0.5%;
+                    margin: 1% 0% 0% 0.5%;
                     color: gray;
-                }
-                .only_products{
-                    margin: 2% 0%;
-                    padding: 0%;
                 }
                 .only_products .only_products_card{
                     padding: 0.8% 0%;
                     background: none;
                     border: none;
                 }
-
                 .only_products .only_products_div{
                     display: flex;
                     flex-direction: column;
@@ -598,9 +600,6 @@ function OnlyProducts(props) {
                     margin-bottom: 5px;
                 }    
                 @media (max-width: 767px) {
-                    .only_products .only_products_div{
-                        // border: 1.5px solid ${GlobalStyleSheet.primry_color};
-                    }
                     .only_products .header{
                         font-size: 16px;
                     }

@@ -143,6 +143,9 @@ class AddCategory extends Component {
                                             <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
                                                 <Form.Label style={styles.label}> Category <span> * </span></Form.Label>
                                                 <CreatableSelect
+                                                    id={'1'}
+                                                    instanceId={'1'}
+                                                    inputId={'1'}
                                                     isClearable
                                                     onChange={this.handleCategoryChange}
                                                     options={this.props.categories_list}

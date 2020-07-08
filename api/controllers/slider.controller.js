@@ -17,6 +17,7 @@ sliderController.add_slider = async (req, res) => {
     var datetime = new Date();
     body.entry_date = datetime;
     body.url = url;
+    console.log("1", body);
     const slider = new Slider(body);
     const result = await slider.save();
     res.status(200).send({

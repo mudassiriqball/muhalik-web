@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
-import { Row, Col, Card, Image, Button, Form, Table, Tab, Nav, Badge, Tabs, InputGroup } from 'react-bootstrap'
+import { Row, Col, Card, Image, Button, Form, Table, Tab, Nav, Badge, Tabs, InputGroup, Spinner } from 'react-bootstrap'
 import { useRouter } from 'next/router'
 import Layout from '../../components/customer/layout';
 import useDimensions from "react-use-dimensions";
@@ -12,7 +12,8 @@ import {
 } from "react-device-detect";
 import {
     removeTokenFromStorage,
-    getDecodedTokenFromStorage
+    getDecodedTokenFromStorage,
+    getTokenFromStorage
 } from '../../../sdk/core/authentication-service';
 import axios from 'axios'
 import MuhalikConfig from '../../../sdk/muhalik.config'
@@ -61,18 +62,27 @@ function Product(props) {
     const { product } = router.query
 
     const [token, setToken] = useState({ role: '', full_name: '' })
-    const { loading, products } = useProductsInfiniteScroll('sub_category', props.single_product.sub_category._id, '1', isMobile ? '6' : '7')
+    const [undecoded_token, setUndecoded_token] = useState('')
+
+    const { loading, products } = useProductsInfiniteScroll('sub_category', props.single_product.sub_category._id, '1', isMobile ? '6' : '8')
     const [vendor, setVendor] = useState({})
     const [wish, setWish] = useState('gray')
+    const [_loading, _setLoading] = useState(false)
+    const [cart, setCart] = useState(0)
 
     useLayoutEffect(() => {
         getData()
     }, []);
 
     async function getData() {
-        const _token = await getDecodedTokenFromStorage()
+        const decoded_token = await getDecodedTokenFromStorage()
+        if (decoded_token !== null) {
+            setToken(decoded_token)
+        }
+
+        const _token = await getTokenFromStorage()
         if (_token !== null) {
-            setToken(_token)
+            setUndecoded_token(_token)
         }
 
         const url = MuhalikConfig.PATH + `/api/users/${props.single_product.vendor_id}`;
@@ -82,7 +92,6 @@ function Product(props) {
         }).catch((error) => {
         })
     }
-
 
     function logout() {
         if (removeTokenFromStorage()) {
@@ -94,16 +103,65 @@ function Product(props) {
         }
     }
 
-    function addToWishlist() {
-        if (token.role == '') {
+    async function addToWishlist(product_id) {
+        let data = {
+            _id: product_id,
+        }
+
+        if (token.full_name == '') {
             Router.push('/login')
         } else if (wish == 'gray') {
-            setWish('orange')
+            const url = MuhalikConfig.PATH + `/api/users/add-wish/${props.token._id}`;
+            await axios.put(url, data, {
+                headers: {
+                    'authorization': undecoded_token,
+                }
+            }).then(function (response) {
+                setWish('orange')
+            }).catch(function (error) {
+                alert('ERROR: Product not added to wishlist')
+            });
         } else {
-            setWish('gray')
+            const url = MuhalikConfig.PATH + `/api/users/remove-wish/${props.token._id}`;
+            await axios.put(url, data, {
+                headers: {
+                    'authorization': undecoded_token,
+                }
+            }).then(function (response) {
+                setWish('gray')
+            }).catch(function (error) {
+                alert('ERROR: Product not removed from wishlist')
+            });
         }
     }
-    // console.log('single-product:', props.single_product)
+
+
+    async function handleAddToCart(product_id, variation_id) {
+        let data = {
+            _id: product_id,
+            variation_id: variation_id,
+            quantity: cart
+        }
+
+        if (token.full_name == '') {
+            Router.push('/login')
+        } else {
+            setLoading(true)
+            if (cart > 0) {
+                const url = MuhalikConfig.PATH + `/api/users/cart/${props.token._id}`;
+                await axios.put(url, data, {
+                    headers: {
+                        'authorization': undecoded_token,
+                    }
+                }).then(function (response) {
+                    setLoading(false)
+                }).catch(function (error) {
+                    setLoading(false)
+                    alert('ERROR: Product not added to cart')
+                });
+            }
+        }
+    }
 
     return (
         <div className='single_product'>
@@ -124,6 +182,9 @@ function Product(props) {
                                 token={token}
                                 wish={wish}
                                 addToWishlist={addToWishlist}
+                                setCart={(value) => setCart(value)}
+                                handleAddToCart={handleAddToCart}
+                                loading={_loading}
                             />
                             :
                             <VariableProduct
@@ -132,10 +193,13 @@ function Product(props) {
                                 token={token}
                                 wish={wish}
                                 addToWishlist={addToWishlist}
+                                setCart={(value) => setCart(value)}
+                                handleAddToCart={handleAddToCart}
+                                loading={_loading}
                             />
                         }
                     </Row>
-                    <RelatedProducts products={products} />
+                    <RelatedProducts products={products} current_product_id={props.single_product._id} />
                 </div>
             </Layout >
             <style type="text/css">{`
@@ -282,6 +346,9 @@ function Product(props) {
                     .img_col{
                         padding: 2% 0% 2% 2%;
                     }
+                    .vertical_align_img{
+                        padding: 0% 1%;
+                    }
                     .desc_col{
                         padding: 2% 1% 2% 2%;
                     }
@@ -296,6 +363,9 @@ function Product(props) {
                     .img_col{
                         padding: 2% 0% 2% 2%;
                     }
+                    .vertical_align_img{
+                        padding: 0% 1% 0% 2%;
+                    }
                     .desc_col{
                         padding: 2% 1% 2% 2%;
                     }
@@ -305,10 +375,13 @@ function Product(props) {
                 }
                 @media (max-width: 767px) {
                     .single_product .main-row{
-                        padding: 2%;
+                        padding: 2% 2% 16% 2%;
                     }
                     .img_col{
                         padding: 2%;
+                    }
+                    .vertical_align_img{
+                        padding: 0% 0% 0% 3%;
                     }
                     .desc_col{
                         padding: 2%;
@@ -317,6 +390,7 @@ function Product(props) {
                         margin: 2% 0%;
                         border-radius: 5px;
                         padding: %;
+                        border: none;
                     }
                 }
                 @media (max-width: 575px) {
@@ -324,8 +398,8 @@ function Product(props) {
                         border-radius: 5px;
                     }
                     .larg_img{
-                        padding: 0.1%;
-                        margin: 0.1%;
+                        padding: 0% 2%;
+                        margin: 0% 2%;
                     }
                     .desc_col{
                         margin: 2% 0%;
@@ -376,7 +450,28 @@ function Product(props) {
 function SimpleProduct(props) {
     const [ref, { x, y, width }] = useDimensions();
     const [activeImageIndex, setActiveImageIndex] = useState(0)
+    let rating_review = {
+        rating: {
+            overall: 0,
+            one_star: 0,
+            two_star: 0,
+            three_star: 0,
+            four_star: 0,
+            five_star: 0
+        },
+        reviews: []
+    }
+    let options = []
 
+    for (let i = 0; i < props.single_product.product_in_stock; i++) {
+        options.push(
+            <option>{i + 1}</option>
+        )
+    }
+
+    if ('rating_review' in props.single_product) {
+        rating_review = props.single_product.rating_review;
+    }
 
     return (
         <div className='simple_product'>
@@ -422,26 +517,26 @@ function SimpleProduct(props) {
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
                                 <div className='product_rating'> Rating: </div>
-                                <Badge variant='info' style={{ fontSize: '13px', marginLeft: '5px' }}> 4.0 </Badge>
+                                <Badge variant='info' style={{ fontSize: '13px', marginLeft: '5px' }}> {rating_review.rating.overall} </Badge>
                             </div>
                             <ReactStars
                                 count={5}
                                 size={15}
                                 half={true}
-                                value={4}
+                                value={rating_review.rating.overall}
                                 edit={false}
                                 color2={"orange"}
                             />
                         </Col>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div>Reviews </div>
-                            <div>160</div>
+                            <div>{rating_review.reviews.length}</div>
                         </Col>
                     </Row>
 
                     <div className='add_to_wish_list'>
-                        <label>Add to wishlist</label>
-                        <FontAwesomeIcon icon={faHeart} className='font_awsome' onClick={props.addToWishlist} />
+                        <label>Add to Wishlist</label>
+                        <FontAwesomeIcon icon={faHeart} className='font_awsome' onClick={() => props.addToWishlist(props.single_product._id)} />
                     </div>
 
                     <div className='stock'>
@@ -452,12 +547,19 @@ function SimpleProduct(props) {
                     <div className='cart'>
                         <Row noGutters>
                             <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
-                                <Form.Control as="select" defaultValue="Choose...">
+                                <Form.Control as="select" onChange={(e) => props.setCart(e.target.value)} defaultValue="Choose...">
                                     <option>Quantity</option>
+                                    {options.map(element =>
+                                        element
+                                    )}
                                 </Form.Control>
                             </Form.Group>
                             <Col className='ml-1'>
-                                <Button variant='success' block>Add To Card</Button>
+                                <Button variant='success' block disabled={props.loading}
+                                    onClick={() => props.handleAddToCart(props.single_product._id, '')}>
+                                    {props.loading ? 'Adding' : 'Add to Cart'}
+                                    {props.loading ? <Spinner animation="grow" size="sm" /> : null}
+                                </Button>
                             </Col>
                         </Row>
                     </div>
@@ -488,6 +590,29 @@ function VariableProduct(props) {
     const [activeVariation, setActiveVariation] = useState(props.single_product.product_variations[0])
     const [activeImageIndex, setActiveImageIndex] = useState(0)
     const [activeVariationIndex, setActiveVariationIndex] = useState(0)
+
+    let rating_review = {
+        rating: {
+            overall: 0,
+            one_star: 0,
+            two_star: 0,
+            three_star: 0,
+            four_star: 0,
+            five_star: 0
+        },
+        reviews: []
+    }
+    let options = []
+
+    for (let i = 0; i < activeVariation.stock; i++) {
+        options.push(
+            <option>{i + 1}</option>
+        )
+    }
+
+    if ('rating_review' in activeVariation) {
+        rating_review = activeVariation.rating_review;
+    }
 
     return (
         <div className='variable_product'>
@@ -534,26 +659,26 @@ function VariableProduct(props) {
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
                                 <div className='product_rating'> Rating: </div>
-                                <Badge variant='info' style={{ fontSize: '13px', marginLeft: '5px' }}> 4.0 </Badge>
+                                <Badge variant='info' style={{ fontSize: '13px', marginLeft: '5px' }}> {rating_review.rating.overall} </Badge>
                             </div>
                             <ReactStars
                                 count={5}
                                 size={15}
                                 half={true}
-                                value={4}
+                                value={rating_review.rating.overall}
                                 edit={false}
                                 color2={"orange"}
                             />
                         </Col>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div>Reviews </div>
-                            <div>160</div>
+                            <div>{rating_review.reviews.length}</div>
                         </Col>
                     </Row>
 
                     <div className='add_to_wish_list'>
-                        <label>Add to wishlist</label>
-                        <FontAwesomeIcon icon={faHeart} className='font_awsome' onClick={props.addToWishlist} />
+                        <label>Add to Wishlist</label>
+                        <FontAwesomeIcon icon={faHeart} className='font_awsome' onClick={() => props.addToWishlist(props.single_product._id)} />
                     </div>
 
                     <div className='stock'>
@@ -564,12 +689,19 @@ function VariableProduct(props) {
                     <div className='cart'>
                         <Row noGutters>
                             <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
-                                <Form.Control as="select" defaultValue="Choose...">
+                                <Form.Control as="select" onChange={(e) => props.setCart(e.target.value)} >
                                     <option>Quantity</option>
+                                    {options.map(element =>
+                                        element
+                                    )}
                                 </Form.Control>
                             </Form.Group>
                             <Col className='ml-1'>
-                                <Button variant='success' block>Add To Card</Button>
+                                <Button variant='success' block disabled={props.loading}
+                                    onClick={() => props.handleAddToCart(props.single_product._id, props.activeVariation._id)}>
+                                    {props.loading ? 'Adding' : 'Add to Cart'}
+                                    {props.loading ? <Spinner animation="grow" size="sm" /> : null}
+                                </Button>
                             </Col>
                         </Row>
                     </div>
@@ -648,6 +780,7 @@ function VariableProduct(props) {
             <TabComponent
                 single_product={props.single_product}
                 activeVariation={activeVariation}
+                activeVariationIndex={activeVariationIndex}
                 custom_fields={activeVariation.custom_fields}
                 item={activeVariation.item}
                 single_product={props.single_product}
@@ -962,7 +1095,6 @@ function TabComponent(props) {
         },
         reviews: []
     }
-
     if (props.single_product.product_type == "simple-product") {
         if ('rating_review' in props.single_product) {
             rating_review = props.single_product.rating_review;
@@ -981,7 +1113,11 @@ function TabComponent(props) {
         if (props.single_product.product_type == "simple-product") {
             parameters = { _id: props.single_product._id }
         } else {
-            parameters = { _id: props.single_product._id, variation_id: props.activeVariation._id }
+            parameters = {
+                _id: props.single_product._id,
+                variation_id: props.activeVariation._id,
+                variation_index: props.activeVariationIndex
+            }
         }
         const _url = MuhalikConfig.PATH + '/api/products/review-rating'
         axios({
@@ -1231,30 +1367,30 @@ function RelatedProducts(props) {
             <label className='header'>Related Products</label>
             <Row noGutters>
                 {props.products && props.products.map((element, index) =>
-                    <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
-                        {element.product_type == "simple-product" ?
-                            <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category._id}/${element._id}`)}>
-                                <Image ref={ref} className='only_product_img'
-                                    style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
-                                    src={element.product_image_link[0].url}
-                                />
-                                <label className='my_label'>{element.product_name}</label>
-                                <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
-                            </div>
-                            :
-                            <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category._id}/${element._id}`)}>
-                                <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
-                                <label className='my_label'>{element.product_name}</label>
-                                <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
-                            </div>
-                        }
-                    </Card>
+                    props.current_product_id != element._id ?
+                        <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                            {element.product_type == "simple-product" ?
+                                <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category._id}/${element._id}`)}>
+                                    <Image ref={ref} className='only_product_img'
+                                        style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
+                                        src={element.product_image_link[0].url}
+                                    />
+                                    <label className='my_label'>{element.product_name}</label>
+                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
+                                </div>
+                                :
+                                <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category._id}/${element._id}`)}>
+                                    <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
+                                    <label className='my_label'>{element.product_name}</label>
+                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
+                                </div>
+                            }
+                        </Card>
+                        :
+                        null
                 )}
             </Row>
             <style type="text/css">{`
-                .related_products{
-                    padding-bottom: 50px;
-                }
                 .related_products .header{
                     font-size: 18px;
                     margin-left: 0.5%;

@@ -37,7 +37,7 @@ class Vendor extends Component {
             field_requests_list: [],
 
             token: '',
-            decodedToken: '',
+            decodedToken: { role: '', full_name: '', status: '' },
         }
     }
 
@@ -67,7 +67,10 @@ class Vendor extends Component {
     }
 
     async authUser() {
-        this.setState({ decodedToken: await checkAuth('vendor') })
+        let _decodedToken = await checkAuth('vendor')
+        console.log('vvavvav:', _decodedToken)
+        if (_decodedToken != null)
+            this.setState({ decodedToken: _decodedToken })
     }
 
     drawerToggleClickHandler = () => {

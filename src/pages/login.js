@@ -51,7 +51,6 @@ class Login extends Component {
 
     async login(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/login';
-
         await axios.post(url, data).then(function (response) {
             if (response.status == '200') {
                 saveTokenToStorage(response.data.token);
@@ -69,8 +68,7 @@ class Login extends Component {
             }
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false })
-            currentComponent.setState({ serverErrorMsg: error.response.data.messag })
-            alert('ERROR:' + error.response.data.message)
+            currentComponent.setState({ serverErrorMsg: error.response.data.message })
         });
     }
 

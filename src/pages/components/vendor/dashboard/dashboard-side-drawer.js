@@ -9,7 +9,6 @@ import {
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 import VendorDashboard from './dashboard-contents/vendor-dashboard';
-import AllProducts from './dashboard-contents/product-contents/all-products';
 import AddNew from './dashboard-contents/product-contents/add-new';
 // import AddCategory from './dashboard-contents/product-contents/add-category';
 import Inventory from './dashboard-contents/inventory';
@@ -49,38 +48,13 @@ const DashboardSideDrawer = props => {
                         </Nav.Item>
                         <Nav.Item>
                             <div className="nav_link">
-                                <Nav.Link style={styles.nav_link} onClick={() => setShow_product(!show_product)}>
-                                    <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
-                                    <div className="mr-auto"> Products </div>
-                                    <FontAwesomeIcon icon={show_product ? faChevronUp : faChevronDown} style={styles.forword_fontawesome} />
+                                <Nav.Link eventKey="AddProduct" onClick={props.click} style={styles.nav_link}>
+                                    <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
+                                    <div className="mr-auto">Add Product</div>
+                                    <FontAwesomeIcon igcon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>
-                        {show_product ?
-                            <div>
-                                <div className="product_submenu">
-                                    <Nav.Link eventKey="AllProducts" onClick={props.click} style={styles.product_submenu_link} >
-                                        <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
-                                        <div className="mr-auto"> All Products </div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                    </Nav.Link>
-                                </div>
-                                <div className="product_submenu">
-                                    <Nav.Link eventKey="AddNew" onClick={props.click} style={styles.product_submenu_link} >
-                                        <FontAwesomeIcon size="xs" icon={faPlusCircle} style={styles.fontawesome} />
-                                        <div className="mr-auto"> Add New </div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                    </Nav.Link>
-                                </div>
-                                {/* <div className="product_submenu">
-                                    <Nav.Link eventKey="AddCategory" onClick={props.click} style={styles.product_submenu_link}>
-                                        <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
-                                        <div className="mr-auto"> Add Category </div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                    </Nav.Link>
-                                </div> */}
-                            </div>
-                            : null}
                         <Nav.Item>
                             <div className="nav_link">
                                 <Nav.Link eventKey="Inventory" onClick={props.click} style={styles.nav_link}>
@@ -144,10 +118,7 @@ const DashboardSideDrawer = props => {
                             <Tab.Pane eventKey="Dashboard">
                                 <VendorDashboard user_status={props.user_status} />
                             </Tab.Pane>
-                            <Tab.Pane eventKey="AllProducts">
-                                <AllProducts />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="AddNew">
+                            <Tab.Pane eventKey="AddProduct">
                                 <AddNew
                                     {...props}
                                     isUpdateProduct={false}
@@ -163,9 +134,6 @@ const DashboardSideDrawer = props => {
                                     dangerousGoodsArray={[]}
                                 />
                             </Tab.Pane>
-                            {/* <Tab.Pane eventKey="AddCategory">
-                                <AddCategory />
-                            </Tab.Pane> */}
                             <Tab.Pane eventKey="Inventory">
                                 <Inventory />
                             </Tab.Pane>

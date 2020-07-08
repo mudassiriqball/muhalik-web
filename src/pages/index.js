@@ -113,12 +113,14 @@ class Index extends Component {
                         sub_categories_list={this.props.sub_categories_list}
                     >
                         <SliderCarousel categories_list={this.props.categories_list} />
-                        <Home
-                            new_products_list={this.props.new_products_list}
-                            top_ranking_products_list={this.props.top_ranking_products_list}
-                            categories_list={this.props.categories_list}
-                            sub_categories_list={this.props.sub_categories_list}
-                        />
+                        <div className='_index'>
+                            <Home
+                                new_products_list={this.props.new_products_list}
+                                top_ranking_products_list={this.props.top_ranking_products_list}
+                                categories_list={this.props.categories_list}
+                                sub_categories_list={this.props.sub_categories_list}
+                            />
+                        </div>
                     </Layout>
                 </main>
                 <style jsx>{`
@@ -130,8 +132,23 @@ class Index extends Component {
                         left: 0;
                         right: 0;
                     }
-                    @media (max-width: 767px){
-                        
+                    ._index{
+                        padding: 2% 3.7%;
+                    }
+                    @media (max-width: 1199px){
+                        ._index{
+                            padding: 2% 2.7%;
+                        }
+                    }
+                    @media (max-width: 991px){
+                        ._index{
+                            padding: 2%;
+                        }
+                    }
+                    @media (max-width: 767px) {
+                        ._index{
+                            padding: 2% 2% 16% 2%;
+                        }
                     }
                 `}</style>
                 <style jsx global>{`
