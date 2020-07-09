@@ -7,7 +7,7 @@ const CategoriesSlider = (props) => {
         <>
             <div className='category_container'>
                 {props.categories_list && props.categories_list.map((element, index) =>
-                    <Link href='/[name]/[id]' as={`/category/${element._id}`} key={index} >
+                    <Link href='/[name]/[id]' as={`/category/${element.value}`} key={index} >
                         {props.id == element._id ?
                             <a className='item' style={{ color: 'blue' }}>
                                 {element.value}

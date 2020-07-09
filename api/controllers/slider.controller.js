@@ -1,6 +1,5 @@
 const sliderController = {};
 const Slider = require("../models/slider.model");
-const fs = require("fs");
 var AWS = require("aws-sdk");
 
 var s3 = new AWS.S3({
@@ -8,7 +7,13 @@ var s3 = new AWS.S3({
   accessKeyId: "AKIAIYECX324S27WGWFQ",
 });
 
+// Post Methods
 sliderController.add_slider = async (req, res) => {
+  // const uploader = async (path) =>
+  //   await cloudinary.uploads(path, "Slider-Images");
+  // const imagepath = req.files[0].path;
+  // const newPath = await uploader(imagepath);
+  // fs.unlinkSync(imagepath);
   const url = req.files[0].location;
 
   const body = req.body;
@@ -17,7 +22,6 @@ sliderController.add_slider = async (req, res) => {
     var datetime = new Date();
     body.entry_date = datetime;
     body.url = url;
-    console.log("1", body);
     const slider = new Slider(body);
     const result = await slider.save();
     res.status(200).send({
@@ -28,7 +32,9 @@ sliderController.add_slider = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+  
 
+// Post Methods
 sliderController.get_slider = async (req, res) => {
   let slider;
   try {
@@ -44,6 +50,8 @@ sliderController.get_slider = async (req, res) => {
   }
 };
 
+
+// Put Methods
 sliderController.update_slider = async (req, res) => {
   const _id = req.params._id;
 
@@ -65,7 +73,7 @@ sliderController.update_slider = async (req, res) => {
           Bucket: "slider-images",
           Key: filenameToRemove,
         },
-        function (err, data) { }
+        function (err, data) {}
       );
 
       var url = req.files[0].location;
@@ -91,6 +99,8 @@ sliderController.update_slider = async (req, res) => {
   }
 };
 
+
+// Delete Methods
 sliderController.delete_slider = async (req, res) => {
   const _id = req.params._id;
 
@@ -108,7 +118,7 @@ sliderController.delete_slider = async (req, res) => {
         Bucket: "slider-images",
         Key: filenameToRemove,
       },
-      function (err, data) { }
+      function (err, data) {}
     );
     Slider.findByIdAndDelete(_id, function (err) {
       res.status(200).send({

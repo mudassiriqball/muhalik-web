@@ -44,7 +44,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Dashboard" style={styles.nav_link} onClick={() => { setShow_category(false), setShow_product(false) }}>
+                                    <Nav.Link eventKey="Dashboard" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                         <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
                                         <div className="mr-auto"> Dashboard </div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -53,7 +53,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Vendors" style={styles.nav_link} onClick={() => { setShow_category(false), setShow_product(false) }}>
+                                    <Nav.Link eventKey="Vendors" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                         <FontAwesomeIcon size="xs" icon={faPersonBooth} style={styles.fontawesome} />
                                         <div className="mr-auto">Vendors</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -62,7 +62,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Customers" style={styles.nav_link} onClick={() => { setShow_category(false), setShow_product(false) }}>
+                                    <Nav.Link eventKey="Customers" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                         <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
                                         <div className="mr-auto">Customers</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -71,7 +71,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Inventory" style={styles.nav_link} onClick={() => { setShow_category(false), setShow_product(false) }}>
+                                    <Nav.Link eventKey="Inventory" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                         <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
                                         <div className="mr-auto">Inventory</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -80,8 +80,8 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="ProductFields" style={styles.nav_link} onClick={() => { setShow_category(false), setShow_product(false) }}>
-                                        <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
+                                    <Nav.Link eventKey="ProductFields" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                        <FontAwesomeIcon icon={faProductHunt} style={styles.fontawesome} />
                                         <div className="mr-auto">Product Fields</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                     </Nav.Link>
@@ -89,7 +89,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link style={styles.nav_link} onClick={() => { setShow_category(!show_category), setShow_product(false) }}>
+                                    <Nav.Link style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                         <FontAwesomeIcon size="xs" icon={faTh} style={styles.fontawesome} />
                                         <div className="mr-auto"> Category </div>
                                         <FontAwesomeIcon icon={show_category ? faChevronUp : faChevronDown} style={styles.forword_fontawesome} />
@@ -117,7 +117,7 @@ const Dashboard = props => {
                             }
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Slider" style={styles.nav_link} onClick={() => { setShow_category(false), setShow_product(false) }}>
+                                    <Nav.Link eventKey="Slider" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                         <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
                                         <div className="mr-auto">Slider</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -126,7 +126,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Discounts" style={styles.nav_link} onClick={() => { setShow_category(false), setShow_product(false) }}>
+                                    <Nav.Link eventKey="Discounts" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                         <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
                                         <div className="mr-auto">Discounts</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -135,7 +135,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link" >
-                                    <Nav.Link eventKey="Commission" style={styles.nav_link} onClick={() => { setShow_category(false), setShow_product(false) }}>
+                                    <Nav.Link eventKey="Commission" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                         <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
                                         <div className="mr-auto">Commission</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -144,7 +144,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link" >
-                                    <Nav.Link eventKey="Reports" style={styles.nav_link} onClick={() => { setShow_category(false), setShow_product(false) }}>
+                                    <Nav.Link eventKey="Reports" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                         <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
                                         <div className="mr-auto">Reports</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -157,7 +157,7 @@ const Dashboard = props => {
                     {/* Toolbar & Tabs Contents */}
                     <Col>
                         {/* Toolbar */}
-                        <Navbar collapseOnSelect expand="lg" style={styles.navbar} variant="dark" className='p-1 m-0'>
+                        <Navbar collapseOnSelect expand="lg" style={styles.navbar} variant="dark" className='p-2 m-0'>
                             {/* Show/Hide bar btn while screen switches to Large to Small,Medium,Extra-Small Devices */}
                             <div className="side_tab_toogle_btn mr-auto" style={styles.toolbar_btn_div}>
                                 <Button style={styles.toolbar_btn} onClick={props.drawerClickHandler}>
@@ -171,7 +171,7 @@ const Dashboard = props => {
                                 </Button>
                             </div>
                             {/* Search Bar */}
-                            <Form inline style={{ width: '85%' }} className="mr-auto">
+                            <Form inline className='search_form mr-auto'>
                                 <Form.Control
                                     style={styles.search_bar}
                                     type="text"
@@ -186,30 +186,6 @@ const Dashboard = props => {
                                     </Button>
                                 </InputGroup.Prepend>
                             </Form>
-                            {/* Account Setting Dropdown */}
-                            <div className="account_settig_dropdown">
-                                <NavDropdown className='p-0 m-0' title={
-                                    <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '30px', maxWidth: '30px' }} />
-                                } id="nav-dropdown" alignRight>
-                                    <NavDropdown.Item href="#/action-1">
-                                        <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
-                                        My Profile
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item href="#/action-2">
-                                        <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
-                                        Feedback
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item href="#/action-3">
-                                        <FontAwesomeIcon icon={faHandsHelping} style={styles.dropDown_fontawesome} />
-                                        Help?
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Divider />
-                                    <NavDropdown.Item onClick={props.logout}>
-                                        <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
-                                        {"Logout"}
-                                    </NavDropdown.Item>
-                                </NavDropdown>
-                            </div>
                         </Navbar>
                         {/* End of Toolbar */}
                         {/* Tab Content for Large Devices */}
@@ -228,7 +204,7 @@ const Dashboard = props => {
                                     <Slider {...props} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Inventory">
-                                    <Inventory />
+                                    <Inventory {...props} />
                                 </Tab.Pane>
                                 {/* <Tab.Pane eventKey="AddProduct">
                                     <AddNew
@@ -271,6 +247,23 @@ const Dashboard = props => {
                     {/* End of the Toolbar & Tabs Components */}
                 </Row>
             </Tab.Container>
+            <style type="text/css">{`
+                .search_form{
+                    width: 50%;
+                    padding-left: 5%;
+                }
+                @media (max-width: 991px){
+                    .search_form{
+                        width: 80%;
+                        padding: 0%;
+                    }
+                }
+                @media (max-width: 575px){
+                    .search_form{
+                        width: 90%;
+                    }
+                }
+            `}</style>
             <style jsx>
                 {`
                 .show_product {

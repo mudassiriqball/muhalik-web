@@ -6,10 +6,10 @@ const Product = new Schema({
   vendor_id: {
     type: Schema.Types.ObjectId,
   },
-  category: {
+  category:{
     type: Schema.Types.ObjectId,
   },
-  sub_category: {
+  sub_category:{
     type: Schema.Types.ObjectId,
   },
   product_name: {
@@ -104,14 +104,26 @@ const Product = new Schema({
       value: { type: String },
     },
   ],
-  review_rating: [
-    {
-      rating: { type: Number },
-      review: { type: String },
-      c_name: { type: String },
-      entry_date: { type: Date }
-    }
-  ],
+
+  // r_r:{type:String},
+  rating_review: {
+    rating: {
+      overall: { type: Number, default: 0 },
+      one_star: { type: Number, default: 0 },
+      two_star: { type: Number, default: 0 },
+      three_star: { type: Number, default: 0 },
+      four_star: { type: Number, default: 0 },
+      five_star: { type: Number, default: 0 },
+    },
+    reviews: [
+      {
+        c_name: { type: String },
+        review: { type: String },
+        entry_date: { type: Date },
+      },
+    ],
+  },
+
   product_variations: [
     {
       item: [
@@ -133,14 +145,23 @@ const Product = new Schema({
           url: { type: String },
         },
       ],
-      review_rating: [
-        {
-          rating: { type: Number },
-          review: { type: String },
-          c_name: { type: String },
-          entry_date: { type: Date }
-        }
-      ],
+      rating_review: {
+        rating: {
+          overall: { type: Number, default: 0 },
+          one_star: { type: Number, default: 0 },
+          two_star: { type: Number, default: 0 },
+          three_star: { type: Number, default: 0 },
+          four_star: { type: Number, default: 0 },
+          five_star: { type: Number, default: 0 },
+        },
+        reviews: [
+          {
+            c_name: { type: String },
+            review: { type: String },
+            entry_date: { type: Date },
+          },
+        ],
+      },
     },
   ],
 

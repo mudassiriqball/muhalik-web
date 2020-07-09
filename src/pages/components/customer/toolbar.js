@@ -228,7 +228,7 @@ const Toolbar = (props) => {
                                     <Col style={{ overflowY: 'auto', zIndex: 1 }}>
                                         {props.categories_list && props.categories_list.map((element, index) =>
                                             // <div key={index} className="category_list_item" >
-                                            <Link href='/[name]/[id]' as={`/category/${element._id}`} key={index} >
+                                            <Link href='/[name]/[id]' as={`/category/${element.value}`} key={index} >
                                                 {props.id == element._id ?
                                                     <a style={{ color: 'blue' }} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)} onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
                                                         {element.value}
@@ -245,7 +245,7 @@ const Toolbar = (props) => {
                                     <Col style={{ minHeight: '500px', maxHeight: '500px', overflowY: 'auto', boxShadow: '-2px 0px 10px 1px rgba(0,0,0,0.12)' }}>
                                         {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
                                             element.category_id == category_id ?
-                                                <Link href='/[name]/[id]' as={`/sub_category/${element._id}`} key={index} >
+                                                <Link href='/[name]/[id]' as={`/sub-category/${element.value}`} key={index} >
                                                     {props.id == element._id ?
                                                         <a style={{ color: 'blue' }} className="category_list_item" onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
                                                             {element.value}

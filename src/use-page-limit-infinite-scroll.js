@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import MuhalikConfig from './sdk/muhalik.config'
 
-export default function useAllProductsInfiniteScroll(pageNumber, limit) {
-    const [loading, setLoading] = useState('')
-    const [error, setError] = useState('')
-    const [products, setProducts] = useState([])
-    const [hasMore, setHasMore] = useState('')
+export default function usePageLimitInfiniteScroll(isAppend, pageNumber, limit) {
+    const [_loading, setLoading] = useState('')
+    const [_error, setError] = useState('')
+    const [_products, setProducts] = useState([])
+    const [_hasMore, setHasMore] = useState('')
 
     useEffect(() => {
-        setProducts([])
+        if (isAppend == false)
+            setProducts([])
     }, [pageNumber])
     useEffect(() => {
         getData()
@@ -38,5 +39,5 @@ export default function useAllProductsInfiniteScroll(pageNumber, limit) {
         })
         return () => cancle()
     }
-    return { loading, error, products, hasMore }
+    return { _loading, _error, _products, _hasMore }
 }

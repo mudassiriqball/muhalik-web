@@ -32,7 +32,7 @@ class Admin extends Component {
             sideDrawerOpen: false,
             showWrapper: true,
 
-            products_list: [],
+            // products_list: [],
             vendors_list: [],
             new_vendors_list: [],
             restricted_vendors_list: [],
@@ -75,7 +75,7 @@ class Admin extends Component {
             });
         }).catch(function (error) {
             console.log("Fields Fetching Error:", error)
-            alert('Fields Fetching Error: ', error)
+            // alert('Fields Fetching Error: ', error)
         })
 
         const url_2 = MuhalikConfig.PATH + '/api/categories/field-requests';
@@ -85,18 +85,25 @@ class Admin extends Component {
             });
         }).catch(function (error) {
             console.log("Field Requests Fetching Error:", error)
-            alert('field-requests: ', error)
+            // alert('field-requests: ', error)
         })
 
-        const url_3 = MuhalikConfig.PATH + '/api/products/';
-        await axios.get(url_3).then(function (response) {
-            currentComponent.setState({
-                products_list: response.data.data,
-            });
-        }).catch(function (error) {
-            console.log("all products: Fetching Error:", error)
-            alert('all products error: ', error)
-        })
+
+
+
+        // const url_3 = MuhalikConfig.PATH + '/api/products/';
+        // await axios.get(url_3).then(function (response) {
+        //     currentComponent.setState({
+        //         products_list: response.data.data,
+        //     });
+        // }).catch(function (error) {
+        //     console.log("all products: Fetching Error:", error)
+        //     alert('all products error: ', error)
+        // })
+
+
+
+
 
         const url_4 = MuhalikConfig.PATH + '/api/users/vendors';
         await axios.get(url_4).then(function (response) {
@@ -105,7 +112,7 @@ class Admin extends Component {
             });
         }).catch(function (error) {
             console.log("vendors Fetching Error:", error)
-            alert('vendors error: ', error)
+            // alert('vendors error: ', error)
         })
 
         const url_5 = MuhalikConfig.PATH + '/api/users/new-vendors';
@@ -115,7 +122,7 @@ class Admin extends Component {
             });
         }).catch(function (error) {
             console.log("new-vendors Fetching Error:", error)
-            alert('new-vendors error: ', error)
+            // alert('new-vendors error: ', error)
         })
 
         const url_6 = MuhalikConfig.PATH + '/api/users/restricted-vendors';
@@ -125,7 +132,7 @@ class Admin extends Component {
             });
         }).catch(function (error) {
             console.log("restricted_vendors Fetching Error:", error)
-            alert('restricted_vendors error: ', error)
+            // alert('restricted_vendors error: ', error)
         })
 
         const url_7 = MuhalikConfig.PATH + '/api/users/customers';
@@ -135,7 +142,7 @@ class Admin extends Component {
             });
         }).catch(function (error) {
             console.log("customers Fetching Error:", error)
-            alert('customers error: ', error)
+            // alert('customers error: ', error)
         })
         const url_8 = MuhalikConfig.PATH + '/api/users/restricted-customers';
         await axios.get(url_8).then(function (response) {
@@ -144,7 +151,7 @@ class Admin extends Component {
             });
         }).catch(function (error) {
             console.log("restricted customers Fetching Error:", error)
-            alert('restricted customers error: ', error)
+            // alert('restricted customers error: ', error)
         })
 
         const url_9 = MuhalikConfig.PATH + '/api/sliders/';
@@ -154,7 +161,7 @@ class Admin extends Component {
             });
         }).catch(function (error) {
             console.log("sliders_list Fetching Error:", error)
-            alert('sliders_list error: ', error)
+            // alert('sliders_list error: ', error)
         })
     }
 
@@ -216,7 +223,7 @@ class Admin extends Component {
             <div style={styles.body}>
                 {/* <AdminLayout> */}
                 <Dashboard
-                    products_list={this.state.products_list}
+                    // products_list={this.state.products_list}
 
                     vendors_list={this.state.vendors_list}
                     new_vendors_list={this.state.new_vendors_list}
@@ -244,7 +251,7 @@ class Admin extends Component {
                     sliderReloadHandler={this.reloadSlider.bind(this)}
                 />
                 <DashboardSideDrawer
-                    products_list={this.state.products_list}
+                    // products_list={this.state.products_list}
 
                     vendors_list={this.state.vendors_list}
                     new_vendors_list={this.state.new_vendors_list}

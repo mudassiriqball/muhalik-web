@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Row, Table, Button, Nav, Col, Image, Card, Form, InputGroup, Accordion } from 'react-bootstrap'
+import React, { Component, useState, useEffect } from 'react';
+import { Row, Table, Button, Nav, Col, Image, Card, Form, InputGroup, Accordion, Pagination, Spinner } from 'react-bootstrap'
 import axios from 'axios'
 import Link from 'next/link'
 import Router from 'next/router'
@@ -11,33 +11,69 @@ import MuhalikConfig from '../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../styleSheet'
 import TitleRow from '../../../title-row';
 import AddNew from '../../../vendor/dashboard/dashboard-contents/product-contents/add-new'
+import usePageLimitInfiniteScroll from '../../../../../use-page-limit-infinite-scroll';
+import useQueryInfiniteScroll from '../../../../../use-query-infinite-scroll';
+import useDimensions from "react-use-dimensions";
 
 
-class Inventory extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            products_list: [],
-            viewProduct: false,
-            data: {},
+export default function Inventory(props) {
+
+    const [totalProducts, setTotalProducts] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
+
+    const [product_list, setProduct_list] = useState([])
+    const [viewProduct, setViewProduct] = useState(false)
+    const [data, setData] = useState({})
+
+    const [isSearch, setIsSearch] = useState(false)
+    const [searchType, setSearchType] = useState('_id')
+    const [filterStr, setFilterStr] = useState('')
+
+    const [fieldName, setFieldName] = useState('')
+    const [limitPageNumber, setlimitPageNumber] = useState(1)
+    const [queryPageNumber, setQueryPageNumber] = useState(1)
+    const [query, setQuery] = useState(null)
+
+    const { _loading, _error, _products, _hasMore } = usePageLimitInfiniteScroll(false, limitPageNumber, 20)
+    const { loading, error, products, hasMore } = useQueryInfiniteScroll(fieldName, query, queryPageNumber, 20)
+
+    useEffect(() => {
+        getData()
+    }, [])
+
+    async function getData() {
+        const url = MuhalikConfig.PATH + '/api/products/total-products';
+        await axios.get(url).then((response) => {
+            setTotalProducts(response.data.count)
+            let count = response.data.count / 20
+            let rounded = Math.floor(count);
+            let decimal = count - rounded;
+            if (decimal > 0) {
+                setTotalPages(rounded + 1)
+            } else {
+                setTotalPages(rounded)
+            }
+        }).catch((error) => {
+            console.log('total Fetchig Error: ', error)
+        })
+    }
+
+    async function handleSearch() {
+        if (filterStr != '') {
+            setFieldName(searchType)
+            setQuery(filterStr)
+            setIsSearch(true)
+        } else {
+            setIsSearch(false)
         }
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        this.setState({
-            products_list: nextProps.products_list,
-            token: nextProps.token
-        });
-    }
-
-
-    handleEditProduct(index) {
-        console.log('edit called')
+    function handleEditProduct(index) {
         let element = []
         if (index == -1) {
-            element = this.state.data
+            element = data
         } else {
-            element = this.state.products_list[index]
+            element = _products[index]
         }
         if (element.product_type != 'simple-product') {
             let array = [];
@@ -52,17 +88,18 @@ class Inventory extends Component {
         } else {
             element.product_variations = []
         }
-
-        this.setState({ data: element, viewProduct: 'edit' })
-
+        setData(element)
+        setViewProduct('edit')
     }
 
-    async handleDeleteProduct(index) {
-        // const copyArray = Object.assign([], this.state.products_list)
-        // const array = Object.assign([], this.state.products_list)
+    console.log('dadad:', data)
+
+    async function handleDeleteProduct(index) {
+        // const copyArray = Object.assign([], products)
+        // const array = Object.assign([], products)
         // let _id = ''
         // if (index == -1) {
-        //     _id = this.state.data._id;
+        //     _id = data._id;
         // } else {
         //     _id = copyArray[index]._id;
         // }
@@ -72,7 +109,7 @@ class Inventory extends Component {
         //         array.splice(i, 1)
         //     }
         // })
-        // this.setState({ products_list: array })
+        // setState({ products: array })
         // await axios.delete(url, {
         //     headers: { 'authorization': await getUncodededTokenFromStorage() }
         // }).then(function (response) {
@@ -83,184 +120,206 @@ class Inventory extends Component {
         // });
     }
 
-    isVariableProduct(element) {
-        if (element.product_type != "simple-product") {
-            return true
-        } else {
-            return false
-        }
-    }
-
-    renderSwitch(param) {
+    function renderSwitch(param) {
         switch (param) {
             case 'view':
                 return <ViewProduct
-                    data={this.state.data}
-                    back={() => this.setState({ viewProduct: false, data: {} })}
-                    isVariableProduct={this.state.data.product_type != "simple-product"}
-                    delete={() => this.handleDeleteProduct(-1)}
-                    edit={() => this.handleEditProduct(-1)}
+                    data={data}
+                    back={() => { setViewProduct(false), setData({}) }}
+                    isVariableProduct={data.product_type != "simple-product"}
+                    delete={() => handleDeleteProduct(-1)}
+                    edit={() => handleEditProduct(-1)}
                 />
                 break;
             case 'edit':
                 return <AddNew
                     title={'Vendor Dashboard / All Products / Update'}
                     isUpdateProduct={true}
-                    _id={this.state.data._id}
-                    isVariableProduct={this.state.data.product_type != 'simple-product'}
+                    _id={data._id}
+                    isVariableProduct={data.product_type != 'simple-product'}
 
-                    back={() => this.setState({ viewProduct: false, data: {} })}
-                    view={() => this.setState({ viewProduct: 'view' })}
-                    delete={() => this.handleDeleteProduct(-1)}
+                    back={() => { setViewProduct(false), setData({}) }}
+                    view={() => setViewProduct('view')}
+                    delete={() => handleDeleteProduct(-1)}
 
-                    productCategory={this.state.data.category}
-                    // productSubCategories={this.state.data.sub_category}
+                    productCategory={data.category}
+                    // productSubCategories={data.sub_category}
 
-                    productTags={this.state.data.product_tags}
-                    warrantyType={this.state.data.warranty_type}
-                    simple_product_image_link={this.state.data.product_image_link}
-                    variationsArray={this.state.data.product_variations}
-                    dangerousGoodsArray={this.state.data.dangerous_goods}
+                    productTags={data.product_tags}
+                    warrantyType={data.warranty_type}
+                    simple_product_image_link={data.product_image_link}
+                    variationsArray={data.product_variations}
+                    dangerousGoodsArray={data.dangerous_goods}
 
-                    product_name={this.state.data.product_name}
-                    product_description={this.state.data.product_description}
+                    product_name={data.product_name}
+                    product_description={data.product_description}
                     product_type={'variable-product'}
-                    product_type={this.state.data.product_type}
-                    sku={this.state.data.sku}
-                    product_price={this.state.data.product_price}
-                    product_in_stock={this.state.data.product_in_stock}
-                    product_brand_name={this.state.data.product_brand_name}
+                    product_type={data.product_type}
+                    sku={data.sku}
+                    product_price={data.product_price}
+                    product_in_stock={data.product_in_stock}
+                    product_brand_name={data.product_brand_name}
 
-                    product_warranty={this.state.data.product_warranty}
-                    warranty_type={this.state.data.warranty_type}
-                    product_discount={this.state.data.product_discount}
-                    purchase_note={this.state.data.purchase_note}
-                    product_weight={this.state.data.product_weight}
-                    dimension_length={this.state.data.dimension_length}
-                    dimension_width={this.state.data.dimension_width}
-                    dimension_height={this.state.data.dimension_height}
-                    shipping_charges={this.state.data.shipping_charges}
-                    handling_fee={this.state.data.handling_fee}
+                    product_warranty={data.product_warranty}
+                    warranty_type={data.warranty_type}
+                    product_discount={data.product_discount}
+                    purchase_note={data.purchase_note}
+                    product_weight={data.product_weight}
+                    dimension_length={data.dimension_length}
+                    dimension_width={data.dimension_width}
+                    dimension_height={data.dimension_height}
+                    shipping_charges={data.shipping_charges}
+                    handling_fee={data.handling_fee}
                 />
                 break;
             default:
                 return <>
                     <TitleRow icon={faPlus} title={' Vendor Dashboard / All Products'} />
-                    <Row noGutters style={{ margin: '2%', background: 'white' }}>
-                        <Table responsive bordered hover size="sm">
-                            <thead>
-                                <tr>
-                                    <th style={{ textAlign: 'center' }}>
-                                        <Form.Check type="checkbox" />
-                                    </th>
-                                    <th style={{ textAlign: 'center' }}>Name</th>
-                                    <th style={{ textAlign: 'center' }}>Product Type</th>
-                                    <th style={{ textAlign: 'center' }}>SKU</th>
-                                    <th style={{ textAlign: 'center' }}>Stock</th>
-                                    <th style={{ textAlign: 'center' }}>Price</th>
-                                    <th style={{ textAlign: 'center' }}>Categories</th>
-                                    <th style={{ textAlign: 'center' }}>Tags</th>
-                                    <th style={{ textAlign: 'center' }}>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.state.products_list && this.state.products_list.map((element, index) =>
-                                    <>
-                                        {this.isVariableProduct(element) ?
-                                            <tr key={index}>
-                                                <td align="center" style={styles.label}><Form.Check type="checkbox" /></td>
-                                                <td className="td">
-                                                    {element.product_name || '-'}
-                                                    <div className="mr-auto"></div>
-                                                    <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}> View </Nav.Link>
-                                                    <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
-                                                    <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
-                                                </td>
-                                                <td align="center" style={styles.label}>{element.product_type || '-'}</td>
-                                                <td align="center" style={styles.label}>{element.sku || '-'}</td>
-                                                <td align="center" style={styles.label}>
-                                                    {element.product_variations.map((e, i) =>
-                                                        <>
-                                                            {i >= 3 ? null : e.stock}
-                                                            {i < 2 ? ', ' : null}
-                                                            {i == 2 ? ' ...' : null}
-                                                        </>
-                                                    )}
-                                                </td>
-                                                <td align="center" style={styles.label}>
-                                                    {element.product_variations.map((e, i) =>
-                                                        <>
-                                                            {i >= 3 ? null : e.price}
-                                                            {i < 2 ? ', ' : null}
-                                                            {i == 2 ? ' ...' : null}
-                                                        </>
-                                                    )}
-                                                </td>
-                                                <td align="center" style={styles.label}>
-                                                    {element.category.value || '-'}
-                                                    {/* {element.category.value + ' => ' + element.sub_category.value} */}
-                                                </td>
-                                                <td align="center" style={styles.label}>
-                                                    {element.product_tags && element.product_tags.map((e, i) =>
-                                                        <>
-                                                            {i >= 3 ? null : e.value}
-                                                            {i < 2 ? ', ' : null}
-                                                            {i == 2 ? ' ...' : null}
-                                                        </>
-                                                    )}
-                                                </td>
-                                                <td align="center" style={styles.label}>
-                                                    {element.entry_date || '-'}
-                                                </td>
-                                            </tr>
-                                            :
-                                            <>
-                                                <tr>
-                                                    <td align="center" style={styles.label}>
-                                                        <Form.Check type="checkbox" />
-                                                    </td>
-                                                    <td className="td">
-                                                        {element.product_name || '-'}
-                                                        <div className="mr-auto"></div>
-                                                        <Nav.Link style={styles.nav_link} onClick={() => this.setState({ data: element, viewProduct: 'view' })}>View</Nav.Link>
-                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleEditProduct(index)}>Edit</Nav.Link>
-                                                        <Nav.Link style={styles.nav_link} onClick={() => this.handleDeleteProduct(index)}>Delete</Nav.Link>
-                                                    </td>
-                                                    <td align="center" style={styles.label}>{element.product_type || '-'}</td>
-                                                    <td align="center" style={styles.label}>{element.sku || '-'}</td>
-                                                    <td align="center" style={styles.label}>
-                                                        {element.product_in_stock || '-'}
-                                                    </td>
-                                                    <td align="center" style={styles.label}>
-                                                        {element.product_price || '-'}
-                                                    </td>
-                                                    <td align="center" style={styles.label}>
-                                                        {element.category.value || '-'}
-                                                        {/* {element.category.value + ' => ' + element.sub_category.value} */}
-                                                    </td>
-                                                    <td align="center" style={styles.label}>
-                                                        {element.product_tags && element.product_tags.forEach(e =>
-                                                            e.value + ','
-                                                        )}
-                                                    </td>
-                                                    <td align="center" style={styles.label}>
-                                                        {element.entry_date || '-'}
-                                                    </td>
-                                                </tr>
-                                            </>
-                                        }
-                                    </>
-                                )}
-                            </tbody>
-                        </Table>
-                    </Row >
+                    <Card as={Row} style={{ margin: '2%' }}>
+                        <Card.Header>
+                            <Form.Row>
+                                <Col lg='auto' md='auto' sm='auto' sm='auto'>
+                                    <Form.Control as="select"
+                                        variant="dark"
+                                        value={searchType}
+                                        onChange={(e) => setSearchType(e.target.value)}>
+                                        <option value='_id'>ID</option>
+                                        <option value='product_name'>Name</option>
+                                        <option value='category'>Category</option>
+                                        <option value='sub-category'>Sub Category</option>
+                                    </Form.Control>
+                                </Col>
+                                <Col lg={6} md={6} sm={6} xs={12} className='search_col'>
+                                    <InputGroup>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Search Here"
+                                            name="search"
+                                            value={filterStr}
+                                            onChange={(e) => { e.target.value != '' ? setFilterStr(e.target.value) : setIsSearch(false), setFilterStr(e.target.value) }}
+                                        />
+                                        <InputGroup.Append >
+                                            <Button variant='outline-primary' onClick={handleSearch}>
+                                                Search
+                                            </Button>
+                                        </InputGroup.Append>
+                                    </InputGroup>
+                                </Col>
+                            </Form.Row>
+                        </Card.Header>
+                        <Card.Body className='w-100'>
+                            <Table responsive bordered hover size="sm">
+                                <thead>
+                                    <tr>
+                                        <th style={{ textAlign: 'center' }}>#</th>
+                                        <th style={{ textAlign: 'center' }}>ID</th>
+                                        <th style={{ textAlign: 'center' }}>Name</th>
+                                        <th style={{ textAlign: 'center' }}>Type</th>
+                                        <th style={{ textAlign: 'center' }}>Price</th>
+                                        <th style={{ textAlign: 'center' }}>Stock</th>
+                                        <th style={{ textAlign: 'center' }}>Category</th>
+                                        <th style={{ textAlign: 'center' }}>Sub Category</th>
+                                        <th style={{ textAlign: 'center' }}>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {!isSearch ?
+                                        _products && _products.map((element, index) =>
+                                            <TableBody key={element._id}
+                                                element={element}
+                                                pageNumber={limitPageNumber}
+                                                index={index}
+                                                loading={_loading}
+
+                                                setViewProduct={() => { setData(element), setViewProduct('view') }}
+                                                handleEditProduct={() => handleEditProduct(index)}
+                                                handleDeleteProduct={() => handleDeleteProduct(index)}
+                                            />
+                                        )
+                                        :
+                                        products && products.map((element, index) =>
+                                            <TableBody key={element._id}
+                                                element={element}
+                                                pageNumber={queryPageNumber}
+                                                index={index}
+                                                loading={loading}
+
+                                                setViewProduct={() => { setData(element), setViewProduct('view') }}
+                                                handleEditProduct={() => handleEditProduct(index)}
+                                                handleDeleteProduct={() => handleDeleteProduct(index)}
+                                            />
+                                        )
+                                    }
+                                </tbody>
+                            </Table >
+
+                            {!isSearch ?
+                                <>
+                                    {_loading ?
+                                        <div className='_div'>
+                                            < Spinner animation="grow" variant="primary" />
+                                            <Spinner animation="grow" variant="secondary" />
+                                            <Spinner animation="grow" variant="success" />
+                                            <Spinner animation="grow" variant="danger" />
+                                            <Spinner animation="grow" variant="warning" />
+                                            <Spinner animation="grow" variant="info" />
+                                            <Spinner animation="grow" variant="dark" />
+                                        </div>
+                                        :
+                                        !_hasMore && <Row className='_div'>No Data Found</Row>
+                                    }
+                                    <hr />
+                                    <PaginationRow
+                                        totalPages={totalPages}
+                                        pageNumber={limitPageNumber}
+                                        setPageNumber={(pageNumber) => setlimitPageNumber(pageNumber)}
+                                    />
+                                </>
+                                :
+                                <>
+                                    {loading ?
+                                        <div className='_div'>
+                                            < Spinner animation="grow" variant="primary" />
+                                            <Spinner animation="grow" variant="secondary" />
+                                            <Spinner animation="grow" variant="success" />
+                                            <Spinner animation="grow" variant="danger" />
+                                            <Spinner animation="grow" variant="warning" />
+                                            <Spinner animation="grow" variant="info" />
+                                            <Spinner animation="grow" variant="dark" />
+                                        </div>
+                                        :
+                                        !hasMore && <Row className='_div'>No Data Found</Row>
+                                    }
+                                    <hr />
+                                    <PaginationRow
+                                        totalPages={-1}
+                                        pageNumber={queryPageNumber}
+                                        setPageNumber={(pageNumber) => setQueryPageNumber(pageNumber)}
+                                        hasMore={hasMore}
+                                    />
+                                </>
+                            }
+                        </Card.Body >
+                    </Card >
+                    <style type="text/css">{`
+                        ._div{
+                            display: flex;
+                            justify-content: center;
+                            margin: 5%;
+                        }
+                        .form_label{
+                            font-size: 12px;
+                        }
+                        @media (max-width: 575px){
+                            .search_col{
+                                padding-top: 1%;
+                            }
+                        }
+                    `}</style>
                     <style jsx >
                         {`
-                        .td {
-                            display: flex;
-                            flex-direction: row;
-                            align-items: center;
-                            font-size: ${GlobalStyleSheet.form_label_fontsize};
+                        th{
+                            font-size: 14px;
                         }
                     `}
                     </style>
@@ -268,37 +327,155 @@ class Inventory extends Component {
         }
     }
 
-    render() {
-        return (
-            <>
-                <div>
-                    {this.renderSwitch(this.state.viewProduct)}
-                </div>
-            </>
-        );
-    }
+    return (
+        <div>
+            {renderSwitch(viewProduct)}
+        </div>
+    )
+}
+
+function TableBody(props) {
+    let element = props.element
+    let pageNumber = props.pageNumber
+    let index = props.index
+    return (
+        <>
+            {element.product_type == "simple-product" ?
+                <tr>
+                    <td align="center" >{(pageNumber - 1) * 20 + index + 1}</td>
+                    <td >
+                        {element._id}
+                        <div className="td">
+                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.setViewProduct} >View</Nav.Link>
+                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.handleEditProduct}>Edit</Nav.Link>
+                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={props.handleDeleteProduct}>Delete</Nav.Link>
+                        </div>
+                    </td>
+                    <td align="center" >{element.product_name}</td>
+                    <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
+                    <td align="center" >
+                        {element.product_price}
+                    </td>
+                    <td align="center" >
+                        {element.product_in_stock}
+                    </td>
+                    <td align="center" >
+                        {element.category.value}
+                    </td>
+                    <td align="center" >
+                        {element.sub_category.value}
+                    </td>
+                    <td align="center" >
+                        {element.entry_date.substring(0, 10)}
+                    </td>
+                </tr>
+                :
+                <tr>
+                    <td align="center" >{(pageNumber - 1) * 20 + index + 1}</td>
+                    <td>
+                        {element._id}
+                        <div className="td">
+                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.setViewProduct} >View</Nav.Link>
+                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.handleEditProduct}>Edit</Nav.Link>
+                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={props.handleDeleteProduct}>Delete</Nav.Link>
+                        </div>
+                    </td>
+                    <td align="center" >{element.product_name}</td>
+                    <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
+                    <td align="center" >
+                        {element.product_variations[0].price} ...
+                    </td>
+                    <td align="center" >
+                        {element.product_variations[0].stock} ...
+                    </td>
+                    <td align="center" >
+                        {element.category.value}
+                    </td>
+                    <td align="center" >
+                        {element.sub_category.value}
+                    </td>
+                    <td align="center" >
+                        {element.entry_date.substring(0, 10)}
+                    </td>
+                </tr>
+            }
+            <style type="text/css">{`
+                .delete{
+                    color: #ff4d4d;
+                }
+                .delete:hover{
+                    color: #e60000;
+                }
+            `}</style>
+            <style jsx >
+                {`
+                .td {
+                    display: flex;
+                    flex-direction: row;
+                    font-size: 12px;
+                    float: right;
+                    padding: 0%;
+                    margin: 0%;
+                }
+                td {
+                    font-size: 12px;
+                }
+            `}
+            </style>
+        </>
+    )
+}
+
+function PaginationRow(props) {
+    return (
+        <Row className='d-flex justify-content-center p-0 m-0 align-items-center'>
+            <Pagination >
+                <Pagination.Item onClick={() => props.setPageNumber(1)}>{1}</Pagination.Item>
+                <Pagination.Prev
+                    disabled={props.pageNumber == 1}
+                    onClick={() => props.setPageNumber(props.pageNumber - 1)}>
+                </Pagination.Prev>
+
+                <Pagination.Ellipsis />
+                <Pagination.Item active>{props.pageNumber}</Pagination.Item>
+                <Pagination.Ellipsis />
+
+                <Pagination.Next
+                    disabled={props.totalPages != -1 ? props.totalPages == props.pageNumber : props.hasMore ? false : true}
+                    onClick={() => props.setPageNumber(props.pageNumber + 1)}>
+                </Pagination.Next>
+
+
+                <Pagination.Item
+                    disabled={props.totalPages != -1 ? false : true}
+                    onClick={() => props.setPageNumber(props.totalPages)}>{props.totalPages}</Pagination.Item>
+            </Pagination>
+        </Row>
+    )
 }
 
 
 const ViewProduct = props => {
+    const [ref, { x, y, width }] = useDimensions();
+
     const [imgPreview, setImgPreview] = React.useState(false);
-    const [index, setIndex] = React.useState('')
+    const [currentImgIndex, setCurrentImgIndex] = React.useState('')
     const [imgData, setImgData] = React.useState([])
 
     // const len = props.data.product_image_link.length;
 
     function prevImage() {
-        if (index > 0) {
-            setIndex(index - 1)
+        if (currentImgIndex > 0) {
+            setCurrentImgIndex(currentImgIndex - 1)
         }
     }
-
     function nextImage() {
-        if (index < (imgData.length - 1)) {
-            setIndex(index + 1)
+        if (currentImgIndex < (imgData.length - 1)) {
+            setCurrentImgIndex(currentImgIndex + 1)
         }
     }
 
+    console.log('width:', width + ',,,' + x + '---' + y)
     return (
         <>
             <TitleRow icon={faPlus} title={` Vendor Dashboard / All Products / ${props.data.product_name}`} />
@@ -310,184 +487,212 @@ const ViewProduct = props => {
             </Form.Row>
             <CardAccordion title={'General Info'}>
                 <Row>
-                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Product Name:</Form.Label>
+                    <Form.Group as={Col} lg={props.isVariableProduct ? 6 : 4} md={props.isVariableProduct ? 6 : 4} sm={props.isVariableProduct ? 6 : 6} xs={12}>
+                        <Form.Label className='form_label'>Product ID:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name || '-'} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data._id} disabled={true} />
                         </InputGroup>
                     </Form.Group>
-                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Brand Name:</Form.Label>
+                    <Form.Group as={Col} lg={props.isVariableProduct ? 6 : 4} md={props.isVariableProduct ? 6 : 4} sm={props.isVariableProduct ? 6 : 6} xs={12}>
+                        <Form.Label className='form_label'>Product Name:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_brand_name || '-'} disabled={true} />
+                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
                         </InputGroup>
                     </Form.Group>
-                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>SKU:</Form.Label>
+                    <Form.Group as={Col} lg={props.isVariableProduct ? 6 : 4} md={props.isVariableProduct ? 6 : 4} sm={props.isVariableProduct ? 6 : 6} xs={12}>
+                        <Form.Label className='form_label'>SKU:</Form.Label>
                         <InputGroup>
                             <Form.Control type="text" size="sm" value={props.data.sku || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
                     {props.isVariableProduct ?
-                        null :
+                        null
+                        :
                         <>
                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                                <Form.Label style={styles.label}>Price:</Form.Label>
+                                <Form.Label className='form_label'>Brand Name:</Form.Label>
                                 <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.product_price || '-'} disabled={true} />
+                                    <Form.Control type="text" size="sm" value={props.data.product_brand_name || '-'} disabled={true} />
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                                <Form.Label style={styles.label}>Product In Stock:</Form.Label>
+                                <Form.Label className='form_label'>Price:</Form.Label>
                                 <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.product_in_stock || '-'} disabled={true} />
+                                    <Form.Control type="text" size="sm" value={props.data.product_price} disabled={true} />
+                                </InputGroup>
+                            </Form.Group>
+                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
+                                <Form.Label className='form_label'>Product In Stock:</Form.Label>
+                                <InputGroup>
+                                    <Form.Control type="text" size="sm" value={props.data.product_in_stock} disabled={true} />
+                                </InputGroup>
+                            </Form.Group>
+                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
+                                <Form.Label className='form_label'>Warranty (month):</Form.Label>
+                                <InputGroup>
+                                    <Form.Control type="text" size="sm" value={props.data.product_warranty || 'No Warranty'} disabled={true} />
+                                </InputGroup>
+                            </Form.Group>
+                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
+                                <Form.Label className='form_label'>Warranty Type:</Form.Label>
+                                <InputGroup>
+                                    <Form.Control type="text" size="sm" value={props.data.warranty_type || '-'} disabled={true} />
+                                </InputGroup>
+                            </Form.Group>
+                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
+                                <Form.Label className='form_label'>Discount (%):</Form.Label>
+                                <InputGroup>
+                                    <Form.Control type="text" size="sm" value={props.data.product_discount || '0%'} disabled={true} />
                                 </InputGroup>
                             </Form.Group>
                         </>
                     }
 
-
-                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Warranty (month):</Form.Label>
-                        <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_warranty || '-'} disabled={true} />
-                        </InputGroup>
-                    </Form.Group>
-                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Warranty Type:</Form.Label>
-                        <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.warranty_type || '-'} disabled={true} />
-                        </InputGroup>
-                    </Form.Group>
-                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Discount (%):</Form.Label>
-                        <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_discount || '-'} disabled={true} />
-                        </InputGroup>
-                    </Form.Group>
-
-                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Purchase Note(s):</Form.Label>
+                    <Form.Group as={Col} lg={props.isVariableProduct ? 6 : 4} md={props.isVariableProduct ? 6 : 4} sm={props.isVariableProduct ? 6 : 6} xs={12}>
+                        <Form.Label className='form_label'>Purchase Note(s):</Form.Label>
                         <InputGroup>
                             <Form.Control type="text" size="sm" value={props.data.purchase_note || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
                     <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
-                        <Form.Label style={styles.label}>Description:</Form.Label>
+                        <Form.Label className='form_label'>Description:</Form.Label>
                         <InputGroup>
-                            <Form.Control as="textarea" row="5" size="sm" value={props.data.product_description || '-'} disabled={true} />
+                            <Form.Control as="textarea" row='8' value={props.data.product_description || 'No Description'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                 </Row>
             </CardAccordion>
 
             {props.isVariableProduct ?
-                <CardAccordion title={'Product Variations'}>
+                <CardAccordion title={'Variations'}>
                     {props.data.product_variations && props.data.product_variations.map((element, index) =>
-                        <>
-                            <Row key={index}>
-                                <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
-                                    <Form.Label style={styles.label}>Price</Form.Label>
-                                    <InputGroup>
-                                        <Form.Control type="text" size="sm" value={element.price || '-'} disabled={true} />
-                                    </InputGroup>
-                                </Form.Group>
-                                <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
-                                    <Form.Label style={styles.label}>Stock</Form.Label>
-                                    <InputGroup>
-                                        <Form.Control type="text" size="sm" value={element.stock || '-'} disabled={true} />
-                                    </InputGroup>
-                                </Form.Group>
-                                {element.item && element.item.map((e, i) =>
+                        <Accordion defaultActiveKey='0' className='pb-2'>
+                            <Card>
+                                <Accordion.Toggle as={Card.Header} eventKey={index} className='accordian_toggle'>
+                                    <Form.Label className='p-0 mb-0 ml-0 mr-auto'>ID: {element._id}</Form.Label>
+                                    <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.slider_fontawesome} />
+                                </Accordion.Toggle>
+                                <Accordion.Collapse eventKey={index} style={{ padding: '1%' }}>
                                     <>
-                                        <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={12}>
-                                            <Form.Label style={styles.label}>{e.name}</Form.Label>
-                                            <InputGroup>
-                                                <Form.Control type="text" size="sm" value={e.value} disabled={true} />
-                                            </InputGroup>
-                                        </Form.Group>
+                                        <Row key={index} noGutters >
+                                            <label className='haeder_label'>Variations</label>
+                                            <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl1 pr-1'>
+                                                <Form.Label className='form_label'>Price</Form.Label>
+                                                <InputGroup>
+                                                    <Form.Control type="text" size="sm" value={element.price || '-'} disabled={true} />
+                                                </InputGroup>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl1 pr-1'>
+                                                <Form.Label className='form_label'>Stock</Form.Label>
+                                                <InputGroup>
+                                                    <Form.Control type="text" size="sm" value={element.stock || '-'} disabled={true} />
+                                                </InputGroup>
+                                            </Form.Group>
+                                            {element.item && element.item.map((e, i) =>
+                                                <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={6} className='pl1 pr-1'>
+                                                    <Form.Label className='form_label'>{e.name}</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control type="text" size="sm" value={e.value} disabled={true} />
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            )}
+
+                                        </Row>
+                                        <Row noGutters>
+                                            <label className='haeder_label'>Specifications</label>
+                                            {element.custom_fields && element.custom_fields.map((e, i) =>
+                                                <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={6} className='pl1 pr-1'>
+                                                    <Form.Label className='form_label'>{e.name}</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control type="text" size="sm" value={e.value} disabled={true} />
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            )}
+                                        </Row>
+
                                     </>
-                                )}
-                                {element.custom_fields && element.custom_fields.map((e, i) =>
-                                    <>
-                                        <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={12}>
-                                            <Form.Label style={styles.label}>{e.name}</Form.Label>
-                                            <InputGroup>
-                                                <Form.Control type="text" size="sm" value={e.value} disabled={true} />
-                                            </InputGroup>
-                                        </Form.Group>
-                                    </>
-                                )}
+                                </Accordion.Collapse>
+                            </Card>
+                            <Row noGutters className='w-100'>
                                 {element.image_link && element.image_link.map((img, i) =>
-                                    <Row>
-                                        <Image thumbnail fluid style={{ minWidth: '100px', maxWidth: '100px' }} src={img.url} alt="Product Image"
-                                            onClick={() => { setImgPreview(true), setIndex(i), setImgData(element.image_link) }} />
-                                    </Row>
+                                    <Col lg={1} md={2} sm={3} xs={3} >
+                                        <div className='my_img_div'>
+                                            <Image ref={ref} thumbnail
+                                                style={{ width: '100%', maxHeight: width + 10 || '200px', minHeight: width + 10 || '200px' }}
+                                                onClick={() => { setImgPreview(true), setCurrentImgIndex(i), setImgData(element.image_link) }} src={img.url} />
+                                        </div>
+                                    </Col>
                                 )}
                             </Row>
-                            <hr />
-                        </>
+                        </Accordion>
                     )}
                 </CardAccordion>
                 :
                 <>
                     <CardAccordion title={'Custom Fields'}>
-                        {props.data.custom_fields && props.data.custom_fields.map((element, index) =>
-                            <Row key={index}>
-                                <Form.Group as={Col} lg={2} md={2} sm={4} xs={12}>
-                                    <Form.Label style={styles.label}>{element.name}</Form.Label>
+                        <Row key={index} noGutters>
+                            {props.data.custom_fields && props.data.custom_fields.map((element, index) =>
+                                <Form.Group as={Col} lg={2} md={2} sm={4} xs={12} className='pl1 pr-1'>
+                                    <Form.Label className='form_label'>{element.name}</Form.Label>
                                     <InputGroup>
                                         <Form.Control type="text" size="sm" value={element.value} disabled={true} />
                                     </InputGroup>
                                 </Form.Group>
-                            </Row>
-                        )}
+                            )}
+                        </Row>
                     </CardAccordion>
                     <CardAccordion title={'Product Images'}>
-                        {props.data.product_image_link && props.data.product_image_link.map((element, index) =>
-                            <Image thumbnail fluid key={index} style={{ minWidth: '200px', maxWidth: '200px' }} src={element.url}
-                                alt="Product Image" onClick={() => { setImgPreview(true), setIndex(index), setImgData(props.data.product_image_link) }} />
-                        )}
+                        <Row noGutters>
+                            {props.data.product_image_link && props.data.product_image_link.map((img, index) =>
+                                <Col lg={1} md={2} sm={3} xs={3} >
+                                    <div className='my_img_div'>
+                                        <Image ref={ref} thumbnail
+                                            style={{ width: '100%', maxHeight: width + 10 || '200px', minHeight: width + 10 || '200px' }}
+                                            onClick={() => { setImgPreview(true), setCurrentImgIndex(i), setImgData(element.image_link) }} src={img.url} />
+                                    </div>
+                                </Col>
+                            )}
+                        </Row>
                     </CardAccordion>
                 </>
             }
             <CardAccordion title={'Shipping Details'}>
                 <Row>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Length (cm):</Form.Label>
+                        <Form.Label className='form_label'>Length (cm):</Form.Label>
                         <InputGroup>
                             <Form.Control type="text" size="sm" value={props.data.dimension_length || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Width (cm):</Form.Label>
+                        <Form.Label className='form_label'>Width (cm):</Form.Label>
                         <InputGroup>
                             <Form.Control type="text" size="sm" value={props.data.dimension_width || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Height (cm):</Form.Label>
+                        <Form.Label className='form_label'>Height (cm):</Form.Label>
                         <InputGroup>
                             <Form.Control type="text" size="sm" value={props.data.dimension_height || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Weight (kg):</Form.Label>
+                        <Form.Label className='form_label'>Weight (kg):</Form.Label>
                         <InputGroup>
                             <Form.Control type="text" size="sm" value={props.data.product_weight || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Shipping Charges:</Form.Label>
+                        <Form.Label className='form_label'>Shipping Charges:</Form.Label>
                         <InputGroup>
                             <Form.Control type="text" size="sm" value={props.data.shipping_charges || '-'} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label style={styles.label}>Handlink Fee:</Form.Label>
+                        <Form.Label className='form_label'>Handlink Fee:</Form.Label>
                         <InputGroup>
                             <Form.Control type="text" size="sm" value={props.data.handling_fee || '-'} disabled={true} />
                         </InputGroup>
@@ -496,60 +701,122 @@ const ViewProduct = props => {
             </CardAccordion>
             <CardAccordion title={'Product Categories'}>
                 <Form.Group>
-                    <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Product Categories:</Form.Label>
+                    <Form.Label className='heading_label'>Product Category:</Form.Label>
                     <InputGroup>
-                        <Form.Label style={styles.label}>
-                            {props.data.category.value || '-'}
-                            {/* {props.data.category.value + ' => ' + props.data.sub_category.value} */}
+                        <Form.Label className='form_label'>
+                            {props.data.category.value}
                         </Form.Label>
                     </InputGroup>
                 </Form.Group >
                 <hr />
                 <Form.Group>
-                    <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Product Tags:</Form.Label>
+                    <Form.Label className='heading_label'>Product Category:</Form.Label>
+                    <InputGroup>
+                        <Form.Label className='form_label'>
+                            {props.data.sub_category.value}
+                        </Form.Label>
+                    </InputGroup>
+                </Form.Group >
+                <hr />
+                <Form.Group>
+                    <Form.Label className='heading_label'>Product Tags:</Form.Label>
                     <InputGroup>
                         {props.data.product_tags && props.data.product_tags.map((element, index) =>
-                            <Form.Label key={index} style={styles.label}>{element.value}</Form.Label>
+                            <Form.Label key={index} className='form_label'>
+                                {element.value}
+                            </Form.Label>
                         )}
                     </InputGroup>
                 </ Form.Group >
                 <hr />
                 <Form.Group>
-                    <Form.Label style={{ fontSie: '13px', fontWeight: 'bold' }}>Dangerous Goods:</Form.Label>
+                    <Form.Label className='heading_label'>Dangerous Goods:</Form.Label>
                     <InputGroup>
                         {props.data.dangerous_goods && props.data.dangerous_goods.map((element, index) =>
-                            <Form.Label key={index} style={styles.label}>{element.value}</Form.Label>
+                            <Form.Label key={index} className='form_label'>
+                                {element.value}
+                            </Form.Label>
                         )}
                     </InputGroup>
                 </Form.Group>
             </CardAccordion >
 
             {/* Image Preview */}
-            {
-                imgPreview ?
-                    <div className="modal-overlay">
-                        <div className="modal-body">
-                            <div className="close-modal">
-                                <div className="mr-auto"></div>
-                                <div className="mr-auto"></div>
-                                <FontAwesomeIcon className="mr-auto" icon={faChevronLeft} style={styles.img_preview_fontawesome}
-                                    onClick={prevImage} />
-                                <FontAwesomeIcon className="mr-auto" icon={faChevronRight} style={styles.img_preview_fontawesome}
-                                    onClick={nextImage} />
-                                <div className="mr-auto"></div>
-                                <FontAwesomeIcon icon={faTimes} style={styles.img_preview_fontawesome}
-                                    onClick={() => setImgPreview(false)} />
-                            </div>
-                            <div className="image-container">
-                                <img
-                                    src={imgData[index].url}
-                                    style={{ maxWidth: '100%', maxHeight: '90vh', margin: 'auto' }}
-                                />
-                            </div>
-                        </div>
+            {imgPreview && <ImagePreview
+                imgData={imgData}
+                index={currentImgIndex}
+                prevImage={prevImage}
+                nextImage={nextImage}
+                setImgPreview={() => setImgPreview(false)}
+            />}
+            <style type="text/css">{`
+                .heading_label{
+                    font-size: 13px;
+                    font-weight: bold;
+                }
+                .my_img_div{
+                    padding: 2%;
+                    cursor: pointer;
+                    background: white;
+                    cursor: pointer;
+                }
+                .my_img_div:hover{
+                    box-shadow: 0px 0px 10px 0.01px gray;
+                    transition-timing-function: ease-in;
+                    transition: 0.5s;
+                    padding: 0% 2% 4% 2%;
+                }
+                .haeder_label{
+                    font-size: 13px;
+                    font-weight: bold;
+                    width: 100%;
+                }
+                .accordian_toggle{
+                    background: #9a9db1;
+                    font-size: 12px;
+                    color: white;
+                    cursor: pointer;
+                    display: inline-flex;
+                    align-items: center;
+                }
+                .accordian_toggle:hover{
+                    background: #7d819b;
+                }
+                .field_col{
+                    padding: 0% 2%;
+                }
+                
+            `}</style>
+        </>
+    )
+}
+
+function ImagePreview(props) {
+    const [ref, { x, y, width }] = useDimensions();
+    return (
+        <>
+            <div className="modal-overlay">
+                <div className="modal-body">
+                    <div className="close-modal">
+                        <div className="mr-auto"></div>
+                        <div className="mr-auto"></div>
+                        <FontAwesomeIcon className="mr-auto" icon={faChevronLeft} style={styles.img_preview_fontawesome}
+                            onClick={props.prevImage} />
+                        <FontAwesomeIcon className="mr-auto" icon={faChevronRight} style={styles.img_preview_fontawesome}
+                            onClick={props.nextImage} />
+                        <div className="mr-auto"></div>
+                        <FontAwesomeIcon icon={faTimes} style={styles.img_preview_fontawesome}
+                            onClick={props.setImgPreview} />
                     </div>
-                    : null
-            }
+                    <div className="image-container">
+                        <img ref={ref}
+                            thumbnail
+                            src={props.imgData[props.index].url}
+                            style={{ width: '100%', maxHeight: width + 90, minHeight: width + 90, margin: 'auto' }}
+                        />
+                    </div>
+                </div>
+            </div>
             <style jsx>
                 {`
                    .modal-overlay {
@@ -580,11 +847,35 @@ const ViewProduct = props => {
                         width: 100%;
                     }
                     .image-container {
-                        display: grid;
-                        height: 100%;
-                        // display: flex;
-                        // justify-content: center;
-                        // align-items: center;
+                        margin: 2% 30%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                     @media (max-width: 1299px){
+                        .image-container {
+                            margin: 2% 25%;
+                        }
+                    }
+                    @media (max-width: 1199px){
+                        .image-container {
+                            margin: 2% 20%;
+                        }
+                    }
+                     @media (max-width: 991px){
+                        .image-container {
+                            margin: 2% 15%;
+                        }
+                    }
+                     @media (max-width: 767px){
+                        .image-container {
+                            margin: 2% 10%;
+                        }
+                    }
+                     @media (max-width: 575px){
+                        .image-container {
+                            margin: 10% 2%;
+                        }
                     }
                 `}
             </style>
@@ -646,7 +937,11 @@ const styles = {
         fontSize: `${GlobalStyleSheet.card_header_fontsize}`,
         background: `${GlobalStyleSheet.card_header_background}`,
     },
+    slider_fontawesome: {
+        color: 'white',
+        width: '15px',
+        height: '15px',
+        maxHeight: '15px',
+        maxWidth: '15px',
+    },
 }
-
-export default Inventory;
-

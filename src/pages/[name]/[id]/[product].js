@@ -19,7 +19,7 @@ import axios from 'axios'
 import MuhalikConfig from '../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../styleSheet'
 import Link from 'next/link'
-import useProductsInfiniteScroll from '../../../use-poducts-infinite-scroll'
+import useQueryInfiniteScroll from '../../../use-query-infinite-scroll'
 import ReactStars from "react-rating-stars-component";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-regular-svg-icons';
@@ -64,7 +64,7 @@ function Product(props) {
     const [token, setToken] = useState({ role: '', full_name: '' })
     const [undecoded_token, setUndecoded_token] = useState('')
 
-    const { loading, products } = useProductsInfiniteScroll('sub_category', props.single_product.sub_category._id, '1', isMobile ? '6' : '8')
+    const { loading, products } = useQueryInfiniteScroll('sub-category', props.single_product.sub_category.value, '1', isMobile ? '6' : '8')
     const [vendor, setVendor] = useState({})
     const [wish, setWish] = useState('gray')
     const [_loading, _setLoading] = useState(false)
@@ -906,7 +906,7 @@ function VendorInfo(props) {
                     color2={"orange"}
                 />
             </Row>
-            <div className='d-flex flex-column p-2 justify-content-center'>
+            <div className='d-flex flex-column p-2'>
                 <div className='vendor_rating five_stars_vendor_rating'>
                     {'5:'} <span></span>
                     <label>
@@ -1000,19 +1000,19 @@ function VendorInfo(props) {
                     left:0;
                 }
                 .one_stars_vendor_rating span:after{
-                    width: ${rating.one_star}%;
+                    width: calc(${rating.one_star}% / 10);
                 }
                 .two_stars_vendor_rating span:after{
-                    width: ${rating.two_star}%;
+                    width: calc(${rating.two_star}% / 10);
                 }
                 .three_stars_vendor_rating span:after{
-                    width: ${rating.three_star}%;
+                    width: cals(${rating.three_star}% / 10);
                 }
                 .four_stars_vendor_rating span:after{
-                    width: ${rating.four_star}%;
+                    width: calc(${rating.four_star}% / 10);
                 }
                 .five_stars_vendor_rating span:after{
-                    width: ${rating.five_star}%;
+                    width: calc(${rating.five_star}% / 10);
                 }
                 
                 .delivered_slope , .cancelled_slope, .returned_slope {
@@ -1108,6 +1108,7 @@ function TabComponent(props) {
     function ratingChanged(newRating) {
         setRating(newRating)
     }
+
     function handleSetRating() {
         let parameters = {}
         if (props.single_product.product_type == "simple-product") {
@@ -1119,6 +1120,7 @@ function TabComponent(props) {
                 variation_index: props.activeVariationIndex
             }
         }
+        console.log('params: ', parameters)
         const _url = MuhalikConfig.PATH + '/api/products/review-rating'
         axios({
             method: 'PUT',
@@ -1171,7 +1173,7 @@ function TabComponent(props) {
                     <Tabs defaultActiveKey="Rating" id="uncontrolled-tab-example" className='inner_tabs'>
                         <Tab eventKey="Rating" title="Rating">
                             <Row className='pt-3 pb-3'>
-                                <Col className='d-flex flex-column align-items-center  justify-content-center' lg={3} md={3} sm={12} xs={12}>
+                                <Col lg={4} md={4} sm={4} xs={12} className='d-flex flex-column align-items-center  justify-content-center'>
                                     <div className='text-center' style={{ fontSize: '13px', color: 'gray', marginBottom: '5px' }}>Overall Rating</div>
                                     <div className='text-center' style={{ fontSize: '20px', color: 'orange' }}>
                                         {rating_review.rating.overall}
@@ -1185,48 +1187,46 @@ function TabComponent(props) {
                                         color2={"orange"}
                                     />
                                 </Col>
-                                <Col>
-                                    <div className='d-flex flex-column p-2 justify-content-center w-100'>
-                                        <div className='star_rating five_stars_rating'>
-                                            {'5:'} <span></span>
-                                            <label>
-                                                {rating_review.rating.five_star}
-                                            </label>
-                                        </div>
-                                        <div className='star_rating four_stars_rating'>
-                                            {'4:'} <span></span>
-                                            <label>
-                                                {rating_review.rating.four_star}
-                                            </label>
-                                        </div>
-                                        <div className='star_rating three_stars_rating'>
-                                            {'3:'} <span></span>
-                                            <label>
-                                                {rating_review.rating.three_star}
-                                            </label>
-                                        </div>
-                                        <div className='star_rating two_stars_rating'>
-                                            {'2:'} <span></span>
-                                            <label>
-                                                {rating_review.rating.two_star}
-                                            </label>
-                                        </div>
-                                        <div className='star_rating one_stars_rating'>
-                                            {'1:'} <span></span>
-                                            <label>
-                                                {rating_review.rating.one_star}
-                                            </label>
-                                        </div>
+                                <Col lg={8} md={8} sm={8} xs={12} className='d-flex flex-column'>
+                                    <div className='star_rating five_stars_rating'>
+                                        {'5:'} <span></span>
+                                        <label>
+                                            {rating_review.rating.five_star}
+                                        </label>
+                                    </div>
+                                    <div className='star_rating four_stars_rating'>
+                                        {'4:'} <span></span>
+                                        <label>
+                                            {rating_review.rating.four_star}
+                                        </label>
+                                    </div>
+                                    <div className='star_rating three_stars_rating'>
+                                        {'3:'} <span></span>
+                                        <label>
+                                            {rating_review.rating.three_star}
+                                        </label>
+                                    </div>
+                                    <div className='star_rating two_stars_rating'>
+                                        {'2:'} <span></span>
+                                        <label>
+                                            {rating_review.rating.two_star}
+                                        </label>
+                                    </div>
+                                    <div className='star_rating one_stars_rating'>
+                                        {'1:'} <span></span>
+                                        <label>
+                                            {rating_review.rating.one_star}
+                                        </label>
                                     </div>
                                 </Col>
                             </Row>
                         </Tab>
-                        <Tab eventKey="Reviews" title="Reviews">
+                        <Tab eventKey="Reviews" title="Reviews" style={{ overflowY: 'scroll', maxHeight: '300px' }}>
                             {rating_review.reviews == [] ?
                                 <label className='text-center p-5 w-100' style={{ fontSize: '16px', color: 'gray' }}>No Reviews</label>
                                 :
                                 rating_review.reviews && rating_review.reviews.map((element, index) =>
-                                    <div className='review'>
+                                    <div key={element._id} className='review'>
                                         <div>
                                             <label>{element.c_name}</label>
                                             <span>{element.entry_date}</span>
@@ -1261,7 +1261,6 @@ function TabComponent(props) {
                                         onClick={handleSetRating}
                                         disabled={rating == '' ? true : false}
                                     >Rate</Button>
-
                                 </Row>
                             </Tab>
                             :
@@ -1272,7 +1271,7 @@ function TabComponent(props) {
             </Tabs>
             <style type="text/css">{`
                 .tab_component{
-                    min-height: 200px;
+                    min-height: 400px;
                     margin: 2% 0%;
                     background: white;
                 }
@@ -1283,11 +1282,11 @@ function TabComponent(props) {
                 }
 
                 .star_rating {
+                    padding-left: 5%;
                    display: inline-flex;
                     align-items: center;
                     font-size: 14px;
                     color: orange;
-                    justify-content: center;
                 }
                 .star_rating  label{
                      color: gray;
@@ -1296,7 +1295,7 @@ function TabComponent(props) {
                      font-size: 13px;
                 }                
                 .star_rating span{
-                    width: 40%;
+                    width: 350px;
                     min-height: 10px;
                     max-height: 10px;
                     border:1px solid lightgray;
@@ -1312,19 +1311,19 @@ function TabComponent(props) {
                     left:0;
                 }
                 .one_stars_rating span:after{
-                    width: ${rating_review.rating.one_star}%;
+                    width: calc(${rating_review.rating.one_star}% / 10);
                 }
                 .two_stars_rating span:after{
-                    width: ${rating_review.rating.two_star}%;
+                    width: calc(${rating_review.rating.two_star}% / 10);
                 }
                 .three_stars_rating span:after{
-                    width: ${rating_review.rating.three_star}%;
+                    width: calc(${rating_review.rating.three_star}% / 10);
                 }
                 .four_stars_rating span:after{
-                    width: ${rating_review.rating.four_star}%;
+                    width: calc(${rating_review.rating.four_star}% / 10);
                 }
                 .five_stars_rating span:after{
-                    width: ${rating_review.rating.five_star}%;
+                    width: calc(${rating_review.rating.five_star}% / 10);
                 }
 
                 .review{
@@ -1346,12 +1345,23 @@ function TabComponent(props) {
                     width: 100%;
                     margin: 2%;
                 }
+                @media (max-width: 767px) {
+                    .star_rating span{
+                        width: 300px;
+                    }
+                }
                 @media (max-width: 575px) {
                     .outer_tabs{
                         font-size: 13px;
                     }
                     .inner_tabs{
                         font-size: 12px;
+                    }
+                    .star_rating {
+                        padding-left: 14%;
+                    }
+                    .star_rating span{
+                        width: 200px;
                     }
                 }
             `}</style>
@@ -1370,7 +1380,7 @@ function RelatedProducts(props) {
                     props.current_product_id != element._id ?
                         <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                             {element.product_type == "simple-product" ?
-                                <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category._id}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub-category/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img'
                                         style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
                                         src={element.product_image_link[0].url}
@@ -1379,7 +1389,7 @@ function RelatedProducts(props) {
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
                                 </div>
                                 :
-                                <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub_category/${element.sub_category._id}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub-category/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>

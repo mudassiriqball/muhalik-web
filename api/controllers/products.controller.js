@@ -1,14 +1,110 @@
 const productsController = {};
 const Products = require("../models/product.model");
-const fs = require("fs");
 const jwt = require("jsonwebtoken");
-const util = require("util");
-const Category = require("../models/category.model");
-const Sub_Category = require("../models/sub-category.model");
-const User = require("../models/user.model");
 const mongoose = require("mongoose");
-//const xlsx = require("xlsx");
-//var wb = xlsx.readFile("../prd_inv_template.xlsx");
+
+
+productsController.add_rating_and_review = async (req, res) => {
+  const body = req.body;
+  var datetime = new Date();
+  body.entry_date = datetime;
+
+  var search = "";
+  if (body.rating === 1) {
+    search = "one_star";
+  } else if (body.rating === 2) {
+    search = "two_star";
+  } else if (body.rating === 3) {
+    search = "three_star";
+  } else if (body.rating === 4) {
+    search = "four_star";
+  } else if (body.rating === 5) {
+    search = "five_star";
+  }
+
+  if (!req.query.variation_id) {
+    const products1 = await Products.update(
+      { _id: req.query._id },
+      {
+        $push: { "rating_review.reviews": body },
+        $inc: { [`rating_review.rating.${search}`]: 1 },
+      }
+    );
+
+    const products2 = await Products.findOne(
+      { _id: req.query._id },
+      { rating_review: 1 }
+    );
+    const one = products2.rating_review.rating.one_star;
+    const two = products2.rating_review.rating.two_star;
+    const three = products2.rating_review.rating.three_star;
+    const four = products2.rating_review.rating.four_star;
+    const five = products2.rating_review.rating.five_star;
+    const up = one * 1 + two * 2 + three * 3 + four * 4 + five * 5;
+    const down = one + two + three + four + five;
+    const overall = up / down;
+
+    const products3 = await Products.update(
+      { _id: req.query._id },
+      {
+        $set: { "rating_review.rating.overall": overall.toFixed(1) },
+      }
+    );
+    res.status(200).send({
+      code: 200,
+      message: "Thank You For Review And Rating",
+    });
+  } else {
+    const products1 = await Products.update(
+      { _id: req.query._id },
+      {
+        $push: { [`product_variations.$[i].rating_review.reviews`]: body },
+        $inc: { [`product_variations.$[i].rating_review.rating.${search}`]: 1 },
+      },
+      { arrayFilters: [{ "i._id": req.query.variation_id }], multi: true }
+    );
+    const products2 = await Products.find(
+      { _id: req.query._id }, { "product_variations": 1, _id: 0 }
+    );
+    var one = 0;
+    var two = 0;
+    var three = 0;
+    var four = 0;
+    var five = 0;
+    var up = 0;
+    var down = 0;
+    var overall = 0;
+    var index = req.query.variation_index;
+
+
+    products2.forEach(element => {
+      one = element.product_variations[index].rating_review.rating.one_star;
+      two = element.product_variations[index].rating_review.rating.two_star;
+      three = element.product_variations[index].rating_review.rating.three_star;
+      four = element.product_variations[index].rating_review.rating.four_star;
+      five = element.product_variations[index].rating_review.rating.five_star;
+
+    });
+    up = one * 1 + two * 2 + three * 3 + four * 4 + five * 5;
+    down = one + two + three + four + five;
+    overall = up / down;
+
+
+    const products3 = await Products.update(
+      { _id: req.query._id },
+      {
+        $set: { "product_variations.$[i].rating_review.rating.overall": overall.toFixed(1) },
+      },
+      { arrayFilters: [{ "i._id": req.query.variation_id }], multi: true }
+
+    );
+    res.status(200).send({
+      code: 200,
+      message: "Thank You For Review And Rating",
+    });
+
+  }
+};
 
 //Add product endpoint definition
 productsController.addProduct = async (req, res) => {
@@ -30,6 +126,17 @@ productsController.addProduct = async (req, res) => {
     const header = jwt.decode(req.headers.authorization);
     body.vendor_id = header.data._id;
     if (body.product_type === "simple-product") {
+      const body1 = {
+        rating: {
+          one_star: 0,
+          two_star: 0,
+          three_star: 0,
+          four_star: 0,
+          five_star: 0,
+          overall: 0,
+        },
+      };
+      body.rating_review = body1;
       body.custom_fields = JSON.parse(body.custom_fields);
       body.product_image_link = urls;
     } else if (body.product_type === "variable-prouct") {
@@ -61,6 +168,7 @@ productsController.addProduct = async (req, res) => {
 };
 
 productsController.get_products = async (req, res) => {
+
   let products;
   try {
     if (req.query.q === "new-arrival") {
@@ -85,20 +193,93 @@ productsController.get_products = async (req, res) => {
           message: "Does Not Exist",
         });
       }
-    } else {
+    } else if (req.query.field === "category" && req.query.field === "sub-category") {
+      var ObjectId = mongoose.Types.ObjectId;
+      const _id = new ObjectId(req.query.q)
       const field = req.query.field;
       const search = {};
-      search[field] = req.query.q;
-
-      products = await Products.paginate(search, {
-        limit: parseInt(req.query.limit),
-        page: parseInt(req.query.page),
-      });
+      search[field] = _id;
+      const products = await Products.aggregate([
+        {
+          $match:
+            search
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $lookup: {
+            from: "sub_categories",
+            localField: "sub_category",
+            foreignField: "_id",
+            as: "sub_category",
+          },
+        },
+        { $unwind: "$sub_category" },
+        {
+          $skip: (req.query.page - 1) * req.query.limit
+        },
+        {
+          $limit: parseInt(req.query.limit)
+        },
+      ]);
       if (products) {
         res.status(200).send({
           code: 200,
           message: "Successful",
-          data: products.docs,
+          data: products,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
+    } else {
+      const field = req.query.field;
+      const search = {};
+      search[field] = req.query.q;
+      const products = await Products.aggregate([
+        {
+          $match:
+            search
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $lookup: {
+            from: "sub_categories",
+            localField: "sub_category",
+            foreignField: "_id",
+            as: "sub_category",
+          },
+        },
+        { $unwind: "$sub_category" },
+        {
+          $skip: (req.query.page - 1) * req.query.limit
+        },
+        {
+          $limit: parseInt(req.query.limit)
+        },
+      ]);
+      if (products) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: products,
         });
       } else {
         res.status(500).send({
@@ -114,6 +295,7 @@ productsController.get_products = async (req, res) => {
 };
 
 productsController.get_all_products = async (req, res) => {
+
   try {
     const products = await Products.aggregate([
       {
@@ -134,6 +316,12 @@ productsController.get_all_products = async (req, res) => {
         },
       },
       { $unwind: "$sub_category" },
+      {
+        $skip: (req.query.page - 1) * req.query.limit
+      },
+      {
+        $limit: parseInt(req.query.limit)
+      },
     ]);
     res.status(200).send({
       code: 200,
@@ -228,6 +416,12 @@ productsController.get_vendor_products = async (req, res) => {
         },
       },
       { $unwind: "$sub_category" },
+      {
+        $skip: (req.query.page - 1) * req.query.limit
+      },
+      {
+        $limit: parseInt(req.query.limit)
+      },
       // {
       //   $project: {
       //     product_name: 1,
@@ -417,7 +611,6 @@ productsController.get_total_products = async (req, res) => {
   let products;
   try {
     products = await Products.paginate();
-    console.log(products.total);
     const count = products.total;
     res.status(200).send({
       code: 200,
@@ -440,7 +633,6 @@ productsController.get_total_sold = async (req, res) => {
     come.forEach((element) => {
       count = count + element.product_in_stock;
     });
-    console.log(count);
     res.status(200).send({
       code: 200,
       message: "Successful",
@@ -468,7 +660,6 @@ productsController.geteverything = async (req, res) => {
       { _id: 0, product_in_stock: 1 }
     );
 
-    console.log(products);
     data.noOfTotalProducts = products.length; // store number of documents in data.nooftotalproducts
     for (let index = 0; index < products.length; index++) {
       data.noOfInStockProducts += products[index].product_in_stock;

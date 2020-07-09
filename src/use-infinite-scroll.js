@@ -28,5 +28,3 @@ export default function useInfiniteScroll(fieldName, query, pageNumber, limit) {
     }, [query, pageNumber])
     return { loading, error, products }
 }
-
-

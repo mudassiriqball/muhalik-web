@@ -2,15 +2,17 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import MuhalikConfig from './sdk/muhalik.config'
 
-export default function useProductsInfiniteScroll(fieldName, query, pageNumber, limit) {
+export default function useQueryInfiniteScroll(fieldName, query, pageNumber, limit) {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [products, setProducts] = useState([])
     const [hasMore, setHasMore] = useState('')
 
+
     useEffect(() => {
         setProducts([])
     }, [query])
+
     useEffect(() => {
         getData()
     }, [query, pageNumber])
@@ -26,8 +28,9 @@ export default function useProductsInfiniteScroll(fieldName, query, pageNumber, 
             params: { field: fieldName, q: query, page: pageNumber, limit: limit },
             cancelToken: new axios.CancelToken(c => cancle = c)
         }).then(res => {
-            setProducts(prevProducts => {
-                return [...new Set([...prevProducts, ...res.data.data])]
+            console.log('agaghshs:', res.data.data)
+            setProducts(prevPro => {
+                return [...new Set([...prevPro, ...res.data.data])]
             })
             setHasMore(res.data.data.length > 0)
             setLoading(false)
