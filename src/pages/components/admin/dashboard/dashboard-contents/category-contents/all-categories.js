@@ -11,14 +11,12 @@ import ConfirmModal from '../../../../confirm-modal'
 import TitleRow from '../../../../title-row';
 import CardAccordion from '../../../../card-accordion';
 
-import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
-
 let categoryArray = [];
 class AllCategories extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            token: '',
+            token: this.props.token,
             isLoading: false,
             showToast: false,
 

@@ -15,38 +15,43 @@ import * as yup from 'yup';
 import CreatableSelect from 'react-select/creatable';
 
 const schema = yup.object({
-    sub_category: yup.string().required("Enter Category")
-        .min(5, "Must have at least 5 characters")
-        .max(25, "Can't be longer than 25 characters"),
+    sub_category: yup.string()
 });
-
 
 class AddCategory extends Component {
     state = {
-        token: '',
+        token: this.props.token,
         isLoading: false,
         showToast: false,
 
+        categories_list: this.props.categories_list,
+        sub_categories_list: this.props.sub_categories_list,
+
         category: '',
+        subCategory: '',
         isCategoryNew: false,
         categoryError: '',
+        subCategoryError: '',
+
         img: '',
         imgError: '',
     };
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
-            token: nextProps.token
+            token: nextProps.token,
+            categories_list: nextProps.categories_list,
+            sub_categories_list: nextProps.sub_categories_list
         });
     }
 
     async addCategory(values, currentComponent) {
         let formData = new FormData()
-        console.log('jjjjj:', this.state.category)
-        formData.append('category', this.state.category)
-        formData.append('sub_category', values.sub_category)
+        formData.append('category', this.state.category.value)
+        formData.append('sub_category', this.state.subCategory.value)
         formData.append('myImage', this.state.img)
 
+        console.log('auth:', currentComponent.state.token)
         const url = MuhalikConfig.PATH + '/api/categories/category';
         await axios.post(url, formData, {
             headers: {
@@ -59,6 +64,7 @@ class AddCategory extends Component {
                 isLoading: false,
                 showToast: true,
                 isCategoryNew: false,
+                isSubCategoryNew: false,
                 category: '',
                 imgError: '',
             })
@@ -74,16 +80,32 @@ class AddCategory extends Component {
         });
     }
     handleCategoryChange = (e) => {
+        this.setState({ categoryError: '' })
         let search = null
         if (e != null) {
             search = this.props.categories_list.filter(element => element._id == e._id)
             if (search.length == 0) {
                 this.setState({ isCategoryNew: true })
             } else {
-                this.setState({ category: e.value, isCategoryNew: false })
+                this.setState({ category: e, isCategoryNew: false })
             }
         } else {
-            this.setState({ isCategoryNew: false })
+            this.setState({ category: '' })
+        }
+    }
+
+    handleSubCategoryChange = (e) => {
+        this.setState({ subCategoryError: '' })
+        let search = null
+        if (e != null) {
+            search = this.state.sub_categories_list.filter(element => element.value == e.value)
+            if (search.length != 0) {
+                this.setState({ isSubCategoryNew: true, subCategoryError: 'Enter new Value' })
+            } else {
+                this.setState({ subCategory: e, isSubCategoryNew: false })
+            }
+        } else {
+            this.setState({ subCategory: '' })
         }
     }
 
@@ -93,11 +115,25 @@ class AddCategory extends Component {
                 validationSchema={schema}
                 initialValues={{ sub_category: '' }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
-                    if (this.state.category == '') {
-                        this.setState({ categoryError: 'Select/Enter Value' })
-                    } else if (this.state.category.length < 5 || this.state.category.length > 24) {
-                        this.setState({ categoryError: 'Must be 5-25 caracters' })
+                    if (this.state.category == '' || this.state.subCategory == '') {
+                        if (this.state.category == '') {
+                            this.setState({ categoryError: 'Select/Enter Value' })
+                        }
+                        if (this.state.subCategory == '') {
+                            this.setState({ subCategoryError: 'Enter Value' })
+                        }
+                    } else if (this.state.isSubCategoryNew == true) {
+                        this.setState({ subCategoryError: 'Enter New Value' })
+                    } else if (this.state.category.value.length < 3 || this.state.category.value.length > 24) {
+                        this.setState({
+                            categoryError: 'Must be 3-25 caracters'
+                        })
+                    } else if (this.state.subCategory.value.length < 3 || this.state.subCategory.value.length > 24) {
+                        this.setState({
+                            subCategoryError: 'Must be 3-25 caracters'
+                        })
                     } else if (this.state.isCategoryNew == true && this.state.img == '') {
+                        this.setState({})
                         this.setState({ imgError: 'Select Image' })
                     }
                     else {
@@ -105,7 +141,6 @@ class AddCategory extends Component {
                         setSubmitting(true);
                         setTimeout(() => {
                             if (this.addCategory(values, this)) {
-                                resetForm()
                                 this.props.categoriesReloadHandler()
                             }
                             setSubmitting(false);
@@ -147,28 +182,29 @@ class AddCategory extends Component {
                                                     instanceId={'1'}
                                                     inputId={'1'}
                                                     isClearable
+                                                    value={this.state.category}
                                                     onChange={this.handleCategoryChange}
-                                                    options={this.props.categories_list}
+                                                    options={this.state.categories_list}
                                                 />
                                                 <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
                                                     {this.state.categoryError}
                                                 </Form.Row>
                                             </Form.Group>
+
                                             <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
                                                 <Form.Label style={styles.label}> Sub Category <span> * </span></Form.Label>
-                                                <InputGroup>
-                                                    <Form.Control
-                                                        type="text"
-                                                        placeholder="Enter Category Value"
-                                                        name="sub_category"
-                                                        value={values.sub_category}
-                                                        onChange={handleChange}
-                                                        isInvalid={touched.sub_category && errors.sub_category}
-                                                    />
-                                                    <Form.Control.Feedback type="invalid">
-                                                        {errors.sub_category}
-                                                    </Form.Control.Feedback>
-                                                </InputGroup>
+                                                <CreatableSelect
+                                                    id={'1'}
+                                                    instanceId={'1'}
+                                                    inputId={'1'}
+                                                    isClearable
+                                                    value={this.state.subCategory}
+                                                    onChange={this.handleSubCategoryChange}
+                                                    options={this.state.sub_categories_list}
+                                                />
+                                                <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
+                                                    {this.state.subCategoryError}
+                                                </Form.Row>
                                             </Form.Group>
                                         </Form.Row>
                                         {this.state.isCategoryNew ?

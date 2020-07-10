@@ -49,7 +49,7 @@ class Admin extends Component {
             sliders_list: [],
 
             token: '',
-            decodedToken: '',
+            decodedToken: { role: '', full_name: '', status: '' },
         }
     }
 
@@ -166,7 +166,10 @@ class Admin extends Component {
     }
 
     async authUser() {
-        this.setState({ decodedToken: await checkAuth('admin') });
+        let _decodedToken = await checkAuth('vendor')
+        console.log('vvavvav:', _decodedToken)
+        if (_decodedToken != null)
+            this.setState({ decodedToken: _decodedToken })
     }
 
     drawerToggleClickHandler = () => {

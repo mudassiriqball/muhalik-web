@@ -2,6 +2,8 @@ const productsController = {};
 const Products = require("../models/product.model");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const Categories = require("../models/category.model");
+const Sub_categories = require("../models/sub-category.model");
 
 
 productsController.add_rating_and_review = async (req, res) => {
@@ -193,16 +195,60 @@ productsController.get_products = async (req, res) => {
           message: "Does Not Exist",
         });
       }
-    } else if (req.query.field === "category" && req.query.field === "sub-category") {
-      var ObjectId = mongoose.Types.ObjectId;
-      const _id = new ObjectId(req.query.q)
-      const field = req.query.field;
-      const search = {};
-      search[field] = _id;
+    } else if (req.query.field === "category") {
+
+      let query = {};
+      query = await Categories.findOne({ label: req.query.q }, { _id: 1 })
       const products = await Products.aggregate([
         {
           $match:
-            search
+            { category: query._id }
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $lookup: {
+            from: "sub_categories",
+            localField: "sub_category",
+            foreignField: "_id",
+            as: "sub_category",
+          },
+        },
+        { $unwind: "$sub_category" },
+        {
+          $skip: (req.query.page - 1) * req.query.limit
+        },
+        {
+          $limit: parseInt(req.query.limit)
+        },
+      ]);
+      if (products) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: products,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
+    } else if (req.query.field === "sub-category") {
+
+      let query = {};
+      query = await Sub_categories.findOne({ label: req.query.q }, { _id: 1 })
+      const products = await Products.aggregate([
+        {
+          $match:
+            { sub_category: query._id }
         },
         {
           $lookup: {
@@ -487,12 +533,8 @@ productsController.getSingleProduct = async (req, res) => {
 };
 
 productsController.deleteProduct = async (req, res) => {
-  if (!req.params._id) {
-    Fu;
-    res.status(500).send({
-      message: "ID missing",
-    });
-  }
+  console.log('fu:', req.params._id)
+
   try {
     const _id = req.params._id;
     Products.findOneAndUpdate(

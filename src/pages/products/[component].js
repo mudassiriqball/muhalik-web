@@ -1,9 +1,9 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useLayoutEffect, useEffect } from 'react';
 import { Row, Col, Card, Image } from 'react-bootstrap'
 import { useRouter } from 'next/router'
 import SliderCarousel from '../components/customer/slider-carousel'
 import Layout from '../components/customer/layout';
-import useProductsInfiniteScroll from '../../use-poducts-infinite-scroll'
+import useQueryInfiniteScroll from '../../use-query-infinite-scroll'
 import useDimensions from "react-use-dimensions";
 import Router from 'next/router'
 import {
@@ -20,6 +20,8 @@ import axios from 'axios'
 import MuhalikConfig from '../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../styleSheet'
 import Link from 'next/link'
+
+React.useLayoutEffect = React.useEffect
 
 export async function getServerSideProps(context) {
     let categories_list = []
@@ -53,7 +55,7 @@ export default function Component(props) {
     let loadingCard = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
         '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
 
-    const { loading, error, products, hasMore } = useProductsInfiniteScroll(fieldName, query, pageNumber, isMobile ? '12' : '28')
+    const { loading, error, products, hasMore } = useQueryInfiniteScroll(fieldName, query, pageNumber, isMobile ? '12' : '28')
 
     const observer = useRef()
     const lastProducrRef = useCallback((node) => {

@@ -31,22 +31,21 @@ const ProductData = props => {
     return (
         <Accordion as={Row} style={{ margin: '2%' }} defaultActiveKey="0">
             <Card style={styles.card}>
-                <Card.Header style={styles.card_header}>
-                    Product Data
-                    <div className='mr-auto'></div>
+                <Card.Header className='card_toggle'>
+                    <Form.Label className='p-0 mb-0 ml-0 mr-auto'> Product Data</Form.Label>
                     <Form.Control
+                        className='mr-auto'
                         style={{ width: '50%' }}
                         as="select"
                         name="product_type"
                         size="sm"
                         value={props.product_type_values}
                         onChange={(e) => { props.onChange(e), props.productTypeHandler(e) }}
-                    // disabled={props.isUpdateProduct}
                     >
                         <option value='simple-product'> Simple Product </option>
                         <option value='variable-prouct'> Variable Product </option>
                     </Form.Control>
-                    <div className='mr-auto'></div>
+
                     <Accordion.Toggle eventKey="0" style={{ background: 'none' }}>
                         <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.slider_fontawesome} />
                     </Accordion.Toggle>
@@ -437,6 +436,19 @@ const ProductData = props => {
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>
+            <style type="text/css">{`
+                .card_toggle{
+                    background: #595c73;
+                    font-size: 13px;
+                    color: white;
+                    cursor: pointer;
+                    display: inline-flex;
+                    align-items: center;
+                }
+                .card_toggle:hover{
+                    background: #4e5065;
+                }
+            `}</style>
             <style jsx>
                 {`
                     span {
@@ -1138,7 +1150,7 @@ const styles = {
         maxWidth: '15px',
     },
     slider_fontawesome: {
-        color: `${GlobalStyleSheet.admin_primry_color}`,
+        color: 'white',
         width: '15px',
         height: '15px',
         maxHeight: '15px',

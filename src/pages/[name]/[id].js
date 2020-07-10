@@ -43,8 +43,8 @@ export async function getServerSideProps(context) {
 
 function Products(props) {
     const router = useRouter()
-    const { id } = router.query
     const { name } = router.query
+    const { id } = router.query
     const [ref, { x, y, width }] = useDimensions();
     const [_id, set_id] = useState(id)
     const [fieldName, setFieldName] = useState(name)
@@ -82,14 +82,19 @@ function Products(props) {
         if (_token !== null) {
             setToken(_token)
         }
-        if (name == 'sub_category') {
+        if (name == 'sub-category') {
             props.sub_categories_list.forEach(element => {
-                if (element._id == id) {
+                if (element.value == id) {
                     set_id(element.category_id)
                 }
             })
+        } else if (name == 'category') {
+            props.categories_list.forEach(element => {
+                if (element.value == id) {
+                    set_id(element._id)
+                }
+            })
         }
-
     }
 
 
@@ -122,8 +127,8 @@ function Products(props) {
                         <div className='m-3 align-self-center'>Related Categories</div>
                         {props.sub_categories_list && props.sub_categories_list.map(element =>
                             element.category_id == _id ?
-                                <Link href='/[name]/[id]' as={`/sub_category/${element._id}`} key={element._id} >
-                                    {id == element._id ?
+                                <Link href='/[name]/[id]' as={`/sub-category/${element.value}`} key={element._id} >
+                                    {id == element.value ?
                                         <a style={{ color: 'blue' }}>
                                             {element.value}
                                         </a>

@@ -102,6 +102,14 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
+                            <Nav.Item>
+                                <div className="nav_link" >
+                                    <Nav.Link style={styles.nav_link} onClick={props.logoutClickHandler}>
+                                        <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
+                                        <div className="mr-auto"> Reports </div>
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
                         </Nav>
                         {/* End Tabs Side Drawer */}
                     </div>
@@ -138,7 +146,7 @@ const Dashboard = props => {
                                 </InputGroup.Prepend>
                             </Form>
                             {/* Account Setting Dropdown */}
-                            <div className="account_settig_dropdown">
+                            {/* <div className="account_settig_dropdown">
                                 <NavDropdown className='p-0 m-0' title={
                                     <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '30px', maxWidth: '30px' }} />
                                 } id="nav-dropdown" alignRight>
@@ -160,7 +168,7 @@ const Dashboard = props => {
                                         Logout
                                 </NavDropdown.Item>
                                 </NavDropdown>
-                            </div>
+                            </div> */}
                         </Navbar>
                         {/* End of Toolbar */}
                         {/* Tab Content for Large Devices */}
@@ -188,7 +196,7 @@ const Dashboard = props => {
                                     />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Inventory">
-                                    <Inventory />
+                                    <Inventory {...props} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="BulkUpload">
                                     <BulkUpload />

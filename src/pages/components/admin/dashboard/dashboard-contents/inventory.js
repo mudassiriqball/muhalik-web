@@ -1,11 +1,9 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Row, Table, Button, Nav, Col, Image, Card, Form, InputGroup, Accordion, Pagination, Spinner } from 'react-bootstrap'
 import axios from 'axios'
-import Link from 'next/link'
-import Router from 'next/router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faArrowLeft, faTimes, faChevronLeft, faChevronRight, faSlidersH } from '@fortawesome/free-solid-svg-icons';
-import { faArrowAltCircleLeft } from '@fortawesome/free-regular-svg-icons';
+import { faPlus, faArrowLeft, faTimes, faChevronLeft, faChevronRight, faSlidersH, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsUp, faThumbsDown } from '@fortawesome/free-regular-svg-icons'
 import CardAccordion from '../../../card-accordion';
 import MuhalikConfig from '../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../styleSheet'
@@ -14,12 +12,16 @@ import AddNew from '../../../vendor/dashboard/dashboard-contents/product-content
 import usePageLimitInfiniteScroll from '../../../../../use-page-limit-infinite-scroll';
 import useQueryInfiniteScroll from '../../../../../use-query-infinite-scroll';
 import useDimensions from "react-use-dimensions";
-
-
+import ConfirmModal from '../../../confirm-modal'
+import AlertModal from '../../../alert-modal';
+import { getTokenFromStorage } from '../../../../../sdk/core/authentication-service'
 export default function Inventory(props) {
 
     const [totalProducts, setTotalProducts] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
+
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false)
+    const [showModal, setShowModal] = useState(false)
 
     const [product_list, setProduct_list] = useState([])
     const [viewProduct, setViewProduct] = useState(false)
@@ -92,32 +94,40 @@ export default function Inventory(props) {
         setViewProduct('edit')
     }
 
-    console.log('dadad:', data)
+    function handleShowConfirmModal(element) {
+        setData(element)
+        setShowConfirmDeleteModal(true)
+    }
 
-    async function handleDeleteProduct(index) {
-        // const copyArray = Object.assign([], products)
-        // const array = Object.assign([], products)
-        // let _id = ''
-        // if (index == -1) {
-        //     _id = data._id;
-        // } else {
-        //     _id = copyArray[index]._id;
-        // }
-        // const url = MuhalikConfig.PATH + `/api/products/${_id}`;
-        // copyArray.forEach((element, i) => {
-        //     if (element._id == _id) {
-        //         array.splice(i, 1)
-        //     }
-        // })
-        // setState({ products: array })
-        // await axios.delete(url, {
-        //     headers: { 'authorization': await getUncodededTokenFromStorage() }
-        // }).then(function (response) {
-        //     return true;
-        // }).catch(function (error) {
-        //     alert('Error: ', error.response.data.message);
-        //     return false;
-        // });
+    async function handleDeleteProduct() {
+        setShowConfirmDeleteModal(false)
+        const url = MuhalikConfig.PATH + `/api/products/delete/${data._id}`;
+
+        await axios.put(url, {}, {
+            headers: {
+                'authorization': props.token
+            }
+        }).then(function (response) {
+            setShowModal(true)
+            if (!isSearch) {
+                _products.forEach((element, index) => {
+                    if (data._id == element._id) {
+                        _products.splice(index, 1)
+                        return
+                    }
+                })
+            } else {
+                products.forEach((element, index) => {
+                    if (data._id == element._id) {
+                        products.splice(index, 1)
+                        return
+                    }
+                })
+            }
+        }).catch(function (error) {
+            console.log(error)
+            alert('Error: ');
+        });
     }
 
     function renderSwitch(param) {
@@ -127,7 +137,7 @@ export default function Inventory(props) {
                     data={data}
                     back={() => { setViewProduct(false), setData({}) }}
                     isVariableProduct={data.product_type != "simple-product"}
-                    delete={() => handleDeleteProduct(-1)}
+                    handleShowConfirmModal={() => handleShowConfirmModal(-1)}
                     edit={() => handleEditProduct(-1)}
                 />
                 break;
@@ -140,7 +150,7 @@ export default function Inventory(props) {
 
                     back={() => { setViewProduct(false), setData({}) }}
                     view={() => setViewProduct('view')}
-                    delete={() => handleDeleteProduct(-1)}
+                    handleShowConfirmModal={() => handleShowConfirmModal(-1)}
 
                     productCategory={data.category}
                     // productSubCategories={data.sub_category}
@@ -233,11 +243,11 @@ export default function Inventory(props) {
 
                                                 setViewProduct={() => { setData(element), setViewProduct('view') }}
                                                 handleEditProduct={() => handleEditProduct(index)}
-                                                handleDeleteProduct={() => handleDeleteProduct(index)}
+                                                handleShowConfirmModal={() => handleShowConfirmModal(element)}
                                             />
                                         )
                                         :
-                                        products && products.map((element, index) =>
+                                        hasMore && products && products.map((element, index) =>
                                             <TableBody key={element._id}
                                                 element={element}
                                                 pageNumber={queryPageNumber}
@@ -246,7 +256,7 @@ export default function Inventory(props) {
 
                                                 setViewProduct={() => { setData(element), setViewProduct('view') }}
                                                 handleEditProduct={() => handleEditProduct(index)}
-                                                handleDeleteProduct={() => handleDeleteProduct(index)}
+                                                handleShowConfirmModal={() => handleShowConfirmModal(element)}
                                             />
                                         )
                                     }
@@ -329,6 +339,25 @@ export default function Inventory(props) {
 
     return (
         <div>
+            <AlertModal
+                onHide={() => setShowModal(false)}
+                show={showModal}
+                header={'Success'}
+                message={'Product Deleted Successfully'}
+                iconname={faThumbsUp}
+                color={"#00b300"}
+            />
+            <ConfirmModal
+                onHide={() => setShowConfirmDeleteModal(false)}
+                show={showConfirmDeleteModal}
+                iconname={faTrash}
+                color={'red'}
+                title={'Delete Product?'}
+                _id={data._id}
+                name={data.product_name}
+                confirm={handleDeleteProduct}
+            />
+
             {renderSwitch(viewProduct)}
         </div>
     )
@@ -348,7 +377,7 @@ function TableBody(props) {
                         <div className="td">
                             <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.setViewProduct} >View</Nav.Link>
                             <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.handleEditProduct}>Edit</Nav.Link>
-                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={props.handleDeleteProduct}>Delete</Nav.Link>
+                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={props.handleShowConfirmModal}>Delete</Nav.Link>
                         </div>
                     </td>
                     <td align="center" >{element.product_name}</td>
@@ -377,7 +406,7 @@ function TableBody(props) {
                         <div className="td">
                             <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.setViewProduct} >View</Nav.Link>
                             <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.handleEditProduct}>Edit</Nav.Link>
-                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={props.handleDeleteProduct}>Delete</Nav.Link>
+                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={props.handleShowConfirmModal}>Delete</Nav.Link>
                         </div>
                     </td>
                     <td align="center" >{element.product_name}</td>
@@ -445,10 +474,9 @@ function PaginationRow(props) {
                     onClick={() => props.setPageNumber(props.pageNumber + 1)}>
                 </Pagination.Next>
 
-
                 <Pagination.Item
-                    disabled={props.totalPages != -1 ? false : true}
-                    onClick={() => props.setPageNumber(props.totalPages)}>{props.totalPages}</Pagination.Item>
+                    disabled={props.totalPages == -1 ? true : false}
+                    onClick={() => props.setPageNumber(props.totalPages)}>{props.totalPages == -1 ? '-' : props.totalPages}</Pagination.Item>
             </Pagination>
         </Row>
     )
@@ -475,7 +503,6 @@ const ViewProduct = props => {
         }
     }
 
-    console.log('width:', width + ',,,' + x + '---' + y)
     return (
         <>
             <TitleRow icon={faPlus} title={` Vendor Dashboard / All Products / ${props.data.product_name}`} />
@@ -483,7 +510,7 @@ const ViewProduct = props => {
                 <Button variant='outline-primary' size='sm' className="mr-auto" onClick={props.back}>Back</Button>
                 <div className="mr-auto" style={{ fontSize: '14px' }}> {props.data.product_name || '-'}</div>
                 <Button variant='outline-primary' size='sm' className="mr-3" onClick={props.edit}>Edit</Button>
-                <Button variant='outline-danger' size='sm' onClick={props.delete}>Delete</Button>
+                <Button variant='outline-danger' size='sm' onClick={props.handleShowConfirmModal}>Delete</Button>
             </Form.Row>
             <CardAccordion title={'General Info'}>
                 <Row>
@@ -568,7 +595,7 @@ const ViewProduct = props => {
             {props.isVariableProduct ?
                 <CardAccordion title={'Variations'}>
                     {props.data.product_variations && props.data.product_variations.map((element, index) =>
-                        <Accordion defaultActiveKey='0' className='pb-2'>
+                        <Accordion key={element._id} defaultActiveKey='0' className='pb-2'>
                             <Card>
                                 <Accordion.Toggle as={Card.Header} eventKey={index} className='accordian_toggle'>
                                     <Form.Label className='p-0 mb-0 ml-0 mr-auto'>ID: {element._id}</Form.Label>
@@ -576,7 +603,7 @@ const ViewProduct = props => {
                                 </Accordion.Toggle>
                                 <Accordion.Collapse eventKey={index} style={{ padding: '1%' }}>
                                     <>
-                                        <Row key={index} noGutters >
+                                        <Row noGutters >
                                             <label className='haeder_label'>Variations</label>
                                             <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl1 pr-1'>
                                                 <Form.Label className='form_label'>Price</Form.Label>
@@ -632,7 +659,7 @@ const ViewProduct = props => {
                 :
                 <>
                     <CardAccordion title={'Custom Fields'}>
-                        <Row key={index} noGutters>
+                        <Row noGutters>
                             {props.data.custom_fields && props.data.custom_fields.map((element, index) =>
                                 <Form.Group as={Col} lg={2} md={2} sm={4} xs={12} className='pl1 pr-1'>
                                     <Form.Label className='form_label'>{element.name}</Form.Label>

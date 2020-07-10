@@ -151,6 +151,14 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
+                            <Nav.Item>
+                                <div className="nav_link" >
+                                    <Nav.Link eventKey="" style={styles.nav_link} onClick={props.logout}>
+                                        <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
+                                        <div className="mr-auto">Logout</div>
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
                         </Nav>
                         {/* End Tabs Side Drawer */}
                     </div>

@@ -69,6 +69,7 @@ function Product(props) {
     const [wish, setWish] = useState('gray')
     const [_loading, _setLoading] = useState(false)
     const [cart, setCart] = useState(0)
+    const [cartError, setCartError] = useState('')
 
     useLayoutEffect(() => {
         getData()
@@ -136,27 +137,32 @@ function Product(props) {
     }
 
 
-    async function handleAddToCart(product_id, variation_id) {
+    async function handleAddToCart(product_id, variation_id, index) {
         let data = {
             _id: product_id,
             variation_id: variation_id,
+            index: index,
             quantity: cart
         }
 
+        console.log('data:', data)
+
         if (token.full_name == '') {
             Router.push('/login')
+        } else if (cart == 0 || cart == 'Quantity') {
+            setCartError('Select quantity first')
         } else {
-            setLoading(true)
+            _setLoading(true)
             if (cart > 0) {
-                const url = MuhalikConfig.PATH + `/api/users/cart/${props.token._id}`;
+                const url = MuhalikConfig.PATH + `/api/users/cart/${token._id}`;
                 await axios.put(url, data, {
                     headers: {
                         'authorization': undecoded_token,
                     }
                 }).then(function (response) {
-                    setLoading(false)
+                    _setLoading(false)
                 }).catch(function (error) {
-                    setLoading(false)
+                    _setLoading(false)
                     alert('ERROR: Product not added to cart')
                 });
             }
@@ -182,7 +188,8 @@ function Product(props) {
                                 token={token}
                                 wish={wish}
                                 addToWishlist={addToWishlist}
-                                setCart={(value) => setCart(value)}
+                                setCart={(value) => { setCart(value), setCartError('') }}
+                                cartError={cartError}
                                 handleAddToCart={handleAddToCart}
                                 loading={_loading}
                             />
@@ -193,7 +200,8 @@ function Product(props) {
                                 token={token}
                                 wish={wish}
                                 addToWishlist={addToWishlist}
-                                setCart={(value) => setCart(value)}
+                                setCart={(value) => { setCart(value), setCartError('') }}
+                                cartError={cartError}
                                 handleAddToCart={handleAddToCart}
                                 loading={_loading}
                             />
@@ -465,7 +473,7 @@ function SimpleProduct(props) {
 
     for (let i = 0; i < props.single_product.product_in_stock; i++) {
         options.push(
-            <option>{i + 1}</option>
+            <option key={i}>{i + 1}</option>
         )
     }
 
@@ -534,10 +542,10 @@ function SimpleProduct(props) {
                         </Col>
                     </Row>
 
-                    <div className='add_to_wish_list'>
+                    {/* <div className='add_to_wish_list'>
                         <label>Add to Wishlist</label>
                         <FontAwesomeIcon icon={faHeart} className='font_awsome' onClick={() => props.addToWishlist(props.single_product._id)} />
-                    </div>
+                    </div> */}
 
                     <div className='stock'>
                         {'Available in Stock'}
@@ -553,10 +561,13 @@ function SimpleProduct(props) {
                                         element
                                     )}
                                 </Form.Control>
+                                <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
+                                    {props.cartError}
+                                </Form.Row>
                             </Form.Group>
                             <Col className='ml-1'>
                                 <Button variant='success' block disabled={props.loading}
-                                    onClick={() => props.handleAddToCart(props.single_product._id, '')}>
+                                    onClick={() => props.handleAddToCart(props.single_product._id, '', '')}>
                                     {props.loading ? 'Adding' : 'Add to Cart'}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
                                 </Button>
@@ -606,7 +617,7 @@ function VariableProduct(props) {
 
     for (let i = 0; i < activeVariation.stock; i++) {
         options.push(
-            <option>{i + 1}</option>
+            <option key={i}>{i + 1}</option>
         )
     }
 
@@ -676,10 +687,10 @@ function VariableProduct(props) {
                         </Col>
                     </Row>
 
-                    <div className='add_to_wish_list'>
+                    {/* <div className='add_to_wish_list'>
                         <label>Add to Wishlist</label>
                         <FontAwesomeIcon icon={faHeart} className='font_awsome' onClick={() => props.addToWishlist(props.single_product._id)} />
-                    </div>
+                    </div> */}
 
                     <div className='stock'>
                         {'Available in Stock'}
@@ -695,10 +706,13 @@ function VariableProduct(props) {
                                         element
                                     )}
                                 </Form.Control>
+                                <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
+                                    {props.cartError}
+                                </Form.Row>
                             </Form.Group>
                             <Col className='ml-1'>
                                 <Button variant='success' block disabled={props.loading}
-                                    onClick={() => props.handleAddToCart(props.single_product._id, props.activeVariation._id)}>
+                                    onClick={() => props.handleAddToCart(props.single_product._id, activeVariation._id, activeVariationIndex)}>
                                     {props.loading ? 'Adding' : 'Add to Cart'}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
                                 </Button>
@@ -940,7 +954,7 @@ function VendorInfo(props) {
             </div>
 
             <hr />
-            <div className='d-flex flex-column align-items-center justify-content-center' style={{ marginLeft: '-25px' }}>
+            {/* <div className='d-flex flex-column align-items-center justify-content-center' style={{ marginLeft: '-25px' }}>
                 <div className='delivered_slope'>
                     <div > Delivered: </div>
                     <Badge variant='success' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
@@ -959,7 +973,7 @@ function VendorInfo(props) {
                         {returned}
                     </Badge>
                 </div>
-            </div>
+            </div> */}
             <style type="text/css">{`
                 ._div{
                     font-size: 13px;
@@ -1080,7 +1094,7 @@ function VendorInfo(props) {
 
 
 function TabComponent(props) {
-    const [rating, setRating] = useState('')
+    const [rating, setRating] = useState(0)
     const [review, setReview] = useState('')
     const [reviewError, setReviewError] = useState('')
 
@@ -1149,12 +1163,12 @@ function TabComponent(props) {
                             {props.single_product.product_description}
                         </div>
                         :
-                        <label className='text-center p-5 w-100' style={{ fontSize: '16px', color: 'gray' }}>No Description</label>
+                        <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>No Description</label>
                     }
                 </Tab>
                 <Tab eventKey="Specifications" title="Specifications" className='p-3'>
                     {props.custom_fields.length == 0 ?
-                        <label className='text-center p-5 w-100' style={{ fontSize: '16px', color: 'gray' }}>No Specifications</label>
+                        <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>No Specifications</label>
                         :
                         <Table borderless size="sm" >
                             <tbody>
@@ -1173,21 +1187,21 @@ function TabComponent(props) {
                     <Tabs defaultActiveKey="Rating" id="uncontrolled-tab-example" className='inner_tabs'>
                         <Tab eventKey="Rating" title="Rating">
                             <Row className='pt-3 pb-3'>
-                                <Col lg={4} md={4} sm={4} xs={12} className='d-flex flex-column align-items-center  justify-content-center'>
-                                    <div className='text-center' style={{ fontSize: '13px', color: 'gray', marginBottom: '5px' }}>Overall Rating</div>
+                                <Col lg={4} md={4} sm={4} xs={4} className='d-flex flex-column align-items-center  justify-content-center'>
+                                    <div className='text-center' style={{ fontSize: '12px', color: 'gray', marginBottom: '5px' }}>Overall Rating</div>
                                     <div className='text-center' style={{ fontSize: '20px', color: 'orange' }}>
                                         {rating_review.rating.overall}
                                     </div>
                                     <ReactStars
                                         count={5}
-                                        size={24}
+                                        size={20}
                                         half={true}
                                         value={rating_review.rating.overall}
                                         edit={false}
                                         color2={"orange"}
                                     />
                                 </Col>
-                                <Col lg={8} md={8} sm={8} xs={12} className='d-flex flex-column'>
+                                <Col lg={8} md={8} sm={8} xs={8} className='d-flex flex-column'>
                                     <div className='star_rating five_stars_rating'>
                                         {'5:'} <span></span>
                                         <label>
@@ -1223,7 +1237,7 @@ function TabComponent(props) {
                         </Tab>
                         <Tab eventKey="Reviews" title="Reviews" style={{ overflowY: 'scroll', maxHeight: '300px' }}>
                             {rating_review.reviews == [] ?
-                                <label className='text-center p-5 w-100' style={{ fontSize: '16px', color: 'gray' }}>No Reviews</label>
+                                <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>No Reviews</label>
                                 :
                                 rating_review.reviews && rating_review.reviews.map((element, index) =>
                                     <div key={element._id} className='review'>
@@ -1241,13 +1255,13 @@ function TabComponent(props) {
                             <Tab eventKey="GiveReview" title="Give Review" >
                                 <Row className='pt-2 pb-2 pl-5 pr-5'>
                                     <div className='d-inline-flex align-items-center'>
-                                        <div style={{ fontSize: '16px', marginRight: '10px' }}>Rate Product</div>
+                                        <div style={{ fontSize: '13px', marginRight: '10px' }}>Rate Product</div>
                                         <ReactStars
                                             count={5}
                                             value={rating}
                                             half={false}
                                             onChange={ratingChanged}
-                                            size={26}
+                                            size={20}
                                             color2={"orange"}
                                         />
                                     </div>
