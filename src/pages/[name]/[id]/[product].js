@@ -145,6 +145,8 @@ function Product(props) {
             quantity: cart
         }
 
+        console.log('ueer _id:', token._id)
+
         console.log('data:', data)
 
         if (token.full_name == '') {
