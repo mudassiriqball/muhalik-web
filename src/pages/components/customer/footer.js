@@ -10,7 +10,7 @@ const Footer = () => (
         <div style={styles.footer}>
             <p className="text-center">
                 Copyright@ 2020
-                    <span style={{ fontSize: 'medium', fontWeight: 'bold', }}> Muhalik </span>
+                    <span style={{ fontSize: 'medium', fontWeight: 'bold', }}> Mahaalk </span>
                 - Online Shopping Website
             </p>
             <Row style={styles.card} className='justify-content-center'>
@@ -43,7 +43,7 @@ const Footer = () => (
                 <div className='mr-auto'>
                     <div className='list_header'>About Us</div>
                     <div className='list_text'>Know More About Us</div>
-                    <div className='list_text'>Muhalik's Team</div>
+                    <div className='list_text'>Mahaalk's Team</div>
                 </div>
 
                 <div className='mr-auto'>
@@ -54,7 +54,7 @@ const Footer = () => (
                 </div>
                 <div>
                     <div className='list_header'>Sell With Us</div>
-                    <div className='list_text'>Be Muhalik's Part</div>
+                    <div className='list_text'>Be Mahaalk's Part</div>
                     <div className='list_text'>Learn More</div>
                 </div>
             </Row>

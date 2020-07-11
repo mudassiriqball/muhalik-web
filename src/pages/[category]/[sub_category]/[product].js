@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
-import { Row, Col, Card, Image, Button, Form, Table, Tab, Nav, Badge, Tabs, InputGroup, Spinner } from 'react-bootstrap'
+import { Row, Col, Card, Image, Button, Form, Breadcrumb, Table, Tab, Nav, Badge, Tabs, InputGroup, Spinner } from 'react-bootstrap'
 import { useRouter } from 'next/router'
 import Layout from '../../components/customer/layout';
 import useDimensions from "react-use-dimensions";
@@ -23,7 +23,7 @@ import useQueryInfiniteScroll from '../../../use-query-infinite-scroll'
 import ReactStars from "react-rating-stars-component";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-regular-svg-icons';
-
+import BreadcrumbRow from '../../components/breadcrumb-row'
 React.useLayoutEffect = React.useEffect
 
 export async function getServerSideProps(context) {
@@ -58,8 +58,7 @@ export async function getServerSideProps(context) {
 
 function Product(props) {
     const router = useRouter()
-    const { id } = router.query
-    const { product } = router.query
+    const { category, sub_category, product } = router.query
 
     const [token, setToken] = useState({ role: '', full_name: '' })
     const [undecoded_token, setUndecoded_token] = useState('')
@@ -179,9 +178,23 @@ function Product(props) {
                 logout={logout}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
-                id={id}
+                active_category={category}
+                active_sub_category={sub_category}
             >
                 <div className='main-row'>
+                    <BreadcrumbRow active={product}>
+                        <Breadcrumb.Item >
+                            <Link href='/[category]' as={`/${category}`} >
+                                {category}
+                            </Link>
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item >
+                            <Link href='/[category]/[sub_category]' as={`/${category}/${sub_category}`} >
+                                {sub_category}
+                            </Link>
+                        </Breadcrumb.Item>
+                    </BreadcrumbRow>
+
                     <Row noGutters>
                         {props.single_product.product_type == "simple-product" ?
                             <SimpleProduct

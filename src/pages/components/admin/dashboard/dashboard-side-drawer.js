@@ -3,7 +3,7 @@ import { Nav, Tab, Row, Col, Image } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faPersonBooth, faTachometerAlt, faChevronRight, faUsers, faChevronUp, faChevronDown,
-    faListAlt, faWarehouse, faTags, faPercent, faChartBar, faPlusCircle, faTh
+    faListAlt, faWarehouse, faTags, faPercent, faChartBar, faPlusCircle, faTh, faPowerOff
 } from '@fortawesome/free-solid-svg-icons';
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
@@ -93,7 +93,7 @@ const DashboardSideDrawer = props => {
                         </Nav.Item>
                         <Nav.Item>
                             <div className="nav_link">
-                                <Nav.Link style={styles.nav_link} onClick={() => setShow_category(false)}>
+                                <Nav.Link style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
                                     <FontAwesomeIcon size="xs" icon={faTh} style={styles.fontawesome} />
                                     <div className="mr-auto"> Category </div>
                                     <FontAwesomeIcon icon={show_category ? faChevronUp : faChevronDown} style={styles.forword_fontawesome} />
@@ -159,7 +159,7 @@ const DashboardSideDrawer = props => {
                         <Nav.Item>
                             <div className="nav_link" >
                                 <Nav.Link onClick={props.click, props.logout} style={styles.nav_link}>
-                                    <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
+                                    <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
                                     <div className="mr-auto">Logout</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>

@@ -1,7 +1,7 @@
 import { Image, Nav, Navbar, Dropdown, NavDropdown, ButtonGroup, Form, FormControl, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faBars, faPowerOff, faChevronRight, faPlusCircle, faChevronDown, faChevronUp, faTachometerAlt, faPersonBooth, faHandsHelping, faUser, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar, faTh } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBars, faPowerOff, faChevronRight, faPlusCircle, faChevronDown, faChevronUp, faTachometerAlt, faPersonBooth, faHandsHelping, faUser, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar, faTh, faCog } from '@fortawesome/free-solid-svg-icons';
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 import AdminDashboard from './dashboard-contents/admin-dashboard';
@@ -151,14 +151,6 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
-                            <Nav.Item>
-                                <div className="nav_link" >
-                                    <Nav.Link eventKey="" style={styles.nav_link} onClick={props.logout}>
-                                        <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
-                                        <div className="mr-auto">Logout</div>
-                                    </Nav.Link>
-                                </div>
-                            </Nav.Item>
                         </Nav>
                         {/* End Tabs Side Drawer */}
                     </div>
@@ -179,7 +171,7 @@ const Dashboard = props => {
                                 </Button>
                             </div>
                             {/* Search Bar */}
-                            <Form inline className='search_form mr-auto'>
+                            {/* <Form inline className='search_form mr-auto'>
                                 <Form.Control
                                     style={styles.search_bar}
                                     type="text"
@@ -193,7 +185,23 @@ const Dashboard = props => {
                                         <FontAwesomeIcon icon={faSearch} style={styles.toolbar_fontawesomer} />
                                     </Button>
                                 </InputGroup.Prepend>
-                            </Form>
+                            </Form> */}
+                            {/* Account Setting Dropdown */}
+                            <div className="account_settig_dropdown ml-auto">
+                                <NavDropdown className='p-0 m-0' title={
+                                    <FontAwesomeIcon icon={faCog} style={styles.cog_fontawesome} />
+                                } id="nav-dropdown" alignRight>
+                                    <NavDropdown.Item className='dropdown_item'>
+                                        <FontAwesomeIcon icon={faHandsHelping} style={styles.dropDown_fontawesome} />
+                                        Help?
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Divider />
+                                    <NavDropdown.Item onClick={props.logout} className='dropdown_item'>
+                                        <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
+                                        Logout
+                                </NavDropdown.Item>
+                                </NavDropdown>
+                            </div>
                         </Navbar>
                         {/* End of Toolbar */}
                         {/* Tab Content for Large Devices */}
@@ -256,6 +264,11 @@ const Dashboard = props => {
                 </Row>
             </Tab.Container>
             <style type="text/css">{`
+                .dropdown_item{
+                    font-size: 12px;
+                    display: flex;
+                    align-items: center;
+                }
                 .search_form{
                     width: 50%;
                     padding-left: 5%;
@@ -431,6 +444,14 @@ const styles = {
     dropDown_fontawesome: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
         margin: '0px 20px 0px 0px',
+        width: '18px',
+        height: '18px',
+        maxHeight: '18px',
+        maxWidth: '18px',
+    },
+    cog_fontawesome: {
+        color: `${GlobalStyleSheet.admin_primry_color}`,
+        margin: '0px',
         width: '18px',
         height: '18px',
         maxHeight: '18px',

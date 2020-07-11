@@ -9,8 +9,8 @@ import MuhalikConfig from '../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../styleSheet'
 import TitleRow from '../../../title-row';
 import AddNew from '../../../vendor/dashboard/dashboard-contents/product-contents/add-new'
-import usePageLimitInfiniteScroll from '../../../../../use-page-limit-infinite-scroll';
-import useQueryInfiniteScroll from '../../../../../use-query-infinite-scroll';
+import useIdPageLimitInfiniteScroll from '../../../../../use-id-page-limit-infinite-scroll';
+import useIdQueryInfiniteScroll from '../../../../../use-id-query-infinite-scroll';
 import useDimensions from "react-use-dimensions";
 import ConfirmModal from '../../../confirm-modal'
 import AlertModal from '../../../alert-modal';
@@ -36,8 +36,8 @@ export default function Inventory(props) {
     const [queryPageNumber, setQueryPageNumber] = useState(1)
     const [query, setQuery] = useState(null)
 
-    const { _loading, _error, _products, _hasMore } = usePageLimitInfiniteScroll(false, limitPageNumber, 20)
-    const { loading, error, products, hasMore } = useQueryInfiniteScroll(fieldName, query, queryPageNumber, 20)
+    const { _id_loading, _id_error, _id_products, _id_hasMore } = useIdPageLimitInfiniteScroll(false, limitPageNumber, 20)
+    const { id_loading, id_error, id_products, id_hasMore } = useIdQueryInfiniteScroll(fieldName, query, queryPageNumber, 20)
 
     useEffect(() => {
         getData()
@@ -60,6 +60,15 @@ export default function Inventory(props) {
         })
     }
 
+    function handleSearchEnterPress(e) {
+        var key = e.keyCode || e.which;
+        if (key == 13) {
+            handleSearch()
+        } else {
+            console.log('not e')
+        }
+    }
+
     async function handleSearch() {
         if (filterStr != '') {
             setFieldName(searchType)
@@ -75,7 +84,7 @@ export default function Inventory(props) {
         if (index == -1) {
             element = data
         } else {
-            element = _products[index]
+            element = _id_products[index]
         }
         if (element.product_type != 'simple-product') {
             let array = [];
@@ -110,16 +119,16 @@ export default function Inventory(props) {
         }).then(function (response) {
             setShowModal(true)
             if (!isSearch) {
-                _products.forEach((element, index) => {
+                _id_products.forEach((element, index) => {
                     if (data._id == element._id) {
-                        _products.splice(index, 1)
+                        _id_products.splice(index, 1)
                         return
                     }
                 })
             } else {
-                products.forEach((element, index) => {
+                id_products.forEach((element, index) => {
                     if (data._id == element._id) {
-                        products.splice(index, 1)
+                        id_products.splice(index, 1)
                         return
                     }
                 })
@@ -206,6 +215,7 @@ export default function Inventory(props) {
                                             placeholder="Search Here"
                                             name="search"
                                             value={filterStr}
+                                            onKeyPress={(e) => handleSearchEnterPress(e)}
                                             onChange={(e) => { e.target.value != '' ? setFilterStr(e.target.value) : setIsSearch(false), setFilterStr(e.target.value) }}
                                         />
                                         <InputGroup.Append >
@@ -234,12 +244,12 @@ export default function Inventory(props) {
                                 </thead>
                                 <tbody>
                                     {!isSearch ?
-                                        _products && _products.map((element, index) =>
+                                        _id_products && _id_products.map((element, index) =>
                                             <TableBody key={element._id}
                                                 element={element}
                                                 pageNumber={limitPageNumber}
                                                 index={index}
-                                                loading={_loading}
+                                                loading={_id_loading}
 
                                                 setViewProduct={() => { setData(element), setViewProduct('view') }}
                                                 handleEditProduct={() => handleEditProduct(index)}
@@ -247,12 +257,12 @@ export default function Inventory(props) {
                                             />
                                         )
                                         :
-                                        hasMore && products && products.map((element, index) =>
+                                        id_hasMore && id_products && id_products.map((element, index) =>
                                             <TableBody key={element._id}
                                                 element={element}
                                                 pageNumber={queryPageNumber}
                                                 index={index}
-                                                loading={loading}
+                                                loading={id_loading}
 
                                                 setViewProduct={() => { setData(element), setViewProduct('view') }}
                                                 handleEditProduct={() => handleEditProduct(index)}
@@ -265,7 +275,7 @@ export default function Inventory(props) {
 
                             {!isSearch ?
                                 <>
-                                    {_loading ?
+                                    {_id_loading ?
                                         <div className='_div'>
                                             < Spinner animation="grow" variant="primary" />
                                             <Spinner animation="grow" variant="secondary" />
@@ -276,7 +286,7 @@ export default function Inventory(props) {
                                             <Spinner animation="grow" variant="dark" />
                                         </div>
                                         :
-                                        !_hasMore && <Row className='_div'>No Data Found</Row>
+                                        !_id_hasMore && <Row className='_div'>No Data Found</Row>
                                     }
                                     <hr />
                                     <PaginationRow
@@ -287,7 +297,7 @@ export default function Inventory(props) {
                                 </>
                                 :
                                 <>
-                                    {loading ?
+                                    {id_loading ?
                                         <div className='_div'>
                                             < Spinner animation="grow" variant="primary" />
                                             <Spinner animation="grow" variant="secondary" />
@@ -298,14 +308,14 @@ export default function Inventory(props) {
                                             <Spinner animation="grow" variant="dark" />
                                         </div>
                                         :
-                                        !hasMore && <Row className='_div'>No Data Found</Row>
+                                        !id_hasMore && <Row className='_div'>No Data Found</Row>
                                     }
                                     <hr />
                                     <PaginationRow
                                         totalPages={-1}
                                         pageNumber={queryPageNumber}
                                         setPageNumber={(pageNumber) => setQueryPageNumber(pageNumber)}
-                                        hasMore={hasMore}
+                                        hasMore={id_hasMore}
                                     />
                                 </>
                             }

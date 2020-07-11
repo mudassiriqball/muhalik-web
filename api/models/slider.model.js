@@ -7,10 +7,10 @@ const slider = new Schema({
     type: String
   },
   category: {
-    type: Schema.Types.ObjectId,
+    type: String,
   },
   sub_category: {
-    type: Schema.Types.ObjectId,
+    type: String,
   },
   entry_date: {
     type: Date

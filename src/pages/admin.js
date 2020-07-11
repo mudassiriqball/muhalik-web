@@ -28,6 +28,7 @@ let token = ''
 class Admin extends Component {
     constructor(props) {
         super(props);
+        this.authUser()
         this.state = {
             sideDrawerOpen: false,
             showWrapper: true,
@@ -54,7 +55,6 @@ class Admin extends Component {
     }
 
     async componentDidMount() {
-        this.authUser()
         const currentComponent = this;
         this.setState({ token: await getTokenFromStorage() })
 
@@ -87,23 +87,6 @@ class Admin extends Component {
             console.log("Field Requests Fetching Error:", error)
             // alert('field-requests: ', error)
         })
-
-
-
-
-        // const url_3 = MuhalikConfig.PATH + '/api/products/';
-        // await axios.get(url_3).then(function (response) {
-        //     currentComponent.setState({
-        //         products_list: response.data.data,
-        //     });
-        // }).catch(function (error) {
-        //     console.log("all products: Fetching Error:", error)
-        //     alert('all products error: ', error)
-        // })
-
-
-
-
 
         const url_4 = MuhalikConfig.PATH + '/api/users/vendors';
         await axios.get(url_4).then(function (response) {
@@ -166,10 +149,10 @@ class Admin extends Component {
     }
 
     async authUser() {
-        let _decodedToken = await checkAuth('vendor')
-        console.log('vvavvav:', _decodedToken)
-        if (_decodedToken != null)
+        let _decodedToken = await checkAuth('admin')
+        if (_decodedToken != null) {
             this.setState({ decodedToken: _decodedToken })
+        }
     }
 
     drawerToggleClickHandler = () => {

@@ -26,6 +26,7 @@ const BackDrop = props => (
 class Vendor extends Component {
     constructor(props) {
         super(props);
+        this.authUser();
         this.state = {
             sideDrawerOpen: false,
             showWrapper: true,
@@ -42,7 +43,6 @@ class Vendor extends Component {
     }
 
     async componentDidMount() {
-        this.authUser();
         const url = MuhalikConfig.PATH + '/api/categories/categories'
         this.setState({ token: await getTokenFromStorage() })
         const currentComponent = this
@@ -68,9 +68,9 @@ class Vendor extends Component {
 
     async authUser() {
         let _decodedToken = await checkAuth('vendor')
-        console.log('vvavvav:', _decodedToken)
-        if (_decodedToken != null)
+        if (_decodedToken != null) {
             this.setState({ decodedToken: _decodedToken })
+        }
     }
 
     drawerToggleClickHandler = () => {

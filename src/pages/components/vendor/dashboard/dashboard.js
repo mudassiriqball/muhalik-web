@@ -3,7 +3,7 @@ import { Image, Nav, Navbar, Dropdown, NavDropdown, ButtonGroup, Form, Container
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faSearch, faBars, faChevronRight, faTachometerAlt, faUpload, faHandsHelping, faUser,
-    faChevronDown, faChevronUp, faPowerOff, faListAlt, faWarehouse, faTags, faPercent, faPlusCircle, faChartBar
+    faChevronDown, faChevronUp, faPowerOff, faListAlt, faWarehouse, faTags, faPercent, faPlusCircle, faChartBar, faCog
 } from '@fortawesome/free-solid-svg-icons';
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
@@ -102,14 +102,6 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
-                            <Nav.Item>
-                                <div className="nav_link" >
-                                    <Nav.Link style={styles.nav_link} onClick={props.logoutClickHandler}>
-                                        <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
-                                        <div className="mr-auto"> Reports </div>
-                                    </Nav.Link>
-                                </div>
-                            </Nav.Item>
                         </Nav>
                         {/* End Tabs Side Drawer */}
                     </div>
@@ -130,7 +122,7 @@ const Dashboard = props => {
                                 </Button>
                             </div>
                             {/* Search Bar */}
-                            <Form inline style={{ width: '85%' }} className="mr-auto">
+                            {/* <Form inline style={{ width: '85%' }} className="search_form mr-auto">
                                 <Form.Control
                                     style={styles.search_bar}
                                     type="text"
@@ -144,31 +136,23 @@ const Dashboard = props => {
                                         <FontAwesomeIcon icon={faSearch} style={styles.toolbar_fontawesomer} />
                                     </Button>
                                 </InputGroup.Prepend>
-                            </Form>
+                            </Form> */}
                             {/* Account Setting Dropdown */}
-                            {/* <div className="account_settig_dropdown">
+                            <div className="account_settig_dropdown ml-auto">
                                 <NavDropdown className='p-0 m-0' title={
-                                    <Image src="muhalik.jpg" roundedCircle fluid style={{ width: '30px', maxWidth: '30px' }} />
+                                    <FontAwesomeIcon icon={faCog} style={styles.cog_fontawesome} />
                                 } id="nav-dropdown" alignRight>
-                                    <NavDropdown.Item href="#/action-1">
-                                        <FontAwesomeIcon icon={faUser} style={styles.dropDown_fontawesome} />
-                                        My Profile
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item href="#/action-2">
-                                        <FontAwesomeIcon icon={faSearch} style={styles.dropDown_fontawesome} />
-                                        Feedback
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item href="#/action-3">
+                                    <NavDropdown.Item className='dropdown_item'>
                                         <FontAwesomeIcon icon={faHandsHelping} style={styles.dropDown_fontawesome} />
                                         Help?
                                     </NavDropdown.Item>
                                     <NavDropdown.Divider />
-                                    <NavDropdown.Item onClick={props.logoutClickHandler}>
+                                    <NavDropdown.Item onClick={props.logoutClickHandler} className='dropdown_item'>
                                         <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
                                         Logout
                                 </NavDropdown.Item>
                                 </NavDropdown>
-                            </div> */}
+                            </div>
                         </Navbar>
                         {/* End of Toolbar */}
                         {/* Tab Content for Large Devices */}
@@ -217,6 +201,28 @@ const Dashboard = props => {
                     {/* End of the Toolbar & Tabs Components */}
                 </Row>
             </Tab.Container>
+            <style type="text/css">{`
+                .dropdown_item{
+                    font-size: 12px;
+                    display: flex;
+                    align-items: center;
+                }
+                .search_form{
+                    width: 50%;
+                    padding-left: 5%;
+                }
+                @media (max-width: 991px){
+                    .search_form{
+                        width: 80%;
+                        padding: 0%;
+                    }
+                }
+                @media (max-width: 575px){
+                    .search_form{
+                        width: 90%;
+                    }
+                }
+            `}</style>
             <style jsx>
                 {`
                 .show_product {
@@ -370,7 +376,15 @@ const styles = {
 
     dropDown_fontawesome: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
-        margin: '0px 20px 0px 0px',
+        margin: '0px 10px 0px 0px',
+        width: '15px',
+        height: '15px',
+        maxHeight: '15px',
+        maxWidth: '15px',
+    },
+    cog_fontawesome: {
+        color: `${GlobalStyleSheet.admin_primry_color}`,
+        margin: '0px',
         width: '18px',
         height: '18px',
         maxHeight: '18px',

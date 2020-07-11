@@ -26,21 +26,28 @@ let animation =
 
 
 export async function getServerSideProps(context) {
+    let slider_list = []
     let new_products_list = []
     let categories_list = []
     let sub_categories_list = []
     let top_ranking_products_list = []
 
-    const url = MuhalikConfig.PATH + '/api/categories/categories';
-    await axios.get(url).then((response) => {
-        categories_list = response.data.category.docs,
-            sub_categories_list = response.data.sub_category.docs
+    const url = MuhalikConfig.PATH + '/api/sliders/';
+    await axios.get(url).then((res) => {
+        slider_list = res.data.data
+    }).catch((error) => {
+    })
+
+    const url_1 = MuhalikConfig.PATH + '/api/categories/categories';
+    await axios.get(url_1).then((res) => {
+        categories_list = res.data.category.docs,
+            sub_categories_list = res.data.sub_category.docs
     }).catch((error) => {
     })
 
     const url_3 = MuhalikConfig.PATH + '/api/products/';
-    await axios.get(url_3).then((response) => {
-        top_ranking_products_list = response.data.data
+    await axios.get(url_3).then((res) => {
+        top_ranking_products_list = res.data.data
     }).catch((error) => {
     })
 
@@ -49,13 +56,14 @@ export async function getServerSideProps(context) {
         method: 'GET',
         url: _url,
         params: { q: "new-arrival", page: 1, limit: 8 },
-    }).then((response) => {
-        new_products_list = response.data.data
+    }).then((res) => {
+        new_products_list = res.data.data
     }).catch(err => {
     })
 
     return {
         props: {
+            slider_list,
             new_products_list,
             top_ranking_products_list,
             categories_list,
@@ -69,6 +77,11 @@ class Index extends Component {
         super(props);
         this.state = {
             token: '',
+            slider_list: this.props.slider_list,
+            new_products_list: this.props.new_products_list,
+            top_ranking_products_list: this.props.top_ranking_products_list,
+            categories_list: this.props.categories_list,
+            sub_categories_list: this.props.sub_categories_list,
         }
     }
     async componentDidMount() {
@@ -109,16 +122,19 @@ class Index extends Component {
                         role={this.state.token.role || ''}
                         name={this.state.token.full_name || ''}
                         logout={this.logout}
-                        categories_list={this.props.categories_list}
-                        sub_categories_list={this.props.sub_categories_list}
+                        categories_list={this.state.categories_list}
+                        sub_categories_list={this.state.sub_categories_list}
                     >
-                        <SliderCarousel categories_list={this.props.categories_list} />
+                        <SliderCarousel
+                            categories_list={this.state.categories_list}
+                            slider_list={this.state.slider_list}
+                        />
                         <div className='_index'>
                             <Home
-                                new_products_list={this.props.new_products_list}
-                                top_ranking_products_list={this.props.top_ranking_products_list}
-                                categories_list={this.props.categories_list}
-                                sub_categories_list={this.props.sub_categories_list}
+                                new_products_list={this.state.new_products_list}
+                                top_ranking_products_list={this.state.top_ranking_products_list}
+                                categories_list={this.state.categories_list}
+                                sub_categories_list={this.state.sub_categories_list}
                             />
                         </div>
                     </Layout>

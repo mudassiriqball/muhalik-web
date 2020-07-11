@@ -70,7 +70,7 @@ const Toolbar = (props) => {
 
     function categoryMouseEnter(index) {
         const copyArray = Object.assign([], props.categories_list)
-        setCategory_id(copyArray[index]._id)
+        setCategory_id(copyArray[index])
     }
     function categoryMouseLeave() {
         setCategory_id('')
@@ -227,9 +227,8 @@ const Toolbar = (props) => {
                                 <Row noGutters onMouseLeave={() => categoryMouseLeave()} >
                                     <Col style={{ overflowY: 'auto', zIndex: 1 }}>
                                         {props.categories_list && props.categories_list.map((element, index) =>
-                                            // <div key={index} className="category_list_item" >
-                                            <Link href='/[name]/[id]' as={`/category/${element.value}`} key={index} >
-                                                {props.id == element._id ?
+                                            <Link href='/[category]' as={`/${element.value}`} key={index} >
+                                                {props.active_category == element.value ?
                                                     <a style={{ color: 'blue' }} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)} onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
                                                         {element.value}
                                                     </a>
@@ -244,9 +243,9 @@ const Toolbar = (props) => {
                                     {/* {category_id ? */}
                                     <Col style={{ minHeight: '500px', maxHeight: '500px', overflowY: 'auto', boxShadow: '-2px 0px 10px 1px rgba(0,0,0,0.12)' }}>
                                         {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
-                                            element.category_id == category_id ?
-                                                <Link href='/[name]/[id]' as={`/sub-category/${element.value}`} key={index} >
-                                                    {props.id == element._id ?
+                                            element.category_id == category_id._id ?
+                                                <Link href='/[category]/[sub_category]' as={`/${category_id.value}/${element.value}`} key={index} >
+                                                    {props.active_sub_category == element.value ?
                                                         <a style={{ color: 'blue' }} className="category_list_item" onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
                                                             {element.value}
                                                         </a>

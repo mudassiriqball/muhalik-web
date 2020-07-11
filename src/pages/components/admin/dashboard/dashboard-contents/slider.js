@@ -45,15 +45,15 @@ class Slider extends Component {
     async addCategory(values, currentComponent) {
         let formData = new FormData()
 
-        formData.append('category', this.state.category)
-        formData.append('sub_category', this.state.sub_category)
+        formData.append('category', this.state.category.value)
+        formData.append('sub_category', this.state.sub_category.value)
         formData.append('myImage', this.state.img)
 
         const url = MuhalikConfig.PATH + '/api/sliders/';
         await axios.post(url, formData, {
             headers: {
                 'content-type': 'multipart/form-data',
-                'authorization': currentComponent.state.token,
+                'authorization': currentComponent.props.token,
             }
         }).then(function (response) {
             currentComponent.setState({
@@ -81,7 +81,7 @@ class Slider extends Component {
     handleCategoryChange = (e) => {
         let search
         if (e != null) {
-            this.setState({ category: e._id, categoryError: '' })
+            this.setState({ category: e, categoryError: '' })
             search = this.props.sub_categories_list.filter(element => element.category_id == e._id)
             if (search.length != 0) {
                 this.setState({ sub_categories: search, sub_categoryDisabled: false })
@@ -92,7 +92,7 @@ class Slider extends Component {
     }
     handleSubCategoryChange = (e) => {
         if (e != null) {
-            this.setState({ sub_category: e._id, subCategoryError: '' })
+            this.setState({ sub_category: e, subCategoryError: '' })
         } else {
             this.setState({ sub_category: '', subCategoryError: '' })
         }
@@ -317,6 +317,7 @@ class Slider extends Component {
                                                 instanceId={'1'}
                                                 inputId={'1'}
                                                 isClearable={false}
+                                                value={this.state.category}
                                                 onChange={this.handleCategoryChange}
                                                 options={this.props.categories_list}
                                             />
@@ -330,6 +331,7 @@ class Slider extends Component {
                                                 id={'1'}
                                                 instanceId={'1'}
                                                 inputId={'1'}
+                                                value={this.state.sub_category}
                                                 isClearable={false}
                                                 onChange={this.handleSubCategoryChange}
                                                 options={this.state.sub_categories}

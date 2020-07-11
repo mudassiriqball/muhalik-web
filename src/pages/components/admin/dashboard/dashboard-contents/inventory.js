@@ -60,6 +60,15 @@ export default function Inventory(props) {
         })
     }
 
+    function handleSearchEnterPress(e) {
+        var key = e.keyCode || e.which;
+        if (key == 13) {
+            handleSearch()
+        } else {
+            console.log('not e')
+        }
+    }
+
     async function handleSearch() {
         if (filterStr != '') {
             setFieldName(searchType)
@@ -205,6 +214,7 @@ export default function Inventory(props) {
                                             type="text"
                                             placeholder="Search Here"
                                             name="search"
+                                            onKeyPress={(e) => handleSearchEnterPress(e)}
                                             value={filterStr}
                                             onChange={(e) => { e.target.value != '' ? setFilterStr(e.target.value) : setIsSearch(false), setFilterStr(e.target.value) }}
                                         />
