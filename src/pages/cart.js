@@ -10,6 +10,7 @@ import GlobalStyleSheet from '../styleSheet'
 import Layout from './components/customer/layout'
 import { getDecodedTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service'
 import Router from 'next/router'
+
 React.useLayoutEffect = React.useEffect
 
 export async function getServerSideProps(context) {
@@ -42,6 +43,7 @@ export default function Cart(props) {
 
     const [checkAll, setCheckAll] = useState(false)
     const [total, setTotal] = useState(0)
+    const [shipping_charges, setShipping_charges] = useState(0)
     useLayoutEffect(() => {
         setProducts([])
         getData()
@@ -57,6 +59,11 @@ export default function Cart(props) {
                 setCart_count(res.data.data[0].cart.length)
             }).catch((error) => {
             })
+            if (decoded_token.city == 'riyadh' || decoded_token.city == 'Riyadh') {
+                setShipping_charges(25)
+            } else {
+                setShipping_charges(45)
+            }
         }
         const _token = await getTokenFromStorage()
         if (_token !== null) {
@@ -197,27 +204,20 @@ export default function Cart(props) {
     function handlePlaceOrder() {
         if (products != '') {
             const url = MuhalikConfig.PATH + `/api/orders/${token._id}`;
-            let shiping_charges = 0
-            if (token.city == 'riyadh' || token.city == 'Riyadh') {
-                shiping_charges = 25
-            } else {
-                shiping_charges = 45
-            }
-
             let data = []
             products.forEach((element, index) => {
                 if (element.product.product_type == "simple-product") {
                     data.push({
                         'p_id': element.p_id,
                         'quantity': element.quantity,
-                        'shiping_charges': shiping_charges
+                        'shiping_charges': shipping_charges
                     })
                 } else {
                     data.push({
                         'p_id': element.p_id,
                         'variation_id': element.variation_id,
                         'quantity': element.quantity,
-                        'shiping_charges': shiping_charges
+                        'shiping_charges': shipping_charges
                     })
                 }
             })
@@ -326,7 +326,6 @@ export default function Cart(props) {
                                                         </Col>
                                                     </Row>
                                                 }
-
                                             </Card.Body>
                                         </Card>
                                     )}
@@ -338,12 +337,17 @@ export default function Cart(props) {
                                 <Card.Body className='p-3'>
                                     <div>Order Summary</div>
                                     <div className='d-inline-flex w-100 mt-4' style={{ fontSize: '14px', color: 'orange' }}>
-                                        <div className='mr-auto'>Shipping Charges</div>
-                                        <div>{token.city == 'riyadh' || token.city == 'Riyadh' ? '25' : '45'}</div>
+                                        <div className='mr-auto'>Sub Total</div>
+                                        <div>Rs.{total}</div>
                                     </div>
-                                    <div className='d-inline-flex w-100 mt-4' style={{ fontSize: '14px', color: 'orange' }}>
+                                    <div className='d-inline-flex w-100 mt-2' style={{ fontSize: '14px', color: 'orange' }}>
+                                        <div className='mr-auto'>Shipping Charges</div>
+                                        <div>Rs.{shipping_charges}</div>
+                                    </div>
+                                    <hr style={{ color: 'orange' }} />
+                                    <div className='d-inline-flex w-100 ' style={{ fontSize: '14px', color: 'orange' }}>
                                         <div className='mr-auto'>Total</div>
-                                        <div>{total}</div>
+                                        <div>Rs.{total + shipping_charges}</div>
                                     </div>
                                     <Button variant='success' block className='mt-2' onClick={handlePlaceOrder}>Place Order</Button>
                                 </Card.Body>
