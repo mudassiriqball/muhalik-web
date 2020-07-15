@@ -42,7 +42,7 @@ export default function Cart(props) {
     const [products, setProducts] = useState([])
 
     const [checkAll, setCheckAll] = useState(false)
-    const [total, setTotal] = useState(0)
+    const [sub_total, setTotal] = useState(0)
     const [shipping_charges, setShipping_charges] = useState(0)
     useLayoutEffect(() => {
         setProducts([])
@@ -55,8 +55,9 @@ export default function Cart(props) {
             setToken(decoded_token)
             const url = MuhalikConfig.PATH + `/api/users/cart/${decoded_token._id}`;
             await axios.get(url).then((res) => {
-                setCart_list(res.data.data[0].cart)
-                setCart_count(res.data.data[0].cart.length)
+                console.log('cart data:', res.data.data)
+                setCart_list(res.data.data)
+                setCart_count(res.data.data.length)
             }).catch((error) => {
             })
             if (decoded_token.city == 'riyadh' || decoded_token.city == 'Riyadh') {
@@ -201,36 +202,42 @@ export default function Cart(props) {
         })
     }
 
-    function handlePlaceOrder() {
+    async function handlePlaceOrder() {
         if (products != '') {
             let data = []
             products.forEach((element, index) => {
                 if (element.product.product_type == "simple-product") {
                     data.push({
+                        'vendor_id': element.product.vendor_id,
                         'p_id': element.p_id,
                         'quantity': element.quantity,
-                        'sub_total': total,
-                        'shiping_charges': shipping_charges
+                        'price': element.product.product_price * element.quantity,
                     })
                 } else {
                     data.push({
+                        'vendor_id': element.product.vendor_id,
                         'p_id': element.p_id,
                         'variation_id': element.variation_id,
                         'quantity': element.quantity,
-                        'sub_total': total,
-                        'shiping_charges': shipping_charges
+                        'price': element.variation.price * element.quantity,
                     })
                 }
             })
-            console.log('ooo:', data)
 
-            const url = MuhalikConfig.PATH + `/api/users/place-order/${token._id}`;
-            await axios.post(url, data).then((res) => {
-                alert('Successfully Added')
-            }).catch((error) => {
-                console.log('Error:', error)
-                alert('Not  Added')
-            })
+            let d = {}
+            d['shipping_charges'] = shipping_charges
+            d['sub_total_price'] = sub_total
+            d['product'] = data
+
+            console.log('ooo:', d)
+
+            // const url = MuhalikConfig.PATH + `/api/users/place-order/${token._id}`;
+            // await axios.post(url, data).then((res) => {
+            //     alert('Successfully Added')
+            // }).catch((error) => {
+            //     console.log('Error:', error)
+            //     alert('Not  Added')
+            // })
         }
     }
 
@@ -343,7 +350,7 @@ export default function Cart(props) {
                                     <div>Order Summary</div>
                                     <div className='d-inline-flex w-100 mt-4' style={{ fontSize: '14px', color: 'orange' }}>
                                         <div className='mr-auto'>Sub Total</div>
-                                        <div>Rs.{total}</div>
+                                        <div>Rs.{sub_total}</div>
                                     </div>
                                     <div className='d-inline-flex w-100 mt-2' style={{ fontSize: '14px', color: 'orange' }}>
                                         <div className='mr-auto'>Shipping Charges</div>
@@ -352,7 +359,7 @@ export default function Cart(props) {
                                     <hr style={{ color: 'orange' }} />
                                     <div className='d-inline-flex w-100 ' style={{ fontSize: '14px', color: 'orange' }}>
                                         <div className='mr-auto'>Total</div>
-                                        <div>Rs.{total + shipping_charges}</div>
+                                        <div>Rs.{sub_total + shipping_charges}</div>
                                     </div>
                                     <Button variant='success' block className='mt-2' onClick={handlePlaceOrder}>Place Order</Button>
                                 </Card.Body>

@@ -372,14 +372,18 @@ usersController.get_cart = async (req, res) => {
   }
 
   let user;
+  let check = [];
   const _id = req.params._id;
   try {
     user = await Users.find({ _id: _id }, { cart: 1, _id: 0 });
+    for (let index = 0; index < user[0].cart.length; index++) {
+      check.push(user[0].cart[index]);
+    }
     if (user) {
       res.status(200).send({
         code: 200,
         message: "Successful",
-        data: user,
+        data: check,
       });
     } else {
       res.status(500).send({
