@@ -25,11 +25,15 @@ export function getTokenFromStorage() {
     return reactLocalStorage.get('token');
 }
 
-export function removeTokenFromStorage() {
+export function removeTokenFromStorage(index_page) {
     try {
         reactLocalStorage.remove('token');
-        Router.replace('/index')
-        return <div></div>
+        if (index_page) {
+            Router.reload()
+        } else {
+            Router.replace('/index')
+        }
+        return
     } catch (error) {
         console.log("error:", error)
         alert('Logout Failed')

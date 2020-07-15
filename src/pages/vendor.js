@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Router from 'next/router'
 import axios from 'axios'
 import Dashboard from './components/vendor/dashboard/dashboard'
 import DashboardSideDrawer from './components/vendor/dashboard/dashboard-side-drawer'
@@ -26,7 +25,6 @@ const BackDrop = props => (
 class Vendor extends Component {
     constructor(props) {
         super(props);
-        this.authUser();
         this.state = {
             sideDrawerOpen: false,
             showWrapper: true,
@@ -43,6 +41,7 @@ class Vendor extends Component {
     }
 
     async componentDidMount() {
+        this.authUser();
         const url = MuhalikConfig.PATH + '/api/categories/categories'
         this.setState({ token: await getTokenFromStorage() })
         const currentComponent = this
@@ -89,7 +88,7 @@ class Vendor extends Component {
     }
 
     logout = () => {
-        removeTokenFromStorage()
+        removeTokenFromStorage(false)
     }
 
     render() {
@@ -106,25 +105,33 @@ class Vendor extends Component {
                     sub_categories_list={this.state.sub_categories_list}
                     field_requests_list={this.state.field_requests_list}
                     fields_list={this.state.fields_list}
+
                     token={this.state.token}
                     user_name={this.state.decodedToken.full_name}
+                    user_id={this.state.decodedToken._id}
                     user_status={this.state.decodedToken.status}
+
                     show={this.state.showWrapper}
                     drawerClickHandler={this.drawerToggleClickHandler}
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
-                    logoutClickHandler={this.logout} />
+                    logoutClickHandler={this.logout}
+                />
 
                 <DashboardSideDrawer
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
                     field_requests_list={this.state.field_requests_list}
                     fields_list={this.state.fields_list}
+
                     token={this.state.token}
+                    user_id={this.state.decodedToken._id}
                     user_name={this.state.decodedToken.full_name}
                     user_status={this.state.decodedToken.status}
+
                     show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler}
-                    logoutClickHandler={this.logout} />
+                    logoutClickHandler={this.logout}
+                />
                 {backdrop}
                 {/* </AdminLayout> */}
                 <style jsx global>{`

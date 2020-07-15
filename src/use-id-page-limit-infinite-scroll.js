@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import MuhalikConfig from './sdk/muhalik.config'
 
-export default function useIdPageLimitInfiniteScroll(isAppend, pageNumber, limit) {
+export default function useIdPageLimitInfiniteScroll(vendor_id, isAppend, pageNumber, limit) {
     const [_id_loading, setLoading] = useState('')
     const [_id_error, setError] = useState('')
     const [_id_products, setProducts] = useState([])
@@ -20,7 +20,7 @@ export default function useIdPageLimitInfiniteScroll(isAppend, pageNumber, limit
         setLoading(true)
         setError(false)
         let cancle
-        const _url = MuhalikConfig.PATH + `/api/products/`
+        const _url = MuhalikConfig.PATH + `/api/products/vendor/${vendor_id}`
         await axios({
             method: 'GET',
             url: _url,
@@ -34,6 +34,7 @@ export default function useIdPageLimitInfiniteScroll(isAppend, pageNumber, limit
             setLoading(false)
         }).catch(err => {
             if (axios.isCancel(err)) return
+            setLoading(false)
             setError(true)
             console.log('Error---->:', err)
         })

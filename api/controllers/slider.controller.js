@@ -32,7 +32,6 @@ sliderController.add_slider = async (req, res) => {
     return res.status(500).send(error);
   }
 };
-  
 
 // Post Methods
 sliderController.get_slider = async (req, res) => {

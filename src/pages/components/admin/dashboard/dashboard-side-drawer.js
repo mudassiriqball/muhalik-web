@@ -43,7 +43,7 @@ const DashboardSideDrawer = props => {
                         <Nav.Item style={styles.image_div}>
                             <p>
                                 <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                <Nav.Link href="/index" style={styles.muhalik}> {props.user_name} </Nav.Link>
+                                <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
                             </p>
                         </Nav.Item>
                         <Nav.Item>

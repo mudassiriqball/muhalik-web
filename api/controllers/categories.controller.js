@@ -88,7 +88,7 @@ categoriesController.add_fields = async (req, res) => {
       console.log("error", error);
     }
   } else {
-    Field_Request.findByIdAndDelete(body._id, function (err) { });
+    Field_Request.findByIdAndDelete(body._id, function (err) {});
     try {
       var datetime = new Date();
       body.entry_date = datetime;
@@ -298,9 +298,9 @@ categoriesController.update_field = async (req, res) => {
 categoriesController.update_category = async (req, res) => {
 
   var s3 = new AWS.S3({
-    secretAccessKey: 'nKZSmn0MFET9TEtEy4kUrksDjzkMFBQdt+x6+aPc',
-    accessKeyId: 'AKIAIYECX324S27WGWFQ',
-  });
+    secretAccessKey:'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',
+    accessKeyId:'AKIAIYECX324S27WGWFQ',
+  });     
 
   const body = req.body;
   const _id = req.params._id;
@@ -311,12 +311,12 @@ categoriesController.update_category = async (req, res) => {
       message: "ID missing",
     });
   }
+  
 
-
-  const category = await Categories.findOne({ _id: _id });
-  const token = category.url;
+  const category=await Categories.findOne({_id:_id});
+  const token=category.url;
   const filenameToRemove = token.split('/').slice(-1)[0];
-
+    
 
   if (!req.files && !body.category) {
     res.status(500).send({
@@ -345,13 +345,13 @@ categoriesController.update_category = async (req, res) => {
       return res.status(500).send(error);
     }
   } else if (req.files.length && !body.category) {
-
+        
     s3.deleteObject(
       {
         Bucket: 'slider-images',
         Key: filenameToRemove
       },
-      function (err, data) { }
+      function (err, data) {}
     );
     var url = req.files[0].location;
     try {
@@ -381,9 +381,9 @@ categoriesController.update_category = async (req, res) => {
         Bucket: 'slider-images',
         Key: filenameToRemove
       },
-      function (err, data) { }
+      function (err, data) {}
     );
-
+    
     var url = req.files[0].location;
     try {
       Categories.findOneAndUpdate(

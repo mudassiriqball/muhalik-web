@@ -34,7 +34,7 @@ const DashboardSideDrawer = props => {
                         <Nav.Item style={styles.image_div}>
                             <p>
                                 <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                <Nav.Link href="/index" style={styles.muhalik}> {props.user_name} </Nav.Link>
+                                <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
                             </p>
                         </Nav.Item>
                         <Nav.Item>
@@ -51,7 +51,7 @@ const DashboardSideDrawer = props => {
                                 <Nav.Link eventKey="AddProduct" onClick={props.click} style={styles.nav_link}>
                                     <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
                                     <div className="mr-auto">Add Product</div>
-                                    <FontAwesomeIcon igcon={faChevronRight} style={styles.forword_fontawesome} />
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
                         </Nav.Item>

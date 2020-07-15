@@ -41,7 +41,6 @@ export async function getServerSideProps(context) {
 
     const url_1 = MuhalikConfig.PATH + `/api/products/product/${product}`;
     await axios.get(url_1).then((response) => {
-        // console.log('single-product:', response.data.data)
         single_product = response.data.data[0]
     }).catch((error) => {
     })
@@ -63,44 +62,45 @@ function Product(props) {
     const [token, setToken] = useState({ role: '', full_name: '' })
     const [undecoded_token, setUndecoded_token] = useState('')
 
-    const { loading, products } = useQueryInfiniteScroll('sub-category', props.single_product.sub_category.value, '1', isMobile ? '6' : '8')
+    const { loading, products } = useQueryInfiniteScroll('sub-category', props.single_product == '' ? null : props.single_product.sub_category.value, '1', isMobile ? '6' : '8')
     const [vendor, setVendor] = useState({})
     const [wish, setWish] = useState('gray')
-    const [_loading, _setLoading] = useState(false)
+    const [_loading, cartLoading] = useState(false)
     const [cart, setCart] = useState(0)
     const [cartError, setCartError] = useState('')
+    const [cart_count, setCart_count] = useState(0)
 
     useLayoutEffect(() => {
         getData()
+        if (props.single_product != '')
+            getSingleProduct()
     }, []);
-
     async function getData() {
-        const decoded_token = await getDecodedTokenFromStorage()
-        if (decoded_token !== null) {
-            setToken(decoded_token)
-        }
-
-        const _token = await getTokenFromStorage()
+        const _token = await getDecodedTokenFromStorage()
         if (_token !== null) {
-            setUndecoded_token(_token)
+            setToken(_token)
+            getCartCount()
         }
+        const undecoded_token = await getTokenFromStorage()
+        if (undecoded_token !== null) {
+            setUndecoded_token(undecoded_token)
+        }
+    }
 
-        const url = MuhalikConfig.PATH + `/api/users/${props.single_product.vendor_id}`;
-        await axios.get(url).then((response) => {
-            console.log('vendor info:', response.data.data[0])
-            setVendor(response.data.data[0])
+    async function getCartCount() {
+        const url = MuhalikConfig.PATH + `/api/users/cart/${token._id}`;
+        await axios.get(url).then((res) => {
+            setCart_count(res.data.data[0].cart.length)
         }).catch((error) => {
         })
     }
 
-    function logout() {
-        if (removeTokenFromStorage()) {
-            this.setState({ token: '' })
-            Router.reload('/index');
-            Router.replace('/index');
-        } else {
-            alert('Logout Failed')
-        }
+    async function getSingleProduct() {
+        const url = MuhalikConfig.PATH + `/api/users/${props.single_product.vendor_id}`;
+        await axios.get(url).then((response) => {
+            setVendor(response.data.data[0])
+        }).catch((error) => {
+        })
     }
 
     async function addToWishlist(product_id) {
@@ -138,22 +138,17 @@ function Product(props) {
 
     async function handleAddToCart(product_id, variation_id, index) {
         let data = {
-            _id: product_id,
+            p_id: product_id,
             variation_id: variation_id,
             index: index,
             quantity: cart
         }
-
-        console.log('ueer _id:', token._id)
-
-        console.log('data:', data)
-
         if (token.full_name == '') {
             Router.push('/login')
         } else if (cart == 0 || cart == 'Quantity') {
             setCartError('Select quantity first')
         } else {
-            _setLoading(true)
+            cartLoading(true)
             if (cart > 0) {
                 const url = MuhalikConfig.PATH + `/api/users/cart/${token._id}`;
                 await axios.put(url, data, {
@@ -161,9 +156,10 @@ function Product(props) {
                         'authorization': undecoded_token,
                     }
                 }).then(function (response) {
-                    _setLoading(false)
+                    cartLoading(false)
+                    getCartCount()
                 }).catch(function (error) {
-                    _setLoading(false)
+                    cartLoading(false)
                     alert('ERROR: Product not added to cart')
                 });
             }
@@ -175,55 +171,59 @@ function Product(props) {
             <Layout
                 role={token.role || ''}
                 name={token.full_name || ''}
-                logout={logout}
+                cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
                 active_category={category}
                 active_sub_category={sub_category}
             >
-                <div className='main-row'>
-                    <BreadcrumbRow active={product}>
-                        <Breadcrumb.Item >
-                            <Link href='/[category]' as={`/${category}`} >
-                                {category}
-                            </Link>
-                        </Breadcrumb.Item>
-                        <Breadcrumb.Item >
-                            <Link href='/[category]/[sub_category]' as={`/${category}/${sub_category}`} >
-                                {sub_category}
-                            </Link>
-                        </Breadcrumb.Item>
-                    </BreadcrumbRow>
+                {props.single_product == '' ?
+                    null
+                    :
+                    <div className='main-row'>
+                        <BreadcrumbRow active={product}>
+                            <Breadcrumb.Item >
+                                <Link href='/[category]' as={`/${category}`} >
+                                    {category}
+                                </Link>
+                            </Breadcrumb.Item>
+                            <Breadcrumb.Item >
+                                <Link href='/[category]/[sub_category]' as={`/${category}/${sub_category}`} >
+                                    {sub_category}
+                                </Link>
+                            </Breadcrumb.Item>
+                        </BreadcrumbRow>
 
-                    <Row noGutters>
-                        {props.single_product.product_type == "simple-product" ?
-                            <SimpleProduct
-                                single_product={props.single_product}
-                                vendor={vendor}
-                                token={token}
-                                wish={wish}
-                                addToWishlist={addToWishlist}
-                                setCart={(value) => { setCart(value), setCartError('') }}
-                                cartError={cartError}
-                                handleAddToCart={handleAddToCart}
-                                loading={_loading}
-                            />
-                            :
-                            <VariableProduct
-                                single_product={props.single_product}
-                                vendor={vendor}
-                                token={token}
-                                wish={wish}
-                                addToWishlist={addToWishlist}
-                                setCart={(value) => { setCart(value), setCartError('') }}
-                                cartError={cartError}
-                                handleAddToCart={handleAddToCart}
-                                loading={_loading}
-                            />
-                        }
-                    </Row>
-                    <RelatedProducts products={products} current_product_id={props.single_product._id} />
-                </div>
+                        <Row noGutters>
+                            {props.single_product.product_type == "simple-product" ?
+                                <SimpleProduct
+                                    single_product={props.single_product}
+                                    vendor={vendor}
+                                    token={token}
+                                    wish={wish}
+                                    addToWishlist={addToWishlist}
+                                    setCart={(value) => { setCart(value), setCartError('') }}
+                                    cartError={cartError}
+                                    handleAddToCart={handleAddToCart}
+                                    loading={_loading}
+                                />
+                                :
+                                <VariableProduct
+                                    single_product={props.single_product}
+                                    vendor={vendor}
+                                    token={token}
+                                    wish={wish}
+                                    addToWishlist={addToWishlist}
+                                    setCart={(value) => { setCart(value), setCartError('') }}
+                                    cartError={cartError}
+                                    handleAddToCart={handleAddToCart}
+                                    loading={_loading}
+                                />
+                            }
+                        </Row>
+                        <RelatedProducts products={products} current_product_id={props.single_product._id} />
+                    </div>
+                }
             </Layout >
             <style type="text/css">{`
                 .single_product{
@@ -1149,7 +1149,6 @@ function TabComponent(props) {
                 variation_index: props.activeVariationIndex
             }
         }
-        console.log('params: ', parameters)
         const _url = MuhalikConfig.PATH + '/api/products/review-rating'
         axios({
             method: 'PUT',
@@ -1158,7 +1157,6 @@ function TabComponent(props) {
             data: { rating: rating, review: review, c_name: props.token.full_name }
         }).then(res => {
             alert('Add ho gya')
-            console.log('response:', res.data)
         }).catch(err => {
             console.log('Error:', err)
         })
@@ -1409,7 +1407,7 @@ function RelatedProducts(props) {
                     props.current_product_id != element._id ?
                         <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                             {element.product_type == "simple-product" ?
-                                <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub-category/${element.sub_category.value}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img'
                                         style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
                                         src={element.product_image_link[0].url}
@@ -1418,7 +1416,7 @@ function RelatedProducts(props) {
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
                                 </div>
                                 :
-                                <div className='only_products_div' onClick={() => Router.push('/[name]/[id]/[product]', `/sub-category/${element.sub_category.value}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>

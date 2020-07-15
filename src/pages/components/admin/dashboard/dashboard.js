@@ -39,12 +39,12 @@ const Dashboard = props => {
                             <Nav.Item style={styles.image_div}>
                                 <p>
                                     <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
-                                    <Nav.Link href="/index" style={styles.muhalik}> {props.user_name} </Nav.Link>
+                                    <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
                                 </p>
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Dashboard" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                    <Nav.Link eventKey="Dashboard" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
                                         <div className="mr-auto"> Dashboard </div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -53,7 +53,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Vendors" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                    <Nav.Link eventKey="Vendors" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon size="xs" icon={faPersonBooth} style={styles.fontawesome} />
                                         <div className="mr-auto">Vendors</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -62,7 +62,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Customers" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                    <Nav.Link eventKey="Customers" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
                                         <div className="mr-auto">Customers</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -71,7 +71,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Inventory" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                    <Nav.Link eventKey="Inventory" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
                                         <div className="mr-auto">Inventory</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -80,7 +80,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="ProductFields" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                    <Nav.Link eventKey="ProductFields" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon icon={faProductHunt} style={styles.fontawesome} />
                                         <div className="mr-auto">Product Fields</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -117,7 +117,7 @@ const Dashboard = props => {
                             }
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Slider" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                    <Nav.Link eventKey="Slider" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
                                         <div className="mr-auto">Slider</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -126,7 +126,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Discounts" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                    <Nav.Link eventKey="Discounts" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
                                         <div className="mr-auto">Discounts</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -135,7 +135,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link" >
-                                    <Nav.Link eventKey="Commission" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                    <Nav.Link eventKey="Commission" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
                                         <div className="mr-auto">Commission</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -144,7 +144,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link" >
-                                    <Nav.Link eventKey="Reports" style={styles.nav_link} onClick={() => setShow_category(!show_category)}>
+                                    <Nav.Link eventKey="Reports" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
                                         <div className="mr-auto">Reports</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />

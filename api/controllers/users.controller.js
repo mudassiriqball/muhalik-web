@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
-
+var phoneUtil = require('google-libphonenumber').phoneUtil;
 //Post Methods
 usersController.loginUser = async (req, res) => {
   try {
@@ -35,7 +35,9 @@ usersController.loginUser = async (req, res) => {
         );
         res.send({ message: "Successfully Logged in", token: token });
       } else {
-        res.status(401).send({ message: "Number or Password is not correct", code: 401 });
+        res
+          .status(401)
+          .send({ message: "Number or Password is not correct", code: 401 });
       }
     }
   } catch (ex) {
@@ -46,6 +48,7 @@ usersController.loginUser = async (req, res) => {
 usersController.registerUser = async (req, res) => {
   try {
     const body = req.body;
+
     const result = await Users.findOne({ mobile: body.mobile });
     if (result) {
       res.status(500).send({
@@ -126,7 +129,6 @@ usersController.set_avatar = async (req, res) => {
   }
 };
 
-
 //Get Methods
 usersController.getAll = async (req, res) => {
   let users;
@@ -157,7 +159,7 @@ usersController.getAll = async (req, res) => {
 usersController.get_user = async (req, res) => {
   let users;
   try {
-    users = await Users.find({ _id: req.params._id })
+    users = await Users.find({ _id: req.params._id });
     res.status(200).send({
       code: 200,
       message: "Successful",
@@ -179,8 +181,7 @@ usersController.check_mobile = async (req, res) => {
         message: "Successful",
         data: user,
       });
-    }
-    else {
+    } else {
       res.status(500).send({
         code: 500,
         message: "This Number Does Not Exist",
@@ -195,18 +196,23 @@ usersController.check_mobile = async (req, res) => {
 usersController.get_admins = async (req, res) => {
   let user;
   try {
-    user = await Users.find({ role: "admin" });
+    user = await Users.paginate(
+      { role: "admin" },
+      {
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
+      }
+    );
     if (user) {
       res.status(200).send({
         code: 200,
         message: "Successful",
         data: user,
       });
-    }
-    else {
+    } else {
       res.status(500).send({
         code: 500,
-        message: "does not exits"
+        message: "does not exits",
       });
     }
   } catch (error) {
@@ -218,7 +224,16 @@ usersController.get_admins = async (req, res) => {
 usersController.get_new_vendors = async (req, res) => {
   let user;
   try {
-    user = await Users.find({ status: "disapproved", role: "vendor" });
+    user = await Users.paginate(
+      {
+        status: "disapproved",
+        role: "vendor",
+      },
+      {
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
+      }
+    );
     if (user) {
       res.status(200).send({
         code: 200,
@@ -228,7 +243,7 @@ usersController.get_new_vendors = async (req, res) => {
     } else {
       res.status(500).send({
         code: 500,
-        message: "does not exits"
+        message: "does not exits",
       });
     }
   } catch (error) {
@@ -240,18 +255,23 @@ usersController.get_new_vendors = async (req, res) => {
 usersController.get_vendors = async (req, res) => {
   let user;
   try {
-    user = await Users.find({ role: "vendor" });
+    user = await Users.paginate(
+      { role: "vendor", status: "approved" },
+      {
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
+      }
+    );
     if (user) {
       res.status(200).send({
         code: 200,
         message: "Successful",
         data: user,
       });
-    }
-    else {
+    } else {
       res.status(500).send({
         code: 500,
-        message: "does not exits"
+        message: "does not exits",
       });
     }
   } catch (error) {
@@ -263,7 +283,13 @@ usersController.get_vendors = async (req, res) => {
 usersController.get_restricted_vendors = async (req, res) => {
   let user;
   try {
-    user = await Users.find({ status: "restricted", role: "vendor" });
+    user = await Users.paginate(
+      { status: "restricted", role: "vendor" },
+      {
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
+      }
+    );
     if (user) {
       res.status(200).send({
         code: 200,
@@ -273,7 +299,7 @@ usersController.get_restricted_vendors = async (req, res) => {
     } else {
       res.status(500).send({
         code: 500,
-        message: "does not exits"
+        message: "does not exits",
       });
     }
   } catch (error) {
@@ -285,20 +311,24 @@ usersController.get_restricted_vendors = async (req, res) => {
 usersController.get_customers = async (req, res) => {
   let user;
   try {
-    user = await Users.find({ role: "customer" });
+    user = await Users.paginate(
+      { role: "customer", status: "approved" },
+      {
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
+      }
+    );
     if (user) {
       res.status(200).send({
         code: 200,
         message: "Successful",
         data: user,
       });
-    }
-    else {
+    } else {
       res.status(500).send({
         code: 500,
-        message: "does not exits"
+        message: "does not exits",
       });
-
     }
   } catch (error) {
     return res.status(500).send(error);
@@ -309,18 +339,23 @@ usersController.get_customers = async (req, res) => {
 usersController.get_restricted_customers = async (req, res) => {
   let user;
   try {
-    user = await Users.find({ status: "restricted", role: "customer" });
+    user = await Users.paginate(
+      { status: "restricted", role: "customer" },
+      {
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
+      }
+    );
     if (user) {
       res.status(200).send({
         code: 200,
         message: "Successful",
         data: user,
       });
-    }
-    else {
+    } else {
       res.status(500).send({
         code: 500,
-        message: "does not exits"
+        message: "does not exits",
       });
     }
   } catch (error) {
@@ -328,6 +363,157 @@ usersController.get_restricted_customers = async (req, res) => {
   }
 };
 
+usersController.get_cart = async (req, res) => {
+  if (!req.params._id) {
+    Fu;
+    res.status(500).send({
+      message: "ID missing",
+    });
+  }
+
+  let user;
+  const _id = req.params._id;
+  try {
+    user = await Users.find({ _id: _id }, { cart: 1, _id: 0 });
+    if (user) {
+      res.status(200).send({
+        code: 200,
+        message: "Successful",
+        data: user,
+      });
+    } else {
+      res.status(500).send({
+        code: 500,
+        message: "does not exits",
+      });
+    }
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+usersController.get_total_specific_users = async (req, res) => {
+  const admins_count = await Users.countDocuments({ role: "admin" });
+  const vendors_count = await Users.countDocuments({ role: "vendor" });
+  const new_vendors_count = await Users.countDocuments({
+    role: "vendor",
+    status: "disapproved",
+  });
+  const restricted_vendors_count = await Users.countDocuments({
+    role: "vendor",
+    status: "restricted",
+  });
+  const customers_count = await Users.countDocuments({ role: "customer" });
+  const restricted_customers_count = await Users.countDocuments({
+    role: "customer",
+    status: "restricted",
+  });
+  res.status(200).send({
+    code: 200,
+    message: "OK",
+    admins_count,
+    vendors_count,
+    new_vendors_count,
+    restricted_vendors_count,
+    customers_count,
+    restricted_customers_count,
+  });
+};
+
+usersController.get_users_by_query = async (req, res) => {
+  let user;
+  try {
+    if (req.query.field === "_id") {
+      console.log("aa gya 1");
+      user = await Users.paginate(
+        { role: req.params._role, _id: req.query.q, status: req.query.status },
+        {
+          limit: parseInt(req.query.limit),
+          page: parseInt(req.query.page),
+        }
+      );
+      if (user) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: user.docs,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
+    } else if (req.query.field === "full_name") {
+      user = await Users.paginate(
+        { role: req.params._role, full_name: req.query.q, status: req.query.status },
+        {
+          limit: parseInt(req.query.limit),
+          page: parseInt(req.query.page),
+        }
+      );
+      if (user) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: user.docs,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
+    } else if (req.query.field === "city") {
+      user = await Users.paginate(
+        { role: req.params._role, city: req.query.q, status: req.query.status },
+        {
+          limit: parseInt(req.query.limit),
+          page: parseInt(req.query.page),
+        }
+      );
+      if (user) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: user.docs,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
+    } else if (req.query.field === "mobile") {
+      console.log("aa gya mobile", req.query.q);
+      var mobile = req.query.q;
+      mobile = mobile.trim();
+      mobile = "+" + mobile;
+      user = await Users.paginate(
+        { role: req.params._role, mobile: mobile, status: req.query.status },
+        {
+          limit: parseInt(req.query.limit),
+          page: parseInt(req.query.page),
+        }
+      );
+      if (user) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: user.docs,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
+    }
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
 
 // put Methods
 usersController.update_status = async (req, res) => {
@@ -395,6 +581,34 @@ usersController.reset_password = async (req, res) => {
   }
 };
 
+usersController.add_to_cart = async (req, res) => {
+  const body = req.body;
+  if (body.variation_id === "") {
+    body.variation_id = undefined;
+    body.index = undefined;
+  }
+  if (!req.params._id) {
+    Fu;
+    res.status(500).send({
+      message: "ID missing",
+    });
+  }
+  try {
+    const user = await Users.update(
+      { _id: req.params._id },
+      {
+        $push: { ["cart"]: body },
+      }
+    );
+    res.status(200).send({
+      code: 200,
+      message: "Added",
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
 
 // Delete Methods
 usersController.deleteUser = async (req, res) => {
@@ -419,6 +633,34 @@ usersController.deleteUser = async (req, res) => {
   }
 };
 
+usersController.deleteCartData = async (req, res) => {
+  if (!req.params._id) {
+    res.status(500).send({
+      message: "ID missing",
+    });
+  }
+  try {
+    const _id = req.params._id;
+    const obj_id = req.query.obj_id;
+
+    const result = await Users.findOneAndUpdate(
+      {
+        _id: _id,
+      },
+      {
+        $pull: { cart: { _id: obj_id } },
+      },
+      { new: true }
+    );
+    res.status(200).send({
+      code: 200,
+      message: "Deleted Successfully",
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
 
 // usersController.getSingleUser = async (req, res) => {
 //   let user;
@@ -567,10 +809,6 @@ usersController.deleteUser = async (req, res) => {
 //     return res.status(500).send(error);
 //   }
 // }
-
-
-
-
 
 module.exports = usersController;
 // const user = new Users ({

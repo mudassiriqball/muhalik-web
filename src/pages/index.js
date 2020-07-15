@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap'
-import Router from 'next/router'
 import Head from 'next/head'
 import axios from 'axios'
 import Layout from './components/customer/layout'
@@ -24,14 +23,12 @@ let animation =
         />
     </h3>
 
-
 export async function getServerSideProps(context) {
     let slider_list = []
     let new_products_list = []
     let categories_list = []
     let sub_categories_list = []
     let top_ranking_products_list = []
-
     const url = MuhalikConfig.PATH + '/api/sliders/';
     await axios.get(url).then((res) => {
         slider_list = res.data.data
@@ -61,6 +58,8 @@ export async function getServerSideProps(context) {
     }).catch(err => {
     })
 
+
+
     return {
         props: {
             slider_list,
@@ -77,6 +76,7 @@ class Index extends Component {
         super(props);
         this.state = {
             token: '',
+            cart_count: 0,
             slider_list: this.props.slider_list,
             new_products_list: this.props.new_products_list,
             top_ranking_products_list: this.props.top_ranking_products_list,
@@ -85,21 +85,20 @@ class Index extends Component {
         }
     }
     async componentDidMount() {
-        // this.props.setCategories(this.props.categories)
+        let currentComponent = this
         const _token = await getDecodedTokenFromStorage()
         if (_token !== null) {
             this.setState({ token: _token })
+            const url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
+            await axios.get(url).then((res) => {
+                currentComponent.setState({ cart_count: res.data.data[0].cart.length })
+            }).catch((error) => {
+            })
         }
     }
 
     logout = () => {
-        if (removeTokenFromStorage()) {
-            this.setState({ token: '' })
-            Router.reload('/index');
-            Router.replace('/index');
-        } else {
-            alert('Logout Failed')
-        }
+        removeTokenFromStorage(true)
     }
 
     render() {
@@ -124,6 +123,7 @@ class Index extends Component {
                         logout={this.logout}
                         categories_list={this.state.categories_list}
                         sub_categories_list={this.state.sub_categories_list}
+                        cart_count={this.state.cart_count}
                     >
                         <SliderCarousel
                             categories_list={this.state.categories_list}

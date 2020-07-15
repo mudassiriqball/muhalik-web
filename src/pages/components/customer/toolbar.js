@@ -1,7 +1,7 @@
 import {
     Navbar, Nav, Form, InputGroup, FormControl, Image, Button,
     NavDropdown, DropdownButton, Card, Dropdown, ButtonGroup,
-    Row, Col, OverlayTrigger, Popover, Tooltip
+    Row, Col, OverlayTrigger, Popover, Tooltip, Badge
 } from 'react-bootstrap'
 import GlobalStyleSheet from '../../../styleSheet'
 import Link from 'next/link'
@@ -75,6 +75,11 @@ const Toolbar = (props) => {
     function categoryMouseLeave() {
         setCategory_id('')
     }
+
+    function logout() {
+        removeTokenFromStorage(false)
+    }
+
     return (
         <div className='customer_toolar'>
             <Card>
@@ -152,7 +157,7 @@ const Toolbar = (props) => {
                                         {'My Profile'}
                                     </Dropdown.Item>
                                     <Dropdown.Divider />
-                                    <Dropdown.Item onClick={props.logout} className='dropdown_item'>
+                                    <Dropdown.Item onClick={logout} className='dropdown_item'>
                                         <FontAwesomeIcon icon={faPowerOff} style={styles.dropdown_fontawesome} />
                                         {'Logout'}
                                     </Dropdown.Item>
@@ -193,8 +198,11 @@ const Toolbar = (props) => {
                             </InputGroup.Append>
                         </InputGroup>
                         {/* <Nav className=""> */}
-                        <Nav.Link href="#" className='display_in_md_lg nav_link'>
-                            <FontAwesomeIcon icon={faShoppingCart} style={styles.second_nav_fontawesome} />
+                        <Nav.Link href='/cart' className='display_in_md_lg nav_link pb-0 mb-0'>
+                            <div className='cart_div'>
+                                <FontAwesomeIcon icon={faShoppingCart} style={styles.second_nav_fontawesome} />
+                                <Badge variant='primary' className='cart_badge'>{props.cart_count}</Badge>
+                            </div>
                             {"Cart"}
                         </Nav.Link>
                         {/* </Nav> */}
@@ -320,7 +328,14 @@ const Toolbar = (props) => {
                 </Navbar>
             </Card >
             <style type="text/css">{`
-
+                .cart_div{
+                    display: inline-flex;
+                    align-items: center;
+                }
+                .cart_badge{
+                    margin-top: -20px;
+                    margin-left: 3px;
+                }
                 .customer_toolar .first_nav_link{
                     font-size: 12.5px;
                     white-space: nowrap;
@@ -353,12 +368,14 @@ const Toolbar = (props) => {
                 .customer_toolar .sticky .sticky-inner {
                     background: ${GlobalStyleSheet.primry_color};
                     position: fixed;
+                    align-items: center;
                     top: 0;
                     left: 0;
                     right: 0;
                     z-index: 1000000;
                 }
                 .customer_toolar .sticky-inner{
+                    align-items: center;
                     padding: 0.5% 10%;
                 }
 
@@ -388,12 +405,11 @@ const Toolbar = (props) => {
                 .customer_toolar .nav_link{
                     display: flex;
                     flex-direction: column;
-                    align-items: center;
-                    text-align: center;
                     font-size: 14px;
                     margin-left: 1%;
                     color: ${GlobalStyleSheet.primry_color};
                 }
+                
                 .customer_toolar .nav_link:hover{
                     color: green;
                 }

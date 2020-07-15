@@ -162,7 +162,6 @@ class ProducFields extends Component {
             label: copyArray[index].value,
             value: copyArray[index].value,
         }
-        console.log('data:', data)
         await axios.post(url, data, {
             headers: {
                 '_id': copyArray[index]._id,

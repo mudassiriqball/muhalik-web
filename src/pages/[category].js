@@ -21,6 +21,7 @@ import MuhalikConfig from '../sdk/muhalik.config'
 import GlobalStyleSheet from '../styleSheet'
 import Link from 'next/link'
 import BreadcrumbRow from './components/breadcrumb-row'
+React.useLayoutEffect = React.useEffect
 
 
 export async function getServerSideProps(context) {
@@ -60,10 +61,28 @@ export default function Category(props) {
     const [pageNumber, setPageNumber] = useState(1)
     const [token, setToken] = useState({ role: '', full_name: '' })
 
+    const [cart_count, setCart_count] = useState(0)
+
     let loadingCard = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
         '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
 
     const { loading, error, products, hasMore } = useQueryInfiniteScroll(fieldName, query, pageNumber, isMobile ? 12 : 24)
+
+    useEffect(() => {
+        getData()
+    }, [])
+
+    async function getData() {
+        const _token = await getDecodedTokenFromStorage()
+        if (_token !== null) {
+            setToken(_token)
+            const url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
+            await axios.get(url).then((res) => {
+                setCart_count(res.data.data[0].cart.length)
+            }).catch((error) => {
+            })
+        }
+    }
 
     const observer = useRef()
     const lastProducrRef = useCallback((node) => {
@@ -86,16 +105,7 @@ export default function Category(props) {
         })
         setQuery(category)
         setPageNumber(1)
-        getData()
     }, [category]);
-
-    async function getData() {
-        const _token = await getDecodedTokenFromStorage()
-        if (_token !== null) {
-            setToken(_token)
-        }
-    }
-
 
     function logout() {
         if (removeTokenFromStorage()) {
@@ -116,6 +126,7 @@ export default function Category(props) {
                 role={token.role || ''}
                 name={token.full_name || ''}
                 logout={logout}
+                cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
                 active_category={category}

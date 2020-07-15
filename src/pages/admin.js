@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Router from 'next/router'
 import axios from 'axios'
 import Dashboard from './components/admin/dashboard/dashboard';
 import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-drawer';
@@ -7,6 +6,60 @@ import AdminLayout from './components/admin/layout/AdminLayout';
 import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config'
 import { checkAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service';
+
+
+export async function getServerSideProps(context) {
+    let sliders_list = []
+    let categories_list = []
+    let sub_categories_list = []
+
+    let admins_count = 0
+    let vendors_count = 5
+    let new_vendors_count = 0
+    let restricted_vendors_count = 0
+    let customers_count = 0
+    let restricted_customers_count = 0
+
+    const url = MuhalikConfig.PATH + '/api/users/users-count';
+    await axios.get(url).then((res) => {
+        admins_count = res.data.admins_count
+        vendors_count = res.data.vendors_count
+        new_vendors_count = res.data.new_vendors_count
+        restricted_vendors_count = res.data.restricted_vendors_count
+        customers_count = res.data.customers_count
+        restricted_customers_count = res.data.restricted_customers_count
+    }).catch((error) => {
+    })
+
+    const url_1 = MuhalikConfig.PATH + '/api/sliders/';
+    await axios.get(url_1).then((res) => {
+        sliders_list = res.data.data
+    }).catch((error) => {
+    })
+
+    const url_2 = MuhalikConfig.PATH + '/api/categories/categories';
+    await axios.get(url_2).then((res) => {
+        categories_list = res.data.category.docs
+        sub_categories_list = res.data.sub_category.docs
+    }).catch((error) => {
+    })
+
+    return {
+        props: {
+            admins_count,
+            vendors_count,
+            new_vendors_count,
+            restricted_vendors_count,
+            customers_count,
+            restricted_customers_count,
+
+            sliders_list,
+            categories_list,
+            sub_categories_list
+        },
+    }
+}
+
 
 const BackDrop = props => (
     <div>
@@ -28,12 +81,20 @@ let token = ''
 class Admin extends Component {
     constructor(props) {
         super(props);
-        this.authUser()
         this.state = {
+            limit: '1',
+            admins_count: this.props.admins_count,
+            vendors_count: this.props.vendors_count,
+            new_vendors_count: this.props.new_vendors_count,
+            restricted_vendors_count: this.props.restricted_vendors_count,
+            customers_count: this.props.customers_count,
+            restricted_customers_count: this.props.restricted_customers_count,
+
             sideDrawerOpen: false,
             showWrapper: true,
 
             // products_list: [],
+            users_count: this.props.users_count,
             vendors_list: [],
             new_vendors_list: [],
             restricted_vendors_list: [],
@@ -41,13 +102,13 @@ class Admin extends Component {
             customers_list: [],
             restricted_customers_list: [],
 
-            categories_list: [],
-            sub_categories_list: [],
+            categories_list: this.props.categories_list,
+            sub_categories_list: this.props.sub_categories_list,
 
             fields_list: [],
             field_requests_list: [],
 
-            sliders_list: [],
+            sliders_list: this.props.sliders_list,
 
             token: '',
             decodedToken: { role: '', full_name: '', status: '' },
@@ -55,96 +116,27 @@ class Admin extends Component {
     }
 
     async componentDidMount() {
+        this.authUser()
         const currentComponent = this;
         this.setState({ token: await getTokenFromStorage() })
 
-        const url = MuhalikConfig.PATH + '/api/categories/categories';
-        await axios.get(url).then((response) => {
-            currentComponent.setState({
-                categories_list: response.data.category.docs,
-                sub_categories_list: response.data.sub_category.docs
-            });
-        }).catch((error) => {
-            console.log('Caterories Fetchig Error: ', error)
-        })
-
         const url_1 = MuhalikConfig.PATH + '/api/categories/fields';
-        await axios.get(url_1).then(function (response) {
+        await axios.get(url_1).then(function (res) {
             currentComponent.setState({
-                fields_list: response.data.data.docs,
+                fields_list: res.data.data.docs,
             });
         }).catch(function (error) {
             console.log("Fields Fetching Error:", error)
             // alert('Fields Fetching Error: ', error)
         })
-
         const url_2 = MuhalikConfig.PATH + '/api/categories/field-requests';
-        await axios.get(url_2).then(function (response) {
+        await axios.get(url_2).then(function (res) {
             currentComponent.setState({
-                field_requests_list: response.data.data.docs,
+                field_requests_list: res.data.data.docs,
             });
         }).catch(function (error) {
             console.log("Field Requests Fetching Error:", error)
             // alert('field-requests: ', error)
-        })
-
-        const url_4 = MuhalikConfig.PATH + '/api/users/vendors';
-        await axios.get(url_4).then(function (response) {
-            currentComponent.setState({
-                vendors_list: response.data.data,
-            });
-        }).catch(function (error) {
-            console.log("vendors Fetching Error:", error)
-            // alert('vendors error: ', error)
-        })
-
-        const url_5 = MuhalikConfig.PATH + '/api/users/new-vendors';
-        await axios.get(url_5).then(function (response) {
-            currentComponent.setState({
-                new_vendors_list: response.data.data,
-            });
-        }).catch(function (error) {
-            console.log("new-vendors Fetching Error:", error)
-            // alert('new-vendors error: ', error)
-        })
-
-        const url_6 = MuhalikConfig.PATH + '/api/users/restricted-vendors';
-        await axios.get(url_6).then(function (response) {
-            currentComponent.setState({
-                restricted_vendors_list: response.data.data,
-            });
-        }).catch(function (error) {
-            console.log("restricted_vendors Fetching Error:", error)
-            // alert('restricted_vendors error: ', error)
-        })
-
-        const url_7 = MuhalikConfig.PATH + '/api/users/customers';
-        await axios.get(url_7).then(function (response) {
-            currentComponent.setState({
-                customers_list: response.data.data,
-            });
-        }).catch(function (error) {
-            console.log("customers Fetching Error:", error)
-            // alert('customers error: ', error)
-        })
-        const url_8 = MuhalikConfig.PATH + '/api/users/restricted-customers';
-        await axios.get(url_8).then(function (response) {
-            currentComponent.setState({
-                restricted_customers_list: response.data.data,
-            });
-        }).catch(function (error) {
-            console.log("restricted customers Fetching Error:", error)
-            // alert('restricted customers error: ', error)
-        })
-
-        const url_9 = MuhalikConfig.PATH + '/api/sliders/';
-        await axios.get(url_9).then(function (response) {
-            currentComponent.setState({
-                sliders_list: response.data.data,
-            });
-        }).catch(function (error) {
-            console.log("sliders_list Fetching Error:", error)
-            // alert('sliders_list error: ', error)
         })
     }
 
@@ -171,16 +163,16 @@ class Admin extends Component {
     };
 
     logout = () => {
-        removeTokenFromStorage()
+        removeTokenFromStorage(false)
     }
 
     async reloadCategories() {
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/categories/categories';
-        await axios.get(url).then((response) => {
+        await axios.get(url).then((res) => {
             currentComponent.setState({
-                categories_list: response.data.category.docs,
-                sub_categories_list: response.data.sub_category.docs
+                categories_list: res.data.category.docs,
+                sub_categories_list: res.data.sub_category.docs
             });
         }).catch((error) => {
             console.log('Caterories Fetchig Error: ', error)
@@ -189,9 +181,9 @@ class Admin extends Component {
     async reloadSlider() {
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/sliders/';
-        await axios.get(url).then(function (response) {
+        await axios.get(url).then(function (res) {
             currentComponent.setState({
-                sliders_list: response.data.data,
+                sliders_list: res.data.data,
             });
         }).catch(function (error) {
             console.log("sliders_list Fetching Error:", error)
@@ -209,14 +201,12 @@ class Admin extends Component {
             <div style={styles.body}>
                 {/* <AdminLayout> */}
                 <Dashboard
-                    // products_list={this.state.products_list}
-
-                    vendors_list={this.state.vendors_list}
-                    new_vendors_list={this.state.new_vendors_list}
-                    restricted_vendors_list={this.state.restricted_vendors_list}
-
-                    customers_list={this.state.customers_list}
-                    restricted_customers_list={this.state.restricted_customers_list}
+                    admins_count={this.state.admins_count}
+                    vendors_count={this.state.vendors_count}
+                    new_vendors_count={this.state.new_vendors_count}
+                    restricted_vendors_count={this.state.restricted_vendors_count}
+                    customers_count={this.state.customers_count}
+                    restricted_customers_count={this.state.restricted_customers_count}
 
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
@@ -237,14 +227,12 @@ class Admin extends Component {
                     sliderReloadHandler={this.reloadSlider.bind(this)}
                 />
                 <DashboardSideDrawer
-                    // products_list={this.state.products_list}
-
-                    vendors_list={this.state.vendors_list}
-                    new_vendors_list={this.state.new_vendors_list}
-                    restricted_vendors_list={this.state.restricted_vendors_list}
-
-                    customers_list={this.state.customers_list}
-                    restricted_customers_list={this.state.restricted_customers_list}
+                    admins_count={this.state.admins_count}
+                    vendors_count={this.state.vendors_count}
+                    new_vendors_count={this.state.new_vendors_count}
+                    restricted_vendors_count={this.state.restricted_vendors_count}
+                    customers_count={this.state.customers_count}
+                    restricted_customers_count={this.state.restricted_customers_count}
 
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}

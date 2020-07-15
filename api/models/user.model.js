@@ -150,7 +150,15 @@ const User = new Schema({
     },
     Rank: {
         type: String,
-    }
+    },
+    cart:[
+        {
+            p_id:{type: Schema.Types.ObjectId},//product_id
+            variation_id:{type: Schema.Types.ObjectId},
+            index:{type:Number},
+            quantity:{type:Number}
+        }
+    ]
 });
 
 User.plugin(mongoosePaginate);

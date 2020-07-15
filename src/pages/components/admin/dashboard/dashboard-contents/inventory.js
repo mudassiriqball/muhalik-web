@@ -15,21 +15,22 @@ import useDimensions from "react-use-dimensions";
 import ConfirmModal from '../../../confirm-modal'
 import AlertModal from '../../../alert-modal';
 import { getTokenFromStorage } from '../../../../../sdk/core/authentication-service'
-export default function Inventory(props) {
+import PaginationRow from '../../../pagination-row'
+import CardSearchAccordion from '../../../card-search-accordion';
+import Loading from '../../../loading';
 
+
+export default function Inventory(props) {
     const [totalProducts, setTotalProducts] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
 
     const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false)
     const [showModal, setShowModal] = useState(false)
 
-    const [product_list, setProduct_list] = useState([])
     const [viewProduct, setViewProduct] = useState(false)
     const [data, setData] = useState({})
 
     const [isSearch, setIsSearch] = useState(false)
-    const [searchType, setSearchType] = useState('_id')
-    const [filterStr, setFilterStr] = useState('')
 
     const [fieldName, setFieldName] = useState('')
     const [limitPageNumber, setlimitPageNumber] = useState(1)
@@ -60,19 +61,10 @@ export default function Inventory(props) {
         })
     }
 
-    function handleSearchEnterPress(e) {
-        var key = e.keyCode || e.which;
-        if (key == 13) {
-            handleSearch()
-        } else {
-            console.log('not e')
-        }
-    }
-
-    async function handleSearch() {
-        if (filterStr != '') {
+    async function handleSearch(searchType, searchValue) {
+        if (searchValue != '') {
             setFieldName(searchType)
-            setQuery(filterStr)
+            setQuery(searchValue)
             setIsSearch(true)
         } else {
             setIsSearch(false)
@@ -194,133 +186,90 @@ export default function Inventory(props) {
             default:
                 return <>
                     <TitleRow icon={faPlus} title={' Vendor Dashboard / All Products'} />
-                    <Card as={Row} style={{ margin: '2%' }}>
-                        <Card.Header>
-                            <Form.Row>
-                                <Col lg='auto' md='auto' sm='auto' sm='auto'>
-                                    <Form.Control as="select"
-                                        variant="dark"
-                                        value={searchType}
-                                        onChange={(e) => setSearchType(e.target.value)}>
-                                        <option value='_id'>ID</option>
-                                        <option value='product_name'>Name</option>
-                                        <option value='category'>Category</option>
-                                        <option value='sub-category'>Sub Category</option>
-                                    </Form.Control>
-                                </Col>
-                                <Col lg={6} md={6} sm={6} xs={12} className='search_col'>
-                                    <InputGroup>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Search Here"
-                                            name="search"
-                                            onKeyPress={(e) => handleSearchEnterPress(e)}
-                                            value={filterStr}
-                                            onChange={(e) => { e.target.value != '' ? setFilterStr(e.target.value) : setIsSearch(false), setFilterStr(e.target.value) }}
+                    <CardSearchAccordion
+                        title={'Inventory'}
+                        option={'inventory'}
+                        handleSearch={handleSearch}
+                        setIsSearch={() => setIsSearch(false)}
+                    >
+                        <Table responsive bordered hover size="sm">
+                            <thead>
+                                <tr>
+                                    <th >#</th>
+                                    <th >ID</th>
+                                    <th >Name</th>
+                                    <th >Type</th>
+                                    <th >Price</th>
+                                    <th >Stock</th>
+                                    <th >Category</th>
+                                    <th >Sub Category</th>
+                                    <th >Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {!isSearch ?
+                                    _products && _products.map((element, index) =>
+                                        <TableBody key={element._id}
+                                            element={element}
+                                            pageNumber={limitPageNumber}
+                                            index={index}
+                                            loading={_loading}
+
+                                            setViewProduct={() => { setData(element), setViewProduct('view') }}
+                                            handleEditProduct={() => handleEditProduct(index)}
+                                            handleShowConfirmModal={() => handleShowConfirmModal(element)}
                                         />
-                                        <InputGroup.Append >
-                                            <Button variant='outline-primary' onClick={handleSearch}>
-                                                Search
-                                            </Button>
-                                        </InputGroup.Append>
-                                    </InputGroup>
-                                </Col>
-                            </Form.Row>
-                        </Card.Header>
-                        <Card.Body className='w-100'>
-                            <Table responsive bordered hover size="sm">
-                                <thead>
-                                    <tr>
-                                        <th style={{ textAlign: 'center' }}>#</th>
-                                        <th style={{ textAlign: 'center' }}>ID</th>
-                                        <th style={{ textAlign: 'center' }}>Name</th>
-                                        <th style={{ textAlign: 'center' }}>Type</th>
-                                        <th style={{ textAlign: 'center' }}>Price</th>
-                                        <th style={{ textAlign: 'center' }}>Stock</th>
-                                        <th style={{ textAlign: 'center' }}>Category</th>
-                                        <th style={{ textAlign: 'center' }}>Sub Category</th>
-                                        <th style={{ textAlign: 'center' }}>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {!isSearch ?
-                                        _products && _products.map((element, index) =>
-                                            <TableBody key={element._id}
-                                                element={element}
-                                                pageNumber={limitPageNumber}
-                                                index={index}
-                                                loading={_loading}
+                                    )
+                                    :
+                                    hasMore && products && products.map((element, index) =>
+                                        <TableBody key={element._id}
+                                            element={element}
+                                            pageNumber={queryPageNumber}
+                                            index={index}
+                                            loading={loading}
 
-                                                setViewProduct={() => { setData(element), setViewProduct('view') }}
-                                                handleEditProduct={() => handleEditProduct(index)}
-                                                handleShowConfirmModal={() => handleShowConfirmModal(element)}
-                                            />
-                                        )
-                                        :
-                                        hasMore && products && products.map((element, index) =>
-                                            <TableBody key={element._id}
-                                                element={element}
-                                                pageNumber={queryPageNumber}
-                                                index={index}
-                                                loading={loading}
+                                            setViewProduct={() => { setData(element), setViewProduct('view') }}
+                                            handleEditProduct={() => handleEditProduct(index)}
+                                            handleShowConfirmModal={() => handleShowConfirmModal(element)}
+                                        />
+                                    )
+                                }
+                            </tbody>
+                        </Table >
 
-                                                setViewProduct={() => { setData(element), setViewProduct('view') }}
-                                                handleEditProduct={() => handleEditProduct(index)}
-                                                handleShowConfirmModal={() => handleShowConfirmModal(element)}
-                                            />
-                                        )
-                                    }
-                                </tbody>
-                            </Table >
-
-                            {!isSearch ?
-                                <>
-                                    {_loading ?
-                                        <div className='_div'>
-                                            < Spinner animation="grow" variant="primary" />
-                                            <Spinner animation="grow" variant="secondary" />
-                                            <Spinner animation="grow" variant="success" />
-                                            <Spinner animation="grow" variant="danger" />
-                                            <Spinner animation="grow" variant="warning" />
-                                            <Spinner animation="grow" variant="info" />
-                                            <Spinner animation="grow" variant="dark" />
-                                        </div>
-                                        :
-                                        !_hasMore && <Row className='_div'>No Data Found</Row>
-                                    }
-                                    <hr />
-                                    <PaginationRow
-                                        totalPages={totalPages}
-                                        pageNumber={limitPageNumber}
-                                        setPageNumber={(pageNumber) => setlimitPageNumber(pageNumber)}
-                                    />
-                                </>
+                        {!isSearch ?
+                            _loading ?
+                                <Loading />
                                 :
-                                <>
-                                    {loading ?
-                                        <div className='_div'>
-                                            < Spinner animation="grow" variant="primary" />
-                                            <Spinner animation="grow" variant="secondary" />
-                                            <Spinner animation="grow" variant="success" />
-                                            <Spinner animation="grow" variant="danger" />
-                                            <Spinner animation="grow" variant="warning" />
-                                            <Spinner animation="grow" variant="info" />
-                                            <Spinner animation="grow" variant="dark" />
-                                        </div>
-                                        :
-                                        !hasMore && <Row className='_div'>No Data Found</Row>
-                                    }
-                                    <hr />
-                                    <PaginationRow
-                                        totalPages={-1}
-                                        pageNumber={queryPageNumber}
-                                        setPageNumber={(pageNumber) => setQueryPageNumber(pageNumber)}
-                                        hasMore={hasMore}
-                                    />
-                                </>
-                            }
-                        </Card.Body >
-                    </Card >
+                                !_hasMore ?
+                                    <Row className='_div'>No Data Found</Row>
+                                    :
+                                    <>
+                                        <hr />
+                                        <PaginationRow
+                                            totalPages={totalPages}
+                                            activePageNumber={limitPageNumber}
+                                            setActivePageNumber={(pageNumber) => setlimitPageNumber(pageNumber)}
+                                        />
+                                    </>
+                            :
+                            loading ?
+                                <Loading />
+                                :
+                                !hasMore ?
+                                    <Row className='_div'>No Data Found</Row>
+                                    :
+                                    <>
+                                        <hr />
+                                        <PaginationRow
+                                            totalPages={-1}
+                                            activePageNumber={queryPageNumber}
+                                            setActivePageNumber={(pageNumber) => setQueryPageNumber(pageNumber)}
+                                            hasMore={hasMore}
+                                        />
+                                    </>
+                        }
+                    </CardSearchAccordion>
                     <style type="text/css">{`
                         ._div{
                             display: flex;
@@ -340,6 +289,8 @@ export default function Inventory(props) {
                         {`
                         th{
                             font-size: 14px;
+                            text-align: center;
+                            white-space: nowrap;
                         }
                     `}
                     </style>
@@ -382,7 +333,7 @@ function TableBody(props) {
             {element.product_type == "simple-product" ?
                 <tr>
                     <td align="center" >{(pageNumber - 1) * 20 + index + 1}</td>
-                    <td >
+                    <td>
                         {element._id}
                         <div className="td">
                             <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.setViewProduct} >View</Nav.Link>
@@ -443,7 +394,7 @@ function TableBody(props) {
                     color: #ff4d4d;
                 }
                 .delete:hover{
-                    color: #e60000;
+                    color: #cc0000;
                 }
             `}</style>
             <style jsx >
@@ -464,34 +415,6 @@ function TableBody(props) {
         </>
     )
 }
-
-function PaginationRow(props) {
-    return (
-        <Row className='d-flex justify-content-center p-0 m-0 align-items-center'>
-            <Pagination >
-                <Pagination.Item onClick={() => props.setPageNumber(1)}>{1}</Pagination.Item>
-                <Pagination.Prev
-                    disabled={props.pageNumber == 1}
-                    onClick={() => props.setPageNumber(props.pageNumber - 1)}>
-                </Pagination.Prev>
-
-                <Pagination.Ellipsis />
-                <Pagination.Item active>{props.pageNumber}</Pagination.Item>
-                <Pagination.Ellipsis />
-
-                <Pagination.Next
-                    disabled={props.totalPages != -1 ? props.totalPages == props.pageNumber : props.hasMore ? false : true}
-                    onClick={() => props.setPageNumber(props.pageNumber + 1)}>
-                </Pagination.Next>
-
-                <Pagination.Item
-                    disabled={props.totalPages == -1 ? true : false}
-                    onClick={() => props.setPageNumber(props.totalPages)}>{props.totalPages == -1 ? '-' : props.totalPages}</Pagination.Item>
-            </Pagination>
-        </Row>
-    )
-}
-
 
 const ViewProduct = props => {
     const [ref, { x, y, width }] = useDimensions();

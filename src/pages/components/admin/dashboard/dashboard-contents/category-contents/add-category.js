@@ -51,7 +51,6 @@ class AddCategory extends Component {
         formData.append('sub_category', this.state.subCategory.value)
         formData.append('myImage', this.state.img)
 
-        console.log('auth:', currentComponent.state.token)
         const url = MuhalikConfig.PATH + '/api/categories/category';
         await axios.post(url, formData, {
             headers: {

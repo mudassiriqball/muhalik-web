@@ -7,7 +7,7 @@ const CardAccordion = props => (
     <>
         <Accordion as={Row} defaultActiveKey="0" style={{ margin: '2%' }} noGutters >
             <Card style={styles.card}>
-                <Accordion.Toggle as={Card.Header} eventKey="0" className='card_toggle'>
+                <Accordion.Toggle as={Card.Header} eventKey="0" className='accordion_card_toggle'>
                     {props.notification ?
                         <>
                             <Form.Label className='p-0 m-0'>{props.title}</Form.Label>
@@ -28,7 +28,7 @@ const CardAccordion = props => (
             </Card>
         </Accordion>
         <style type="text/css">{`
-            .card_toggle{
+            .accordion_card_toggle{
                 background: #595c73;
                 font-size: 13px;
                 color: white;
@@ -36,7 +36,7 @@ const CardAccordion = props => (
                 display: inline-flex;
                 align-items: center;
             }
-            .card_toggle:hover{
+            .accordion_card_toggle:hover{
                 background: #4e5065;
             }
         `}</style>

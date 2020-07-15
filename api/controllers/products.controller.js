@@ -3,7 +3,7 @@ const Products = require("../models/product.model");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const Categories = require("../models/category.model");
-const Sub_categories = require("../models/sub-category.model");
+const Sub_categories=require("../models/sub-category.model");
 
 
 productsController.add_rating_and_review = async (req, res) => {
@@ -66,13 +66,13 @@ productsController.add_rating_and_review = async (req, res) => {
       { arrayFilters: [{ "i._id": req.query.variation_id }], multi: true }
     );
     const products2 = await Products.find(
-      { _id: req.query._id }, { "product_variations": 1, _id: 0 }
-    );
-    var one = 0;
-    var two = 0;
-    var three = 0;
-    var four = 0;
-    var five = 0;
+      {_id:req.query._id},{"product_variations":1,_id:0}
+    ); 
+    var one=0;
+    var two=0;
+    var three=0;
+    var four=0;
+    var five=0;
     var up = 0;
     var down = 0;
     var overall = 0;
@@ -80,32 +80,32 @@ productsController.add_rating_and_review = async (req, res) => {
 
 
     products2.forEach(element => {
-      one = element.product_variations[index].rating_review.rating.one_star;
-      two = element.product_variations[index].rating_review.rating.two_star;
-      three = element.product_variations[index].rating_review.rating.three_star;
-      four = element.product_variations[index].rating_review.rating.four_star;
-      five = element.product_variations[index].rating_review.rating.five_star;
+       one=element.product_variations[index].rating_review.rating.one_star;
+       two=element.product_variations[index].rating_review.rating.two_star;
+       three=element.product_variations[index].rating_review.rating.three_star;
+       four=element.product_variations[index].rating_review.rating.four_star;
+       five=element.product_variations[index].rating_review.rating.five_star;
+      
+    });     
+       up = one * 1 + two * 2 + three * 3 + four * 4 + five * 5;
+       down = one + two + three + four + five;
+       overall = up / down;
 
-    });
-    up = one * 1 + two * 2 + three * 3 + four * 4 + five * 5;
-    down = one + two + three + four + five;
-    overall = up / down;
 
+      const products3 = await Products.update(
+        { _id: req.query._id },
+        {
+          $set: { "product_variations.$[i].rating_review.rating.overall": overall.toFixed(1) },
+        },
+        { arrayFilters: [{ "i._id": req.query.variation_id }], multi: true }
 
-    const products3 = await Products.update(
-      { _id: req.query._id },
-      {
-        $set: { "product_variations.$[i].rating_review.rating.overall": overall.toFixed(1) },
-      },
-      { arrayFilters: [{ "i._id": req.query.variation_id }], multi: true }
+      );
+      res.status(200).send({
+        code: 200,
+        message: "Thank You For Review And Rating",
+      });
 
-    );
-    res.status(200).send({
-      code: 200,
-      message: "Thank You For Review And Rating",
-    });
-
-  }
+    }
 };
 
 //Add product endpoint definition
@@ -114,9 +114,9 @@ productsController.addProduct = async (req, res) => {
 
   var url;
   const urls = [];
-  for (const file of req.files) {
-    urls.push({ url: file.location });
-  }
+    for (const file of req.files) {
+      urls.push({ url: file.location });
+    }
 
   try {
     body.dangerous_goods = JSON.parse(body.dangerous_goods);
@@ -141,7 +141,10 @@ productsController.addProduct = async (req, res) => {
       body.rating_review = body1;
       body.custom_fields = JSON.parse(body.custom_fields);
       body.product_image_link = urls;
+      body.product_variations=undefined;
     } else if (body.product_type === "variable-prouct") {
+      body.product_image_link=undefined;
+      body.custom_fields=undefined;
       body.product_variations = JSON.parse(body.product_variations);
       var count = 0;
       for (let index = 0; index < body.product_variations.length; index++) {
@@ -179,8 +182,8 @@ productsController.get_products = async (req, res) => {
       products = await Products.paginate(
         { entry_date: { $gte: new Date(datetime) } },
         {
-          limit: parseInt(req.query.limit),
-          page: parseInt(req.query.page),
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
         }
       );
       if (products) {
@@ -195,14 +198,14 @@ productsController.get_products = async (req, res) => {
           message: "Does Not Exist",
         });
       }
-    } else if (req.query.field === "category") {
+    } else if(req.query.field==="category"){
 
-      let query = {};
-      query = await Categories.findOne({ label: req.query.q }, { _id: 1 })
+      let query={};
+        query=await Categories.findOne({label:req.query.q},{_id:1})
       const products = await Products.aggregate([
         {
-          $match:
-            { category: query._id }
+          $match: 
+            {category:query._id} 
         },
         {
           $lookup: {
@@ -222,11 +225,11 @@ productsController.get_products = async (req, res) => {
           },
         },
         { $unwind: "$sub_category" },
-        {
-          $skip: (req.query.page - 1) * req.query.limit
+        {        
+          $skip: (req.query.page-1) * req.query.limit
         },
         {
-          $limit: parseInt(req.query.limit)
+          $limit:parseInt(req.query.limit)
         },
       ]);
       if (products) {
@@ -241,14 +244,15 @@ productsController.get_products = async (req, res) => {
           message: "Does Not Exist",
         });
       }
-    } else if (req.query.field === "sub-category") {
+    }else if(req.query.field==="sub-category"){
 
-      let query = {};
-      query = await Sub_categories.findOne({ label: req.query.q }, { _id: 1 })
+      let query={};
+        query=await Sub_categories.findOne({label:req.query.q},{_id:1})
+        console.log(query._id);
       const products = await Products.aggregate([
         {
-          $match:
-            { sub_category: query._id }
+          $match: 
+            {sub_category:query._id} 
         },
         {
           $lookup: {
@@ -268,11 +272,11 @@ productsController.get_products = async (req, res) => {
           },
         },
         { $unwind: "$sub_category" },
-        {
-          $skip: (req.query.page - 1) * req.query.limit
+        {        
+          $skip: (req.query.page-1) * req.query.limit
         },
         {
-          $limit: parseInt(req.query.limit)
+          $limit:parseInt(req.query.limit)
         },
       ]);
       if (products) {
@@ -287,14 +291,14 @@ productsController.get_products = async (req, res) => {
           message: "Does Not Exist",
         });
       }
-    } else {
+    }else {
       const field = req.query.field;
       const search = {};
       search[field] = req.query.q;
       const products = await Products.aggregate([
         {
-          $match:
-            search
+          $match: 
+            search 
         },
         {
           $lookup: {
@@ -314,11 +318,11 @@ productsController.get_products = async (req, res) => {
           },
         },
         { $unwind: "$sub_category" },
-        {
-          $skip: (req.query.page - 1) * req.query.limit
+        {        
+          $skip: (req.query.page-1) * req.query.limit
         },
         {
-          $limit: parseInt(req.query.limit)
+          $limit:parseInt(req.query.limit)
         },
       ]);
       if (products) {
@@ -362,11 +366,11 @@ productsController.get_all_products = async (req, res) => {
         },
       },
       { $unwind: "$sub_category" },
-      {
-        $skip: (req.query.page - 1) * req.query.limit
+      {        
+        $skip: (req.query.page-1) * req.query.limit
       },
       {
-        $limit: parseInt(req.query.limit)
+        $limit:parseInt(req.query.limit)
       },
     ]);
     res.status(200).send({
@@ -386,7 +390,7 @@ productsController.get_product_by_id = async (req, res) => {
     const products = await Products.aggregate([
       {
         $match: {
-          _id: _id,
+          _id:_id,
           isdeleted: false,
         },
       },
@@ -408,7 +412,7 @@ productsController.get_product_by_id = async (req, res) => {
         },
       },
       { $unwind: "$sub_category" },
-
+      
     ]);
     res.status(200).send({
       code: 200,
@@ -423,14 +427,14 @@ productsController.get_product_by_id = async (req, res) => {
 
 
 // {
-//   $project: {
-//     product_name: 1,
-//     product_type: 1,
-//     product_weight: 1,
-//     value: "$category.value",
-//     label: "$category.label",
-//   },
-// },
+      //   $project: {
+      //     product_name: 1,
+      //     product_type: 1,
+      //     product_weight: 1,
+      //     value: "$category.value",
+      //     label: "$category.label",
+      //   },
+      // },
 //Get All Products of specific vendor endpoint definition
 productsController.get_vendor_products = async (req, res) => {
 
@@ -462,11 +466,11 @@ productsController.get_vendor_products = async (req, res) => {
         },
       },
       { $unwind: "$sub_category" },
-      {
-        $skip: (req.query.page - 1) * req.query.limit
+      {        
+        $skip: (req.query.page-1) * req.query.limit
       },
       {
-        $limit: parseInt(req.query.limit)
+        $limit:parseInt(req.query.limit)
       },
       // {
       //   $project: {
@@ -533,8 +537,12 @@ productsController.getSingleProduct = async (req, res) => {
 };
 
 productsController.deleteProduct = async (req, res) => {
-  console.log('fu:', req.params._id)
-
+  if (!req.params._id) {
+    Fu;
+    res.status(500).send({
+      message: "ID missing",
+    });
+  }
   try {
     const _id = req.params._id;
     Products.findOneAndUpdate(

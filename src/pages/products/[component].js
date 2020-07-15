@@ -24,11 +24,18 @@ import Link from 'next/link'
 React.useLayoutEffect = React.useEffect
 
 export async function getServerSideProps(context) {
+    let slider_list = []
     let categories_list = []
     let sub_categories_list = []
 
-    const url = MuhalikConfig.PATH + '/api/categories/categories';
-    await axios.get(url).then((response) => {
+    const url = MuhalikConfig.PATH + '/api/sliders/';
+    await axios.get(url).then((res) => {
+        slider_list = res.data.data
+    }).catch((error) => {
+    })
+
+    const url_1 = MuhalikConfig.PATH + '/api/categories/categories';
+    await axios.get(url_1).then((response) => {
         categories_list = response.data.category.docs,
             sub_categories_list = response.data.sub_category.docs
     }).catch((error) => {
@@ -36,6 +43,7 @@ export async function getServerSideProps(context) {
 
     return {
         props: {
+            slider_list,
             categories_list,
             sub_categories_list
         },
@@ -46,7 +54,6 @@ export default function Component(props) {
     const router = useRouter()
     const { component } = router.query
     const [ref, { x, y, width }] = useDimensions();
-    const [_id, set_id] = useState(null)
     const [fieldName, setFieldName] = useState('')
     const [query, setQuery] = useState(component)
     const [pageNumber, setPageNumber] = useState(1)
@@ -94,8 +101,8 @@ export default function Component(props) {
         }
     }
 
-    function handleProductClick(_id) {
-        Router.push('/[name]/[id]/[product]', `/${name}/${id}/${_id}`)
+    function handleProductClick(element) {
+        Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)
     }
 
     return (
@@ -107,13 +114,16 @@ export default function Component(props) {
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
             >
-                <SliderCarousel categories_list={props.categories_list} />
+                <SliderCarousel
+                    slider_list={props.slider_list}
+                    categories_list={props.categories_list}
+                />
                 <Row noGutters className='main_row'>
                     <Col className='products_col'>
                         <Row noGutters className='id_row'>
                             {products && products.map((element, index) => {
                                 if (products.length === index + 1) {
-                                    return <Card onClick={() => handleProductClick(element._id)} ref={lastProducrRef} key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                                    return <Card onClick={() => handleProductClick(element)} ref={lastProducrRef} key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                         {element.product_type == "simple-product" ?
                                             <div className='only_products_div'>
                                                 <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />
@@ -129,7 +139,7 @@ export default function Component(props) {
                                         }
                                     </Card>
                                 } else {
-                                    return <Card onClick={() => handleProductClick(element._id)} key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                                    return <Card onClick={() => handleProductClick(element)} key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                         {element.product_type == "simple-product" ?
                                             <div className='only_products_div'>
                                                 <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />

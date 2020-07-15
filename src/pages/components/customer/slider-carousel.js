@@ -1,4 +1,4 @@
-import { Carousel, Col, Row, ListGroup, Nav, Button } from 'react-bootstrap'
+import { Carousel, Row, Form, Button } from 'react-bootstrap'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -24,13 +24,15 @@ const SliderCarousel = (props) => {
                             <img
                                 style={{
                                     width: '100vw', maxWidth: '100%',
-                                    minHeight: width / 3.3, maxHeight: width / 3.3
+                                    height: '30vw', maxHeight: '30vw'
                                 }}
                                 className="d-block bg-cover"
                                 src={element.url}
                                 alt='Slide {index}'
                             />
                             <Carousel.Caption>
+                                <h3>{element.category}</h3>
+                                <h4>{element.sub_category}</h4>
                                 <Button variant='success' className='pl-5 pr-5'
                                     onClick={() => Router.push('/[category]/[sub_category]', `/${element.category}/${element.sub_category}`)}>Shop Now</Button>
                             </Carousel.Caption>
