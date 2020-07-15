@@ -209,6 +209,7 @@ export default function Cart(props) {
                     data.push({
                         'p_id': element.p_id,
                         'quantity': element.quantity,
+                        'sub_total': total,
                         'shiping_charges': shipping_charges
                     })
                 } else {
@@ -216,6 +217,7 @@ export default function Cart(props) {
                         'p_id': element.p_id,
                         'variation_id': element.variation_id,
                         'quantity': element.quantity,
+                        'sub_total': total,
                         'shiping_charges': shipping_charges
                     })
                 }
