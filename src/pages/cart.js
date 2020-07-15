@@ -203,7 +203,6 @@ export default function Cart(props) {
 
     function handlePlaceOrder() {
         if (products != '') {
-            const url = MuhalikConfig.PATH + `/api/orders/${token._id}`;
             let data = []
             products.forEach((element, index) => {
                 if (element.product.product_type == "simple-product") {
@@ -222,10 +221,14 @@ export default function Cart(props) {
                 }
             })
             console.log('ooo:', data)
-            // await axios.get(url, data).then((res) => {
-            //     setCart_list(res.data.data[0].cart)
-            // }).catch((error) => {
-            // })
+
+            const url = MuhalikConfig.PATH + `/api/users/place-order/${token._id}`;
+            await axios.post(url, data).then((res) => {
+                alert('Successfully Added')
+            }).catch((error) => {
+                console.log('Error:', error)
+                alert('Not  Added')
+            })
         }
     }
 
