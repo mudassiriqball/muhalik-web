@@ -56,8 +56,12 @@ const Home = (props) => {
                 <Col lg={6} md={12} sm={12} xs={12} style={{ height: '100%' }}>
                     <Card className='first_card'>
                         <Card.Header className='card_header'>
-                            <div className='mr-auto' >New Arrivals</div>
-                            <Link href='products/[component]' as={`/products/new-arrival`}><a>Show More</a></Link>
+                            <Link href='products/[component]' as={`/products/new-arrival`}>
+                                <a style={{ fontSize: '15px', width: '100%', color: `${GlobalStyleSheet.primry_color}` }} className='d-inline-flex align-items-center'>
+                                    <label className='mr-auto' >New Arrivals</label>
+                                    <span style={{ color: 'blue', fontSize: '13px' }}> Show More</span>
+                                </a>
+                            </Link>
                         </Card.Header>
                         <Card.Body className='card_body'>
                             <Carousel
@@ -103,8 +107,13 @@ const Home = (props) => {
                 <Col lg={6} md={12} sm={12} xs={12} style={{ height: '100%' }}>
                     <Card className='second_card'>
                         <Card.Header className='card_header'>
-                            <div className='mr-auto' >Top Ranking</div>
-                            <Link href=''><a>Show More</a></Link>
+                            <div className='mr-auto' ></div>
+                            <Link href='products/[component]' as={`/products/top-ranking`}>
+                                <a style={{ fontSize: '15px', width: '100%', color: `${GlobalStyleSheet.primry_color}` }} className='d-inline-flex align-items-center'>
+                                    <label className='mr-auto' >Top Ranking</label>
+                                    <span style={{ color: 'blue', fontSize: '13px' }}> Show More</span>
+                                </a>
+                            </Link>
                         </Card.Header>
                         <Card.Body className='card_body'>
                             <Carousel
@@ -180,15 +189,16 @@ const Home = (props) => {
                     .home .product_card .card_div{
                         display: flex;
                         flex-direction: column;
-                        border-radiud: 3px;
+                        border-radius: 3px;
                         font-size: 13px;
                         margin: 5px;
                         padding: 5px 5px 0px 5px;
                         cursor: pointer;
                         background: ${GlobalStyleSheet.body_color};
+                        border: 1px solid ${GlobalStyleSheet.primry_color};
                     }
                     .home .product_card .card_div:hover{
-                        box-shadow: 0px 0px 10px 0.5px lightgray;
+                        box-shadow: 0px 0px 10px 0.5px  ${GlobalStyleSheet.primry_color};
                         transition-timing-function: ease-in;
                         transition: 0.5s;
                         margin: 4px;
@@ -292,7 +302,7 @@ function CategoryCard(props) {
             <Card as={Row} className='category_card'>
                 <Card.Header className='d-inline-flex align-items-center'>
                     <Link href='' href='/[category]' as={`/${props.element.value}`}>
-                        <a style={{ fontSize: '13px', width: '100%' }} className='d-inline-flex align-items-center'>
+                        <a style={{ fontSize: '13px', width: '100%', color: `${GlobalStyleSheet.primary_text_color}` }} className='d-inline-flex align-items-center'>
                             <label className='mr-auto category_heading' >{props.element.value}</label>
                             {' Show More'}
                         </a>
@@ -320,7 +330,7 @@ function CategoryCard(props) {
                     </Row>
                     {loading &&
                         <Row noGutters className='box_shadow'>
-                            <Loading />
+                            <LoadingCard />
                         </Row>
                     }
                 </Card.Body>
@@ -334,7 +344,9 @@ function CategoryCard(props) {
                     margin: 0.5% 0%;
                     border: none;
                     border-radius: 5px;
-                    background: #adebbb;
+                    background-image: linear-gradient(180deg, ${GlobalStyleSheet.primry_color} 0%, ${GlobalStyleSheet.body_color} 100%);
+                    // background: #eac8e8;
+                    // background: #adebbb;
                 }
                 .CategoryCard .category_heading{
                     font-size: 20px;
@@ -342,7 +354,7 @@ function CategoryCard(props) {
                     margin: 0%;
                 }
                 .CategoryCard .category_card_body{
-                    padding: 1% 1% 2% 1%;
+                    padding: 1% 1% 1% 1%;
                     margin: 0%;
                 }
                 
@@ -357,12 +369,12 @@ function CategoryCard(props) {
                 }
 
                 .CategoryCard .box_shadow{
-                    padding: 1% 0%;
-                    background: white;
-                    background: #adebbb;
+                    padding: 1% 0% 0% 0%;
+                    background: none;
+                    // background: #adebbb;
                 }
                 .CategoryCard .box_shadow:hover{
-                    box-shadow: 0px 0px 10px 0px blue;
+                    // box-shadow: 0px 0px 10px 0px blue;
                 }
 
                 @media (max-width: 767px) {
@@ -417,7 +429,8 @@ function CategoryProducts(props) {
                 .category_product_card{
                     border: none;
                     border-radius: 5px;
-                    background: #adebbb;
+                    background: none;
+                    // background: #adebbb;
                 }
                 .category_product_card .category_card_div{
                     display: flex;
@@ -457,7 +470,7 @@ function CategoryProducts(props) {
     )
 }
 
-function Loading(props) {
+function LoadingCard(props) {
     const [ref, { x, y, width }] = useDimensions();
     let loadingCard = ['0', '1', '2', '3', '4', '5', '6']
 
@@ -465,8 +478,12 @@ function Loading(props) {
         <>
             {loadingCard.map((element, index) =>
                 <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='category_product_card'>
-                    <div className='category_card_div'>
-                        <div className='category_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src='' />
+                    <div className='loading_card_div'>
+                        <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20, minHeight: width + 20 }} >
+                            <Image className='react-logo'
+                                src='/muhalik.jpg'
+                            />
+                        </div>
                         <label className='my_label'>{'-'}</label>
                         <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
                     </div>
@@ -476,9 +493,10 @@ function Loading(props) {
                 .category_product_card{
                     border: none;
                     border-radius: 5px;
-                    background: #adebbb;
+                    background: none;
+                    // background: #adebbb;
                 }
-                .category_product_card .category_card_div{
+                .category_product_card .loading_card_div{
                     display: flex;
                     flex-direction: column;
                     border-radius: 5px;
@@ -488,27 +506,56 @@ function Loading(props) {
                     background: white;
                     border: 4px solid #4d4dff;
                 }
-                .category_product_card .category_card_div:hover{
+                .category_product_card .loading_card_div:hover{
                     box-shadow: 0px 0px 8px 0px blue;
                     transition-timing-function: ease-in;
                     transition: 0.5s;
                     margin: 0% 0.5% 4% 0.5%;
                 }
-                .category_product_card .category_product_img{
+                .category_product_card .loadin_img_div{
                     margin-bottom: 5px;
                     min-width: 100%;
                     max-width: 100%;
                     background: white;
+                    display: flex;
+                    border: 0.5px solid lightgray;
+                    align-items: center;
+                    justify-content: center;
                 }
 
                 @media (max-width: 767px){
-                    .category_product_card .category_card_div{
+                    .category_product_card .loading_card_div{
                         border: 2px solid #4d4dff;
                     }
                 }
                  @media (min-width: 1200px) {
                     .category_product_card{
                         max-width: 14.285714285714285714285714285714%;
+                    }
+                }
+                .react-logo{
+                    animation-name:rotate;
+                    animation-duration: 5s;
+                    animation-iteration-count: infinite;
+                    animation-timing-function: linear;
+                }
+                .react-logo , .react-logo:before , .react-logo:after{
+                    width: 70px;
+                    height: 70px;
+                    // max-height: 70px;
+                }
+                .react-logo:before , .react-logo:after{
+                    content:"";
+                }
+                .react-logo:after{
+                    transform:rotate(-57deg);
+                }
+                .react-logo:before{
+                    transform:rotate(57deg);
+                }
+                @keyframes rotate{
+                    100%{
+                        transform:rotate(360deg);
                     }
                 }
             `}</style>
@@ -594,8 +641,10 @@ function OnlyProducts(props) {
                             index < 12 ?
                                 <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                     <div className='only_products_div'>
-                                        <div className='only_product_img d-flex align-items-center justify-content-center' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}>
-                                            <Spinner animation='grow' size='lg' />
+                                        <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20, minHeight: width + 20 }} >
+                                            <Image className='react-logo'
+                                                src='/muhalik.jpg'
+                                            />
                                         </div>
                                         <label className='my_label'>{'-'}</label>
                                         <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
@@ -606,8 +655,10 @@ function OnlyProducts(props) {
                             :
                             <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                 <div className='only_products_div'>
-                                    <div className='only_product_img d-flex align-items-center justify-content-center' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} >
-                                        <Spinner animation="grow" variant="primary" />
+                                    <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20, minHeight: width + 20 }} >
+                                        <Image className='react-logo'
+                                            src='/muhalik.jpg'
+                                        />
                                     </div>
                                     <label className='my_label'>{'-'}</label>
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
@@ -658,6 +709,42 @@ function OnlyProducts(props) {
                 @media (min-width: 1200px) {
                     .only_products_card{
                         max-width: 14.285714285714285714285714285714%;
+                    }
+                }
+
+                .only_products .loadin_img_div{
+                    margin-bottom: 5px;
+                    min-width: 100%;
+                    max-width: 100%;
+                    background: white;
+                    display: flex;
+                    border: 0.5px solid lightgray;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .react-logo{
+                    animation-name:rotate;
+                    animation-duration: 5s;
+                    animation-iteration-count: infinite;
+                    animation-timing-function: linear;
+                }
+                .react-logo , .react-logo:before , .react-logo:after{
+                    width: 70px;
+                    height: 70px;
+                    // max-height: 70px;
+                }
+                .react-logo:before , .react-logo:after{
+                    content:"";
+                }
+                .react-logo:after{
+                    transform:rotate(-57deg);
+                }
+                .react-logo:before{
+                    transform:rotate(57deg);
+                }
+                @keyframes rotate{
+                    100%{
+                        transform:rotate(360deg);
                     }
                 }
             `}</style>

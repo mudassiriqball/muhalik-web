@@ -23,7 +23,7 @@ const CategoriesSlider = (props) => {
             <style jsx>{`
                 .category_container {
                     display: inline-flex;
-                    background: ${GlobalStyleSheet.body_color};
+                    background: #c4e3ed;
                     width: 100%;
                     padding: 0.5%;
                     margin: 1% 0%;

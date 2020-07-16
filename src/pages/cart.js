@@ -224,20 +224,17 @@ export default function Cart(props) {
                 }
             })
 
-            let d = {}
-            d['shipping_charges'] = shipping_charges
-            d['sub_total_price'] = sub_total
-            d['product'] = data
+            console.log('products:', data)
+            console.log('shipping_charges:', shipping_charges)
+            console.log('sub_total:', sub_total)
 
-            console.log('ooo:', d)
-
-            // const url = MuhalikConfig.PATH + `/api/users/place-order/${token._id}`;
-            // await axios.post(url, data).then((res) => {
-            //     alert('Successfully Added')
-            // }).catch((error) => {
-            //     console.log('Error:', error)
-            //     alert('Not  Added')
-            // })
+            const url = MuhalikConfig.PATH + `/api/users/check`;
+            await axios.post(url, { products: data, sub_total_price: sub_total, shipping_charges: shipping_charges }).then((res) => {
+                alert('Successfully Added')
+            }).catch((error) => {
+                console.log('Error:', error)
+                alert('Not  Added')
+            })
         }
     }
 

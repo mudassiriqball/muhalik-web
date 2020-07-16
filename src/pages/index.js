@@ -42,23 +42,25 @@ export async function getServerSideProps(context) {
     }).catch((error) => {
     })
 
-    const url_3 = MuhalikConfig.PATH + '/api/products/';
-    await axios.get(url_3).then((res) => {
+    const url_3 = MuhalikConfig.PATH + `/api/products/get`
+    await axios({
+        method: 'GET',
+        url: url_3,
+        params: { q: "new-arrival", page: 1, limit: 12 },
+    }).then((res) => {
         top_ranking_products_list = res.data.data
-    }).catch((error) => {
+    }).catch(err => {
     })
 
     const _url = MuhalikConfig.PATH + `/api/products/get`
     await axios({
         method: 'GET',
         url: _url,
-        params: { q: "new-arrival", page: 1, limit: 8 },
+        params: { q: "new-arrival", page: 1, limit: 12 },
     }).then((res) => {
         new_products_list = res.data.data
     }).catch(err => {
     })
-
-
 
     return {
         props: {
@@ -91,7 +93,7 @@ class Index extends Component {
             this.setState({ token: _token })
             const url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
             await axios.get(url).then((res) => {
-                currentComponent.setState({ cart_count: res.data.data[0].cart.length })
+                currentComponent.setState({ cart_count: res.data.data.length })
             }).catch((error) => {
             })
         }
@@ -118,8 +120,8 @@ class Index extends Component {
                 <main>
                     {animation}
                     <Layout
-                        role={this.state.token.role || ''}
-                        name={this.state.token.full_name || ''}
+                        role={this.state.token.role}
+                        name={this.state.token.full_name}
                         logout={this.logout}
                         categories_list={this.state.categories_list}
                         sub_categories_list={this.state.sub_categories_list}

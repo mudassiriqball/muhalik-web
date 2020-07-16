@@ -75,7 +75,7 @@ export default function Category(props) {
             setToken(_token)
             const url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
             await axios.get(url).then((res) => {
-                setCart_count(res.data.data[0].cart.length)
+                setCart_count(res.data.data.length)
             }).catch((error) => {
             })
         }

@@ -6,8 +6,15 @@
 // }
 
 let GlobalStyleSheet = {
-    // primry_color: '#563D7C',
-    primry_color: '#28A745',
+
+
+    primry_color: '#592357',
+    primry_hover_color: '#371536',
+
+    primry_text_color: 'white',
+
+    // primry_color: '#28A745',
+    // primry_color: '#FFC107',
 
     admin_primry_color: '#4e5065',
     primary_text_color: 'white',

@@ -18,6 +18,7 @@ import { removeTokenFromStorage } from '../../../sdk/core/authentication-service
 import React from 'react';
 import { faHeart, faUserCircle } from '@fortawesome/free-regular-svg-icons'
 import Router from 'next/router'
+import PrimaryBtn from '../buttons/primary-btn'
 
 const categoryArray = [{ value: 'All' }, { value: 'Machinay' }, { value: 'Clothes' }]
 const Toolbar = (props) => {
@@ -53,7 +54,7 @@ const Toolbar = (props) => {
     const ref = React.useRef(null);
     const handleScroll = () => {
         if (ref.current) {
-            setSticky(ref.current.getBoundingClientRect().top <= 0);
+            setSticky(ref.current.getBoundingClientRect().top < 0);
         }
     };
     React.useEffect(() => {
@@ -81,201 +82,188 @@ const Toolbar = (props) => {
     }
 
     return (
-        <div className='customer_toolar'>
-            <Card>
-                <Navbar className='m-0 p-1 display_in_md_lg' bg='light'>
-                    <Nav className="ml-auto mr-auto">
-                    </Nav>
-
-                    <Nav className='m-0 p-0 align-items-center mr-auto'>
-                        {props.role == 'vendor' || props.role == 'admin' ?
-                            <Nav.Link href={dashboard_href} className='first_nav_link'>
-                                Go To Dashboard
+        <div className='customer_toolbar'>
+            <Navbar className='m-0 p-1 display_in_md_lg' >
+                <Nav className='m-0 ml-auto p-0 align-items-center mr-auto'>
+                    {props.role == 'vendor' || props.role == 'admin' ?
+                        <Nav.Link href={dashboard_href} className='first_nav_link'>
+                            Go To Dashboard
                             </Nav.Link>
-                            :
-                            <Nav.Link href='/vendor-signup' className='first_nav_link'>
-                                Sell On Mahaalk
+                        :
+                        <Nav.Link href='/vendor-signup' className='first_nav_link'>
+                            Sell On Mahaalk
                         </Nav.Link>
-                        }
-                        <Nav.Link href='' className='mr-auto first_nav_link' style={{ borderRight: 'none' }}>
-                            Get The App
+                    }
+                    <Nav.Link href='' className='mr-auto first_nav_link' style={{ borderRight: 'none' }}>
+                        Get The App
                         </Nav.Link>
 
-                        <Nav.Link href='' className='first_nav_link'>
-                            Services
+                    <Nav.Link href='' className='first_nav_link'>
+                        Services
                         </Nav.Link>
-                        <Nav.Link href='' className='first_nav_link'>
-                            Help
+                    <Nav.Link href='' className='first_nav_link'>
+                        Help
                         </Nav.Link>
-                        <Dropdown className='d-flex align-items-center'>
-                            <Dropdown.Toggle as={Nav.Link} className='d-inline-flex align-items-center first_nav_link'>
-                                {selectedLang == 'English' ?
-                                    <Image src="/pk-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
-                                    :
-                                    <Image src="/ksa-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
-                                }
-                                {selectedLang}
+                    <Dropdown className='d-flex align-items-center'>
+                        <Dropdown.Toggle as={Nav.Link} className='d-inline-flex align-items-center first_nav_link'>
+                            {selectedLang == 'English' ?
+                                <Image src="/pk-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
+                                :
+                                <Image src="/ksa-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
+                            }
+                            {selectedLang}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu style={{ zIndex: 100 }}>
+                            <Dropdown.Item className='dropdown_item' onClick={() => setSelectedLang('English')}>English</Dropdown.Item>
+                            <Dropdown.Item className='dropdown_item' onClick={() => setSelectedLang("العربية")}>
+                                {"العربية"}</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+
+                    <div style={{ minWidth: '15%' }}></div>
+                    {loggedIn ?
+                        null
+                        :
+                        <>
+                            <Nav.Link href='/login' className='first_nav_link'>
+                                Login
+                                </Nav.Link>
+                            <Nav.Link href='/signup' className='first_nav_link'>
+                                Join now
+                                </Nav.Link>
+                        </>
+                    }
+
+
+                    {loggedIn ?
+                        <Dropdown className='first_nav_link' alignRight>
+                            <Dropdown.Toggle as={Nav.Link} className='first_nav_link align-self-end' style={{ borderRight: 'none' }}>
+                                {props.name}
                             </Dropdown.Toggle>
                             <Dropdown.Menu style={{ zIndex: 100 }}>
-                                <Dropdown.Item className='dropdown_item' onClick={() => setSelectedLang('English')}>English</Dropdown.Item>
-                                <Dropdown.Item className='dropdown_item' onClick={() => setSelectedLang("العربية")}>
-                                    {"العربية"}</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-
-                        <div style={{ minWidth: '15%' }}></div>
-                        {loggedIn ?
-                            null
-                            :
-                            <>
-                                <Nav.Link href='/login' className='first_nav_link'>
-                                    Login
-                                </Nav.Link>
-                                <Nav.Link href='/signup' className='first_nav_link'>
-                                    Join now
-                                </Nav.Link>
-                            </>
-                        }
-
-
-                        {loggedIn ?
-                            <Dropdown className='first_nav_link' alignRight>
-                                <Dropdown.Toggle as={Nav.Link} className='first_nav_link align-self-end' style={{ borderRight: 'none' }}>
-                                    Account
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu style={{ zIndex: 100 }}>
+                                {/* <Dropdown.Item className='dropdown_item' href=''>
+                                        <FontAwesomeIcon icon={faHeart} style={styles.dropdown_fontawesome} />
+                                        {'My Wishlist'}
+                                    </Dropdown.Item> */}
+                                {props.role == 'customer' && <>
                                     <Dropdown.Item className='dropdown_item' href=''>
                                         <FontAwesomeIcon icon={faSuitcaseRolling} style={styles.dropdown_fontawesome} />
                                         {'My Orders'}
-                                    </Dropdown.Item>
-                                    <Dropdown.Item className='dropdown_item' href=''>
-                                        <FontAwesomeIcon icon={faHeart} style={styles.dropdown_fontawesome} />
-                                        {'My Wishlist'}
                                     </Dropdown.Item>
                                     <Dropdown.Item className='dropdown_item'>
                                         <FontAwesomeIcon icon={faUserCircle} style={styles.dropdown_fontawesome} />
                                         {'My Profile'}
                                     </Dropdown.Item>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item onClick={logout} className='dropdown_item'>
-                                        <FontAwesomeIcon icon={faPowerOff} style={styles.dropdown_fontawesome} />
-                                        {'Logout'}
-                                    </Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                            :
-                            null
-                        }
-                    </Nav>
+                                </>
+                                }
+                                <Dropdown.Divider />
+                                <Dropdown.Item onClick={logout} className='dropdown_item'>
+                                    <FontAwesomeIcon icon={faPowerOff} style={styles.dropdown_fontawesome} />
+                                    {'Logout'}
+                                </Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                        :
+                        null
+                    }
+                </Nav>
+            </Navbar>
+
+            <div className={`sticky-wrapper${isSticky ? ' sticky' : ''}`} ref={ref}>
+                <Navbar className='sticky-inner' style={{ background: 'white' }}>
+                    <Navbar.Brand onClick={() => Router.push('/')} className='d-inline-flex align-items-center p-0 m-0'>
+                        <Image src="/muhalik.jpg" className='mahaalk_img' fluid />
+                        <h4 className="display_in_md_lg text_animation">.com</h4>
+                        {/* <h4 className=" text_animation" onClick={() => Router.push('/')}>.com<span className='display_in_md_lg mr-3' style={{ fontSize: '15px' }}>@2020</span></h4> */}
+                    </Navbar.Brand>
+                    <InputGroup className='input_group'>
+                        <FormControl className='search-bar' size='md' variant='warning' placeholder="Search here" />
+                        <InputGroup.Append>
+                            <PrimaryBtn>
+                                <div className='display_in_md_lg pr-1'>Search</div>
+                                <FontAwesomeIcon className='serch-icon' icon={faSearch} style={styles.search_fontawesome} />
+                            </PrimaryBtn>
+                            {/* <Button className='btn_search d-inline-flex align-items-center' variant='warning' >
+
+                                </Button> */}
+                        </InputGroup.Append>
+                    </InputGroup>
+                    {/* <Nav className=""> */}
+                    <Nav.Link href='/cart' className='display_in_md_lg nav_link pb-0 mb-0'>
+                        <div className='cart_div'>
+                            <FontAwesomeIcon icon={faShoppingCart} style={styles.second_nav_fontawesome} />
+                            <Badge variant='primary' className='cart_badge'>{props.cart_count}</Badge>
+                        </div>
+                        {"Cart"}
+                    </Nav.Link>
+                    {/* </Nav> */}
                 </Navbar>
+            </div>
 
-                <div className={`sticky-wrapper${isSticky ? ' sticky' : ''}`} ref={ref}>
-                    <Navbar className='sticky-inner'>
-                        <Navbar.Brand className='d-inline-flex align-items-center'>
-                            <div className='display_in_md_lg'>
-                                <Image src="/muhalik.jpg" className='display_in_md_lg mr-2 ml-1' roundedCircle fluid style={{ width: '60px', minWidth: '60px', margin: '0%' }} />
-                            </div>
-                            <h4 className=" text_animation" onClick={() => Router.push('/')}>Mahaalk<span className='display_in_md_lg mr-3' style={{ fontSize: '15px' }}>@2020</span></h4>
-                        </Navbar.Brand>
-                        <InputGroup>
-                            <InputGroup.Prepend className='display_in_md_lg'>
-                                <Dropdown as={ButtonGroup}>
-                                    <Dropdown.Toggle as={Button} className='btn_search' variant='success'>
-                                        {searchType}
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu >
-                                        {categoryArray.map((element, index) =>
-                                            <Dropdown.Item className='btn' key={index} onClick={() => setSearchType(element.value)}>{element.value}</Dropdown.Item>
-                                        )}
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </InputGroup.Prepend>
-                            <FormControl className='search-bar' placeholder="Search here" />
-                            <InputGroup.Append>
-                                <Button className='btn_search' variant='success'>
-                                    <FontAwesomeIcon className='serch-icon' icon={faSearch} style={styles.search_fontawesome} />
-                                </Button>
-                            </InputGroup.Append>
-                        </InputGroup>
-                        {/* <Nav className=""> */}
-                        <Nav.Link href='/cart' className='display_in_md_lg nav_link pb-0 mb-0'>
-                            <div className='cart_div'>
-                                <FontAwesomeIcon icon={faShoppingCart} style={styles.second_nav_fontawesome} />
-                                <Badge variant='primary' className='cart_badge'>{props.cart_count}</Badge>
-                            </div>
-                            {"Cart"}
-                        </Nav.Link>
-                        {/* </Nav> */}
-                    </Navbar>
-                </div>
-
-                {/* Third Navbar */}
-                <Navbar className='display_in_md_lg m-0 p-0' bg="success" variant="dark">
-                    <Nav className="mr-auto ml-5">
-                        <Dropdown
-                            onMouseOver={() => { setIsCategoryOpen(true), setHoverCategory(true) }}
-                            onMouseLeave={() => { setIsCategoryOpen(false), setHoverCategory(false) }}
-                            show={isCategoryOpen}
-                        >
-                            <Dropdown.Toggle as={Nav.Link} className='third_nav_link'
-                                style={{
-                                    paddingLeft: '1.5vw',
-                                    paddingRight: '1.5vw',
-                                    border: hoverCategory ? '1px solid lightgray' : null,
-                                    background: hoverCategory ? 'white' : null,
-                                    margin: hoverCategory ? '-1px' : '0px',
-                                    color: hoverCategory ? `${GlobalStyleSheet.primry_color}` : 'white',
-                                }}>
-                                <FontAwesomeIcon icon={faListUl} style={hoverCategory ? styles.third_nav_fontawesome_hover : styles.third_nav_fontawesome} />
-                                <div style={{ color: hoverCategory ? `${GlobalStyleSheet.primry_color}` : 'white' }}>
-                                    Categories
+            {/* Third Navbar */}
+            <Navbar className=' third_nav_bar' style={{ background: `${GlobalStyleSheet.primry_color}` }}>
+                <Nav>
+                    <Dropdown
+                        onMouseOver={() => { setIsCategoryOpen(true), setHoverCategory(true) }}
+                        onMouseLeave={() => { setIsCategoryOpen(false), setHoverCategory(false) }}
+                        show={isCategoryOpen}
+                    >
+                        <Dropdown.Toggle as={Nav.Link} className='third_nav_link'
+                            style={{
+                                // border: hoverCategory ? '1px solid lightgray' : null,
+                                background: hoverCategory ? 'white' : null,
+                                // margin: hoverCategory ? '-1px' : '0px',
+                                color: hoverCategory ? `${GlobalStyleSheet.primry_color}` : 'white',
+                            }}>
+                            <FontAwesomeIcon icon={faListUl} style={hoverCategory ? styles.third_nav_fontawesome_hover : styles.third_nav_fontawesome} />
+                            <div style={{ color: hoverCategory ? `${GlobalStyleSheet.primry_color}` : 'white' }}>
+                                Categories
                                     </div>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu style={{ minWidth: '600px', minHeight: '500px', maxHeight: '500px', left: '-1px', borderTop: 'none', borderTopLeftRadius: '0px' }} className='m-0 p-0'>
-                                <Row noGutters onMouseLeave={() => categoryMouseLeave()} >
-                                    <Col style={{ overflowY: 'auto', zIndex: 1 }}>
-                                        {props.categories_list && props.categories_list.map((element, index) =>
-                                            <Link href='/[category]' as={`/${element.value}`} key={index} >
-                                                {props.active_category == element.value ?
-                                                    <a style={{ color: 'blue' }} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)} onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className='dropdown_menue'>
+                            <Row noGutters onMouseLeave={() => categoryMouseLeave()} >
+                                <Col style={{ overflowY: 'auto', zIndex: 1, minHeight: '500px', maxHeight: '500px', }}>
+                                    {props.categories_list && props.categories_list.map((element, index) =>
+                                        <Link href='/[category]' as={`/${element.value}`} key={index} >
+                                            {props.active_category == element.value ?
+                                                <a style={{ color: 'blue' }} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)} onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
+                                                    <Image src={element.url} roundedCircle fluid style={{ width: '30px', maxWidth: '30px', minHeight: '30px', maxHeight: '30px', marginRight: '10px' }} />
+                                                    {element.value}
+                                                </a>
+                                                :
+                                                <a className="category_list_item" onMouseOver={() => categoryMouseEnter(index)} onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
+                                                    <Image src={element.url} roundedCircle fluid style={{ width: '30px', maxWidth: '30px', minHeight: '30px', maxHeight: '30px', marginRight: '10px' }} />
+                                                    {element.value}
+                                                </a>
+                                            }
+                                        </Link>
+                                    )}
+                                </Col>
+                                {/* {category_id ? */}
+                                <Col style={{ minHeight: '500px', maxHeight: '50px', overflowY: 'auto', boxShadow: '-2px 0px 10px 1px rgba(0,0,0,0.12)' }}>
+                                    {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
+                                        element.category_id == category_id._id ?
+                                            <Link href='/[category]/[sub_category]' as={`/${category_id.value}/${element.value}`} key={index} >
+                                                {props.active_sub_category == element.value ?
+                                                    <a style={{ color: 'blue' }} className="category_list_item" onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
                                                         {element.value}
                                                     </a>
                                                     :
-                                                    <a className="category_list_item" onMouseOver={() => categoryMouseEnter(index)} onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
+                                                    <a className="category_list_item" onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
                                                         {element.value}
                                                     </a>
                                                 }
                                             </Link>
-                                        )}
-                                    </Col>
-                                    {/* {category_id ? */}
-                                    <Col style={{ minHeight: '500px', maxHeight: '500px', overflowY: 'auto', boxShadow: '-2px 0px 10px 1px rgba(0,0,0,0.12)' }}>
-                                        {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
-                                            element.category_id == category_id._id ?
-                                                <Link href='/[category]/[sub_category]' as={`/${category_id.value}/${element.value}`} key={index} >
-                                                    {props.active_sub_category == element.value ?
-                                                        <a style={{ color: 'blue' }} className="category_list_item" onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
-                                                            {element.value}
-                                                        </a>
-                                                        :
-                                                        <a className="category_list_item" onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
-                                                            {element.value}
-                                                        </a>
-                                                    }
-                                                </Link>
-                                                :
-                                                null
-                                        )}
-                                    </Col>
-                                    {/* :
-                                        null
-                                    } */}
-                                </Row>
-                            </Dropdown.Menu>
-                        </ Dropdown>
-                        <div className='align-self-center' style={{ color: 'white' }}>|</div>
-                        {/* Shops */}
-                        <Dropdown
+                                            :
+                                            null
+                                    )}
+                                </Col>
+                            </Row>
+                        </Dropdown.Menu>
+                    </ Dropdown>
+                    {/* <div className='align-self-center' style={{ color: 'white' }}>|</div> */}
+                    {/* Shops */}
+                    {/* <Dropdown
                             onMouseOver={() => { setIsShopOpen(true), setHoverShops(true) }}
                             onMouseLeave={() => { setIsShopOpen(false), setHoverShops(false) }}
                             show={isShopOpen}
@@ -298,9 +286,9 @@ const Toolbar = (props) => {
                                 </Row>
                             </Dropdown.Menu>
                         </Dropdown>
-                        <div className='align-self-center' style={{ color: 'white' }}>|</div>
-                        {/* Products */}
-                        <Dropdown
+                        <div className='align-self-center' style={{ color: 'white' }}>|</div> */}
+                    {/* Products */}
+                    {/* <Dropdown
                             onMouseOver={() => { setIsProductOpen(true), setHoverProducts(true) }}
                             onMouseLeave={() => { setIsProductOpen(false), setHoverProducts(false) }}
                             show={isProductOpen}
@@ -322,12 +310,19 @@ const Toolbar = (props) => {
                                     <h1>Products Will Show Here</h1>
                                 </Row>
                             </Dropdown.Menu>
-                        </Dropdown>
-                    </Nav>
-                    <div className='mr-auto'></div>
-                </Navbar>
-            </Card >
+                        </Dropdown> */}
+                </Nav>
+            </Navbar>
             <style type="text/css">{`
+                .mahaalk_img{
+                    width: 60px;
+                    max-width: 60px;
+                    height: 60px;
+                    max-height: 60px;
+                }
+                .input_group {
+                    margin: 0% 1% 0% 10%;
+                }
                 .cart_div{
                     display: inline-flex;
                     align-items: center;
@@ -336,24 +331,29 @@ const Toolbar = (props) => {
                     margin-top: -20px;
                     margin-left: 3px;
                 }
-                .customer_toolar .first_nav_link{
+                .customer_toolbar{
+                    padding: 0%;
+                    margin: 0%;
+                }
+                .first_nav_link {
                     font-size: 12.5px;
                     white-space: nowrap;
                     margin: 0px;
-                    padding-top: 0%;
-                    padding-bottom: 0%;
-                   border-right: 1px solid lightgray;
-                    color: lightgray;
+                    padding: 0%;
+                    border-right: 1px solid lightgray;
                 }
-                .customer_toolar .first_nav_link:last-child{
+                .customer_toolbar .first_nav_link:hover{
+                    color: ${GlobalStyleSheet.primry_color};
+                }
+                .customer_toolbar .first_nav_link:last-child{
                     border: none;
                 }
-                .customer_toolar .dropdown_item{
+                .customer_toolbar .dropdown_item{
                     align-items: center;
                     font-size: 13px;
                     color: gray;
                 }
-                .customer_toolar .dropdown_item:hover{
+                .customer_toolbar .dropdown_item:hover{
                     background: ${GlobalStyleSheet.primry_color};
                     color: white
                 }
@@ -362,10 +362,10 @@ const Toolbar = (props) => {
 
                 // Second Navbar //
 
-                .customer_toolar .sticky-wrapper {
+                .customer_toolbar .sticky-wrapper {
                     position: relative;
                 }
-                .customer_toolar .sticky .sticky-inner {
+                .customer_toolbar .sticky .sticky-inner {
                     background: ${GlobalStyleSheet.primry_color};
                     position: fixed;
                     align-items: center;
@@ -374,80 +374,123 @@ const Toolbar = (props) => {
                     right: 0;
                     z-index: 1000000;
                 }
-                .customer_toolar .sticky-inner{
+                .customer_toolbar .sticky-inner{
                     align-items: center;
-                    padding: 0.5% 10%;
+                    padding: 0.5% 12%;
                 }
 
+                .btn_search {
+                    border-top-right-radius: 20px;
+                    border-bottom-right-radius: 20px;
+                    padding-right: 10px;
+                    color: white;
+                }
+                .btn_search:hover{
+                    color: white;
+                }
+                .btn_search:focus{
+                    color: white;
+                }
+                .btn_search:active{
+                    color: white;
+                }
 
-                .customer_toolar .sticky .sticky-inner .btn_search{
-                    color:  ${GlobalStyleSheet.primry_color};
-                    background: white;
-                    border-color: white;
-                    border-radius: 0px;
+                .btn_search_type {
+                     border-top-left-radius: 20px;
+                    border-bottom-left-radius: 20px;
+                    padding-left: 10px;
+                    color: white;
                 }
-                .customer_toolar .sticky .sticky-inner .btn_search:hover{
-                    color:  green;
-                    border-right: 1px solid green;
-                    border-left: 1px solid green
+                .btn_search_type:hover{
+                    color: white;
                 }
-                .customer_toolar .sticky .sticky-inner .serch-icon{
-                    color:  ${GlobalStyleSheet.primry_color};
+                .btn_search_type:focus{
+                    color: white;
                 }
+                .btn_search_type:active{
+                    color: white;
+                }
+
+                // .customer_toolbar .sticky .sticky-inner .btn_search{
+                //     color:  ${GlobalStyleSheet.primry_color};
+                //     background: white;
+                //     border-color: white;
+                //     border-radius: 0px;
+                // }
+                // .customer_toolbar .sticky .sticky-inner .btn_search:hover{
+                //     color:  green;
+                //     border-right: 1px solid green;
+                //     border-left: 1px solid green
+                // }
+                // .customer_toolbar .sticky .sticky-inner .serch-icon{
+                //     color:  ${GlobalStyleSheet.primry_color};
+                // }
                 
-                .customer_toolar .search-bar{
+                .customer_toolbar .search-bar{
                     border-color: ${GlobalStyleSheet.primry_color};
                 }
-                .customer_toolar .sticky .sticky-inner .search-bar{
-                    border-color: white;
-                }
+                // .customer_toolbar .sticky .sticky-inner .search-bar{
+                //     border-color: white;
+                // }
                 
-                .customer_toolar .nav_link{
+                .customer_toolbar .nav_link{
                     display: flex;
                     flex-direction: column;
                     font-size: 14px;
-                    margin-left: 1%;
+                    margin-left: 2%;
+                    color: gray;
+                }
+                
+                .customer_toolbar .nav_link:hover{
                     color: ${GlobalStyleSheet.primry_color};
                 }
-                
-                .customer_toolar .nav_link:hover{
-                    color: green;
-                }
-                .customer_toolar .sticky .sticky-inner .nav_link {
-                    color: lightgray;
-                }
-                .customer_toolar .sticky .sticky-inner .nav_link:hover {
-                    color: white;
-                }
+                // .customer_toolbar .sticky .sticky-inner .nav_link {
+                //     color: lightgray;
+                // }
+                // .customer_toolbar .sticky .sticky-inner .nav_link:hover {
+                //     color: white;
+                // }
                 
                     
-                    .customer_toolar .text_animation{
+                    .customer_toolbar .text_animation{
                         animation: mymove 5s infinite;
                         color: ${GlobalStyleSheet.primry_color};
                         margin: 0%;
                         cursor: pointer;
                     }
-                    .customer_toolar .sticky .sticky-inner .text_animation {
-                        animation: mymmove 5s infinite;
-                        color: white;
-                    }
+                    // .customer_toolbar .sticky .sticky-inner .text_animation {
+                    //     animation: mymmove 5s infinite;
+                    //     color: white;
+                    // }
                     @keyframes mymove {
-                        50% {text-shadow: 10px 15px 3px green;}
+                        50% {text-shadow: 10px 15px 3px ${GlobalStyleSheet.primry_color}}
                     }
-                    @keyframes mymmove {
-                        50% {text-shadow: 10px 15px 3px white;}
-                    }
+                    // @keyframes mymmove {
+                    //     50% {text-shadow: 10px 15px 3px white;}
+                    // }
 
-                    .customer_toolar .third_nav_link {
+
+                .third_nav_bar{
+                    padding: 0.5% 3.7%;
+                }
+                .dropdown_menue {
+                    min-width: 700px; 
+                    min-height: 500px;
+                    max-height: 500px; 
+                    border-top: none; 
+                    left: -1px; 
+                    padding: 0%;
+                    border-top-left-radius: 0px;
+                }
+                .customer_toolbar .third_nav_link {
                         white-space: nowrap;
                         font-size: 15px;
-                        margin-right: 2%;
                         color: lightgray;
                         display: inline-flex;
                         align-items: center;
                     }
                     
-                    .customer_toolar .category_list_item {
+                    .customer_toolbar .category_list_item {
                         cursor: pointer;
                         width: 98%;
                         display: inline-flex;
@@ -457,23 +500,45 @@ const Toolbar = (props) => {
                         margin: 0% -2% 0% 2%;
                         color: gray;
                     }
-                    .customer_toolar .category_list_item:hover{
+                    .customer_toolbar .category_list_item:hover{
                         z-index: 100;
                         color: #005ce6;
                         border-radius: 2px;
                         box-shadow: -1px 0px 10px 1px rgba(0,0,0,0.12);
                     }
-                    @media (max-width: 992px) {
-                        .customer_toolar .sticky-inner{
+                    .display_in_md_lg{
+                        display: flex;
+                    }
+                     @media (max-width: 1199px) {
+                        .third_nav_bar{
+                            padding: 0.5% 2.7% 0% 2.7%;
+                        }
+                    }
+                    @media (max-width: 991px) {
+                        .customer_toolbar .sticky-inner{
                             padding: 0.5% 5%;
                         }
                     }
                     @media (max-width: 767px) {
-                        .customer_toolar .sticky-inner{
-                            padding: 1%;
+                        .customer_toolbar .sticky-inner{
+                            padding: 0.5% 4%;
                         }
-                        .customer_toolar .display_in_md_lg {
+                        .third_nav_bar{
                             display: none;
+                        }
+                        .customer_toolbar .display_in_md_lg {
+                            display: none;
+                        }
+                        .mahaalk_img{
+                        width: 50px;
+                        max-width: 50px;
+                        height: 50px;
+                        max-height: 50px;
+                    }
+                    }
+                     @media (max-width: 575px) {
+                        .customer_toolbar .sticky-inner{
+                            padding: 0.5% 2%;
                         }
                     }
             `}</style>
