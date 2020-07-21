@@ -398,7 +398,7 @@ function Product(props) {
                 }
                 @media (max-width: 767px) {
                     .single_product .main-row{
-                        padding: 2% 2% 16% 2%;
+                        padding: 2% 2% 50px 2%;
                     }
                     .img_col{
                         padding: 2%;
@@ -417,6 +417,9 @@ function Product(props) {
                     }
                 }
                 @media (max-width: 575px) {
+                    .single_product .main-row{
+                        padding: 1.5% 1.5% 50px 1.5%;
+                    }
                     .img_col{
                         border-radius: 5px;
                     }

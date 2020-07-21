@@ -1,8 +1,8 @@
 import { Carousel, Row, Col, ListGroup, Button, Image } from 'react-bootstrap'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faChevronRight, faTh } from '@fortawesome/free-solid-svg-icons'
-import { faProductHunt, faBuromobelexperte } from '@fortawesome/free-brands-svg-icons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faBuromobelexperte } from '@fortawesome/free-brands-svg-icons';
 import GlobalStyleSheet from '../../../styleSheet'
 import CategoriesSlider from './categories-slider'
 import useDimensions from "react-use-dimensions";
@@ -21,13 +21,13 @@ const SliderCarousel = (props) => {
             <Row noGutters className='_row'>
                 <Row className='w-100' noGutters >
                     <Col lg={3} md={3} className='category_col'>
-                        <ListGroup variant='flush' className='list_group' style={{ maxHeight: width / 2.5 }}>
+                        <ListGroup variant='flush' className='list_group' style={{ maxHeight: width / 2.5 || '25vw' }}>
                             <ListGroup.Item className='list_outer_item'>
                                 <FontAwesomeIcon icon={faBuromobelexperte} className='categories_fontawsome' />
                                 <div>All categories</div>
                                 <FontAwesomeIcon icon={faChevronRight} className='fontawesome' />
                             </ListGroup.Item>
-                            {props.categories_list.map((element, index) =>
+                            {props.categories_list && props.categories_list.map((element, index) =>
                                 <ListGroup.Item key={element._id} className='list_item'>
                                     <Image src={element.url} roundedCircle fluid style={{ width: '30px', maxWidth: '30px', minHeight: '30px', maxHeight: '30px', marginRight: '10px' }} />
                                     <div>{element.value}</div>
@@ -54,7 +54,7 @@ const SliderCarousel = (props) => {
                                 <Carousel.Item key={element._id} >
                                     <img
                                         // className='slider_img'
-                                        style={{ width: '100vw', maxWidth: '100%', minHeight: width / 2.5, maxHeight: width / 2.5 }}
+                                        style={{ width: '100vw', maxWidth: '100%', minHeight: width / 2.5 || '25vw', maxHeight: width / 2.5 || '25vw' }}
                                         src={element.url}
                                         alt='Slide {index}'
                                     />
@@ -178,8 +178,9 @@ const SliderCarousel = (props) => {
                     }
                 }
                 @media (max-width: 767px) {
-                    .slider_carousel .row{
-                        padding: 0.5%;
+                    .slider_carousel ._row{
+                        padding: 0.5% 0% 0% 0%;
+                        background: none;
                     }
                     .slider_carousel{
                         padding: 1%;

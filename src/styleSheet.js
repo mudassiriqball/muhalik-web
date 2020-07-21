@@ -1,28 +1,18 @@
 
-// export const GlobalStyleSheet = {
-//     // primry_color: '#563D7C',
-//     primry_color: '#28A745',
-//     primary_text_color: 'white',
-// }
-
 let GlobalStyleSheet = {
 
-
+    primry_light_color: '#a540a2',
     primry_color: '#592357',
-    primry_hover_color: '#371536',
+    primry_hover_color: '#491d48',
 
     primry_text_color: 'white',
-
-    // primry_color: '#28A745',
-    // primry_color: '#FFC107',
 
     admin_primry_color: '#4e5065',
     primary_text_color: 'white',
 
-    // Body color
-    // body_color: '#F1F1F1',
     body_color: '#F2F3F7',
-    // body_color: '#e3edf7',
+
+    error_color: '#DC3545',
 
     // Fontsize for all the labels of any form control (input, textbox etc):
     form_label_fontsize: '13px',

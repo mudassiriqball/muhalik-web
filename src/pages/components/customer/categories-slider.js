@@ -68,6 +68,7 @@ const CategoriesSlider = (props) => {
                 @media (max-width: 767px) {
                     .category_container {
                         border-radius: 5px;
+                        background: nonw;
                     }
                     .category_container .item{
                         border-radius: 10%;

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import MuhalikConfig from './sdk/muhalik.config'
 
-export default function usersPageLimit(refresh, url, pageNumber, limit) {
+export default function usersPageLimit(token, refresh, url, pageNumber, limit) {
     const [users_loading, setLoading] = useState(true)
     const [users_error, setError] = useState('')
     const [users, setUsers] = useState([])
@@ -25,6 +25,9 @@ export default function usersPageLimit(refresh, url, pageNumber, limit) {
         await axios({
             method: 'GET',
             url: _url,
+            headers: {
+                'authorization': token
+            },
             params: { page: pageNumber, limit: limit },
             cancelToken: new axios.CancelToken(c => cancle = c)
         }).then(res => {

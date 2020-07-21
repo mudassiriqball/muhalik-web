@@ -3,7 +3,7 @@ import Router from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
 import firebase from '../sdk/custom/firebase'
-import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner } from 'react-bootstrap';
+import { Navbar, Container, Form, Col, Row, InputGroup, Image, Spinner } from 'react-bootstrap';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -17,6 +17,8 @@ import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config';
 import Toolbar from './components/toolbar';
 import { checkAuth } from '../sdk/core/authentication-service'
+import MyButton from './components/buttons/my-btn'
+
 
 // RegEx for phone number validation
 const phoneRegExp = /^\+(?:[0-9]?){6,14}[0-9]$/;
@@ -275,6 +277,7 @@ class Signup extends Component {
                                                     </Form.Label>
                                                     <InputGroup>
                                                         <Form.Control
+                                                            style={{ marginRight: '4px' }}
                                                             type="text"
                                                             placeholder="+966590911891"
                                                             aria-describedby="mobile"
@@ -284,20 +287,18 @@ class Signup extends Component {
                                                             isInvalid={this.state.mobileError}
                                                             disabled={this.state.isCodeSended}
                                                         />
-                                                        <InputGroup.Append>
-                                                            <Button id="recaptcha-container"
-                                                                onClick={() => {
-                                                                    this.state.isCodeSended ?
-                                                                        this.handleSenVerificationCode(values.mobile)
-                                                                        :
-                                                                        this.handleSenVerificationCode(values.mobile)
-                                                                }}
-                                                                disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
-                                                                className='append_button' variant='success' >
-                                                                {this.state.isCodeSended ? 'Resend' : 'Send Code'}
-                                                                {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
-                                                            </Button>
-                                                        </InputGroup.Append>
+                                                        <MyButton id="recaptcha-container"
+                                                            onClick={() => {
+                                                                this.state.isCodeSended ?
+                                                                    this.handleSenVerificationCode(values.mobile)
+                                                                    :
+                                                                    this.handleSenVerificationCode(values.mobile)
+                                                            }}
+                                                            disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
+                                                            className='append_button' variant='success' >
+                                                            <div className='append_button'>{this.state.isCodeSended ? 'Resend' : 'Send Code'}</div>
+                                                            {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
+                                                        </MyButton>
                                                         <Form.Control.Feedback type="invalid">
                                                             {this.state.mobileError}
                                                         </Form.Control.Feedback>
@@ -326,6 +327,7 @@ class Signup extends Component {
                                                     <Form.Label style={styles.label}>Verification Code <span> * </span></Form.Label>
                                                     <InputGroup>
                                                         <Form.Control
+                                                            style={{ marginRight: '4px' }}
                                                             type="text"
                                                             placeholder="Verification Code"
                                                             name="verification_code"
@@ -335,12 +337,12 @@ class Signup extends Component {
                                                             disabled={!this.state.isCodeSended || this.state.isCodeVerified}
                                                         />
                                                         {this.state.isCodeSended ?
-                                                            <InputGroup.Append>
-                                                                <Button className='append_button'
-                                                                    onClick={() => this.handleVerifyVarificationCode(values.verification_code)}
-                                                                    disabled={this.state.isCodeVerified}
-                                                                    variant='success'>{this.state.isCodeVerified ? 'Verified' : 'Verify'}</Button>
-                                                            </InputGroup.Append>
+                                                            <MyButton
+                                                                onClick={() => this.handleVerifyVarificationCode(values.verification_code)}
+                                                                disabled={this.state.isCodeVerified}
+                                                            >
+                                                                <div className='append_button'>{this.state.isCodeVerified ? 'Verified' : 'Verify'}</div>
+                                                            </MyButton>
                                                             : null
                                                         }
                                                         <Form.Control.Feedback type="invalid">
@@ -488,9 +490,9 @@ class Signup extends Component {
                                                             isInvalid={touched.password && errors.password}
                                                         />
                                                         <InputGroup.Append>
-                                                            <Button variant='success' onClick={this.showPassword} className='append_button'>
+                                                            <MyButton variant='success' onClick={this.showPassword} className='append_button'>
                                                                 {eyeBtn}
-                                                            </Button>
+                                                            </MyButton>
                                                         </InputGroup.Append>
                                                         <Form.Control.Feedback type="invalid">
                                                             {errors.password}
@@ -511,9 +513,9 @@ class Signup extends Component {
                                                             isInvalid={touched.confirm_password && errors.confirm_password}
                                                         />
                                                         <InputGroup.Append>
-                                                            <Button variant='success' onClick={this.showPassword} className='append_button'>
+                                                            <MyButton variant='success' onClick={this.showPassword} className='append_button'>
                                                                 {eyeBtn}
-                                                            </Button>
+                                                            </MyButton>
                                                         </InputGroup.Append>
                                                         <Form.Control.Feedback type="invalid">
                                                             {errors.confirm_password}
@@ -546,13 +548,13 @@ class Signup extends Component {
                                             </Form.Row>
                                             <Form.Row>
                                                 <Form.Group as={Col} controlId="loginGrop">
-                                                    <Button type="submit"
+                                                    <MyButton type="submit"
                                                         onSubmit={handleSubmit}
                                                         variant='success'
                                                         disabled={this.state.isLoading || !this.state.isCodeVerified} block>
                                                         {this.state.isLoading ? 'Registering' : 'Register'}
                                                         {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
-                                                    </Button>
+                                                    </MyButton>
                                                 </Form.Group>
                                             </Form.Row>
                                             {/* End 4th Row */}
@@ -593,15 +595,25 @@ class Signup extends Component {
                                     }
                                     @media (max-width: 767px) {
                                         .signup .append_button {
-                                            font-size: 10px;
+                                            font-size: 12px;
                                         }
                                         .signup .welcome_note {
                                             font-size: 15px;
                                         }
                                         .signup .form_col{
-                                            width: 94%;
-                                            margin: 3%;
-                                            padding: 3%;
+                                            width: 96%;
+                                            margin: 2%;
+                                            padding: 2%;
+                                        }
+                                    }
+                                     @media (max-width: 767px) {
+                                        .signup .append_button {
+                                            font-size: 11px;
+                                        }
+                                        .signup .form_col{
+                                            width: 97%;
+                                            margin: 1.5%;
+                                            padding: 1.5%;
                                         }
                                     }
 

@@ -29,6 +29,7 @@ const schema = yup.object({
 
 import * as decode from 'jwt-decode'
 import Router from 'next/router'
+import MyButton from './components/buttons/my-btn';
 class Login extends Component {
 
     constructor(props) {
@@ -114,22 +115,22 @@ class Login extends Component {
                                 <Row className='row'>
                                     <Col lg="auto" md="auto" sm="auto" xs="auto" className='form_col'>
                                         <p>
-                                            <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
+                                            <Image src="/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
                                         </p>
                                         <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Login To Mahaalk</h6>
                                         <hr />
                                         <Form noValidate onSubmit={handleSubmit}>
                                             <Form.Row>
                                                 <Form.Group as={Col} controlId="validationMobile">
-                                                    <Form.Label style={styles.label}>Enter Your Mobile Number
+                                                    <Form.Label style={styles.label}>Mobile Number
                                                             <span> * </span>
                                                     </Form.Label>
 
                                                     <InputGroup>
                                                         <InputGroup.Prepend>
-                                                            <Button style={{ cursor: 'default' }} variant='success' className='Button'>
+                                                            <MyButton>
                                                                 <FontAwesomeIcon icon={faMobileAlt} style={styles.fontawesome} />
-                                                            </Button>
+                                                            </MyButton>
                                                         </InputGroup.Prepend>
                                                         <Form.Control
                                                             type="text"
@@ -151,9 +152,9 @@ class Login extends Component {
                                                     <Form.Label style={styles.label}>Password <span>*</span></Form.Label>
                                                     <InputGroup>
                                                         <InputGroup.Prepend>
-                                                            <Button style={{ cursor: 'default' }} variant='success' className='Button'>
+                                                            <MyButton block={false}>
                                                                 <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
-                                                            </Button>
+                                                            </MyButton>
                                                         </InputGroup.Prepend>
                                                         <Form.Control
                                                             type={hide ? 'password' : 'text'}
@@ -165,9 +166,9 @@ class Login extends Component {
                                                             isInvalid={touched.password && errors.password}
                                                         />
                                                         <InputGroup.Append>
-                                                            <Button id="passwordEyeBtn" variant='success' onClick={this.showPassword} className='Button'>
+                                                            <MyButton onClick={this.showPassword}>
                                                                 {eyeBtn}
-                                                            </Button>
+                                                            </MyButton>
                                                         </InputGroup.Append>
                                                         <Form.Control.Feedback type="invalid">
                                                             {errors.password}
@@ -177,7 +178,7 @@ class Login extends Component {
                                             </Form.Row>
                                             <Form.Row>
                                                 <Form.Label className="text-right" style={styles.label}>
-                                                    <Link href="forgot-password"><a>Forgot Password</a></Link>
+                                                    <Link href="reset-password"><a>Forgot Password</a></Link>
                                                 </Form.Label>
                                             </Form.Row>
                                             <Form.Row>
@@ -194,10 +195,10 @@ class Login extends Component {
                                                 </Form.Label>
                                             </Form.Row>
                                             <Form.Row>
-                                                <Button type="submit" variant='success' onSubmit={handleSubmit} disabled={this.state.isLoading} block>
+                                                <MyButton onClick={this.showPassword} onClick={handleSubmit} disabled={this.state.isLoading} block={true}>
                                                     {this.state.isLoading ? 'Logging' : 'Login'}
                                                     {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
-                                                </Button>
+                                                </MyButton>
                                             </Form.Row>
 
                                             <Form.Row>
@@ -228,11 +229,11 @@ class Login extends Component {
                                         margin: 5%;
                                         padding: 2%;
                                     }
-                                    @media (max-width: 574px) {
+                                    @media (max-width: 575px) {
                                         .login .form_col{
-                                            width: 94%;
-                                            margin: 3%;
-                                            padding: 3%;
+                                            width: 97%;
+                                            margin: 1.5%;
+                                            padding: 1.5%;
                                         }
                                     }
 

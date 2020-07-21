@@ -1,4 +1,3 @@
-import { reactLocalStorage } from 'reactjs-localstorage';
 
 const initialState = {
     categories_list: localStorage.getItem('b'),

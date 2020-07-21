@@ -21,6 +21,8 @@ import MuhalikConfig from '../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../styleSheet'
 import Link from 'next/link'
 import BreadcrumbRow from '../components/breadcrumb-row'
+import MovingLogo from '../components/moving-logo'
+
 React.useLayoutEffect = React.useEffect
 
 export async function getServerSideProps(context) {
@@ -211,7 +213,9 @@ export default function Category(props) {
                                         isMobile ? index < 12 ?
                                             <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                                 <div className='only_products_div'>
-                                                    <div className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src='' />
+                                                    <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
+                                                        <MovingLogo />
+                                                    </div>
                                                     <label className='my_label'>{'-'}</label>
                                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
                                                 </div>
@@ -221,7 +225,9 @@ export default function Category(props) {
                                             :
                                             <Card as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                                 <div className='only_products_div'>
-                                                    <div className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src='' />
+                                                    <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
+                                                        <MovingLogo />
+                                                    </div>
                                                     <label className='my_label'>{'-'}</label>
                                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
                                                 </div>
@@ -303,7 +309,17 @@ export default function Category(props) {
                 }     
                 .id .only_product_img{
                     margin-bottom: 5px;
-                }    
+                }
+                .id .loadin_img_div{
+                    margin-bottom: 5px;
+                    min-width: 100%;
+                    max-width: 100%;
+                    background: white;
+                    display: flex;
+                    border: 0.5px solid lightgray;
+                    align-items: center;
+                    justify-content: center;
+                }
                 @media (max-width: 1199px) {
                     .id .only_products_card{
                         max-width: 20%;
@@ -328,10 +344,13 @@ export default function Category(props) {
                         max-width: 25%;
                     }
                     .id .main_row{
-                        padding: 2% 2% 16% 2%;
+                        padding: 2% 2% 50px 2%;
                     }
                 }
                 @media (max-width: 575px) {
+                    .id .main_row{
+                        padding: 1.5% 1.5% 50px 1.5%;
+                    }
                     .id .only_products_card{
                         max-width: 33.3333333333%;
                     }

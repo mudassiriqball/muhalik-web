@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap'
 import Head from 'next/head'
 import axios from 'axios'
 import Layout from './components/customer/layout'
-import { getTokenFromStorage, removeTokenFromStorage, getDecodedTokenFromStorage } from '../sdk/core/authentication-service';
+import { getTokenFromStorage, removeTokenFromStorage, getDecodedTokenFromStorage, checkTokenExpAuth } from '../sdk/core/authentication-service';
 import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config'
 import Typical from 'react-typical'
@@ -13,7 +13,7 @@ import Home from './components/customer/home'
 // import { setCategories } from '../redux/actions/category-actions';
 
 let animation =
-    <h3 style={{ background: 'green', color: 'white', position: 'fixed', left: '1%', bottom: '1%', zIndex: 1000 }}>
+    <h3 style={{ background: 'transparent', color: `${GlobalStyleSheet.primry_color}`, position: 'fixed', left: '1%', bottom: '1%', zIndex: 1000 }}>
         <Typical
             steps={['This website is under development', 1000,
                 'Comming Soon...!', 1000,
@@ -77,7 +77,7 @@ class Index extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            token: '',
+            token: { full_name: '', role: '' },
             cart_count: 0,
             slider_list: this.props.slider_list,
             new_products_list: this.props.new_products_list,
@@ -88,7 +88,7 @@ class Index extends Component {
     }
     async componentDidMount() {
         let currentComponent = this
-        const _token = await getDecodedTokenFromStorage()
+        const _token = await checkTokenExpAuth()
         if (_token !== null) {
             this.setState({ token: _token })
             const url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
@@ -97,10 +97,6 @@ class Index extends Component {
             }).catch((error) => {
             })
         }
-    }
-
-    logout = () => {
-        removeTokenFromStorage(true)
     }
 
     render() {
@@ -122,7 +118,6 @@ class Index extends Component {
                     <Layout
                         role={this.state.token.role}
                         name={this.state.token.full_name}
-                        logout={this.logout}
                         categories_list={this.state.categories_list}
                         sub_categories_list={this.state.sub_categories_list}
                         cart_count={this.state.cart_count}
@@ -165,7 +160,7 @@ class Index extends Component {
                     }
                     @media (max-width: 767px) {
                         ._index{
-                            padding: 2% 2% 16% 2%;
+                            padding: 1.5% 1.5% 50px 1.5%;
                         }
                     }
                 `}</style>

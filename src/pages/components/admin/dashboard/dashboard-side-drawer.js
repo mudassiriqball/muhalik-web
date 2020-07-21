@@ -3,8 +3,9 @@ import { Nav, Tab, Row, Col, Image } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faPersonBooth, faTachometerAlt, faChevronRight, faUsers, faChevronUp, faChevronDown,
-    faListAlt, faWarehouse, faTags, faPercent, faChartBar, faPlusCircle, faTh, faPowerOff
+    faWarehouse, faTags, faPercent, faChartBar, faPlusCircle, faTh, faPowerOff, faShoppingBag
 } from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-regular-svg-icons'
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 import AdminDashboard from './dashboard-contents/admin-dashboard';
@@ -19,6 +20,7 @@ import AddCategory from './dashboard-contents/category-contents/add-category'
 import AllCategories from './dashboard-contents/category-contents/all-categories'
 
 import Inventory from './dashboard-contents/inventory';
+import Orders from './dashboard-contents/orders'
 import Discounts from './dashboard-contents/discount';
 import Commision from './dashboard-contents/commision';
 import Reports from './dashboard-contents/reports';
@@ -78,6 +80,15 @@ const DashboardSideDrawer = props => {
                                 <Nav.Link eventKey="Inventory" onClick={props.click} style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
                                     <div className="mr-auto">Inventory</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                </Nav.Link>
+                            </div>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <div className="nav_link">
+                                <Nav.Link eventKey="Orders" onClick={props.click} style={styles.nav_link}>
+                                    <FontAwesomeIcon icon={faEdit} style={styles.fontawesome} />
+                                    <div className="mr-auto">Orders</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
@@ -182,6 +193,9 @@ const DashboardSideDrawer = props => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="Inventory">
                                 <Inventory {...props} />
+                            </Tab.Pane>
+                            <Tab.Pane eventKey="Orders">
+                                <Orders {...props} />
                             </Tab.Pane>
                             <Tab.Pane eventKey="ProductFields">
                                 <ProductFields {...props} />

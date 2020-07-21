@@ -31,27 +31,49 @@ export default function CardSearchAccordion(props) {
         })
         if (props.option == 'inventory') {
             setOptions(prevPro => {
+                return [...new Set([...prevPro, { value: 'product_name', name: 'Product Name' }])]
+            })
+            setOptions(prevPro => {
+                return [...new Set([...prevPro, { value: 'category', name: 'Category' }])]
+            })
+            setOptions(prevPro => {
+                return [...new Set([...prevPro, { value: 'sub_category', name: 'Sub Category' }])]
+            })
+
+        } else if (props.option == 'vendor') {
+            setOptions(prevPro => {
                 return [...new Set([...prevPro, { value: 'mobile', name: 'Mobile' }])]
             })
             setOptions(prevPro => {
                 return [...new Set([...prevPro, { value: 'full_name', name: 'Name' }])]
             })
             setOptions(prevPro => {
-                return [...new Set([...prevPro, { value: 'shop_name', name: 'Shop Name' }])]
-            })
-        } else if (props.option == 'vendor') {
-            setOptions(prevPro => {
-                return [...new Set([...prevPro, { value: 'product_name', name: 'Name' }])]
-            })
-            setOptions(prevPro => {
                 return [...new Set([...prevPro, { value: 'city', name: 'City' }])]
             })
+            setOptions(prevPro => {
+                return [...new Set([...prevPro, { value: 'shop_name', name: 'Shop Name' }])]
+            })
+
         } else if (props.option == 'customer') {
             setOptions(prevPro => {
                 return [...new Set([...prevPro, { value: 'mobile', name: 'Mobile' }])]
             })
             setOptions(prevPro => {
                 return [...new Set([...prevPro, { value: 'full_name', name: 'Name' }])]
+            })
+            setOptions(prevPro => {
+                return [...new Set([...prevPro, { value: 'city', name: 'City' }])]
+            })
+
+        } else if (props.option == 'order') {
+            setOptions(prevPro => {
+                return [...new Set([...prevPro, { value: 'c_id', name: 'Cutomer ID' }])]
+            })
+            setOptions(prevPro => {
+                return [...new Set([...prevPro, { value: 'c_name', name: 'Name' }])]
+            })
+            setOptions(prevPro => {
+                return [...new Set([...prevPro, { value: 'mobile', name: 'Mobile' }])]
             })
             setOptions(prevPro => {
                 return [...new Set([...prevPro, { value: 'city', name: 'City' }])]
@@ -90,7 +112,7 @@ export default function CardSearchAccordion(props) {
                                         <Form.Control
                                             size='sm'
                                             type="text"
-                                            placeholder="Search Here"
+                                            placeholder="Search here"
                                             name="search"
                                             onKeyPress={(e) => handleSearchEnterPress(e)}
                                             value={searchValue}

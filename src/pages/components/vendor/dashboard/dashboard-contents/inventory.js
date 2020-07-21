@@ -45,7 +45,6 @@ export default function Inventory(props) {
     }, [])
 
     async function getData() {
-
         const url = MuhalikConfig.PATH + '/api/products/total-products/:id';
         await axios.get(url).then((response) => {
             setTotalProducts(response.data.count)
@@ -58,7 +57,7 @@ export default function Inventory(props) {
                 setTotalPages(rounded)
             }
         }).catch((error) => {
-            console.log('total Fetchig Error: ', error)
+            // console.log('total Fetchig Error: ', error)
         })
     }
 

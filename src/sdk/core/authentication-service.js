@@ -1,5 +1,4 @@
 // export default AuthenticationService;
-import { reactLocalStorage } from 'reactjs-localstorage';
 import * as decode from 'jwt-decode'
 import Router from 'next/router'
 
@@ -8,58 +7,65 @@ const AuthenticationService = () => (
 )
 
 export async function saveTokenToStorage(token) {
-    await reactLocalStorage.set('token', token);
+    await localStorage.setItem('token', token)
 }
 
 export function getDecodedTokenFromStorage() {
-    try {
-        const token = reactLocalStorage.get('token');
+    const token = localStorage.getItem('token')
+    if (token) {
         const decodedToken = decode(token);
         return decodedToken.data;
-    } catch (error) {
-        return null;
     }
+    return null
 }
 
 export function getTokenFromStorage() {
-    return reactLocalStorage.get('token');
+    return localStorage.getItem('token');
 }
 
 export function removeTokenFromStorage(index_page) {
-    try {
-        reactLocalStorage.remove('token');
-        if (index_page) {
-            Router.reload()
-        } else {
-            Router.replace('/index')
-        }
-        return
-    } catch (error) {
-        console.log("error:", error)
-        alert('Logout Failed')
-        return null
+    localStorage.removeItem('token')
+    if (index_page) {
+        Router.reload('/')
+    } else {
+        Router.replace('/')
     }
+    return
 }
 
 
-
-
-export function checkAuth(rolee) {
-    try {
-        const token = reactLocalStorage.get('token');
+export function checkTokenExpAuth() {
+    const token = localStorage.getItem('token')
+    if (token != null) {
         const decodedToken = decode(token);
-        if (decodedToken.data.role == rolee) {
-            console.log('good')
+        if (decodedToken.exp < Date.now() / 1000) {
+            localStorage.removeItem('token')
+            Router.reload('/')
+        } else {
             return decodedToken.data;
-        } else {
-            console.log('ddd')
-            Router.replace('/index')
         }
-    } catch (error) {
-        if (rolee == '/login' || rolee == '/signup' || rolee == '/vendor-signup') {
-            Router.replace(rolee)
+    } else
+        return null;
+}
+
+export function checkAuth(current_role) {
+    const token = localStorage.getItem('token')
+    if (token == null) {
+        if (current_role == '/login' || current_role == '/signup' || current_role == '/vendor-signup') {
+            Router.replace(current_role)
+        } else
+            Router.replace('/')
+    } else {
+        const decodedToken = decode(token);
+        if (decodedToken.exp < Date.now() / 1000) {
+            localStorage.removeItem('token')
+            Router.push('/')
+        } else if (decodedToken.data.role == current_role) {
+            return decodedToken.data;
+        } else if (current_role == '/vendor-signup' && decodedToken.datarole == 'customer') {
+            Router.replace(current_role)
         } else {
-            Router.replace('/index')
+            Router.replace('/')
         }
     }
 }

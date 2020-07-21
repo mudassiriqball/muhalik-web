@@ -1,7 +1,13 @@
 import { Image, Nav, Navbar, Dropdown, NavDropdown, ButtonGroup, Form, FormControl, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faBars, faPowerOff, faChevronRight, faPlusCircle, faChevronDown, faChevronUp, faTachometerAlt, faPersonBooth, faHandsHelping, faUser, faUsers, faListAlt, faWarehouse, faTags, faPercent, faChartBar, faTh, faCog } from '@fortawesome/free-solid-svg-icons';
+import {
+    faSearch, faBars, faPowerOff, faChevronRight, faPlusCircle, faChevronDown, faChevronUp,
+    faTachometerAlt, faPersonBooth, faHandsHelping, faUser, faUsers,
+    faWarehouse, faTags, faPercent, faChartBar, faTh, faCog, faShoppingBag
+} from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faUserCircle } from '@fortawesome/free-regular-svg-icons'
+
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 import AdminDashboard from './dashboard-contents/admin-dashboard';
@@ -16,10 +22,12 @@ import AllCategories from './dashboard-contents/category-contents/all-categories
 
 
 import Inventory from './dashboard-contents/inventory';
+import Orders from './dashboard-contents/orders'
 import Discounts from './dashboard-contents/discount';
 import Commision from './dashboard-contents/commision';
 import Reports from './dashboard-contents/reports';
 import GlobalStyleSheet from '../../../../styleSheet';
+import Router from "next/router";
 
 const Dashboard = props => {
     let wprapper_Casses = "wrapper";
@@ -74,6 +82,15 @@ const Dashboard = props => {
                                     <Nav.Link eventKey="Inventory" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
                                         <div className="mr-auto">Inventory</div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <div className="nav_link">
+                                    <Nav.Link eventKey="Orders" style={styles.nav_link} onClick={() => setShow_category(false)}>
+                                        <FontAwesomeIcon icon={faEdit} style={styles.fontawesome} />
+                                        <div className="mr-auto">Orders</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                     </Nav.Link>
                                 </div>
@@ -188,16 +205,20 @@ const Dashboard = props => {
                             </Form> */}
                             {/* Account Setting Dropdown */}
                             <div className="account_settig_dropdown ml-auto">
-                                <NavDropdown className='p-0 m-0' title={
+                                <NavDropdown className='nav_dropdown' title={
                                     <FontAwesomeIcon icon={faCog} style={styles.cog_fontawesome} />
                                 } id="nav-dropdown" alignRight>
+                                    <NavDropdown.Item onClick={() => Router.push('/user/profile')} className='dropdown_item'>
+                                        <FontAwesomeIcon icon={faUserCircle} className='dropdown_fontawesome' />
+                                        Profile
+                                    </NavDropdown.Item>
                                     <NavDropdown.Item className='dropdown_item'>
-                                        <FontAwesomeIcon icon={faHandsHelping} style={styles.dropDown_fontawesome} />
+                                        <FontAwesomeIcon icon={faHandsHelping} className='dropdown_fontawesome' />
                                         Help?
                                     </NavDropdown.Item>
                                     <NavDropdown.Divider />
                                     <NavDropdown.Item onClick={props.logout} className='dropdown_item'>
-                                        <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
+                                        <FontAwesomeIcon icon={faPowerOff} className='dropdown_fontawesome' />
                                         Logout
                                 </NavDropdown.Item>
                                 </NavDropdown>
@@ -221,6 +242,9 @@ const Dashboard = props => {
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Inventory">
                                     <Inventory {...props} />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="Orders">
+                                    <Orders {...props} />
                                 </Tab.Pane>
                                 {/* <Tab.Pane eventKey="AddProduct">
                                     <AddNew
@@ -265,10 +289,24 @@ const Dashboard = props => {
             </Tab.Container>
             <style type="text/css">{`
                 .dropdown_item{
-                    font-size: 12px;
+                    color: gray;
+                    font-size: 13px;
                     display: flex;
                     align-items: center;
+                    padding: 3% 5%;
                 }
+                .dropdown_item:hover{
+                    background: ${GlobalStyleSheet.admin_primry_color};
+                    color: white;
+                }
+                .dropdown_fontawesome {
+                    margin: 0px 10px 0px 0px;
+                    min-width: 18px;
+                    min-height: 18px;
+                    max-height: 18px;
+                    max-width: 18px;
+                }
+                
                 .search_form{
                     width: 50%;
                     padding-left: 5%;
@@ -441,14 +479,6 @@ const styles = {
         maxWidth: '10px',
     },
 
-    dropDown_fontawesome: {
-        color: `${GlobalStyleSheet.admin_primry_color}`,
-        margin: '0px 20px 0px 0px',
-        width: '18px',
-        height: '18px',
-        maxHeight: '18px',
-        maxWidth: '18px',
-    },
     cog_fontawesome: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
         margin: '0px',

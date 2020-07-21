@@ -27,14 +27,14 @@ export default function CountColoredCard(props) {
             </div>
             <style type="text/css">{`
                 .count_colored_card .fontawesome{
-                    color: black;
+                    color: #404040;
                     width: 30px;
                     height: 30px;
                     maxHeight: 30px;
                     maxWidth: 30px;
                     float: right;
                 }
-                .count_colored_card .card_text{
+                .count_colored_card .card_header{
                     color: black;
                     font-size: 14px;
                 }

@@ -135,7 +135,7 @@ const DashboardSideDrawer = props => {
                                 />
                             </Tab.Pane>
                             <Tab.Pane eventKey="Inventory">
-                                <Inventory />
+                                <Inventory {...props} />
                             </Tab.Pane>
                             <Tab.Pane eventKey="BulkUpload">
                                 <BulkUpload />
@@ -144,7 +144,7 @@ const DashboardSideDrawer = props => {
                                 <Discounts />
                             </Tab.Pane>
                             <Tab.Pane eventKey="Orders">
-                                <Orders />
+                                <Orders {...props} />
                             </Tab.Pane>
                             <Tab.Pane eventKey="Reports">
                                 <Reports />

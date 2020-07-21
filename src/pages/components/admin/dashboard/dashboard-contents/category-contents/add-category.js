@@ -185,7 +185,7 @@ class AddCategory extends Component {
                                                     onChange={this.handleCategoryChange}
                                                     options={this.state.categories_list}
                                                 />
-                                                <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
+                                                <Form.Row style={{ color: `${GlobalStyleSheet.error_color}`, fontSize: '13px', marginLeft: '2px' }}>
                                                     {this.state.categoryError}
                                                 </Form.Row>
                                             </Form.Group>
@@ -201,7 +201,7 @@ class AddCategory extends Component {
                                                     onChange={this.handleSubCategoryChange}
                                                     options={this.state.sub_categories_list}
                                                 />
-                                                <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
+                                                <Form.Row style={{ color: `${GlobalStyleSheet.error_color}`, fontSize: '13px', marginLeft: '2px' }}>
                                                     {this.state.subCategoryError}
                                                 </Form.Row>
                                             </Form.Group>
@@ -219,7 +219,7 @@ class AddCategory extends Component {
                                                             onChange={(e) => this.setState({ img: e.target.files[0] })}
                                                             isInvalid={this.state.imgError}
                                                         />
-                                                        <Form.Row style={{ fontSize: '13px', color: '#DC3545', marginLeft: '2px', width: '100%' }}>
+                                                        <Form.Row style={{ fontSize: '13px', color: `${GlobalStyleSheet.error_color}`, marginLeft: '2px', width: '100%' }}>
                                                             {this.state.imgError}
                                                         </Form.Row>
                                                     </InputGroup>

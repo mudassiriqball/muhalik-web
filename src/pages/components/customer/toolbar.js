@@ -18,7 +18,7 @@ import { removeTokenFromStorage } from '../../../sdk/core/authentication-service
 import React from 'react';
 import { faHeart, faUserCircle } from '@fortawesome/free-regular-svg-icons'
 import Router from 'next/router'
-import PrimaryBtn from '../buttons/primary-btn'
+import MyButton from '../buttons/my-btn'
 
 const categoryArray = [{ value: 'All' }, { value: 'Machinay' }, { value: 'Clothes' }]
 const Toolbar = (props) => {
@@ -78,7 +78,7 @@ const Toolbar = (props) => {
     }
 
     function logout() {
-        removeTokenFromStorage(false)
+        removeTokenFromStorage(true)
     }
 
     return (
@@ -125,12 +125,8 @@ const Toolbar = (props) => {
                         null
                         :
                         <>
-                            <Nav.Link href='/login' className='first_nav_link'>
-                                Login
-                                </Nav.Link>
-                            <Nav.Link href='/signup' className='first_nav_link'>
-                                Join now
-                                </Nav.Link>
+                            <Nav.Link href='/login' className='first_nav_link'> Login </Nav.Link>
+                            <Nav.Link href='/signup' className='first_nav_link'> Signup </Nav.Link>
                         </>
                     }
 
@@ -141,18 +137,14 @@ const Toolbar = (props) => {
                                 {props.name}
                             </Dropdown.Toggle>
                             <Dropdown.Menu style={{ zIndex: 100 }}>
-                                {/* <Dropdown.Item className='dropdown_item' href=''>
-                                        <FontAwesomeIcon icon={faHeart} style={styles.dropdown_fontawesome} />
-                                        {'My Wishlist'}
-                                    </Dropdown.Item> */}
+                                <Dropdown.Item className='dropdown_item'>
+                                    <FontAwesomeIcon icon={faUserCircle} style={styles.dropdown_fontawesome} />
+                                    {'My Profile'}
+                                </Dropdown.Item>
                                 {props.role == 'customer' && <>
                                     <Dropdown.Item className='dropdown_item' href=''>
                                         <FontAwesomeIcon icon={faSuitcaseRolling} style={styles.dropdown_fontawesome} />
                                         {'My Orders'}
-                                    </Dropdown.Item>
-                                    <Dropdown.Item className='dropdown_item'>
-                                        <FontAwesomeIcon icon={faUserCircle} style={styles.dropdown_fontawesome} />
-                                        {'My Profile'}
                                     </Dropdown.Item>
                                 </>
                                 }
@@ -179,10 +171,10 @@ const Toolbar = (props) => {
                     <InputGroup className='input_group'>
                         <FormControl className='search-bar' size='md' variant='warning' placeholder="Search here" />
                         <InputGroup.Append>
-                            <PrimaryBtn>
+                            <MyButton>
                                 <div className='display_in_md_lg pr-1'>Search</div>
                                 <FontAwesomeIcon className='serch-icon' icon={faSearch} style={styles.search_fontawesome} />
-                            </PrimaryBtn>
+                            </MyButton>
                             {/* <Button className='btn_search d-inline-flex align-items-center' variant='warning' >
 
                                 </Button> */}
@@ -349,6 +341,7 @@ const Toolbar = (props) => {
                     border: none;
                 }
                 .customer_toolbar .dropdown_item{
+                    display: flex;
                     align-items: center;
                     font-size: 13px;
                     color: gray;
@@ -530,11 +523,11 @@ const Toolbar = (props) => {
                             display: none;
                         }
                         .mahaalk_img{
-                        width: 50px;
-                        max-width: 50px;
-                        height: 50px;
-                        max-height: 50px;
-                    }
+                            width: 50px;
+                            max-width: 50px;
+                            height: 50px;
+                            max-height: 50px;
+                        }
                     }
                      @media (max-width: 575px) {
                         .customer_toolbar .sticky-inner{
@@ -581,11 +574,11 @@ const styles = {
         maxWidth: '24px',
     },
     dropdown_fontawesome: {
-        marginRight: '16px',
-        width: '16px',
-        height: '16px',
-        maxHeight: '16px',
-        maxWidth: '16px',
+        marginRight: '10px',
+        width: '18px',
+        height: '18px',
+        maxHeight: '18px',
+        maxWidth: '18px',
     },
     third_nav_fontawesome: {
         marginRight: '15px',

@@ -16,6 +16,8 @@ import Reports from './dashboard-contents/reports';
 import BulkUpload from './dashboard-contents/bulk-upload';
 import Orders from './dashboard-contents/orders';
 import GlobalStyleSheet from '../../../../styleSheet';
+import { faUserCircle } from "@fortawesome/free-regular-svg-icons";
+import Router from "next/router";
 
 const Dashboard = props => {
     let wprapper_Casses = "wrapper";
@@ -142,13 +144,17 @@ const Dashboard = props => {
                                 <NavDropdown className='p-0 m-0' title={
                                     <FontAwesomeIcon icon={faCog} style={styles.cog_fontawesome} />
                                 } id="nav-dropdown" alignRight>
+                                    <NavDropdown.Item onClick={() => Router.push('/user/profile')} className='dropdown_item'>
+                                        <FontAwesomeIcon icon={faUserCircle} className='dropdown_fontawesome' />
+                                        Profile
+                                    </NavDropdown.Item>
                                     <NavDropdown.Item className='dropdown_item'>
-                                        <FontAwesomeIcon icon={faHandsHelping} style={styles.dropDown_fontawesome} />
+                                        <FontAwesomeIcon icon={faHandsHelping} className='dropdown_fontawesome' />
                                         Help?
                                     </NavDropdown.Item>
                                     <NavDropdown.Divider />
                                     <NavDropdown.Item onClick={props.logoutClickHandler} className='dropdown_item'>
-                                        <FontAwesomeIcon icon={faPowerOff} style={styles.dropDown_fontawesome} />
+                                        <FontAwesomeIcon icon={faPowerOff} className='dropdown_fontawesome' />
                                         Logout
                                 </NavDropdown.Item>
                                 </NavDropdown>
@@ -189,7 +195,7 @@ const Dashboard = props => {
                                     <Discounts />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Orders">
-                                    <Orders />
+                                    <Orders {...props} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Reports">
                                     <Reports />
@@ -203,9 +209,22 @@ const Dashboard = props => {
             </Tab.Container>
             <style type="text/css">{`
                 .dropdown_item{
-                    font-size: 12px;
+                    color: gray;
+                    font-size: 13px;
                     display: flex;
                     align-items: center;
+                    padding: 3% 5%;
+                }
+                .dropdown_item:hover{
+                    background: ${GlobalStyleSheet.admin_primry_color};
+                    color: white;
+                }
+                .dropdown_fontawesome {
+                    margin: 0px 10px 0px 0px;
+                    min-width: 18px;
+                    min-height: 18px;
+                    max-height: 18px;
+                    max-width: 18px;
                 }
                 .search_form{
                     width: 50%;
@@ -372,15 +391,6 @@ const styles = {
         height: '10px',
         maxHeight: '10px',
         maxWidth: '10px',
-    },
-
-    dropDown_fontawesome: {
-        color: `${GlobalStyleSheet.admin_primry_color}`,
-        margin: '0px 10px 0px 0px',
-        width: '15px',
-        height: '15px',
-        maxHeight: '15px',
-        maxWidth: '15px',
     },
     cog_fontawesome: {
         color: `${GlobalStyleSheet.admin_primry_color}`,

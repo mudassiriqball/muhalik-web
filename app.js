@@ -117,11 +117,13 @@ app
     const ProductsRoutes = require("./api/routes/products.routes");
     const Products_CategoriesRoutes = require("./api/routes/categories.routes");
     const Sliders_Routes = require("./api/routes/sliders.routes");
+    const Orders_Routes = require("./api/routes/orders.routes");
 
     app.use("/api/users", UsersRoutes);
     app.use("/api/products", ProductsRoutes);
     app.use("/api/categories", Products_CategoriesRoutes);
     app.use("/api/sliders", Sliders_Routes);
+    app.use("/api/orders", Orders_Routes);
 
     app.get("*", (req, res) => {
       return handle(req, res);

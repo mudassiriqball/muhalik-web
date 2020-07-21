@@ -16,6 +16,8 @@ import {
     isMobile
 } from "react-device-detect";
 import Router from 'next/router'
+import MovingLogo from '../moving-logo';
+React.useLayoutEffect = React.useEffect
 
 
 const responsive = {
@@ -50,6 +52,50 @@ const responsive = {
 const Home = (props) => {
     const [ref, { x, y, width }] = useDimensions();
 
+    const [categories, setCategories] = useState([])
+    useEffect(() => {
+        setCategories([])
+        let copyArray = []
+        copyArray = Object.assign([], props.categories_list)
+
+        let item_1 = copyArray[Math.floor(Math.random() * copyArray.length)]
+        copyArray.forEach((element, index) => {
+            if (element._id == item_1._id) {
+                setCategories(prevPro => {
+                    return [...new Set([...prevPro, item_1])]
+                })
+                copyArray.splice(index, 1)
+                return
+            }
+        })
+
+        let item_2 = copyArray[Math.floor(Math.random() * copyArray.length)]
+        copyArray.forEach((element, index) => {
+            if (element._id == item_2._id) {
+                setCategories(prevPro => {
+                    return [...new Set([...prevPro, item_2])]
+                })
+                copyArray.splice(index, 1)
+                return
+            }
+        })
+
+        let item_3 = copyArray[Math.floor(Math.random() * copyArray.length)]
+        copyArray.forEach((element, index) => {
+            setCategories(prevPro => {
+                return [...new Set([...prevPro, item_3])]
+            })
+            if (element._id == item_3._id) {
+                copyArray.splice(index, 1)
+                return
+            }
+        })
+
+        let item_4 = copyArray[Math.floor(Math.random() * copyArray.length)]
+        setCategories(prevPro => {
+            return [...new Set([...prevPro, item_3])]
+        })
+    }, [props.categories_list])
     return (
         <div className='home'>
             <Row noGutters>
@@ -90,7 +136,7 @@ const Home = (props) => {
                                             </div>
                                             :
                                             <div className='card_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
-                                                <Image className='img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
+                                                <Image className='img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
                                                 <div className='d-inline-flex align-items-center'>
                                                     <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >Rs.</span>{element.product_variations[0].price || '-'}</label>
@@ -160,14 +206,11 @@ const Home = (props) => {
                 </Col>
             </Row>
 
-            {props.categories_list && props.categories_list.map((element, index) =>
-                element.value == 'Babies' || element.value == 'Women Fashion' || element.value == 'Electronics' ?
-                    <CategoryCard
-                        key={element._id}
-                        element={element}
-                    />
-                    :
-                    null
+            {categories && categories.map((element, index) =>
+                <CategoryCard
+                    key={element._id}
+                    element={element}
+                />
             )}
             <OnlyProducts />
 
@@ -265,6 +308,11 @@ const Home = (props) => {
                         .second_card {
                             margin: 0% 0% 2% 0%;
                         }
+                    }
+                    @media (max-width: 767px){
+                        .my_label{
+                            font-size: 11px;
+                        } 
                     }
                 `}
             </style>
@@ -407,7 +455,7 @@ function CategoryProducts(props) {
                         `/${props.element.category.value}/${props.element.sub_category.value}/${props.element._id}`)}
                 >
                     <Image ref={ref} className='category_product_img'
-                        style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
+                        style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
                         src={props.element.product_image_link[0].url} />
 
                     <label className='my_label'>{props.element.product_name}</label>
@@ -419,7 +467,7 @@ function CategoryProducts(props) {
                         `/${props.element.category.value}/${props.element.sub_category.value}/${props.element._id}`)}
                 >
                     <Image ref={ref} className='category_product_img'
-                        style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
+                        style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
                         src={props.element.product_variations[0].image_link[0].url} />
                     <label className='my_label'>{props.element.product_name}</label>
                     <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{props.element.product_variations[0].price}</label>
@@ -479,10 +527,8 @@ function LoadingCard(props) {
             {loadingCard.map((element, index) =>
                 <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='category_product_card'>
                     <div className='loading_card_div'>
-                        <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20, minHeight: width + 20 }} >
-                            <Image className='react-logo'
-                                src='/muhalik.jpg'
-                            />
+                        <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
+                            <MovingLogo />
                         </div>
                         <label className='my_label'>{'-'}</label>
                         <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
@@ -533,31 +579,6 @@ function LoadingCard(props) {
                         max-width: 14.285714285714285714285714285714%;
                     }
                 }
-                .react-logo{
-                    animation-name:rotate;
-                    animation-duration: 5s;
-                    animation-iteration-count: infinite;
-                    animation-timing-function: linear;
-                }
-                .react-logo , .react-logo:before , .react-logo:after{
-                    width: 70px;
-                    height: 70px;
-                    // max-height: 70px;
-                }
-                .react-logo:before , .react-logo:after{
-                    content:"";
-                }
-                .react-logo:after{
-                    transform:rotate(-57deg);
-                }
-                .react-logo:before{
-                    transform:rotate(57deg);
-                }
-                @keyframes rotate{
-                    100%{
-                        transform:rotate(360deg);
-                    }
-                }
             `}</style>
         </>
     )
@@ -600,7 +621,7 @@ function OnlyProducts(props) {
                             {element.product_type == "simple-product" ?
                                 <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img'
-                                        style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
+                                        style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
                                         src={element.product_image_link[0].url}
                                     />
                                     <label className='my_label'>{element.product_name}</label>
@@ -608,7 +629,7 @@ function OnlyProducts(props) {
                                 </div>
                                 :
                                 <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
-                                    <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
+                                    <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
                                 </div>
@@ -619,7 +640,7 @@ function OnlyProducts(props) {
                             {element.product_type == "simple-product" ?
                                 <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img'
-                                        style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
+                                        style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
                                         src={element.product_image_link[0].url}
                                     />
                                     <label className='my_label'>{element.product_name}</label>
@@ -627,7 +648,7 @@ function OnlyProducts(props) {
                                 </div>
                                 :
                                 <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
-                                    <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
+                                    <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
                                 </div>
@@ -641,10 +662,8 @@ function OnlyProducts(props) {
                             index < 12 ?
                                 <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                     <div className='only_products_div'>
-                                        <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20, minHeight: width + 20 }} >
-                                            <Image className='react-logo'
-                                                src='/muhalik.jpg'
-                                            />
+                                        <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
+                                            <MovingLogo />
                                         </div>
                                         <label className='my_label'>{'-'}</label>
                                         <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
@@ -655,10 +674,8 @@ function OnlyProducts(props) {
                             :
                             <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                 <div className='only_products_div'>
-                                    <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20, minHeight: width + 20 }} >
-                                        <Image className='react-logo'
-                                            src='/muhalik.jpg'
-                                        />
+                                    <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
+                                        <MovingLogo />
                                     </div>
                                     <label className='my_label'>{'-'}</label>
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
@@ -670,7 +687,7 @@ function OnlyProducts(props) {
             </Row>
             <style type="text/css">{`
                 .only_products{
-                    margin: 1% 0% 0% 00%;
+                    margin: 1% 0% 0% 0%;
                 }
                 .only_products .header{
                     font-size: 20px;
@@ -700,18 +717,7 @@ function OnlyProducts(props) {
                 }     
                 .only_products .only_product_img{
                     margin-bottom: 5px;
-                }    
-                @media (max-width: 767px) {
-                    .only_products .header{
-                        font-size: 16px;
-                    }
-                }     
-                @media (min-width: 1200px) {
-                    .only_products_card{
-                        max-width: 14.285714285714285714285714285714%;
-                    }
                 }
-
                 .only_products .loadin_img_div{
                     margin-bottom: 5px;
                     min-width: 100%;
@@ -722,29 +728,14 @@ function OnlyProducts(props) {
                     align-items: center;
                     justify-content: center;
                 }
-                .react-logo{
-                    animation-name:rotate;
-                    animation-duration: 5s;
-                    animation-iteration-count: infinite;
-                    animation-timing-function: linear;
-                }
-                .react-logo , .react-logo:before , .react-logo:after{
-                    width: 70px;
-                    height: 70px;
-                    // max-height: 70px;
-                }
-                .react-logo:before , .react-logo:after{
-                    content:"";
-                }
-                .react-logo:after{
-                    transform:rotate(-57deg);
-                }
-                .react-logo:before{
-                    transform:rotate(57deg);
-                }
-                @keyframes rotate{
-                    100%{
-                        transform:rotate(360deg);
+                @media (max-width: 767px) {
+                    .only_products .header{
+                        font-size: 16px;
+                    }
+                }     
+                @media (min-width: 1200px) {
+                    .only_products_card{
+                        max-width: 14.285714285714285714285714285714%;
                     }
                 }
             `}</style>
