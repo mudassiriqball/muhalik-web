@@ -146,9 +146,9 @@ export default function Category(props) {
                     <Row noGutters className='w-100'>
                         <Col className='display_md_lg'>
                             <div className='m-3 align-self-center'>Related Categories</div>
-                            {props.sub_categories_list && props.sub_categories_list.map(element =>
+                            {props.sub_categories_list && props.sub_categories_list.map((element, inex) =>
                                 element.category_id == current_category_id ?
-                                    <Link href='/[category]/[sub_category]' as={`/${category}/${element.value}`} key={element._id} >
+                                    <Link key={index} href='/[category]/[sub_category]' as={`/${category}/${element.value}`} key={element._id} >
                                         <a >
                                             {element.value}
                                         </a>
@@ -161,7 +161,7 @@ export default function Category(props) {
                             <Row noGutters className='id_row'>
                                 {products && products.map((element, index) => {
                                     if (products.length === index + 1) {
-                                        return <Card onClick={() => handleProductClick(element)} ref={lastProducrRef} key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                                        return <Card key={element._id} onClick={() => handleProductClick(element)} ref={lastProducrRef} key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                             {element.product_type == "simple-product" ?
                                                 <div className='only_products_div'>
                                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />

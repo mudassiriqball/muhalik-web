@@ -9,80 +9,75 @@ import MuhalikConfig from '../../../sdk/muhalik.config'
 export default function Address(props) {
     const [token, setToken] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [isEditProfile, setisEditProfile] = useState('')
-    const [countary, setCountary] = useState(props.user.countary)
-    const [city, setCity] = useState(props.user.city)
-    const [shop_name, setShop_name] = useState(props.user.shop_address)
-    const [address, setAddress] = useState(props.user.address)
-    const [shop_address, setShop_address] = useState(props.user.shop_address)
+    const [isEditProfile, setisEditProfile] = useState(false)
+
+    const [countary, setCountary] = useState(props.countary)
+    const [city, setCity] = useState(props.city)
+    const [shop_name, setShop_name] = useState(props.shop_name)
+    const [address, setAddress] = useState(props.address)
+    const [shop_address, setShop_address] = useState(props.shop_address)
 
     const [error, setError] = useState()
 
-    useEffect(() => {
-        getToken()
-        return () => {
-            setToken('')
-        }
-    }, [])
-    async function getToken() {
-        const _token = getTokenFromStorage()
-        if (_token != null) {
-            setToken(_token)
-        }
-    }
-
     function handleUpdateProfile() {
         setIsLoading(true)
-        const formData = new FormData()
-
-        const url = MuhalikConfig.PATH + `/api/users/avatar/${props._id}`
-        axios.post(url, formData, {
+        let data = {}
+        data = {
+            city: city,
+            shop_name: shop_name,
+            address: address,
+            shop_address: shop_address,
+        }
+        const url = MuhalikConfig.PATH + `/api/users/edit/profile/${props._id}`
+        axios.put(url, data, {
             headers: {
-                'content-type': 'multipart/form-data',
-                'authorization': token,
+                'authorization': props.token,
             }
         }).then((response) => {
+            setisEditProfile(false)
             setIsLoading(false)
-            alert('added')
+            props.showAlert('Address Updated Successfully')
+            props.reloadUser()
         }).catch((error) => {
             setIsLoading(false)
-            console.log('error:', error)
-            alert('not afaghssj')
+            console.log('Address Update Failed:', error)
+            alert('Address Update Failed')
         });
     }
 
     function handleCancelEdit() {
         setisEditProfile(!isEditProfile)
-        setCountary(props.user.countary)
-        setAddress(props.user.address)
-        setCity(props.user.city)
-        setShop_name(props.user.shop_name)
+        setCountary(props.countary)
+        setAddress(props.address)
+        setCity(props.city)
+        setShop_name(props.shop_name)
     }
 
     return (
-        <div className='my_profile'>
-            <label className='heading'>My Profile</label>
+        <div className='address'>
+            <label className='heading'>{props.role == 'vendor' ? 'Shop Address' : 'My Address'}</label>
             <div className='my_profile_div'>
                 <Card>
-                    <Card.Body>
+                    <Card.Body className='card_body'>
                         <Row className='p-0 m-0'>
-                            <Form.Group as={Col} className='my_profile_col'>
-                                <Form.Label className='form_label'>Countary</Form.Label>
+                            <Form.Group as={Col} lg={6} md={6} sm={6} xs={12} className='address_col'>
+                                <Form.Label className='form_label'>Country</Form.Label>
                                 <InputGroup>
                                     <Form.Control
                                         className='form_control'
                                         value={countary}
                                         onChange={(e) => setCountary(e.target.value)}
-                                        disabled={!isEditProfile}
+                                        disabled={true}
                                     />
                                 </InputGroup>
                             </Form.Group>
-                            <Form.Group as={Col} className='my_profile_col'>
+                            <Form.Group as={Col} lg={6} md={6} sm={6} xs={12} className='address_col'>
                                 <Form.Label className='form_label'>City</Form.Label>
                                 <InputGroup>
                                     <Form.Control
                                         className='form_control'
                                         value={city}
+                                        onChange={(e) => setCity(e.target.value)}
                                         disabled={!isEditProfile}
                                     />
                                 </InputGroup>
@@ -90,42 +85,42 @@ export default function Address(props) {
                         </Row>
 
                         <Row className='p-0 m-0'>
-                            {props.user.role == 'vendor' && <Form.Group as={Col} className='my_profile_col'>
+                            {props.role == 'vendor' && <Form.Group as={Col} lg={6} md={6} sm={6} xs={12} className='address_col'>
                                 <Form.Label className='form_label'>Shop Name</Form.Label>
                                 <InputGroup>
                                     <Form.Control
                                         className='form_control'
                                         type='address'
                                         value={shop_name}
-                                        onChange={(e) => setAddress(e.target.value)}
+                                        onChange={(e) => setShop_name(e.target.value)}
                                         disabled={!isEditProfile}
                                     />
                                 </InputGroup>
                             </Form.Group>
                             }
-                            <Form.Group as={Col} className='my_profile_col'>
-                                <Form.Label className='form_label'>{props.user.role == 'vendor' && 'Shop '}Address</Form.Label>
+                            <Form.Group as={Col} lg={12} md={12} sm={12} xs={12} className='address_col'>
+                                <Form.Label className='form_label'>{props.role == 'vendor' && 'Shop '}Address</Form.Label>
                                 <InputGroup>
                                     <Form.Control
                                         className='form_control'
                                         type='address'
-                                        value={props.user.role == 'vendor' ? shop_address : address}
-                                        onChange={(e) => setAddress(e.target.value)}
+                                        value={props.role == 'vendor' ? shop_address : address}
+                                        onChange={(e) => { props.role == 'vendor' ? setShop_address(e.target.value) : setAddress(e.target.value) }}
                                         disabled={!isEditProfile}
                                     />
                                 </InputGroup>
                             </Form.Group>
                         </Row>
-                        <Form.Group as={Row} className='my_profile_col mt-5'>
-                            <Col>
-                                <MyButton onClick={handleCancelEdit} block={true}>
+                        <Form.Group as={Row} className='address_col mt-5'>
+                            <Col lg="auto" md="auto" sm="auto" xs="auto">
+                                <MyButton size='sm' onClick={handleCancelEdit} block={true}>
                                     {isEditProfile ? 'Cancel' : 'Edit Profile'}
                                 </MyButton>
                             </Col>
-                            <Col>
-                                {isEditProfile && <MyButton onClick={handleUpdateProfile} block={true}  >
+                            <Col lg="auto" md="auto" sm="auto" xs="auto">
+                                {isEditProfile && <MyButton size='sm' onClick={handleUpdateProfile} block={true}  >
                                     {isLoading ? 'Updating' : 'Update'}
-                                    {isLoading ? <Spinner size='md' animation='grow' /> : null}
+                                    {isLoading ? <Spinner size='sm' animation='grow' /> : null}
                                 </MyButton>
                                 }
                             </Col>
@@ -134,19 +129,19 @@ export default function Address(props) {
                 </Card>
             </div>
             <style type="text/css">{`
-                .my_profile .my_profile_div {
+                .address .my_profile_div {
                     padding: 5px;
                 }
-                .my_profile .heading {
+                .address .heading {
                     font-size: 18px;
-                    margin: 10px 5px;
+                    padding: 10px 5px;
                     width: 100%;
                 }
-                .my_profile_col {
+                .address_col {
                     padding-left: 0.5%;
                     padding-right: 0.5%;
                 }
-                .my_profile .form_label {
+                .address .form_label {
                     font-size: 13px;
                     color: gray;
                 }
@@ -158,7 +153,21 @@ export default function Address(props) {
                     font-size: 14px;
                     font-weight: bold;
                 }
+                @media (max-width: 767px){
+                    .address_col {
+                        padding: 0%;
+                    }
+                    .address .heading {
+                        font-size: 16px;
+                        padding: 10px 5px 0% 7px;
+                        margin: 0%;
+                        width: 100%;
+                    }
+                    .address .card_body {
+                        padding: ${isEditProfile ? '2%' : 'auto'};
+                    }
+                }
             `}</style>
-        </div>
+        </div >
     )
 }

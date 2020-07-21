@@ -19,7 +19,7 @@ export default function ManageOrders(props) {
                     <Card style={{ minHeight: '150px' }}>
                         <Card.Header>
                             <div className='mr-auto'>Delivered Orders</div>
-                            <Nav.Link onClick={() => { history.pushState(null, '', '/user/profile?delivered-orders'), props.setView('delivered_orders') }}>VIEW</Nav.Link>
+                            <Nav.Link onClick={() => { history.pushState(null, '', '/user/profile?deleivered-orders'), props.setView('deleivered_orders') }}>VIEW</Nav.Link>
                         </Card.Header>
                         <Card.Body className='w-100 d-flex align-items-center justify-content-center'>
 

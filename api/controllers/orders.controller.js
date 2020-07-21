@@ -185,11 +185,6 @@ orderController.get_vendors_orders = async (req, res) => {
 orderController.get_all_query_search_orders = async (req, res) => {
   var q = req.query.q;
 
-  // if (req.query.field === "mobile") {
-  //   var mobile = req.query.q;
-  //   mobile = mobile.trim();
-  //   q = "+" + mobile;
-  // }
   const search = {};
   search["status"] = req.params._status;
   search[req.query.field] = q;
@@ -205,7 +200,6 @@ orderController.get_all_query_search_orders = async (req, res) => {
       message: "Successful",
       data: order,
     });
-
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -217,11 +211,6 @@ orderController.get_vendor_query_search_orders = async (req, res) => {
 
   var q = req.query.q;
 
-  // if (req.query.field === "mobile") {
-  //   var mobile = req.query.q;
-  //   mobile = mobile.trim();
-  //   q = "+" + mobile;
-  // }
   if (req.query.field === "c_id") {
     q = new ObjectId(req.query.q);
   }
@@ -281,13 +270,16 @@ orderController.get_all_orders_count = async (req, res) => {
     const delivered_orders = await Orders.countDocuments({
       status: "delivered",
     });
-    const cancelled_orders = await Orders.countDocuments({ status: "cancel" });
+    const cancel_orders = await Orders.countDocuments({ status: "cancelled" });
+    const return_orders = await Orders.countDocuments({ status: "return" });
+
     res.status(200).send({
       code: 200,
       message: "Successful",
       pending_orders,
       delivered_orders,
-      cancelled_orders,
+      cancel_orders,
+      return_orders,
     });
   } catch (error) {
     return res.status(500).send(error);
@@ -295,7 +287,6 @@ orderController.get_all_orders_count = async (req, res) => {
 };
 
 orderController.get_vendor_orders_count = async (req, res) => {
-
   try {
     const pending_orders = await Orders.countDocuments({
       "products.vendor_id": req.params._id,
@@ -305,16 +296,21 @@ orderController.get_vendor_orders_count = async (req, res) => {
       "products.vendor_id": req.params._id,
       status: "delivered",
     });
-    const cancelled_orders = await Orders.countDocuments({
+    const cancel_orders = await Orders.countDocuments({
       "products.vendor_id": req.params._id,
       status: "cancelled",
+    });
+    const return_orders = await Orders.countDocuments({
+      "products.vendor_id": req.params._id,
+      status: "return",
     });
     res.status(200).send({
       code: 200,
       message: "Successful",
       pending_orders,
       delivered_orders,
-      cancelled_orders,
+      cancel_orders,
+      return_orders,
     });
   } catch (error) {
     return res.status(500).send(error);
@@ -323,7 +319,6 @@ orderController.get_vendor_orders_count = async (req, res) => {
 
 // put Methods
 orderController.update_status = async (req, res) => {
-
   try {
     const _id = req.params._id;
     Orders.findOneAndUpdate(

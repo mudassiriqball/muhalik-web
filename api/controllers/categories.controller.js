@@ -4,6 +4,8 @@ const Sub_Categories = require("../models/sub-category.model");
 const Product = require("../models/product.model");
 const Fields = require("../models/field.model");
 const Field_Request = require("../models/field-request.model");
+const Unique_category = require("../models/unique-category.model");
+
 const jwt = require("jsonwebtoken");
 var AWS = require('aws-sdk');
 
@@ -202,6 +204,21 @@ categoriesController.get_tags = async (req, res) => {
   }
 };
 
+categoriesController.get_unique_category= async (req, res) => {
+  let unique_category;
+  try {
+    unique_category = await Unique_category.paginate()
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: unique_category,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
+
 categoriesController.add_field_request = async (req, res) => {
   const body = req.body;
   const header = jwt.decode(req.headers.authorization);
@@ -218,6 +235,20 @@ categoriesController.add_field_request = async (req, res) => {
     return res
       .status(500)
       .send({ message: "custom_fields_requested  Successfully" });
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+categoriesController.add_unique_category = async (req, res) => {
+  const body=req.body;
+  try {
+    const unique_category = new Unique_category(body);
+    const result = await unique_category.save();
+    res.status(200).send({
+      code: 200,
+      message: "unique_category added Successfully",
+    });
   } catch (error) {
     console.log("error", error);
   }
@@ -252,6 +283,18 @@ categoriesController.delete_field_request = async (req, res) => {
     });
   });
 };
+
+categoriesController.delete_unique_category= async (req, res) => {
+  Unique_category.findByIdAndDelete(req.params._id, function (err) {
+    res.status(200).send({
+      code: 200,
+      message: "deleted Successful",
+    });
+  });
+};
+
+
+
 
 categoriesController.delete_field = async (req, res) => {
   Fields.findByIdAndDelete(req.params._id, function (err) {

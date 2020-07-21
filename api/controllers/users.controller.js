@@ -1,11 +1,8 @@
 const usersController = {};
 const Users = require("../models/user.model");
-const path = require("path");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
-const fs = require("fs");
-const jwt = require("jsonwebtoken");
-var phoneUtil = require('google-libphonenumber').phoneUtil;
+
 //Post Methods
 usersController.loginUser = async (req, res) => {
   try {
@@ -98,20 +95,14 @@ usersController.registerUser = async (req, res) => {
 
 // Set avatar
 usersController.set_avatar = async (req, res) => {
-  const header = jwt.decode(req.headers.authorization);
-  const id = header.data._id;
 
-  const uploader = async (path) =>
-    await cloudinary.uploads(path, "User-Images");
-  const imagepath = req.files.path;
-  const newPath = await uploader(imagepath);
-  fs.unlinkSync(imagepath);
-
+  const _id=req.params._id;
+  const url = req.files[0].location;
   try {
     Users.findOneAndUpdate(
-      { _id: id },
+      { _id: _id },
       {
-        $set: { avatar: newPath },
+        $set: { avatar: url },
       },
       {
         returnNewDocument: true,
@@ -585,7 +576,6 @@ usersController.reset_password = async (req, res) => {
 };
 
 usersController.add_to_cart = async (req, res) => {
-  console.log("yes");
   const body = req.body;
   if (body.variation_id === "") {
     body.variation_id = undefined;
@@ -610,6 +600,30 @@ usersController.add_to_cart = async (req, res) => {
     });
   } catch (error) {
     console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
+
+usersController.update_profile = async (req, res) => {
+  const body=req.body;
+  const _id=req.params._id;
+  try {
+    Users.findOneAndUpdate(
+      { _id: _id },
+      {
+        $set: body,
+      },
+      {
+        returnNewDocument: true,
+      },
+      function (error, result) {
+        res.status(200).send({
+          code: 200,
+          message: "Updated Successfully",
+        });
+      }
+    );
+  } catch (error) {
     return res.status(500).send(error);
   }
 };
@@ -667,6 +681,19 @@ usersController.deleteCartData = async (req, res) => {
   }
 };
 
+usersController.delete_cart = async (req, res) => {
+  try{
+    const _id = req.params._id;
+    const result = await Users.update({_id:_id},{$unset:{cart:""}}
+    );
+    res.status(200).send({
+      code: 200,
+      message: "Deleted Successfully",
+    });
+  }catch (error) {
+    return res.status(500).send(error);
+  }
+};
 // usersController.getSingleUser = async (req, res) => {
 //   let user;
 //   try {

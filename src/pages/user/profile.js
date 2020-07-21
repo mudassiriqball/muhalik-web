@@ -6,9 +6,14 @@ import { Row, Col, ListGroup } from 'react-bootstrap'
 import MuhalikConfig from '../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../styleSheet'
 import StickyBottomNavbar from '../components/customer/stick-bottom-navbar'
-import { getDecodedTokenFromStorage, removeTokenFromStorage } from '../../sdk/core/authentication-service'
+import { getDecodedTokenFromStorage, removeTokenFromStorage, getTokenFromStorage } from '../../sdk/core/authentication-service'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBan, faCheckDouble, faHistory, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faThumbsUp, faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 
 import Layout from '../components/customer/layout';
+import AlertModal from '../components/alert-modal'
 
 import ManageAccount from '../components/profile/manage-account'
 import MyProfile from '../components/profile/my-profile'
@@ -42,10 +47,14 @@ export async function getServerSideProps(context) {
 
 export default function Profile(props) {
     const [token, setToken] = useState({ role: '', full_name: '', status: '' })
-    const [cart_count, setCart_count] = useState(0)
+    const [undecoded_token, setUndecodedToken] = useState('')
 
     const [user, setUser] = useState('')
+    const [cart_count, setCart_count] = useState(0)
     const [view, setView] = useState('manage_account')
+
+    const [showAlertModal, setShowAlertModal] = useState(false)
+    const [alertMsg, setAlertMsg] = useState('')
 
     const [loading, setLoading] = useState(false)
     const [dashboard_href, setdashboard_href] = useState('/')
@@ -85,30 +94,32 @@ export default function Profile(props) {
         }
     }
 
-
     async function getData() {
         const _token = await getDecodedTokenFromStorage()
+        const _undecoded_token = await getTokenFromStorage()
         if (_token !== null) {
             setToken(_token)
+            setUndecodedToken(_undecoded_token)
+            await getUser(_token._id)
+
             const count_url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
             await axios.get(count_url).then((res) => {
                 setCart_count(res.data.data.length)
             }).catch((error) => {
             })
-
-            const user_url = MuhalikConfig.PATH + `/api/users/user/${_token._id}`;
-            await axios.get(user_url).then((res) => {
-                console.log('user:', res.data.data[0])
-                setUser(res.data.data[0])
-            }).catch((error) => {
-            })
         }
     }
+    async function getUser(id) {
+        const user_url = MuhalikConfig.PATH + `/api/users/user/${id}`;
+        await axios.get(user_url).then((res) => {
+            setUser(res.data.data[0])
+        }).catch((error) => {
+        })
+    }
 
-    function logout() {
-        setLoading(true)
-        removeTokenFromStorage(false)
-        setLoading(false)
+    function handleShowAlert(msg) {
+        setAlertMsg(msg)
+        setShowAlertModal(true)
     }
 
     useEffect(() => {
@@ -122,8 +133,22 @@ export default function Profile(props) {
         }
     }, [token])
 
+    function logout() {
+        setLoading(true)
+        removeTokenFromStorage(false)
+        setLoading(false)
+    }
+
     return (
         <div className='profile'>
+            <AlertModal
+                onHide={(e) => setShowAlertModal(false)}
+                show={showAlertModal}
+                header={'Success'}
+                message={alertMsg}
+                iconname={faThumbsUp}
+                color={'green'}
+            />
             <Layout
                 role={token.role || ''}
                 name={token.full_name || ''}
@@ -184,15 +209,107 @@ export default function Profile(props) {
                             }
                         </Col>
                         <Col>
-                            {view == 'manage_account' && <ManageAccount user={user} setView={(value) => setView(value)} />}
-                            {view == 'my_profile' && <MyProfile user={user} />}
-                            {view == 'address' && <Address user={user} />}
-                            {view == 'change_picture' && <ChangeProfilePicture user={user} />}
+                            {view == 'manage_account' && <ManageAccount
+                                _id={user._id}
+                                role={user.role}
+                                full_name={user.full_name}
+                                shop_name={user.shop_name}
+                                address={user.address}
+                                shop_address={user.shop_address}
+                                countary={user.countary}
+                                city={user.city}
+                                avatar={user.avatar}
+                                mobile={user.mobile}
+                                email={user.email}
+                                setView={(value) => setView(value)}
+                            />}
+                            {view == 'my_profile' && <MyProfile
+                                token={undecoded_token}
+                                _id={user._id}
+                                role={user.role}
+                                full_name={user.full_name}
+                                mobile={user.mobile}
+                                email={user.email}
+                                showAlert={(msg) => handleShowAlert(msg)}
+                                reloadUser={() => getUser(token._id)}
+                            />}
+                            {view == 'address' && <Address
+                                token={undecoded_token}
+                                _id={user._id}
+                                role={user.role}
+                                shop_name={user.shop_name}
+                                address={user.address}
+                                shop_address={user.shop_address}
+                                countary={user.countary}
+                                city={user.city}
+                                showAlert={(msg) => handleShowAlert(msg)}
+                                reloadUser={() => getUser(token._id)}
+                            />}
+                            {view == 'change_picture' && <ChangeProfilePicture
+                                token={undecoded_token}
+                                _id={user._id}
+                                avatar={user.avatar}
+                                showAlert={(msg) => handleShowAlert(msg)}
+                                reloadUser={() => getUser(token._id)}
+                            />}
 
-                            {view == 'manage_orders' && <ManageOrders user={user} setView={(value) => setView(value)} />}
-                            {view == 'pending_orders' && <PendingOrders user={user} />}
-                            {view == 'delivered_orders' && <DeliveredOrders user={user} />}
-                            {view == 'cancelled_orders' && <CancelledOrders user={user} />}
+                            {view == 'manage_orders' && <ManageOrders
+                                _id={user._id}
+                                role={user.role}
+                                full_name={user.full_name}
+                                shop_name={user.shop_name}
+                                address={user.address}
+                                shop_address={user.shop_address}
+                                countary={user.countary}
+                                city={user.city}
+                                avatar={user.avatar}
+                                mobile={user.mobile}
+                                email={user.email}
+                                setView={(value) => setView(value)}
+                                setView={(value) => setView(value)}
+                            />}
+                            {view == 'pending_orders' && <PendingOrders
+                                _id={user._id}
+                                role={user.role}
+                                full_name={user.full_name}
+                                shop_name={user.shop_name}
+                                address={user.address}
+                                shop_address={user.shop_address}
+                                countary={user.countary}
+                                city={user.city}
+                                avatar={user.avatar}
+                                mobile={user.mobile}
+                                email={user.email}
+                                setView={(value) => setView(value)}
+                            />}
+                            {view == 'delivered_orders' && <DeliveredOrders
+                                _id={user._id}
+                                role={user.role}
+                                full_name={user.full_name}
+                                shop_name={user.shop_name}
+                                address={user.address}
+                                shop_address={user.shop_address}
+                                countary={user.countary}
+                                city={user.city}
+                                avatar={user.avatar}
+                                mobile={user.mobile}
+                                email={user.email}
+                                setView={(value) => setView(value)}
+                            />}
+                            {view == 'cancelled_orders' && <CancelledOrders
+                                _id={user._id}
+                                role={user.role}
+                                full_name={user.full_name}
+                                shop_name={user.shop_name}
+                                address={user.address}
+                                shop_address={user.shop_address}
+                                countary={user.countary}
+                                city={user.city}
+                                avatar={user.avatar}
+                                mobile={user.mobile}
+                                email={user.email}
+                                setView={(value) => setView(value)}
+                            />}
 
                         </Col>
                     </Row>
@@ -212,7 +329,7 @@ export default function Profile(props) {
                 }
 
                 .profile ._div {
-                    padding: 1% 10%;
+                    margin: 1% 7% 20% 7%;
                 }
                 .profile .list-group-item:first-child {
                     background: none;
@@ -274,19 +391,15 @@ export default function Profile(props) {
                     width: 100%;
                     color: gray;
                 }
-                @media (max-width: 1299px){
-                    .profile ._div {
-                        padding: 1% 7%;
-                    }
-                }
                 @media (max-width: 1199px){
                     .profile ._div {
-                        padding: 1% 4%;
+                        margin: 1% 3% 20% 3%;
                     }
                 }
                 @media (max-width: 991px){
                     .profile ._div {
-                        padding: 1% 0%;
+                        margin: 1% 0% 20% 0%;
+                        padding: 0%;
                     }
                 }
                 @media (max-width: 767px){

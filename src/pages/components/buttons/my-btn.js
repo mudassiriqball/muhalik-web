@@ -6,6 +6,7 @@ export default function MyButton(props) {
     return (
         <>
             <Button className='primary_btn'
+                size={props.size}
                 onClick={props.onClick}
                 id={props.id}
                 disabled={props.disabled}

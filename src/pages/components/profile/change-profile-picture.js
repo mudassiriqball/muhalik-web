@@ -11,37 +11,26 @@ export default function ChangrProfilePicture(props) {
     const [img, setImg] = React.useState('')
     const [isLoading, setIsLoading] = React.useState(false)
 
-    React.useEffect(() => {
-        getToken()
-        return () => {
-            setToken('')
-        }
-    }, [])
-    async function getToken() {
-        const _token = getTokenFromStorage()
-        if (_token != null) {
-            setToken(_token)
-        }
-    }
-
     function handleImgUpload() {
         setIsLoading(true)
         const formData = new FormData()
         formData.append('myImage', img)
 
+        console.log('token:', props._id)
         const url = MuhalikConfig.PATH + `/api/users/avatar/${props._id}`
-        axios.post(url, formData, {
+        axios.put(url, formData, {
             headers: {
                 'content-type': 'multipart/form-data',
-                'authorization': token,
+                'authorization': props.token,
             }
         }).then((response) => {
             setIsLoading(false)
-            alert('added')
+            props.showAlert('Profile Picture Updated Successfully')
+            props.reloadUser()
         }).catch((error) => {
             setIsLoading(false)
-            console.log('error:', error)
-            alert('not afaghssj')
+            console.log('Update Picture Failed:', error)
+            alert('Update Picture Failed')
         });
     }
 
@@ -50,9 +39,9 @@ export default function ChangrProfilePicture(props) {
             <label className='heading'>Change Profile Picture</label>
             <div className='profile_pic_div'>
                 <Card>
-                    <Card.Body>
+                    <Card.Body className='card_body'>
                         <Form.Group as={Row} className='profile_img_col'>
-                            <Image src={img != '' ? URL.createObjectURL(img) : props.user.url} roundedCircle thumbnail fluid
+                            <Image src={img != '' ? URL.createObjectURL(img) : props.avatar} roundedCircle thumbnail fluid
                                 style={{ minWidth: '120px', maxWidth: '120px', minHeight: '120px', maxHeight: '120px' }} />
                         </Form.Group>
                         <hr />
@@ -68,7 +57,7 @@ export default function ChangrProfilePicture(props) {
                                 />
                             </InputGroup>
                         </Form.Group>
-                        <Form.Group as={Row} className='profile_img_col mt-5'>
+                        <Form.Group as={Row} className='profile_img_col btn_row mt-5'>
                             <MyButton onClick={handleImgUpload} block={true} disabled={img == '' || isLoading} >
                                 {isLoading ? 'Uploading' : 'Upload'}
                                 {isLoading ? <Spinner size='md' animation='grow' /> : null}
@@ -86,10 +75,27 @@ export default function ChangrProfilePicture(props) {
                     margin: 10px 5px;
                     width: 100%;
                 }
-                .profile_img_col {
+                .change_picture .profile_img_col {
                     display:flex;
                     align-items: center;
                     justify-content: center;
+                }
+                 @media (max-width: 767px){
+                    .change_picture .profile_img_col {
+                        padding: 0%;
+                    }
+                    .change_picture .heading {
+                        font-size: 16px;
+                        padding: 10px 5px 0% 7px;
+                        margin: 0%;
+                        width: 100%;
+                    }
+                    .change_picture .card_body {
+                        padding: 2%;
+                    }
+                    .btn_row {
+                        margin: 0%;
+                    }
                 }
             `}</style>
         </div>
