@@ -28,7 +28,7 @@ export default function Address(props) {
             address: address,
             shop_address: shop_address,
         }
-        const url = MuhalikConfig.PATH + `/api/users/edit/profile/${props._id}`
+        const url = MuhalikConfig.PATH + `/api/users/user-profile/${props._id}`
         axios.put(url, data, {
             headers: {
                 'authorization': props.token,

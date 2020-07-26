@@ -3,7 +3,7 @@ import axios from 'axios'
 import MuhalikConfig from './sdk/muhalik.config'
 
 export default function usersPageLimit(token, refresh, url, pageNumber, limit) {
-    const [users_loading, setLoading] = useState(true)
+    const [users_loading, setLoading] = useState(false)
     const [users_error, setError] = useState('')
     const [users, setUsers] = useState([])
     const [users_pages, setPages] = useState(0)

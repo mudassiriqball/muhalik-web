@@ -1,18 +1,20 @@
 import React from 'react'
 import { Card, Row, Col, Nav, Image } from 'react-bootstrap'
 
+import translate from '../../../i18n/translate'
+
 export default function ManageAccount(props) {
     return (
         <>
-            <div className='heading'>Manage Account</div>
+            <div className='heading'>{translate('manage_account')}</div>
             <Row>
                 <Col className='card_col'>
-                    <Card style={{ minHeight: '200px' }}>
+                    <Card style={{ minHeight: '200px' }} >
                         <Card.Header>
-                            <div className='mr-auto'>Personel Info</div>
-                            <Nav.Link onClick={() => { history.pushState(null, '', '/user/profile?my-profile'), props.setView('my_profile') }}>EDIT</Nav.Link>
+                            <div className='mr-auto'>{translate('personel_info')}</div>
+                            <Nav.Link onClick={() => { history.replaceState(null, '', '/user/profile?my-profile'), props.setView('my_profile') }}>EDIT</Nav.Link>
                         </Card.Header>
-                        <Card.Body>
+                        <Card.Body className='my_card'>
                             <label className='label'>{props.full_name}</label>
                             <label className='label'>{props.mobile}</label>
                             <label className='label'>{props.email}</label>
@@ -22,8 +24,8 @@ export default function ManageAccount(props) {
                 <Col className='card_col'>
                     <Card style={{ minHeight: '200px' }}>
                         <Card.Header>
-                            <div className='mr-auto'>Profile Picture</div>
-                            <Nav.Link onClick={() => { history.pushState(null, '', '/user/profile?change-profile-picture'), props.setView('change_picture') }}>EDIT</Nav.Link>
+                            <div className='mr-auto'>{translate('profile_picture')}</div>
+                            <Nav.Link onClick={() => { history.replaceState(null, '', '/user/profile?change-profile-picture'), props.setView('change_picture') }}>EDIT</Nav.Link>
                         </Card.Header>
                         <Card.Body className='w-100 d-flex align-items-center justify-content-center'>
                             <Image src={props.avatar} roundedCircle thumbnail fluid
@@ -35,11 +37,11 @@ export default function ManageAccount(props) {
                     <Card style={{ minHeight: '200px' }}>
                         <Card.Header>
                             {props.role == 'customer' ?
-                                <div className='mr-auto'>Shipping Address</div>
+                                <div className='mr-auto'>{translate('shipping_address')}</div>
                                 :
-                                <div className='mr-auto'>Shop Address</div>
+                                <div className='mr-auto'>{translate('shop_address')}</div>
                             }
-                            <Nav.Link onClick={() => { history.pushState(null, '', '/user/profile?address'), props.setView('address') }}>EDIT</Nav.Link>
+                            <Nav.Link onClick={() => { history.replaceState(null, '', '/user/profile?address'), props.setView('address') }}>EDIT</Nav.Link>
                         </Card.Header>
                         <Card.Body>
                             <label className='label'>{props.full_name}</label>
@@ -54,6 +56,12 @@ export default function ManageAccount(props) {
                 </Col>
                 {/* } */}
             </Row>
+            <style type="text/css">{`
+                .my_card {
+                   background: rgb(165,64,162);
+background: linear-gradient(135deg, rgba(165,64,162,1) 0%, rgba(89,35,87,1) 100%);
+                }
+            `}</style>
         </>
     )
 }

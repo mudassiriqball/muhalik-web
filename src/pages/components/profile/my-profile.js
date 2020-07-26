@@ -6,6 +6,10 @@ import GlobalStyleSheet from '../../../styleSheet'
 import MyButton from '../buttons/my-btn'
 import MuhalikConfig from '../../../sdk/muhalik.config'
 
+import translate from '../../../i18n/translate'
+import TranslateOption from '../../../i18n/translate-option'
+
+
 export default function MyProfile(props) {
     const [token, setToken] = useState(null)
 
@@ -27,7 +31,7 @@ export default function MyProfile(props) {
             email: email,
             gender: gender,
         }
-        const url = MuhalikConfig.PATH + `/api/users/edit/profile/${props._id}`
+        const url = MuhalikConfig.PATH + `/api/users/user-profile/${props._id}`
         axios.put(url, data, {
             headers: {
                 'authorization': props.token,
@@ -55,11 +59,11 @@ export default function MyProfile(props) {
         <div className='my_profile'>
             <label className='heading'>My Profile</label>
             <div className='my_profile_div'>
-                <Card>
+                <Card className='my_card'>
                     <Card.Body className='card_body'>
                         <Row className='p-0 m-0'>
                             <Form.Group as={Col} lg={6} md={6} sm={6} xs={12} className='my_profile_col'>
-                                <Form.Label className='form_label'>Mobile</Form.Label>
+                                <Form.Label className='form_label'>{translate('mobile')}</Form.Label>
                                 <InputGroup>
                                     <Form.Control
                                         className='form_control'
@@ -69,7 +73,7 @@ export default function MyProfile(props) {
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} lg={6} md={6} sm={6} xs={12} className='my_profile_col'>
-                                <Form.Label className='form_label'>Name</Form.Label>
+                                <Form.Label className='form_label'>{translate('full_name')}</Form.Label>
                                 <InputGroup>
                                     <Form.Control
                                         className='form_control'
@@ -79,28 +83,28 @@ export default function MyProfile(props) {
                                     />
                                 </InputGroup>
                             </Form.Group>
-                            {props.role == 'customer' && <Form.Group as={Col} className='my_profile_col'>
-                                <Form.Label className='form_label'>Gender</Form.Label>
+                            {props.role == 'customer' && <Form.Group as={Col} lg={6} md={6} sm={6} xs={12} className='my_profile_col'>
+                                <Form.Label className='form_label'>{translate('gender')}</Form.Label>
                                 <Form.Control
                                     className='form_control'
                                     as="select"
                                     aria-describedby="gender"
                                     name="gender"
-                                    value={gender || ''}
+                                    value={gender}
                                     onChange={(e) => setGender(e.target.value)}
                                     disabled={!isEditProfile}
                                 >
-                                    <option>Select</option>
-                                    <option> Male </option>
-                                    <option> Female </option>
-                                    <option> Other </option>
+                                    <TranslateOption id='select' />
+                                    <TranslateOption id='male' />
+                                    <TranslateOption id='female' />
+                                    <TranslateOption id='other' />
                                 </Form.Control>
                             </Form.Group>
                             }
                         </Row>
                         <Row className='p-0 m-0'>
                             <Form.Group as={Col} lg={12} md={12} className='my_profile_col'>
-                                <Form.Label className='form_label'>Email</Form.Label>
+                                <Form.Label className='form_label'>{translate('email')}</Form.Label>
                                 <InputGroup>
                                     <Form.Control
                                         className='form_control'
@@ -130,6 +134,9 @@ export default function MyProfile(props) {
                 </Card>
             </div>
             <style type="text/css">{`
+                .my_profile .my_card {
+                    background: -webkit-gradient(left top, right bottom, color-stop(0%, rgba(248,80,50,0.78)), color-stop(0%, rgba(89,35,87,0.78)), color-stop(35%, rgba(89,35,87,0.78)), color-stop(100%, rgba(89,35,87,1)));
+                }
                 .my_profile .my_profile_div {
                     padding: 5px;
                 }

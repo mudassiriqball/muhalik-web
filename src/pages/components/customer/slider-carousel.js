@@ -1,15 +1,61 @@
+import { useState } from 'react';
+import Router from 'next/router'
 import { Carousel, Row, Col, ListGroup, Button, Image } from 'react-bootstrap'
+import useDimensions from "react-use-dimensions";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { faBuromobelexperte } from '@fortawesome/free-brands-svg-icons';
+
 import GlobalStyleSheet from '../../../styleSheet'
 import CategoriesSlider from './categories-slider'
-import useDimensions from "react-use-dimensions";
-import Router from 'next/router'
+import MyButton from '../buttons/my-btn'
+
+import translate from '../../../i18n/translate'
 
 const SliderCarousel = (props) => {
     const [ref, { x, y, width }] = useDimensions();
+
+    const [categoryHover, setCategoryHover] = useState(false)
+    const [hoverCategoryId, setHoverCategoryId] = useState('')
+
+    const [categoryMouseOut, setCategoryMouseOut] = useState(false)
+    const [subCategoryMouseOut, setSubCategoryMouseOut] = useState(true)
+
+    let cat = false
+    let sub = false
+
+    function handleMouseEnter(element) {
+        cat = false
+        setCategoryHover(true)
+        setHoverCategoryId(element._id)
+        console.log('cat in:', cat, sub)
+    }
+
+    function handleMouseOut() {
+        cat = true
+        console.log('cat out:', cat, sub)
+        if (sub == true) {
+            setCategoryHover(false)
+        }
+    }
+
+
+
+    function handleSubMouseEnter() {
+        sub = false
+        console.log('sub in:', cat, sub)
+    }
+
+    function handleSubMouseOut() {
+        sub = true
+        console.log('sub out:', cat, sub)
+        if (cat == true) {
+            setCategoryHover(false)
+        }
+    }
+
+
 
     const [index, setIndex] = React.useState(0);
     const handleSelect = (selectedIndex, e) => {
@@ -22,47 +68,50 @@ const SliderCarousel = (props) => {
                 <Row className='w-100' noGutters >
                     <Col lg={3} md={3} className='category_col'>
                         <ListGroup variant='flush' className='list_group' style={{ maxHeight: width / 2.5 || '25vw' }}>
-                            <ListGroup.Item className='list_outer_item'>
+                            <ListGroup.Item className='list_outer_item' onClick={() => Router.push('/categories')}>
                                 <FontAwesomeIcon icon={faBuromobelexperte} className='categories_fontawsome' />
-                                <div>All categories</div>
+                                <div>{translate('all_categories')}</div>
                                 <FontAwesomeIcon icon={faChevronRight} className='fontawesome' />
                             </ListGroup.Item>
                             {props.categories_list && props.categories_list.map((element, index) =>
-                                <ListGroup.Item key={element._id} className='list_item'>
+                                <ListGroup.Item key={element._id} className='list_item'
+                                    onMouseEnter={() => handleMouseEnter(element)}
+                                    onMouseLeave={handleMouseOut}
+                                >
                                     <Image src={element.url} roundedCircle fluid style={{ width: '30px', maxWidth: '30px', minHeight: '30px', maxHeight: '30px', marginRight: '10px' }} />
                                     <div>{element.value}</div>
                                     <FontAwesomeIcon icon={faChevronRight} className='fontawesome' />
                                 </ListGroup.Item>
                             )}
                         </ListGroup>
-
                     </Col>
-                    <Col className='carosuel_col' ref={ref}>
-                        {/* <div className='show_category'>
-                            <div>hhhh</div>
-                            <div>hhhh</div>
-                            <div>hhhh</div>
-                            <div>hhhh</div>
-                            <div>hhhh</div>
-                            <div>hhhh</div>
-                            <div>hhhh</div>
-                            <div>hhhh</div>
-                            <div>hhhh</div>
-                        </div> */}
-                        <Carousel activeIndex={index} onSelect={handleSelect} indicators={false} interval='3000'>
+                    <Col className='carosuel_col' ref={ref}
+                        onMouseEnter={handleSubMouseEnter}
+                        onMouseLeave={handleSubMouseOut}
+                    >
+                        {categoryHover && <div className='show_sub_categories' style={{ maxHeight: width / 2.5 || '25vw' }}>
+                            {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
+                                hoverCategoryId == element.category_id ?
+                                    <div key={index} className='sub_category_item'>
+                                        <div>{element.value}</div>
+                                        <FontAwesomeIcon icon={faChevronRight} className='fontawesome' />
+                                    </div>
+                                    :
+                                    null
+                            )}
+                        </div>
+                        }
+                        <Carousel activeIndex={index} onSelect={handleSelect} indicators={false} interval={3000}>
                             {props.slider_list && props.slider_list.map((element, index) =>
                                 <Carousel.Item key={element._id} >
                                     <img
-                                        // className='slider_img'
                                         style={{ width: '100vw', maxWidth: '100%', minHeight: width / 2.5 || '25vw', maxHeight: width / 2.5 || '25vw' }}
                                         src={element.url}
                                         alt='Slide {index}'
                                     />
                                     <Carousel.Caption>
-                                        <h3>{element.category}</h3>
-                                        <h4>{element.sub_category}</h4>
-                                        <Button variant='success' className='pl-5 pr-5'
-                                            onClick={() => Router.push('/[category]/[sub_category]', `/${element.category}/${element.sub_category}`)}>Shop Now</Button>
+                                        <label className='carosuel_label'>{element.sub_category}</label>
+                                        <MyButton size='sm' style={{ paddingLeft: '5%', paddingRight: '5%' }} onClick={() => Router.push('/[category]/[sub_category]', `/${element.category}/${element.sub_category}`)}>Shop Now</MyButton>
                                     </Carousel.Caption>
                                 </Carousel.Item>
                             )}
@@ -72,6 +121,7 @@ const SliderCarousel = (props) => {
                 <CategoriesSlider
                     active_category={props.active_category}
                     categories_list={props.categories_list}
+                    sub_categories_list={props.sub_categories_list}
                 />
             </Row>
 
@@ -152,19 +202,28 @@ const SliderCarousel = (props) => {
                 }
                 .slider_img {
                     display: block;
-                    
                 }
-                .show_category{
+                .carosuel_label {
+                    width: 100%;
+                    font-size: 16px;
+                }
+                .show_sub_categories{
                     position: absolute;
+                    width: 100%;
                     top: 0;
                     left: 0;
                     bottom: 0;
-                    background: blue;
+                    padding: 3%;
+                    background: white;
                     z-index: 1000;
-                    max-height: 25vw;
+                }
+                .sub_category_item {
+                    width: 33%;
+                    display: inline-flex;
+                    align-items: cener;
                 }
 
-                 @media (max-width: 1199px){
+                @media (max-width: 1199px){
                     .slider_carousel{
                         padding: 0% 2.7% 2% 2.7%;
                     }
@@ -184,6 +243,9 @@ const SliderCarousel = (props) => {
                     }
                     .slider_carousel{
                         padding: 1%;
+                    }
+                    .carosuel_label {
+                        font-size: 13px;
                     }
                 }
             `}</style>

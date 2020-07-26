@@ -3,7 +3,7 @@ import axios from 'axios'
 import MuhalikConfig from './sdk/muhalik.config'
 
 export default function usersQuerySearch(token, refresh, role, status, fieldName, query, pageNumber, limit) {
-    const [users_query_loading, setLoading] = useState(true)
+    const [users_query_loading, setLoading] = useState(false)
     const [users_query_error, setError] = useState('')
     const [query_users, setUsers] = useState([])
     const [users_query_pages, setPages] = useState('')
@@ -21,7 +21,7 @@ export default function usersQuerySearch(token, refresh, role, status, fieldName
         if (query != null) {
             setLoading(true)
             setError(false)
-            const _url = MuhalikConfig.PATH + `/api/users/query-search/${role}`
+            const _url = MuhalikConfig.PATH + `/api/users/users-query-search/${role}`
             await axios({
                 method: 'GET',
                 url: _url,

@@ -21,7 +21,7 @@ class Discounts extends Component {
                 'content-type': 'multipart/form-data'
             }
         };
-        const url = MuhalikConfig.PATH + '/api/products/add'
+        const url = MuhalikConfig.PATH + '/api/products/add-product'
         axios.post("/upload", formData, config)
             .then((response) => {
                 alert("The file is successfully uploaded");

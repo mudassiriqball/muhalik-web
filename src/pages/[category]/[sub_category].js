@@ -24,13 +24,15 @@ import BreadcrumbRow from '../components/breadcrumb-row'
 import MovingLogo from '../components/moving-logo'
 
 React.useLayoutEffect = React.useEffect
+import translate from '../../i18n/translate'
+
 
 export async function getServerSideProps(context) {
     let slider_list = []
     let categories_list = []
     let sub_categories_list = []
 
-    const url = MuhalikConfig.PATH + '/api/sliders/';
+    const url = MuhalikConfig.PATH + '/api/sliders/sliders';
     await axios.get(url).then((res) => {
         slider_list = res.data.data
     }).catch((error) => {
@@ -107,36 +109,26 @@ export default function Category(props) {
     }, [sub_category]);
 
 
-
-    function logout() {
-        if (removeTokenFromStorage()) {
-            this.setState({ token: '' })
-            Router.reload('/index');
-            Router.replace('/index');
-        } else {
-            alert('Logout Failed')
-        }
-    }
-
     function handleProductClick(element) {
         Router.push('/[category]/[sub_category]/[product]', `/${category}/${element.sub_category.value}/${element._id}`)
     }
     return (
-        <div className='id'>
+        <div className='_sub_category'>
             <Layout
                 role={token.role || ''}
                 name={token.full_name || ''}
-                logout={logout}
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
                 active_category={category}
                 active_sub_category={sub_category}
+                {...props}
             >
                 <SliderCarousel
                     active_category={category}
                     categories_list={props.categories_list}
                     slider_list={props.slider_list}
+                    sub_categories_list={props.sub_categories_list}
                 />
                 <Row noGutters className='main_row'>
                     <Row noGutters className='w-100'>
@@ -149,11 +141,11 @@ export default function Category(props) {
                         </BreadcrumbRow>
                     </Row>
                     <Row noGutters className='w-100'>
-                        <Col className='display_md_lg'>
-                            <div className='m-3 align-self-center'>Related Categories</div>
-                            {props.sub_categories_list && props.sub_categories_list.map(element =>
+                        <Col className='related_categories'>
+                            <div className='related_categories_heading'>{translate('related_categories')}</div>
+                            {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
                                 element.category_id == active_category_id ?
-                                    <Link href='/[category]/[sub_category]' as={`/${category}/${element.value}`} key={element._id} >
+                                    <Link key={index} href='/[category]/[sub_category]' as={`/${category}/${element.value}`} >
                                         {sub_category == element.value ?
                                             <a style={{ color: 'blue' }}>
                                                 {element.value}
@@ -169,79 +161,87 @@ export default function Category(props) {
                             )}
                         </Col>
                         <Col className='products_col'>
-                            <Row noGutters className='id_row'>
-                                {products && products.map((element, index) => {
-                                    if (products.length === index + 1) {
-                                        return <Card onClick={() => handleProductClick(element)} ref={lastProducrRef} key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
-                                            {element.product_type == "simple-product" ?
-                                                <div className='only_products_div'>
-                                                    <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />
-                                                    <label className='my_label'>{element.product_name}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
-                                                </div>
-                                                :
-                                                <div className='only_products_div'>
-                                                    <Image className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
-                                                    <label className='my_label'>{element.product_name}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
-                                                </div>
-                                            }
-                                        </Card>
-                                    } else {
-                                        return <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
-                                            {element.product_type == "simple-product" ?
-                                                <div className='only_products_div' onClick={() => handleProductClick(element)}>
-                                                    <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />
-                                                    <label className='my_label'>{element.product_name}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
-                                                </div>
-                                                :
-                                                <div className='only_products_div' onClick={() => handleProductClick(element)}>
-                                                    <Image className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
-                                                    <label className='my_label'>{element.product_name}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
-                                                </div>
-                                            }
-                                        </Card>
-                                    }
-                                })}
-                            </Row>
-
-                            {loading &&
-                                <Row noGutters className='id_row'>
-                                    {loadingCard.map((element, index) =>
-                                        isMobile ? index < 12 ?
-                                            <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
-                                                <div className='only_products_div'>
-                                                    <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
-                                                        <MovingLogo />
-                                                    </div>
-                                                    <label className='my_label'>{'-'}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
-                                                </div>
-                                            </Card>
-                                            :
-                                            null
-                                            :
-                                            <Card as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
-                                                <div className='only_products_div'>
-                                                    <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
-                                                        <MovingLogo />
-                                                    </div>
-                                                    <label className='my_label'>{'-'}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
-                                                </div>
-                                            </Card>
-                                    )}
+                            {products == '' ?
+                                <Row className='p-5 w-100'>
+                                    <div className='w-100'>
+                                        <h5 className='text-center w-100'>No Data Found</h5>
+                                    </div>
                                 </Row>
+                                :
+                                <>
+                                    <Row noGutters className='id_row'>
+                                        {products && products.map((element, index) => {
+                                            if (products.length === index + 1) {
+                                                return <Card key={index} onClick={() => handleProductClick(element)} ref={lastProducrRef} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                                                    {element.product_type == "simple-product" ?
+                                                        <div className='only_products_div'>
+                                                            <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />
+                                                            <label className='my_label'>{element.product_name}</label>
+                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_price}</label>
+                                                        </div>
+                                                        :
+                                                        <div className='only_products_div'>
+                                                            <Image className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
+                                                            <label className='my_label'>{element.product_name}</label>
+                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_variations[0].price}</label>
+                                                        </div>
+                                                    }
+                                                </Card>
+                                            } else {
+                                                return <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                                                    {element.product_type == "simple-product" ?
+                                                        <div className='only_products_div' onClick={() => handleProductClick(element)}>
+                                                            <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />
+                                                            <label className='my_label'>{element.product_name}</label>
+                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_price}</label>
+                                                        </div>
+                                                        :
+                                                        <div className='only_products_div' onClick={() => handleProductClick(element)}>
+                                                            <Image className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
+                                                            <label className='my_label'>{element.product_name}</label>
+                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_variations[0].price}</label>
+                                                        </div>
+                                                    }
+                                                </Card>
+                                            }
+                                        })}
+                                    </Row>
+                                    {loading &&
+                                        <Row noGutters className='id_row'>
+                                            {loadingCard.map((element, index) =>
+                                                isMobile ? index < 12 ?
+                                                    <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                                                        <div className='only_products_div'>
+                                                            <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
+                                                                <MovingLogo />
+                                                            </div>
+                                                            <label className='my_label'>{'-'}</label>
+                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{'-'}</label>
+                                                        </div>
+                                                    </Card>
+                                                    :
+                                                    null
+                                                    :
+                                                    <Card as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                                                        <div className='only_products_div'>
+                                                            <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
+                                                                <MovingLogo />
+                                                            </div>
+                                                            <label className='my_label'>{'-'}</label>
+                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{'-'}</label>
+                                                        </div>
+                                                    </Card>
+                                            )}
+                                        </Row>
+                                    }
+                                </>
                             }
-                            <div>{error && 'Error...'}</div>
                         </Col>
                     </Row>
                 </Row>
             </Layout >
             <style type="text/css">{`
-                .id{
+                ._sub_category{
                     min-height: 100vh;
                     background: ${GlobalStyleSheet.body_color};
                     position: absolute;
@@ -249,18 +249,24 @@ export default function Category(props) {
                     left: 0;
                     right: 0;
                 }
-                .id .main_row{
+                ._sub_category .main_row{
                     padding: 2% 3.7%;
                 }
-                .id .products_col{
-                    background: white;
-                }
-                .id .display_md_lg{
+               
+                ._sub_category .related_categories {
                     max-width: 210px;
                     border-right: 0.5px solid lightgray;
                     background: white;
                 }
-                .id .display_md_lg a{
+                ._sub_category .related_categories_heading {
+                    margin: 5%;
+                    padding: 3%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-bottom: 0.5px solid lightgray;
+                }
+                ._sub_category .related_categories a{
                     color: gray;
                     display: block;
                     margin: 1% 5%;
@@ -268,20 +274,23 @@ export default function Category(props) {
                     font-size: 15px;
                     text-decoration: none;
                 }
-                .id .display_md_lg a:hover{
+                ._sub_category .related_categories a:hover{
                     color: blue;
                     box-shadow: -1px 0px 10px 1px rgba(0,0,0,0.12);
                 }
+                ._sub_category .products_col{
+                    background: white;
+                }
                 
-                .id .id_row{
+                ._sub_category .id_row{
                     padding: 2%;
                 }
-                .id .only_products_card{
+                ._sub_category .only_products_card{
                     padding: 0.5% 0%;
                     background: none;
                     border: none;
                 }
-                .id .my_label{
+                ._sub_category .my_label{
                     text-overflow: ellipsis;
                     overflow: hidden;
                     white-space: nowrap; 
@@ -291,7 +300,7 @@ export default function Category(props) {
                     font-size: 13px;
                     cursor: pointer;
                 } 
-                .id .only_products_div{
+                ._sub_category .only_products_div{
                     display: flex;
                     flex-direction: column;
                     border-radius: 3px;
@@ -301,16 +310,16 @@ export default function Category(props) {
                     background: white;
                     border: 0.01px solid lightgray;
                 }
-                .id .only_products_div:hover{
+                ._sub_category .only_products_div:hover{
                     box-shadow: 0px 0px 10px 0.5px gray;
                     transition-timing-function: ease-in;
                     transition: 0.5s;
                     margin: 0% 0% 4.4% 0%;
                 }     
-                .id .only_product_img{
+                ._sub_category .only_product_img{
                     margin-bottom: 5px;
                 }
-                .id .loadin_img_div{
+                ._sub_category .loadin_img_div{
                     margin-bottom: 5px;
                     min-width: 100%;
                     max-width: 100%;
@@ -321,37 +330,70 @@ export default function Category(props) {
                     justify-content: center;
                 }
                 @media (max-width: 1199px) {
-                    .id .only_products_card{
+                    ._sub_category .only_products_card{
                         max-width: 20%;
                     }
-                    .id .display_md_lg{
+                    ._sub_category .related_categories{
                         max-width: 150px;
                     }
-                    .id .main_row{
+                    ._sub_category .main_row{
                         padding: 2% 2.7%;
                     }
                 }
                 @media (max-width: 991px) {
-                    .id .main_row{
+                    ._sub_category .main_row{
                         padding: 2%;
                     }
-                    .id .display_md_lg{
+                    ._sub_category  .related_categories {
+                        min-width: 100%;
+                        display: inline-flex;
+                        background: white;
+                        width: 100%;
+                        padding: 0.5%;
+                        margin: 0% 0% 2% 0%;
+                        overflow-y: scroll;
+                        border: none;
+                    }
+                    ._sub_category  .related_categories::-webkit-scrollbar {
                         display: none;
+                    }
+                    ._sub_category  .related_categories {
+                        -ms-overflow-style: none;
+                    }
+                    ._sub_category .related_categories_heading {
+                        margin: 0%;
+                        padding: 0% 1%;
+                        white-space: nowrap;
+                        font-size: 14px;
+                        font-weight: bold;
+                        border: none;
+                    }
+                    ._sub_category .related_categories a{
+                        margin: 0%;
+                        padding: 1%;
+                        font-size: 13px;
+                    }
+                    ._sub_category .products_col{
+                        min-width: 100%;
                     }
                 }
                 @media (max-width: 767px) {
-                    .id .only_products_card{
+                    ._sub_category .only_products_card{
                         max-width: 25%;
                     }
-                    .id .main_row{
+                    ._sub_category .main_row{
                         padding: 2% 2% 50px 2%;
+                    }
+                    ._sub_category .related_categories a{
+                        margin: 1%;
+                        padding: 1%;
                     }
                 }
                 @media (max-width: 575px) {
-                    .id .main_row{
+                    ._sub_category .main_row{
                         padding: 1.5% 1.5% 50px 1.5%;
                     }
-                    .id .only_products_card{
+                    ._sub_category .only_products_card{
                         max-width: 33.3333333333%;
                     }
                 }

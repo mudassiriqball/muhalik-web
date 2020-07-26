@@ -4,15 +4,15 @@ const checkAuth = require('../middleware/check-auth');
 const sliderController = require('../controllers/slider.controller');
 
 // post Requests
-router.post("/",checkAuth, sliderController.add_slider);
+router.post("/add-slider", checkAuth, sliderController.add_slider);
 
 // get Requests
-router.get("/", sliderController.get_slider);
+router.get("/sliders", sliderController.get_slider);
 
 // put Requests
-router.put("/:_id", checkAuth,sliderController.update_slider);
+router.put("/slider/:_id", checkAuth, sliderController.update_slider);
 
 // delete Requests
-router.delete("/:_id",checkAuth, sliderController.delete_slider);
+router.delete("/slider/:_id", checkAuth, sliderController.delete_slider);
 
 module.exports = router;

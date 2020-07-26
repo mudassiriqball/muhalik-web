@@ -344,28 +344,32 @@ class ProducFields extends Component {
 
                 {/* Add New Field */}
                 <CardAccordion title={'Add New Field'}>
-                    <Form.Group>
-                        <InputGroup>
-                            <Form.Control
-                                type="text"
-                                size="sm"
-                                placeholder="Enter Field Value"
-                                name="sku"
-                                value={this.state.fieldValue}
-                                onChange={(e) => this.setState({ fieldValue: e.target.value })}
-                                isInvalid={this.state.error}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                                {this.state.error}
-                            </Form.Control.Feedback>
-                        </InputGroup>
-                    </Form.Group>
-                    <Form.Group>
-                        <Button type="submit" variant="outline-primary" size="sm" onClick={this.handleSubmit.bind(this)} disabled={this.state.isLoading} block style={styles.submit_btn}>
-                            {this.state.isLoading ? 'Uploading' : 'Add Field'}
-                            {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
-                        </Button>
-                    </Form.Group>
+                    <Form.Row className='pt-3 d-flex align-items-center justify-content-center'>
+                        <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
+                            <InputGroup>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    placeholder="Enter Field Value"
+                                    name="sku"
+                                    value={this.state.fieldValue}
+                                    onChange={(e) => this.setState({ fieldValue: e.target.value })}
+                                    isInvalid={this.state.error}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {this.state.error}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+                    </Form.Row>
+                    <Form.Row className='pb-3 d-flex align-items-center justify-content-center'>
+                        <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
+                            <Button type="submit" variant="outline-primary" size="sm" onClick={this.handleSubmit.bind(this)} disabled={this.state.isLoading} block style={styles.submit_btn}>
+                                {this.state.isLoading ? 'Uploading' : 'Add Field'}
+                                {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
+                            </Button>
+                        </Form.Group>
+                    </Form.Row>
                 </CardAccordion>
 
                 {/* Add Field Requests */}

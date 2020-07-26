@@ -21,7 +21,7 @@ export default function ordersPageLimit(token, refresh, status, pageNumber, limi
         setLoading(true)
         setError(false)
         let cancle
-        const _url = MuhalikConfig.PATH + `/api/orders/${status}`
+        const _url = MuhalikConfig.PATH + `/api/orders/all-orders/${status}`
         await axios({
             method: 'GET',
             url: _url,

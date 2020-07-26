@@ -9,20 +9,22 @@ import MuhalikConfig from '../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../styleSheet'
 import TitleRow from '../../../title-row';
 import AddNew from '../../../vendor/dashboard/dashboard-contents/product-contents/add-new'
-import usePageLimitInfiniteScroll from '../../../../../use-page-limit-infinite-scroll';
-import useQueryInfiniteScroll from '../../../../../use-query-infinite-scroll';
+
+import adminInventoryPageLimit from '../../../../../admin-inventory-page-limit';
+import adminInventoryQuerySearch from '../../../../../admin-inventory-query-search';
+
 import useDimensions from "react-use-dimensions";
 import ConfirmModal from '../../../confirm-modal'
 import AlertModal from '../../../alert-modal';
 import { getTokenFromStorage } from '../../../../../sdk/core/authentication-service'
 import PaginationRow from '../../../pagination-row'
-import CardSearchAccordion from '../../../card-search-accordion';
 import Loading from '../../../loading';
-
+import CardSearchAccordion from '../../../card-search-accordion'
 
 export default function Inventory(props) {
-    const [totalProducts, setTotalProducts] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
+
+    const [page, setPage] = useState(1)
+    const [queryPage, setQueryPage] = useState(1)
 
     const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false)
     const [showModal, setShowModal] = useState(false)
@@ -31,35 +33,17 @@ export default function Inventory(props) {
     const [data, setData] = useState({})
 
     const [isSearch, setIsSearch] = useState(false)
+    const [refresh_count, setRefresh_count] = useState(0)
 
     const [fieldName, setFieldName] = useState('')
     const [limitPageNumber, setlimitPageNumber] = useState(1)
     const [queryPageNumber, setQueryPageNumber] = useState(1)
-    const [query, setQuery] = useState(null)
+    const [query, setQuery] = useState('')
 
-    const { _loading, _error, _products, _hasMore } = usePageLimitInfiniteScroll(false, limitPageNumber, 20)
-    const { loading, error, products, hasMore } = useQueryInfiniteScroll(fieldName, query, queryPageNumber, 20)
-
-    useEffect(() => {
-        getData()
-    }, [])
-
-    async function getData() {
-        const url = MuhalikConfig.PATH + '/api/products/total-products';
-        await axios.get(url).then((response) => {
-            setTotalProducts(response.data.count)
-            let count = response.data.count / 20
-            let rounded = Math.floor(count);
-            let decimal = count - rounded;
-            if (decimal > 0) {
-                setTotalPages(rounded + 1)
-            } else {
-                setTotalPages(rounded)
-            }
-        }).catch((error) => {
-            console.log('total Fetchig Error: ', error)
-        })
-    }
+    const { admin_inventory_loading, admin_inventory_products, admin_inventory_pages, admin_inventory_total } =
+        adminInventoryPageLimit(refresh_count, limitPageNumber, '20')
+    const { admin_inventory_query_loading, admin_inventory_query_products, admin_inventory_query_pages, admin_inventory_query_total } =
+        adminInventoryQuerySearch(refresh_count, fieldName, query, queryPageNumber, '20')
 
     async function handleSearch(searchType, searchValue) {
         if (searchValue != '') {
@@ -71,13 +55,24 @@ export default function Inventory(props) {
         }
     }
 
-    function handleEditProduct(index) {
-        let element = []
-        if (index == -1) {
-            element = data
+    function handleSetPage(ppage) {
+        if (ppage > page) {
+            setPage(ppage)
+            setlimitPageNumber(ppage)
         } else {
-            element = _products[index]
+            setPage(ppage)
         }
+    }
+    function handleSetQueryPage(ppage) {
+        if (ppage > page) {
+            setQueryPage(ppage)
+            setQueryPageNumber(ppage)
+        } else {
+            setQueryPage(ppage)
+        }
+    }
+
+    function handleEditProduct(element) {
         if (element.product_type != 'simple-product') {
             let array = [];
             let variations = element.product_variations
@@ -100,9 +95,9 @@ export default function Inventory(props) {
         setShowConfirmDeleteModal(true)
     }
 
-    async function handleDeleteProduct() {
+    async function handleDeleteProduct(element) {
         setShowConfirmDeleteModal(false)
-        const url = MuhalikConfig.PATH + `/api/products/delete/${data._id}`;
+        const url = MuhalikConfig.PATH + `/api/products/delete-product/${data._id}`;
 
         await axios.put(url, {}, {
             headers: {
@@ -110,21 +105,7 @@ export default function Inventory(props) {
             }
         }).then(function (response) {
             setShowModal(true)
-            if (!isSearch) {
-                _products.forEach((element, index) => {
-                    if (data._id == element._id) {
-                        _products.splice(index, 1)
-                        return
-                    }
-                })
-            } else {
-                products.forEach((element, index) => {
-                    if (data._id == element._id) {
-                        products.splice(index, 1)
-                        return
-                    }
-                })
-            }
+            setRefresh_count(refresh_count + 1)
         }).catch(function (error) {
             console.log(error)
             alert('Error: ');
@@ -189,87 +170,56 @@ export default function Inventory(props) {
                     <CardSearchAccordion
                         title={'Inventory'}
                         option={'inventory'}
+                        value={query}
                         handleSearch={handleSearch}
                         setIsSearch={() => setIsSearch(false)}
                     >
-                        <Table responsive bordered hover size="sm">
-                            <thead>
-                                <tr>
-                                    <th >#</th>
-                                    <th >ID</th>
-                                    <th >Name</th>
-                                    <th >Type</th>
-                                    <th >Price</th>
-                                    <th >Stock</th>
-                                    <th >Category</th>
-                                    <th >Sub Category</th>
-                                    <th >Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {!isSearch ?
-                                    _products && _products.map((element, index) =>
-                                        <TableBody key={element._id}
-                                            element={element}
-                                            pageNumber={limitPageNumber}
-                                            index={index}
-                                            loading={_loading}
-
-                                            setViewProduct={() => { setData(element), setViewProduct('view') }}
-                                            handleEditProduct={() => handleEditProduct(index)}
-                                            handleShowConfirmModal={() => handleShowConfirmModal(element)}
-                                        />
-                                    )
-                                    :
-                                    hasMore && products && products.map((element, index) =>
-                                        <TableBody key={element._id}
-                                            element={element}
-                                            pageNumber={queryPageNumber}
-                                            index={index}
-                                            loading={loading}
-
-                                            setViewProduct={() => { setData(element), setViewProduct('view') }}
-                                            handleEditProduct={() => handleEditProduct(index)}
-                                            handleShowConfirmModal={() => handleShowConfirmModal(element)}
-                                        />
-                                    )
-                                }
-                            </tbody>
-                        </Table >
-
                         {!isSearch ?
-                            _loading ?
+                            admin_inventory_loading ?
                                 <Loading />
                                 :
-                                !_hasMore ?
-                                    <Row className='_div'>No Data Found</Row>
-                                    :
+                                admin_inventory_total > 0 ?
                                     <>
+                                        <ProductTable
+                                            list={admin_inventory_products}
+                                            pageNumber={page}
+                                            setViewProduct={(element) => { setData(element), setViewProduct('view') }}
+                                            handleEditProduct={(element) => handleEditProduct(element)}
+                                            handleShowConfirmModal={(element) => handleShowConfirmModal(element)}
+                                        />
                                         <hr />
                                         <PaginationRow
-                                            totalPages={totalPages}
-                                            activePageNumber={limitPageNumber}
-                                            setActivePageNumber={(pageNumber) => setlimitPageNumber(pageNumber)}
+                                            totalPages={admin_inventory_pages}
+                                            activePageNumber={page}
+                                            setActivePageNumber={(ppage) => handleSetPage(ppage)}
                                         />
                                     </>
+                                    :
+                                    <Row className='_div'>No Data Found</Row>
                             :
-                            loading ?
+                            admin_inventory_query_loading ?
                                 <Loading />
                                 :
-                                !hasMore ?
-                                    <Row className='_div'>No Data Found</Row>
-                                    :
+                                admin_inventory_query_total > 0 ?
                                     <>
+                                        <ProductTable
+                                            list={admin_inventory_query_products}
+                                            pageNumber={queryPage}
+                                            setViewProduct={(element) => { setData(element), setViewProduct('view') }}
+                                            handleEditProduct={(index) => handleEditProduct(element)}
+                                            handleShowConfirmModal={(element) => handleShowConfirmModal(element)}
+                                        />
                                         <hr />
                                         <PaginationRow
-                                            totalPages={-1}
-                                            activePageNumber={queryPageNumber}
-                                            setActivePageNumber={(pageNumber) => setQueryPageNumber(pageNumber)}
-                                            hasMore={hasMore}
+                                            totalPages={admin_inventory_query_pages}
+                                            activePageNumber={queryPage}
+                                            setActivePageNumber={(ppage) => handleSetQueryPage(ppage)}
                                         />
                                     </>
+                                    :
+                                    <Row className='_div'>No Data Found</Row>
                         }
-                    </CardSearchAccordion>
+                    </CardSearchAccordion >
                     <style type="text/css">{`
                         ._div{
                             display: flex;
@@ -289,8 +239,6 @@ export default function Inventory(props) {
                         {`
                         th{
                             font-size: 14px;
-                            text-align: center;
-                            white-space: nowrap;
                         }
                     `}
                     </style>
@@ -324,77 +272,103 @@ export default function Inventory(props) {
     )
 }
 
-function TableBody(props) {
-    let element = props.element
-    let pageNumber = props.pageNumber
-    let index = props.index
+function ProductTable(props) {
+    const [lower_limit, setlower_limit] = useState(0)
+    const [upper_limit, setupper_limit] = useState(0)
+
+    useEffect(() => {
+        setlower_limit(props.pageNumber * 20 - 20)
+        setupper_limit(props.pageNumber * 20)
+    }, [props.pageNumber])
+
     return (
         <>
-            {element.product_type == "simple-product" ?
-                <tr>
-                    <td align="center" >{(pageNumber - 1) * 20 + index + 1}</td>
-                    <td>
-                        {element._id}
-                        <div className="td">
-                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.setViewProduct} >View</Nav.Link>
-                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.handleEditProduct}>Edit</Nav.Link>
-                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={props.handleShowConfirmModal}>Delete</Nav.Link>
-                        </div>
-                    </td>
-                    <td align="center" >{element.product_name}</td>
-                    <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
-                    <td align="center" >
-                        {element.product_price}
-                    </td>
-                    <td align="center" >
-                        {element.product_in_stock}
-                    </td>
-                    <td align="center" >
-                        {element.category.value}
-                    </td>
-                    <td align="center" >
-                        {element.sub_category.value}
-                    </td>
-                    <td align="center" >
-                        {element.entry_date.substring(0, 10)}
-                    </td>
-                </tr>
-                :
-                <tr>
-                    <td align="center" >{(pageNumber - 1) * 20 + index + 1}</td>
-                    <td>
-                        {element._id}
-                        <div className="td">
-                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.setViewProduct} >View</Nav.Link>
-                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={props.handleEditProduct}>Edit</Nav.Link>
-                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={props.handleShowConfirmModal}>Delete</Nav.Link>
-                        </div>
-                    </td>
-                    <td align="center" >{element.product_name}</td>
-                    <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
-                    <td align="center" >
-                        {element.product_variations[0].price} ...
-                    </td>
-                    <td align="center" >
-                        {element.product_variations[0].stock} ...
-                    </td>
-                    <td align="center" >
-                        {element.category.value}
-                    </td>
-                    <td align="center" >
-                        {element.sub_category.value}
-                    </td>
-                    <td align="center" >
-                        {element.entry_date.substring(0, 10)}
-                    </td>
-                </tr>
-            }
+            <Table responsive bordered hover size="sm">
+                <thead>
+                    <tr>
+                        <th style={{ textAlign: 'center' }}>#</th>
+                        <th style={{ textAlign: 'center' }}>ID</th>
+                        <th style={{ textAlign: 'center' }}>Name</th>
+                        <th style={{ textAlign: 'center' }}>Type</th>
+                        <th style={{ textAlign: 'center' }}>Price</th>
+                        <th style={{ textAlign: 'center' }}>Stock</th>
+                        <th style={{ textAlign: 'center' }}>Category</th>
+                        <th style={{ textAlign: 'center' }}>Sub Category</th>
+                        <th style={{ textAlign: 'center' }}>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {props.list && props.list.map((element, index) =>
+                        index >= lower_limit && index < upper_limit ?
+                            element.product_type == "simple-product" ?
+                                <tr key={index}>
+                                    <td align="center" >{index + 1}</td>
+                                    <td >
+                                        {element._id}
+                                        <div className="td">
+                                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.setViewProduct(element)} >View</Nav.Link>
+                                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.handleEditProduct(element)}>Edit</Nav.Link>
+                                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={() => props.handleShowConfirmModal(element)}>Delete</Nav.Link>
+                                        </div>
+                                    </td>
+                                    <td align="center" >{element.product_name}</td>
+                                    <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
+                                    <td align="center" >
+                                        {element.product_price}
+                                    </td>
+                                    <td align="center" >
+                                        {element.product_in_stock}
+                                    </td>
+                                    <td align="center" >
+                                        {element.category.value}
+                                    </td>
+                                    <td align="center" >
+                                        {element.sub_category.value}
+                                    </td>
+                                    <td align="center" >
+                                        {element.entry_date.substring(0, 10)}
+                                    </td>
+                                </tr>
+                                :
+                                <tr key={index}>
+                                    <td align="center" >{index + 1}</td>
+                                    <td>
+                                        {element._id}
+                                        <div className="td">
+                                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.setViewProduct(element)} >View</Nav.Link>
+                                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.handleEditProduct(element)}>Edit</Nav.Link>
+                                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={() => props.handleShowConfirmModal(element)}>Delete</Nav.Link>
+                                        </div>
+                                    </td>
+                                    <td align="center" >{element.product_name}</td>
+                                    <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
+                                    <td align="center" >
+                                        {element.product_variations[0].price} ...
+                                </td>
+                                    <td align="center" >
+                                        {element.product_variations[0].stock} ...
+                                </td>
+                                    <td align="center" >
+                                        {element.category.value}
+                                    </td>
+                                    <td align="center" >
+                                        {element.sub_category.value}
+                                    </td>
+                                    <td align="center" >
+                                        {element.entry_date.substring(0, 10)}
+                                    </td>
+                                </tr>
+                            :
+                            null
+                    )}
+                </tbody>
+            </Table >
             <style type="text/css">{`
                 .delete{
                     color: #ff4d4d;
                 }
                 .delete:hover{
-                    color: #cc0000;
+                    color: #e60000;
                 }
             `}</style>
             <style jsx >
@@ -577,7 +551,7 @@ const ViewProduct = props => {
                             </Card>
                             <Row noGutters className='w-100'>
                                 {element.image_link && element.image_link.map((img, i) =>
-                                    <Col lg={1} md={2} sm={3} xs={3} >
+                                    <Col key={i} lg={1} md={2} sm={3} xs={3} >
                                         <div className='my_img_div'>
                                             <Image ref={ref} thumbnail
                                                 style={{ width: '100%', maxHeight: width + 10 || '200px', minHeight: width + 10 || '200px' }}
@@ -594,7 +568,7 @@ const ViewProduct = props => {
                     <CardAccordion title={'Custom Fields'}>
                         <Row noGutters>
                             {props.data.custom_fields && props.data.custom_fields.map((element, index) =>
-                                <Form.Group as={Col} lg={2} md={2} sm={4} xs={12} className='pl1 pr-1'>
+                                <Form.Group key={index} as={Col} lg={2} md={2} sm={4} xs={12} className='pl1 pr-1'>
                                     <Form.Label className='form_label'>{element.name}</Form.Label>
                                     <InputGroup>
                                         <Form.Control type="text" size="sm" value={element.value} disabled={true} />
@@ -606,7 +580,7 @@ const ViewProduct = props => {
                     <CardAccordion title={'Product Images'}>
                         <Row noGutters>
                             {props.data.product_image_link && props.data.product_image_link.map((img, index) =>
-                                <Col lg={1} md={2} sm={3} xs={3} >
+                                <Col key={index} lg={1} md={2} sm={3} xs={3} >
                                     <div className='my_img_div'>
                                         <Image ref={ref} thumbnail
                                             style={{ width: '100%', maxHeight: width + 10 || '200px', minHeight: width + 10 || '200px' }}

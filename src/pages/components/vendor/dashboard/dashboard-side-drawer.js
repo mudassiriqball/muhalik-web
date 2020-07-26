@@ -26,14 +26,14 @@ const DashboardSideDrawer = props => {
     const [show_product, setShow_product] = React.useState(false);
 
     return (
-        <div>
+        <div className='vendor_dashboard_drawer'>
             <Tab.Container id="dashboard-tabs" defaultActiveKey="Dashboard">
                 {/* Side Drawer Components */}
                 <div className={drawerClasses}>
                     <Nav className="flex-column" variant="pills">
                         <Nav.Item style={styles.image_div}>
                             <p>
-                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
+                                <Image src={props.avatar} roundedCircle thumbnail fluid style={styles.image} />
                                 <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
                             </p>
                         </Nav.Item>
@@ -220,16 +220,20 @@ const styles = {
         padding: '2%'
     },
     image: {
-        width: '80px'
+        marginTop: '5px',
+        minWidth: '100px',
+        maxWidth: '100px',
+        minHeight: '100px',
+        maxHeight: '100px',
     },
     muhalik: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
-        fontSize: '16px',
+        fontSize: '14px',
+        margin: '0%',
+        padding: '1%',
         border: 'none',
-        cursor: 'pointer',
-        background: 'none',
-        padding: '0px',
-        margin: '0px'
+        cursor: 'default',
+        background: 'none'
     },
     nav_link: {
         color: 'white',

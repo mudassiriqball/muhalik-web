@@ -238,7 +238,7 @@ class AddNew extends Component {
         formData.append('dangerous_goods', JSON.stringify(values.dangerous_goods))
         formData.append('product_tags', JSON.stringify(values.product_tags))
         // if (this.state.isUpdateProduct == false) {
-        const url = MuhalikConfig.PATH + '/api/products/add'
+        const url = MuhalikConfig.PATH + '/api/products/add-product'
         const config = {
             headers: {
                 'content-type': 'multipart/form-data',

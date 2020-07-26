@@ -40,8 +40,6 @@ export default class Orders extends Component {
     }
   }
 
-
-
   UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
       token: nextProps.token,
@@ -246,26 +244,26 @@ export default class Orders extends Component {
           />
         }
         <style type="text/css">{`
-                    .vendor_orders .Card {
-                        margin: 1%;
-                    }
-                    th {
-                        text-align: center;
-                        font-size: 14px;
-                        white-space: nowrap;
-                    }
-                    .vendor_orders .td {
-                        display: flex;
-                        flex-direction: row;
-                        font-size: 12px;
-                        float: right;
-                        padding: 0%;
-                        margin: 0%;
-                    }
-                    .vendor_orders td {
-                        font-size: 12px;
-                    }
-                `}</style>
+          .vendor_orders .Card {
+              margin: 1%;
+          }
+          th {
+              text-align: center;
+              font-size: 14px;
+              white-space: nowrap;
+          }
+          .vendor_orders .td {
+              display: flex;
+              flex-direction: row;
+              font-size: 12px;
+              float: right;
+              padding: 0%;
+              margin: 0%;
+          }
+          .vendor_orders td {
+              font-size: 12px;
+          }
+      `}</style>
       </div>
     )
   }
@@ -317,7 +315,6 @@ function Order(props) {
       setPage(ppage)
     }
   }
-
   function handleSetQueryPage(ppage) {
     if (ppage > page) {
       setQueryPage(ppage)
@@ -326,8 +323,6 @@ function Order(props) {
       setQueryPage(ppage)
     }
   }
-
-
 
   async function handleConfirmed() {
     let data = []
@@ -371,8 +366,6 @@ function Order(props) {
     });
   }
 
-
-
   return (
     <div className='vendor_table'>
       <ConfirmModal
@@ -398,6 +391,7 @@ function Order(props) {
       <CardSearchAccordion
         title={props.header}
         option={'order'}
+        value={query}
         handleSearch={handleSearch}
         setIsSearch={() => setIsSearch(false)}
       >
@@ -523,11 +517,6 @@ function OrderTable(props) {
     setlower_limit(props.pageNumber * 20 - 20)
     setupper_limit(props.pageNumber * 20)
   }, [props.pageNumber])
-
-  function print(element) {
-    window.print(element);
-  }
-  let componentref = React.useRef();
 
   return (
     <div className='vendor_table'>

@@ -61,8 +61,9 @@ export function checkAuth(current_role) {
             localStorage.removeItem('token')
             Router.push('/')
         } else if (decodedToken.data.role == current_role) {
+            console.log('fuck')
             return decodedToken.data;
-        } else if (current_role == '/vendor-signup' && decodedToken.datarole == 'customer') {
+        } else if (current_role == '/vendor-signup' && decodedToken.data.role == 'customer') {
             Router.replace(current_role)
         } else {
             Router.replace('/')

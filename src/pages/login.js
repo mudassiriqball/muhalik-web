@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
-import axios from 'axios';
-
-import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner } from 'react-bootstrap';
-
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import MuhalikConfig from '../sdk/muhalik.config';
-import Toolbar from './components/toolbar';
+import axios from 'axios';
+import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash, faMobileAlt, faLock } from '@fortawesome/free-solid-svg-icons';
 
+import MuhalikConfig from '../sdk/muhalik.config';
+import Toolbar from './components/toolbar';
 import GlobalStyleSheet from '../styleSheet';
 import { saveTokenToStorage } from '../sdk/core/authentication-service';
-
 import { checkAuth } from '../sdk/core/authentication-service'
+import translate from '../i18n/translate'
+import TranslateFormControl from '../i18n/translate-form-control'
 
 // RegEx for phone number validation
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
@@ -111,21 +110,20 @@ class Login extends Component {
                         isSubmitting
                     }) => (
                             <div className='login'>
-                                <Toolbar />
+                                <Toolbar title={'Login'} />
                                 <Row className='row'>
                                     <Col lg="auto" md="auto" sm="auto" xs="auto" className='form_col'>
                                         <p>
                                             <Image src="/muhalik.jpg" roundedCircle thumbnail fluid style={{ width: '25%', maxWidth: '150px' }} />
                                         </p>
-                                        <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>Login To Mahaalk</h6>
+                                        <h6 className="text-center" style={{ width: '100%', paddingBottom: '10px' }}>{translate('login_to_mahaalk')}</h6>
                                         <hr />
                                         <Form noValidate onSubmit={handleSubmit}>
                                             <Form.Row>
                                                 <Form.Group as={Col} controlId="validationMobile">
-                                                    <Form.Label style={styles.label}>Mobile Number
-                                                            <span> * </span>
+                                                    <Form.Label style={styles.label}>{translate('mobile_number')}
+                                                        <span> * </span>
                                                     </Form.Label>
-
                                                     <InputGroup>
                                                         <InputGroup.Prepend>
                                                             <MyButton>
@@ -149,21 +147,20 @@ class Login extends Component {
                                             </Form.Row>
                                             <Form.Row>
                                                 <Form.Group as={Col} controlId="validationPassword">
-                                                    <Form.Label style={styles.label}>Password <span>*</span></Form.Label>
+                                                    <Form.Label style={styles.label}>{translate('password')} <span>*</span></Form.Label>
                                                     <InputGroup>
                                                         <InputGroup.Prepend>
                                                             <MyButton block={false}>
                                                                 <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
                                                             </MyButton>
                                                         </InputGroup.Prepend>
-                                                        <Form.Control
+                                                        <TranslateFormControl
+                                                            id='enter_password'
                                                             type={hide ? 'password' : 'text'}
-                                                            placeholder="Enter Password"
-                                                            aria-describedby="inputGroup"
-                                                            name="password"
                                                             value={values.password}
-                                                            onChange={handleChange}
                                                             isInvalid={touched.password && errors.password}
+                                                            name="password"
+                                                            onChange={handleChange}
                                                         />
                                                         <InputGroup.Append>
                                                             <MyButton onClick={this.showPassword}>
@@ -178,14 +175,14 @@ class Login extends Component {
                                             </Form.Row>
                                             <Form.Row>
                                                 <Form.Label className="text-right" style={styles.label}>
-                                                    <Link href="reset-password"><a>Forgot Password</a></Link>
+                                                    <Link href="/reset-password"><a>{translate('forgot_password')}</a></Link>
                                                 </Form.Label>
                                             </Form.Row>
                                             <Form.Row>
                                                 <Form.Label className="text-center" style={styles.label}>
-                                                    Don't have an account..??
-                                                        <span>
-                                                        <Link href="signup"><a> Signup</a></Link>
+                                                    {translate('dont_have_account')}
+                                                    <span>
+                                                        <Link href="signup"><a>{translate('signup')}</a></Link>
                                                     </span>
                                                 </Form.Label>
                                             </Form.Row>
@@ -194,22 +191,22 @@ class Login extends Component {
                                                     {this.state.serverErrorMsg}
                                                 </Form.Label>
                                             </Form.Row>
-                                            <Form.Row>
+                                            <Form.Row className='p-0 m-0'>
                                                 <MyButton onClick={this.showPassword} onClick={handleSubmit} disabled={this.state.isLoading} block={true}>
-                                                    {this.state.isLoading ? 'Logging' : 'Login'}
+                                                    {this.state.isLoading ? translate('logging') : translate('login')}
                                                     {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
                                                 </MyButton>
                                             </Form.Row>
 
                                             <Form.Row>
                                                 <Form.Label className="text-center" style={styles.term_condition_label}>
-                                                    By logging in, you agree to Mahaalk's
-                                                        <span>
-                                                        <Link href="./help/terms-and-conditions"><a> Terms & Conditions </a></Link>
+                                                    {translate('by_logging_in')}
+                                                    <span>
+                                                        <Link href="./help/terms-and-conditions"><a> {translate('terms_conditions')} </a></Link>
                                                     </span>
-                                                        and
-                                                            <span>
-                                                        <Link href="./help/privacy-statement"><a> Privacy Statement </a></Link>
+                                                    {translate('and')}
+                                                    <span>
+                                                        <Link href="./help/privacy-statement"><a>{translate('privacy_statement')} </a></Link>
                                                     </span>
                                                 </Form.Label>
                                             </Form.Row>

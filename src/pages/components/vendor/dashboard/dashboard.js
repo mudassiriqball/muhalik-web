@@ -20,30 +20,28 @@ import { faUserCircle } from "@fortawesome/free-regular-svg-icons";
 import Router from "next/router";
 
 const Dashboard = props => {
-    let wprapper_Casses = "wrapper";
+    let wprapper_Classes = "wrapper";
     if (props.show) {
-        wprapper_Casses = "wrapper open";
+        wprapper_Classes = "wrapper open";
     }
 
-    const [show_product, setShow_product] = React.useState(false);
-
     return (
-        <div>
+        <div className='vendor_dashboard'>
             <Tab.Container id="dashboard-tabs" defaultActiveKey="Dashboard" >
                 <Row noGutters>
                     {/* Show/Hide Tabs & Tabs-Content when screen Switches to Large/Medium,Small,Extra-Small Devices*/}
-                    <div className={wprapper_Casses} style={styles.wrapper_col}>
+                    <div className={wprapper_Classes} style={styles.wrapper_col}>
                         <Nav className="flex-column" variant="pills" style={{ minWidth: '220px', maxWidth: '220px' }}>
                             <Nav.Item style={styles.image_div}>
                                 <p>
-                                    <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
+                                    <Image src={props.avatar} roundedCircle thumbnail fluid style={styles.image} />
                                     <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
                                 </p>
                             </Nav.Item>
 
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Dashboard" style={styles.nav_link} onClick={() => setShow_product(false)}>
+                                    <Nav.Link eventKey="Dashboard" style={styles.nav_link} >
                                         <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
                                         <div className="mr-auto"> Dashboard </div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -52,7 +50,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="AddProduct" style={styles.nav_link} onClick={() => setShow_product(false)}>
+                                    <Nav.Link eventKey="AddProduct" style={styles.nav_link} >
                                         <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
                                         <div className="mr-auto"> Add Product </div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -61,7 +59,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Inventory" style={styles.nav_link} onClick={() => setShow_product(false)}>
+                                    <Nav.Link eventKey="Inventory" style={styles.nav_link} >
                                         <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
                                         <div className="mr-auto"> Inventory </div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -70,7 +68,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="BulkUpload" style={styles.nav_link} onClick={() => setShow_product(false)}>
+                                    <Nav.Link eventKey="BulkUpload" style={styles.nav_link} >
                                         <FontAwesomeIcon icon={faUpload} style={styles.fontawesome} />
                                         <div className="mr-auto"> Bulk Upload </div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -79,7 +77,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Discounts" style={styles.nav_link} onClick={() => setShow_product(false)}>
+                                    <Nav.Link eventKey="Discounts" style={styles.nav_link} >
                                         <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
                                         <div className="mr-auto"> Discount </div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -88,7 +86,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link eventKey="Orders" style={styles.nav_link} onClick={() => setShow_product(false)}>
+                                    <Nav.Link eventKey="Orders" style={styles.nav_link} >
                                         <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
                                         <div className="mr-auto"> Orders </div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -97,7 +95,7 @@ const Dashboard = props => {
                             </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link" >
-                                    <Nav.Link eventKey="Reports" style={styles.nav_link} onClick={() => setShow_product(false)}>
+                                    <Nav.Link eventKey="Reports" style={styles.nav_link} >
                                         <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
                                         <div className="mr-auto"> Reports </div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
@@ -144,7 +142,11 @@ const Dashboard = props => {
                                 <NavDropdown className='p-0 m-0' title={
                                     <FontAwesomeIcon icon={faCog} style={styles.cog_fontawesome} />
                                 } id="nav-dropdown" alignRight>
-                                    <NavDropdown.Item onClick={() => Router.push('/user/profile')} className='dropdown_item'>
+                                    <NavDropdown.Item onClick={() => Router.push('/user/profile')} className='profile_md_lg'>
+                                        <FontAwesomeIcon icon={faUserCircle} className='dropdown_fontawesome' />
+                                        Profile
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => Router.push('/user/account')} className='profile_xs_sm'>
                                         <FontAwesomeIcon icon={faUserCircle} className='dropdown_fontawesome' />
                                         Profile
                                     </NavDropdown.Item>
@@ -208,47 +210,74 @@ const Dashboard = props => {
                 </Row>
             </Tab.Container>
             <style type="text/css">{`
-                .dropdown_item{
+                .vendor_dashboard .dropdown_item{
                     color: gray;
                     font-size: 13px;
                     display: flex;
                     align-items: center;
                     padding: 3% 5%;
                 }
-                .dropdown_item:hover{
+                .vendor_dashboard .dropdown_item:hover{
                     background: ${GlobalStyleSheet.admin_primry_color};
                     color: white;
                 }
-                .dropdown_fontawesome {
+                .vendor_dashboard .search_form{
+                    width: 50%;
+                    padding-left: 5%;
+                }
+
+                .vendor_dashboard .dropdown_fontawesome {
                     margin: 0px 10px 0px 0px;
                     min-width: 18px;
                     min-height: 18px;
                     max-height: 18px;
                     max-width: 18px;
                 }
-                .search_form{
-                    width: 50%;
-                    padding-left: 5%;
+                .vendor_dashboard .profile_md_lg {
+                    display: flex;
+                    color: gray;
+                    font-size: 13px;
+                    display: flex;
+                    align-items: center;
+                    padding: 3% 5%;
+                }
+                .vendor_dashboard .profile_md_lg:hover {
+                    background: ${GlobalStyleSheet.admin_primry_color};
+                    color: white;
+                }
+                .vendor_dashboard .profile_xs_sm {
+                    display: none;
                 }
                 @media (max-width: 991px){
-                    .search_form{
+                    .vendor_dashboard .search_form{
                         width: 80%;
                         padding: 0%;
                     }
                 }
+                @media (max-width: 767px) {
+                    .vendor_dashboard .profile_md_lg {
+                        display: none;
+                    }
+                    .vendor_dashboard .profile_xs_sm {
+                        display: flex;
+                        color: gray;
+                        font-size: 13px;
+                        display: flex;
+                        align-items: center;
+                        padding: 3% 5%;
+                    }
+                }
                 @media (max-width: 575px){
-                    .search_form{
+                    .vendor_dashboard .search_form{
                         width: 90%;
                     }
                 }
             `}</style>
             <style jsx>
                 {`
-                .show_product {
-                    display: none;
-                }
-                .show_product.open {
+                .account_settig_dropdown {
                     display: flex;
+                    align-items: center;
                 }
                 .wrapper {
                     display: none;
@@ -294,9 +323,6 @@ const Dashboard = props => {
                     .tab_content {
                         display: none;
                     }
-                    .account_settig_dropdown {
-                        display: none
-                    }
                     .wrapper.open {
                         display: none;
                         height: 0vh
@@ -321,13 +347,19 @@ const styles = {
         padding: '2%'
     },
     image: {
-        width: '100px'
+        marginTop: '5px',
+        minWidth: '100px',
+        maxWidth: '100px',
+        minHeight: '100px',
+        maxHeight: '100px',
     },
     muhalik: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
-        fontSize: '16px',
+        fontSize: '14px',
+        margin: '0%',
+        padding: '1%',
         border: 'none',
-        cursor: 'pointer',
+        cursor: 'default',
         background: 'none'
     },
     wrapper_col: {

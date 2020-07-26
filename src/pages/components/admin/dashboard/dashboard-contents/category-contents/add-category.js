@@ -58,7 +58,7 @@ class AddCategory extends Component {
                 'authorization': currentComponent.state.token,
             }
         }).then(function (response) {
-            currentComponent.categoriesReloadHandler
+            currentComponent.categoriesReloadHandler()
             currentComponent.setState({
                 isLoading: false,
                 showToast: true,
@@ -168,92 +168,80 @@ class AddCategory extends Component {
                                     color={"#00b300"}
                                 />
                                 <TitleRow icon={faListAlt} title={' Admin Dashboard / Add Category'} />
-                                <Card>
-                                    <Card.Header>
-                                        Add New
-                                    </Card.Header>
-                                    <Card.Body>
-                                        <Form.Row>
-                                            <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
-                                                <Form.Label style={styles.label}> Category <span> * </span></Form.Label>
-                                                <CreatableSelect
-                                                    id={'1'}
-                                                    instanceId={'1'}
-                                                    inputId={'1'}
-                                                    isClearable
-                                                    value={this.state.category}
-                                                    onChange={this.handleCategoryChange}
-                                                    options={this.state.categories_list}
-                                                />
-                                                <Form.Row style={{ color: `${GlobalStyleSheet.error_color}`, fontSize: '13px', marginLeft: '2px' }}>
-                                                    {this.state.categoryError}
-                                                </Form.Row>
-                                            </Form.Group>
-
-                                            <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
-                                                <Form.Label style={styles.label}> Sub Category <span> * </span></Form.Label>
-                                                <CreatableSelect
-                                                    id={'1'}
-                                                    instanceId={'1'}
-                                                    inputId={'1'}
-                                                    isClearable
-                                                    value={this.state.subCategory}
-                                                    onChange={this.handleSubCategoryChange}
-                                                    options={this.state.sub_categories_list}
-                                                />
-                                                <Form.Row style={{ color: `${GlobalStyleSheet.error_color}`, fontSize: '13px', marginLeft: '2px' }}>
-                                                    {this.state.subCategoryError}
-                                                </Form.Row>
-                                            </Form.Group>
-                                        </Form.Row>
-                                        {this.state.isCategoryNew ?
-                                            <Form.Row>
-                                                <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
-                                                    <Form.Label style={styles.label}>Image <span> * </span></Form.Label>
-                                                    <InputGroup>
-                                                        <Form.File
-                                                            className="position-relative"
-                                                            style={{ color: 'gray' }}
-                                                            required
-                                                            name="file"
-                                                            onChange={(e) => this.setState({ img: e.target.files[0] })}
-                                                            isInvalid={this.state.imgError}
-                                                        />
-                                                        <Form.Row style={{ fontSize: '13px', color: `${GlobalStyleSheet.error_color}`, marginLeft: '2px', width: '100%' }}>
-                                                            {this.state.imgError}
-                                                        </Form.Row>
-                                                    </InputGroup>
-                                                </Form.Group>
+                                <CardAccordion title={'Add New Category'}>
+                                    <Form.Row>
+                                        <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
+                                            <Form.Label style={styles.label}> Category <span> * </span></Form.Label>
+                                            <CreatableSelect
+                                                id={'1'}
+                                                instanceId={'1'}
+                                                inputId={'1'}
+                                                isClearable
+                                                value={this.state.category}
+                                                onChange={this.handleCategoryChange}
+                                                options={this.state.categories_list}
+                                            />
+                                            <Form.Row style={{ color: `${GlobalStyleSheet.error_color}`, fontSize: '13px', marginLeft: '2px' }}>
+                                                {this.state.categoryError}
                                             </Form.Row>
-                                            :
-                                            null
-                                        }
+                                        </Form.Group>
+
+                                        <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
+                                            <Form.Label style={styles.label}> Sub Category <span> * </span></Form.Label>
+                                            <CreatableSelect
+                                                id={'1'}
+                                                instanceId={'1'}
+                                                inputId={'1'}
+                                                isClearable
+                                                value={this.state.subCategory}
+                                                onChange={this.handleSubCategoryChange}
+                                                options={this.state.sub_categories_list}
+                                            />
+                                            <Form.Row style={{ color: `${GlobalStyleSheet.error_color}`, fontSize: '13px', marginLeft: '2px' }}>
+                                                {this.state.subCategoryError}
+                                            </Form.Row>
+                                        </Form.Group>
+                                    </Form.Row>
+                                    {this.state.isCategoryNew ?
                                         <Form.Row>
-                                            <Form.Group as={Col}>
-                                                <Button type="submit"
-                                                    onClick={handleSubmit}
-                                                    disabled={this.state.isLoading} block className='mt-5'>
-                                                    {this.state.isLoading ? 'Uploading' : 'Add Category'}
-                                                    {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
-                                                </Button>
+                                            <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                <Form.Label style={styles.label}>Image <span> * </span></Form.Label>
+                                                <InputGroup>
+                                                    <Form.File
+                                                        className="position-relative"
+                                                        style={{ color: 'gray' }}
+                                                        required
+                                                        name="file"
+                                                        onChange={(e) => this.setState({ img: e.target.files[0] })}
+                                                        isInvalid={this.state.imgError}
+                                                    />
+                                                    <Form.Row style={{ fontSize: '13px', color: `${GlobalStyleSheet.error_color}`, marginLeft: '2px', width: '100%' }}>
+                                                        {this.state.imgError}
+                                                    </Form.Row>
+                                                </InputGroup>
                                             </Form.Group>
                                         </Form.Row>
-                                    </Card.Body>
-                                </Card>
+                                        :
+                                        null
+                                    }
+                                    <Form.Row>
+                                        <Form.Group as={Col}>
+                                            <Button type="submit"
+                                                onClick={handleSubmit}
+                                                disabled={this.state.isLoading} block className='mt-5'>
+                                                {this.state.isLoading ? 'Uploading' : 'Add Category'}
+                                                {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
+                                            </Button>
+                                        </Form.Group>
+                                    </Form.Row>
+                                </CardAccordion>
+
                                 <style type="text/css">{`
-                                    .add_category .card{
-                                        margin: 2%;
-                                    }
-                                    .add_category .card_header{
-                                        background: ${GlobalStyleSheet.card_header_background};
-                                        font-size: ${GlobalStyleSheet.card_header_fontsize};
-                                    }
                                     .add_category .card-body{
-                                        height: 70vh;
+                                        height: 50vh;
                                     }
                                 `}</style>
                                 <style jsx>{`
-                                   
                                     .add_category p{
                                         font-size: 13px;
                                         text-align: center;

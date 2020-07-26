@@ -1,26 +1,23 @@
-import {
-    Navbar, Nav, Form, InputGroup, FormControl, Image, Button,
-    NavDropdown, DropdownButton, Card, Dropdown, ButtonGroup,
-    Row, Col, OverlayTrigger, Popover, Tooltip, Badge
-} from 'react-bootstrap'
-import GlobalStyleSheet from '../../../styleSheet'
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-    faSearch, faUserPlus, faLanguage, faPowerOff, faUser,
-    faTachometerAlt, faHandsHelping, faPen, faSignOutAlt, faGlobe,
-    faLuggageCart, faFileInvoiceDollar, faListAlt, faEdit,
-    faStoreAlt, faChevronDown, faChevronRight, faListUl, faShoppingCart, faSignLanguage, faMobile, faMobileAlt, faSuitcaseRolling
-} from '@fortawesome/free-solid-svg-icons'
-import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
-import MuhalikConfig from '../../../sdk/muhalik.config'
-import { removeTokenFromStorage } from '../../../sdk/core/authentication-service'
-import React from 'react';
-import { faHeart, faUserCircle } from '@fortawesome/free-regular-svg-icons'
 import Router from 'next/router'
-import MyButton from '../buttons/my-btn'
 
-const categoryArray = [{ value: 'All' }, { value: 'Machinay' }, { value: 'Clothes' }]
+import { Navbar, Nav, InputGroup, Image, NavDropdown, Dropdown, Row, Col, OverlayTrigger, Popover, Badge } from 'react-bootstrap'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch, faPowerOff, faStoreAlt, faChevronRight, faListUl, faShoppingCart, faSuitcaseRolling } from '@fortawesome/free-solid-svg-icons'
+import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
+import { faUserCircle } from '@fortawesome/free-regular-svg-icons'
+
+
+import { removeTokenFromStorage } from '../../../sdk/core/authentication-service'
+import MyButton from '../buttons/my-btn'
+import GlobalStyleSheet from '../../../styleSheet'
+
+import translate from '../../../i18n/translate'
+import TranslateFormControl from '../../../i18n/translate-form-control'
+
+
 const Toolbar = (props) => {
     let loggedIn = false
     let dashboard_href = ''
@@ -37,33 +34,42 @@ const Toolbar = (props) => {
         dashboard_href = '/admin'
     }
 
-    const [searchType, setSearchType] = React.useState('All')
-    const [selectedLang, setSelectedLang] = React.useState('English')
-    const [isCategoryOpen, setIsCategoryOpen] = React.useState(false)
-    const [isShopOpen, setIsShopOpen] = React.useState(false)
-    const [isProductOpen, setIsProductOpen] = React.useState(false)
+    const [searchValue, setSearchValue] = useState('')
+    const [selectedLang, setSelectedLang] = useState('English')
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false)
 
-    const [hoverCategory, setHoverCategory] = React.useState(false)
-    const [hoverProducts, setHoverProducts] = React.useState(false)
-    const [hoverShops, setHoverShops] = React.useState(false)
+    const [hoverCategory, setHoverCategory] = useState(false)
 
-    const [category_id, setCategory_id] = React.useState('')
+    const [category_id, setCategory_id] = useState('')
 
 
-    const [isSticky, setSticky] = React.useState(false);
-    const ref = React.useRef(null);
+    const [isSticky, setSticky] = useState(false);
+    const ref = useRef(null);
     const handleScroll = () => {
         if (ref.current) {
             setSticky(ref.current.getBoundingClientRect().top < 0);
         }
     };
-    React.useEffect(() => {
+    useEffect(() => {
+        if (props.currLang == 'en') {
+            setSelectedLang("English")
+        } else {
+            setSelectedLang("العربية")
+        }
         window.addEventListener('scroll', handleScroll);
-
         return () => {
             window.removeEventListener('scroll', () => handleScroll);
         };
     }, []);
+
+    function handleSetLanguage(lang) {
+        props.changeLang(lang)
+        if (lang == 'en') {
+            setSelectedLang("English")
+        } else {
+            setSelectedLang("العربية")
+        }
+    }
 
     function toggle() {
         setIsCategoryOpen(!isCategoryOpen)
@@ -77,6 +83,16 @@ const Toolbar = (props) => {
         setCategory_id('')
     }
 
+    function handleSearchEnterPress(e) {
+        var key = e.keyCode || e.which;
+        if (key == 13) {
+            handleSearch()
+        }
+    }
+    async function handleSearch() {
+        Router.push('/search/[search]', `/search/${searchValue}`)
+    }
+
     function logout() {
         removeTokenFromStorage(true)
     }
@@ -87,36 +103,35 @@ const Toolbar = (props) => {
                 <Nav className='m-0 ml-auto p-0 align-items-center mr-auto'>
                     {props.role == 'vendor' || props.role == 'admin' ?
                         <Nav.Link href={dashboard_href} className='first_nav_link'>
-                            Go To Dashboard
-                            </Nav.Link>
+                            {translate('go_to_dashbord')}
+                        </Nav.Link>
                         :
                         <Nav.Link href='/vendor-signup' className='first_nav_link'>
-                            Sell On Mahaalk
+                            {translate('sell_on_mahaalk')}
                         </Nav.Link>
                     }
                     <Nav.Link href='' className='mr-auto first_nav_link' style={{ borderRight: 'none' }}>
-                        Get The App
-                        </Nav.Link>
+                        {translate('get_app')}
+                    </Nav.Link>
 
                     <Nav.Link href='' className='first_nav_link'>
-                        Services
-                        </Nav.Link>
+                        {translate('services')}
+                    </Nav.Link>
                     <Nav.Link href='' className='first_nav_link'>
-                        Help
-                        </Nav.Link>
+                        {translate('help')}
+                    </Nav.Link>
                     <Dropdown className='d-flex align-items-center'>
                         <Dropdown.Toggle as={Nav.Link} className='d-inline-flex align-items-center first_nav_link'>
                             {selectedLang == 'English' ?
-                                <Image src="/pk-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
+                                <Image src="/us-flag.jpg" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
                                 :
                                 <Image src="/ksa-flag.svg.png" fluid style={{ width: '22px', maxWidth: '22px', marginRight: '5px' }} />
                             }
                             {selectedLang}
                         </Dropdown.Toggle>
                         <Dropdown.Menu style={{ zIndex: 100 }}>
-                            <Dropdown.Item className='dropdown_item' onClick={() => setSelectedLang('English')}>English</Dropdown.Item>
-                            <Dropdown.Item className='dropdown_item' onClick={() => setSelectedLang("العربية")}>
-                                {"العربية"}</Dropdown.Item>
+                            <Dropdown.Item className='dropdown_item' onClick={() => handleSetLanguage('en')}>English</Dropdown.Item>
+                            <Dropdown.Item className='dropdown_item' onClick={() => handleSetLanguage("ar")}>{"العربية"}</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
 
@@ -125,11 +140,10 @@ const Toolbar = (props) => {
                         null
                         :
                         <>
-                            <Nav.Link href='/login' className='first_nav_link'> Login </Nav.Link>
-                            <Nav.Link href='/signup' className='first_nav_link'> Signup </Nav.Link>
+                            <Nav.Link href='/login' className='first_nav_link'> {translate('login')} </Nav.Link>
+                            <Nav.Link href='/signup' className='first_nav_link'> {translate('signup')} </Nav.Link>
                         </>
                     }
-
 
                     {loggedIn ?
                         <Dropdown className='first_nav_link' alignRight>
@@ -137,21 +151,21 @@ const Toolbar = (props) => {
                                 {props.name}
                             </Dropdown.Toggle>
                             <Dropdown.Menu style={{ zIndex: 100 }}>
-                                <Dropdown.Item className='dropdown_item'>
-                                    <FontAwesomeIcon icon={faUserCircle} style={styles.dropdown_fontawesome} />
-                                    {'My Profile'}
-                                </Dropdown.Item>
+                                <NavDropdown.Item onClick={() => Router.push('/user/profile')} className='dropdown_item'>
+                                    <FontAwesomeIcon icon={faUserCircle} className='dropdown_fontawesome' />
+                                    {translate('profile')}
+                                </NavDropdown.Item>
                                 {props.role == 'customer' && <>
                                     <Dropdown.Item className='dropdown_item' href=''>
-                                        <FontAwesomeIcon icon={faSuitcaseRolling} style={styles.dropdown_fontawesome} />
-                                        {'My Orders'}
+                                        <FontAwesomeIcon icon={faSuitcaseRolling} className='dropdown_fontawesome' />
+                                        {translate('my_orders')}
                                     </Dropdown.Item>
                                 </>
                                 }
                                 <Dropdown.Divider />
                                 <Dropdown.Item onClick={logout} className='dropdown_item'>
-                                    <FontAwesomeIcon icon={faPowerOff} style={styles.dropdown_fontawesome} />
-                                    {'Logout'}
+                                    <FontAwesomeIcon icon={faPowerOff} className='dropdown_fontawesome' />
+                                    {translate('logout')}
                                 </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
@@ -166,18 +180,21 @@ const Toolbar = (props) => {
                     <Navbar.Brand onClick={() => Router.push('/')} className='d-inline-flex align-items-center p-0 m-0'>
                         <Image src="/muhalik.jpg" className='mahaalk_img' fluid />
                         <h4 className="display_in_md_lg text_animation">.com</h4>
-                        {/* <h4 className=" text_animation" onClick={() => Router.push('/')}>.com<span className='display_in_md_lg mr-3' style={{ fontSize: '15px' }}>@2020</span></h4> */}
                     </Navbar.Brand>
                     <InputGroup className='input_group'>
-                        <FormControl className='search-bar' size='md' variant='warning' placeholder="Search here" />
+                        <TranslateFormControl
+                            id='search_here'
+                            type="text"
+                            size='md'
+                            value={searchValue}
+                            onKeyPress={(e) => handleSearchEnterPress(e)}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                        />
                         <InputGroup.Append>
-                            <MyButton>
-                                <div className='display_in_md_lg pr-1'>Search</div>
+                            <MyButton onClick={handleSearch}>
+                                <div className='display_in_md_lg pr-1'>{translate('search')}</div>
                                 <FontAwesomeIcon className='serch-icon' icon={faSearch} style={styles.search_fontawesome} />
                             </MyButton>
-                            {/* <Button className='btn_search d-inline-flex align-items-center' variant='warning' >
-
-                                </Button> */}
                         </InputGroup.Append>
                     </InputGroup>
                     {/* <Nav className=""> */}
@@ -186,7 +203,7 @@ const Toolbar = (props) => {
                             <FontAwesomeIcon icon={faShoppingCart} style={styles.second_nav_fontawesome} />
                             <Badge variant='primary' className='cart_badge'>{props.cart_count}</Badge>
                         </div>
-                        {"Cart"}
+                        {translate('cart')}
                     </Nav.Link>
                     {/* </Nav> */}
                 </Navbar>
@@ -209,8 +226,8 @@ const Toolbar = (props) => {
                             }}>
                             <FontAwesomeIcon icon={faListUl} style={hoverCategory ? styles.third_nav_fontawesome_hover : styles.third_nav_fontawesome} />
                             <div style={{ color: hoverCategory ? `${GlobalStyleSheet.primry_color}` : 'white' }}>
-                                Categories
-                                    </div>
+                                {translate('categories')}
+                            </div>
                         </Dropdown.Toggle>
                         <Dropdown.Menu className='dropdown_menue'>
                             <Row noGutters onMouseLeave={() => categoryMouseLeave()} >
@@ -340,21 +357,27 @@ const Toolbar = (props) => {
                 .customer_toolbar .first_nav_link:last-child{
                     border: none;
                 }
-                .customer_toolbar .dropdown_item{
+                .customer_toolbar .dropdown_fontawesome {
+                    margin: 0px 10px 0px 0px;
+                    min-width: 18px;
+                    min-height: 18px;
+                    max-height: 18px;
+                    max-width: 18px;
+                }
+                .customer_toolbar .dropdown_item {
+                     display: flex;
+                    color: gray;
+                    font-size: 13px;
                     display: flex;
                     align-items: center;
-                    font-size: 13px;
-                    color: gray;
+                    padding: 4% 6%;
                 }
                 .customer_toolbar .dropdown_item:hover{
                     background: ${GlobalStyleSheet.primry_color};
                     color: white
                 }
 
-
-
                 // Second Navbar //
-
                 .customer_toolbar .sticky-wrapper {
                     position: relative;
                 }
@@ -387,7 +410,6 @@ const Toolbar = (props) => {
                 .btn_search:active{
                     color: white;
                 }
-
                 .btn_search_type {
                      border-top-left-radius: 20px;
                     border-bottom-left-radius: 20px;
@@ -403,29 +425,6 @@ const Toolbar = (props) => {
                 .btn_search_type:active{
                     color: white;
                 }
-
-                // .customer_toolbar .sticky .sticky-inner .btn_search{
-                //     color:  ${GlobalStyleSheet.primry_color};
-                //     background: white;
-                //     border-color: white;
-                //     border-radius: 0px;
-                // }
-                // .customer_toolbar .sticky .sticky-inner .btn_search:hover{
-                //     color:  green;
-                //     border-right: 1px solid green;
-                //     border-left: 1px solid green
-                // }
-                // .customer_toolbar .sticky .sticky-inner .serch-icon{
-                //     color:  ${GlobalStyleSheet.primry_color};
-                // }
-                
-                .customer_toolbar .search-bar{
-                    border-color: ${GlobalStyleSheet.primry_color};
-                }
-                // .customer_toolbar .sticky .sticky-inner .search-bar{
-                //     border-color: white;
-                // }
-                
                 .customer_toolbar .nav_link{
                     display: flex;
                     flex-direction: column;
@@ -433,36 +432,20 @@ const Toolbar = (props) => {
                     margin-left: 2%;
                     color: gray;
                 }
-                
                 .customer_toolbar .nav_link:hover{
                     color: ${GlobalStyleSheet.primry_color};
+                }                
+                .customer_toolbar .text_animation{
+                    animation: mymove 5s infinite;
+                    color: ${GlobalStyleSheet.primry_color};
+                    margin: 0%;
+                    cursor: pointer;
                 }
-                // .customer_toolbar .sticky .sticky-inner .nav_link {
-                //     color: lightgray;
-                // }
-                // .customer_toolbar .sticky .sticky-inner .nav_link:hover {
-                //     color: white;
-                // }
-                
-                    
-                    .customer_toolbar .text_animation{
-                        animation: mymove 5s infinite;
-                        color: ${GlobalStyleSheet.primry_color};
-                        margin: 0%;
-                        cursor: pointer;
-                    }
-                    // .customer_toolbar .sticky .sticky-inner .text_animation {
-                    //     animation: mymmove 5s infinite;
-                    //     color: white;
-                    // }
-                    @keyframes mymove {
-                        50% {text-shadow: 10px 15px 3px ${GlobalStyleSheet.primry_color}}
-                    }
-                    // @keyframes mymmove {
-                    //     50% {text-shadow: 10px 15px 3px white;}
-                    // }
+                @keyframes mymove {
+                    50% {text-shadow: 10px 15px 3px ${GlobalStyleSheet.primry_color}}
+                }
 
-
+                // Third Navbar
                 .third_nav_bar{
                     padding: 0.5% 3.7%;
                 }
@@ -476,64 +459,65 @@ const Toolbar = (props) => {
                     border-top-left-radius: 0px;
                 }
                 .customer_toolbar .third_nav_link {
-                        white-space: nowrap;
-                        font-size: 15px;
-                        color: lightgray;
-                        display: inline-flex;
-                        align-items: center;
+                    white-space: nowrap;
+                    font-size: 15px;
+                    color: lightgray;
+                    display: inline-flex;
+                    align-items: center;
+                }
+                .customer_toolbar .category_list_item {
+                    cursor: pointer;
+                    width: 98%;
+                    display: inline-flex;
+                    align-items: center;
+                    font-size: 14px;
+                    padding: 1.5% 4%;
+                    margin: 0% -2% 0% 2%;
+                    color: gray;
+                }
+                .customer_toolbar .category_list_item:hover{
+                    z-index: 100;
+                    color: #005ce6;
+                    border-radius: 2px;
+                    box-shadow: -1px 0px 10px 1px rgba(0,0,0,0.12);
+                }
+
+                .display_in_md_lg{
+                    display: flex;
+                }
+
+                @media (max-width: 1199px) {
+                    .third_nav_bar{
+                        padding: 0.5% 2.7% 0% 2.7%;
                     }
-                    
-                    .customer_toolbar .category_list_item {
-                        cursor: pointer;
-                        width: 98%;
-                        display: inline-flex;
-                        align-items: center;
-                        font-size: 14px;
-                        padding: 1.5% 4%;
-                        margin: 0% -2% 0% 2%;
-                        color: gray;
+                }
+                @media (max-width: 991px) {
+                    .customer_toolbar .sticky-inner {
+                        padding: 0.5% 5%;
                     }
-                    .customer_toolbar .category_list_item:hover{
-                        z-index: 100;
-                        color: #005ce6;
-                        border-radius: 2px;
-                        box-shadow: -1px 0px 10px 1px rgba(0,0,0,0.12);
+                }
+                @media (max-width: 767px) {
+                    .customer_toolbar .sticky-inner {
+                        padding: 0.5% 4%;
                     }
-                    .display_in_md_lg{
-                        display: flex;
+                    .third_nav_bar {
+                        display: none;
                     }
-                     @media (max-width: 1199px) {
-                        .third_nav_bar{
-                            padding: 0.5% 2.7% 0% 2.7%;
-                        }
+                    .customer_toolbar .display_in_md_lg {
+                        display: none;
                     }
-                    @media (max-width: 991px) {
-                        .customer_toolbar .sticky-inner{
-                            padding: 0.5% 5%;
-                        }
+                    .mahaalk_img {
+                        width: 50px;
+                        max-width: 50px;
+                        height: 50px;
+                        max-height: 50px;
                     }
-                    @media (max-width: 767px) {
-                        .customer_toolbar .sticky-inner{
-                            padding: 0.5% 4%;
-                        }
-                        .third_nav_bar{
-                            display: none;
-                        }
-                        .customer_toolbar .display_in_md_lg {
-                            display: none;
-                        }
-                        .mahaalk_img{
-                            width: 50px;
-                            max-width: 50px;
-                            height: 50px;
-                            max-height: 50px;
-                        }
+                }
+                @media (max-width: 575px) {
+                    .customer_toolbar .sticky-inner{
+                        padding: 0.5% 2%;
                     }
-                     @media (max-width: 575px) {
-                        .customer_toolbar .sticky-inner{
-                            padding: 0.5% 2%;
-                        }
-                    }
+                }
             `}</style>
             <style jsx>
                 {`

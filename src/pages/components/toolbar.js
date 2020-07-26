@@ -66,6 +66,7 @@ export default function Toolbar(props) {
                 .simple_toolbar .logo{
                     display: inline-flex;
                     align-items: center;
+                    cursor: pointer;
                     padding: 0%;
                     margin: 0%;
                 }
@@ -95,6 +96,7 @@ export default function Toolbar(props) {
             `}</style>
             <style jsx>{`
                 .simple_toolbar .text_animation{
+                    cusror: pointer;
                     animation: mymove 5s infinite;
                     color:  ${GlobalStyleSheet.primry_color};
                     margin: 0%;

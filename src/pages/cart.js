@@ -15,6 +15,10 @@ import AlertModal from './components/alert-modal'
 
 React.useLayoutEffect = React.useEffect
 
+import translate from '../i18n/translate'
+import TranslateFormControl from '../i18n/translate-form-control'
+
+
 export async function getServerSideProps(context) {
     let categories_list = []
     let sub_categories_list = []
@@ -55,23 +59,26 @@ export default function Cart(props) {
     async function getData() {
         const decoded_token = await getDecodedTokenFromStorage()
         if (decoded_token !== null) {
-            setToken(decoded_token)
-            const url = MuhalikConfig.PATH + `/api/users/cart/${decoded_token._id}`;
-            await axios.get(url).then((res) => {
-                console.log('cart data:', res.data.data)
-                setCart_list(res.data.data)
-                setCart_count(res.data.data.length)
-            }).catch((error) => {
-            })
-            if (decoded_token.city == 'riyadh' || decoded_token.city == 'Riyadh') {
-                setShipping_charges(25)
+            if (decoded_token.role != 'customer') {
+                Router.push('/')
             } else {
-                setShipping_charges(45)
+                setToken(decoded_token)
+                const url = MuhalikConfig.PATH + `/api/users/cart/${decoded_token._id}`;
+                await axios.get(url).then((res) => {
+                    setCart_list(res.data.data)
+                    setCart_count(res.data.data.length)
+                }).catch((error) => {
+                })
+                if (decoded_token.city == 'riyadh' || decoded_token.city == 'Riyadh') {
+                    setShipping_charges(25)
+                } else {
+                    setShipping_charges(45)
+                }
             }
-        }
-        const _token = await getTokenFromStorage()
-        if (_token !== null) {
-            setUndecoded_token(_token)
+            const _token = await getTokenFromStorage()
+            if (_token !== null) {
+                setUndecoded_token(_token)
+            }
         }
     }
 
@@ -82,14 +89,12 @@ export default function Cart(props) {
     useEffect(() => {
         setProducts([])
         cart_list.forEach((element, index) => {
-            console.log('hhh', element)
             getProducts(element, index)
         })
     }, [cart_list])
     async function getProducts(element, index) {
-        const url = MuhalikConfig.PATH + `/api/products/product/${element.p_id}`;
+        const url = MuhalikConfig.PATH + `/api/products/product-by-id/${element.p_id}`;
         await axios.get(url).then(res => {
-            console.log('kkkkhhhgff:', res.data)
             let obj = {}
             obj['_id'] = element._id
             obj['p_id'] = element.p_id
@@ -109,10 +114,9 @@ export default function Cart(props) {
                 return [...new Set([...prevPro, obj])]
             })
         }).catch((error) => {
-            console.log('poduct getting error:', error)
+            alert('Error')
         })
     }
-    console.log('ppp', products)
 
     function calculateTotalPrice() {
         let count = 0
@@ -180,14 +184,13 @@ export default function Cart(props) {
     }
 
     async function handleDeleteCart(obj_id, index) {
-        console.log('obj_id:', obj_id, index)
         let copyArray = []
         copyArray = Object.assign([], products)
         copyArray[index].isLoading = true
         setProducts(copyArray)
-        const _url = MuhalikConfig.PATH + `/api/users/cart/${token._id}`;
+        const _url = MuhalikConfig.PATH + `/api/users/clear-cart-data-by-id/${token._id}`;
         await axios({
-            method: 'DELETE',
+            method: 'PUT',
             url: _url,
             params: { obj_id: obj_id },
             headers: {
@@ -203,8 +206,8 @@ export default function Cart(props) {
             let copyArray = []
             copyArray = Object.assign([], products)
             copyArray[index].isLoading = false
-            console.log('Cart Delete error:', err)
             setProducts(copyArray)
+            alert('Error')
         })
     }
 
@@ -213,7 +216,26 @@ export default function Cart(props) {
     }
 
     async function handleClearCart() {
+        const _url = MuhalikConfig.PATH + `/api/users/clear-cart/${token._id}`;
+        await axios({
+            method: 'DELETE',
+            url: _url,
+            headers: {
+                'authorization': undecoded_token
+            }
+        }).then(res => {
+            Router.reload()
+        }).catch(err => {
+            alert('Error')
+        })
+    }
 
+    function handlePlaceOrderError(element) {
+        let copyArray = Object.assign([], products)
+        let obj = copyArray[element.index]
+        obj[err] = true
+        copyArray[element.index] = obj;
+        setProducts(copyArray)
     }
 
     return (
@@ -224,6 +246,7 @@ export default function Cart(props) {
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
+                {...props}
             >
                 <div className='cart'>
                     {isProcedeOrder ?
@@ -235,11 +258,12 @@ export default function Cart(props) {
                             shipping_charges={shipping_charges}
                             sub_total={sub_total}
                             clearCart={handleClearCart}
+                            handlePlaceOrderError={handlePlaceOrderError}
                         />
                         :
                         products == '' ?
                             <div style={{ minHeight: '40vh' }} className='w-100 d-flex align-items-center justify-content-center'>
-                                <MyButton onClick={() => Router.push('/')}> Continue Shopping </MyButton>
+                                <MyButton onClick={() => Router.push('/')}> {translate('continue_shopping')}</MyButton>
                             </div>
                             :
                             < Row noGutters>
@@ -248,17 +272,17 @@ export default function Cart(props) {
                                         <Card>
                                             <Card.Body className='card_body'>
                                                 <Form.Check checked={checkAll} onChange={(e) => handleAllCheck(e)}></Form.Check>
-                                                <div>Select All</div>
+                                                <div>{translate('select_all')}</div>
                                                 <div className='delete' onClick={handleAllDeleteClick}>
                                                     <FontAwesomeIcon icon={faTrash} className='fontawesome' />
-                                                    <div>Delete</div>
+                                                    <div>{translate('delete')}</div>
                                                 </div>
                                             </Card.Body>
                                         </Card>
 
                                         {products && products.map((element, index) =>
                                             <Card key={element._id}>
-                                                <Card.Body className='card_body'>
+                                                <Card.Body className='card_body' style={{ color: element.err ? 'red' : null }}>
                                                     <Form.Check className='m-0 pr-0' checked={element.check} onChange={(e) => handleCheck(e.target.checked, index)} ></Form.Check>
                                                     {element.product.product_type == "simple-product" ?
                                                         <Row className='w-100 p-0 m-0'>
@@ -272,7 +296,7 @@ export default function Cart(props) {
                                                                 <div className='p-0 m-0'>{element.product.product_name}</div>
                                                             </Col>
                                                             <Col className='_padding' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
-                                                                <label>Rs.{element.product.product_price * element.quantity}</label>
+                                                                <label>{translate('rs')}{element.product.product_price * element.quantity}</label>
                                                             </Col>
                                                             <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
                                                                 <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
@@ -303,7 +327,7 @@ export default function Cart(props) {
                                                                 <div className='p-0 m-0'>{element.product.product_name}</div>
                                                             </Col>
                                                             <Col className='_padding' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
-                                                                <label>Rs.{element.variation.price * element.quantity}</label>
+                                                                <label>{translate('rs')}{element.variation.price * element.quantity}</label>
                                                             </Col>
                                                             <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
                                                                 <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
@@ -314,10 +338,10 @@ export default function Cart(props) {
                                                                 </Form.Control>
                                                                 <div className='d-inline-flex mt-auto'>
                                                                     <Link href='/[category]/[sub_category]/[product]' as={`/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
-                                                                        <a style={{ fontSize: '12px', marginRight: '10px' }}>View</a>
+                                                                        <a style={{ fontSize: '12px', marginRight: '10px' }}>{translate('view')}</a>
                                                                     </Link>
                                                                     <div className='delete' onClick={() => handleDeleteCart(element._id, index)}>
-                                                                        <div>{element.isLoading ? <Spinner animation="grow" size="sm" /> : 'Delete'}</div>
+                                                                        <div>{element.isLoading ? <Spinner animation="grow" size="sm" /> : translate('delete')}</div>
                                                                     </div>
                                                                 </div>
                                                             </Col>
@@ -333,19 +357,19 @@ export default function Cart(props) {
                                         <Card.Body className='p-3'>
                                             <div>Order Summary</div>
                                             <div className='d-inline-flex w-100 mt-4' style={{ fontSize: '14px', color: 'blue' }}>
-                                                <div className='mr-auto'>Sub Total</div>
-                                                <div>Rs.{sub_total}</div>
+                                                <div className='mr-auto'>{translate('sub_total')}</div>
+                                                <div>{translate('rs')}{sub_total}</div>
                                             </div>
                                             <div className='d-inline-flex w-100 mt-2' style={{ fontSize: '14px', color: 'blue' }}>
-                                                <div className='mr-auto'>Shipping Charges</div>
-                                                <div>Rs.{shipping_charges}</div>
+                                                <div className='mr-auto'>{translate('shipping_charges')}</div>
+                                                <div>{translate('rs')}{shipping_charges}</div>
                                             </div>
                                             <hr style={{ color: 'blue' }} />
                                             <div className='d-inline-flex w-100 mb-2' style={{ fontSize: '14px', color: 'blue' }}>
-                                                <div className='mr-auto'>Total</div>
-                                                <div>Rs.{sub_total + shipping_charges}</div>
+                                                <div className='mr-auto'>{translate('total')}</div>
+                                                <div>{translate('rs')}{sub_total + shipping_charges}</div>
                                             </div>
-                                            <MyButton onClick={handleProcedeOrder} disabled={products == ''} block={true}> Procede to Order </MyButton>
+                                            <MyButton onClick={handleProcedeOrder} disabled={products == ''} block={true}> {translate('procede_order')} </MyButton>
                                         </Card.Body>
                                     </Card>
                                 </Col>
@@ -450,6 +474,7 @@ export default function Cart(props) {
 function ProcedeOrder(props) {
     const [loading, setLoading] = useState(false)
     const [showAlertModal, setShowAlertModal] = useState(false)
+    const [showErrorAlertModal, setsetShowErrorAlertModal] = useState(false)
 
     const [name, setName] = useState('')
     const [city, setCity] = useState('')
@@ -466,16 +491,16 @@ function ProcedeOrder(props) {
     async function confirmOrder() {
         if (name == '' || city == '' || mobile == '' || address == '') {
             if (name == '') {
-                setNameError('Enter Value')
+                setNameError(translate('enter_value'))
             }
             if (city == '') {
-                setCityError('Enter Value')
+                setCityError(translate('enter_value'))
             }
             if (mobile == '') {
-                setMobError('Enter Value')
+                setMobError(translate('enter_value'))
             }
             if (address == '') {
-                setAddressError('Enter Value')
+                setAddressError(translate('enter_value'))
             }
         } else {
             setLoading(true)
@@ -499,11 +524,7 @@ function ProcedeOrder(props) {
                 }
             })
 
-            console.log('products:', data)
-            console.log('shipping_charges:', shipping_charges)
-            console.log('sub_total:', props.sub_total)
-
-            const url = MuhalikConfig.PATH + `/api/orders/${props.token._id}`;
+            const url = MuhalikConfig.PATH + `/api/orders/place-order/${props.token._id}`;
             await axios.post(url,
                 {
                     c_name: name,
@@ -520,10 +541,15 @@ function ProcedeOrder(props) {
                     }
                 }).then((res) => {
                     setLoading(false)
-                    setShowAlertModal(true)
-                    props.clearCart()
+                    if (res.data.status == 200) {
+                        setShowAlertModal(true)
+                        props.clearCart()
+                    } else if (res.data.status == 201) {
+                        console.log('gagagagg:', res.data)
+                        setShowErrorAlertModal(true)
+                        props.handlePlaceOrderError(res.data.data)
+                    }
                 }).catch((error) => {
-                    console.log('Error:', error)
                     alert('Not  Added')
                 })
         }
@@ -545,7 +571,15 @@ function ProcedeOrder(props) {
                 onHide={(e) => setShowAlertModal(false)}
                 show={showAlertModal}
                 header={'Success'}
-                message={'Order Successfully Placed'}
+                message={translate('order_placed')}
+                iconname={faThumbsUp}
+                color={'green'}
+            />
+            <AlertModal
+                onHide={(e) => setShowErrorAlertModal(false)}
+                show={showErrorAlertModal}
+                header={'Success'}
+                message={translate('place_order_error')}
                 iconname={faThumbsUp}
                 color={'green'}
             />
@@ -553,10 +587,11 @@ function ProcedeOrder(props) {
                 <Form.Group as={Card.Body}>
                     <Row className='p-0 m-0'>
                         <Col lg={4} md={4} sm={12} xs={12}>
-                            <Form.Label className='field_label'>Name</Form.Label>
+                            <Form.Label className='field_label'>{translate('full_name')}</Form.Label>
                             <InputGroup>
-                                <Form.Control
-                                    placeholder='Enter your name'
+                                <TranslateFormControl
+                                    id='enter_full_name'
+                                    type="text"
                                     value={name}
                                     onChange={(e) => { setName(e.target.value), setNameError('') }}
                                 />
@@ -564,10 +599,11 @@ function ProcedeOrder(props) {
                             </InputGroup>
                         </Col>
                         <Col lg={4} md={4} sm={6} xs={12}>
-                            <Form.Label className='field_label'>City</Form.Label>
+                            <Form.Label className='field_label'>{translate('city')}</Form.Label>
                             <InputGroup>
-                                <Form.Control
-                                    placeholder='Enter your city'
+                                <TranslateFormControl
+                                    id='enter_city'
+                                    type="text"
                                     value={city}
                                     onChange={(e) => handleSetCity(e.target.value)}
                                 />
@@ -575,12 +611,12 @@ function ProcedeOrder(props) {
                             </InputGroup>
                         </Col>
                         <Col lg={4} md={4} sm={6} xs={12}>
-                            <Form.Label className='field_label'>Mobile Number</Form.Label>
+                            <Form.Label className='field_label'>{translate('mobile_number')} </Form.Label>
                             <InputGroup>
                                 <Form.Control
                                     type='number'
                                     min='0'
-                                    placeholder='Enter your mobile'
+                                    placeholder='+966590911891'
                                     value={mobile}
                                     onChange={(e) => { setMobile(e.target.value), setMobError('') }}
                                 />
@@ -590,10 +626,11 @@ function ProcedeOrder(props) {
                     </Row>
                     <Row className='p-0 ml-0 mb-0 mr-0 mt-2'>
                         <Col lg={12} md={12} sm={12} xs={12}>
-                            <Form.Label className='field_label'>Address</Form.Label>
+                            <Form.Label className='field_label'> {translate('address')} <span> * </span> </Form.Label>
                             <InputGroup>
-                                <Form.Control
-                                    placeholder='Enter your address'
+                                <TranslateFormControl
+                                    id='enter_address'
+                                    type="text"
                                     value={address}
                                     onChange={(e) => { setAddress(e.target.value), setAddressError('') }}
                                 />
@@ -605,21 +642,21 @@ function ProcedeOrder(props) {
                 <Form.Group as={Card.Body}>
                     <Row >
                         <Col >
-                            <Form.Label className='rs_label'>Sub Total</Form.Label>
+                            <Form.Label className='rs_label'>{translate('sub_total')}</Form.Label>
                             <InputGroup className='center'>
-                                <Form.Label>Rs.{props.sub_total}</Form.Label>
+                                <Form.Label>{translate('rs')}{props.sub_total}</Form.Label>
                             </InputGroup>
                         </Col>
                         <Col >
-                            <Form.Label className='rs_label'>Shipping Charges</Form.Label>
+                            <Form.Label className='rs_label'>{translate('shipping_charges')}</Form.Label>
                             <InputGroup className='center'>
-                                <Form.Label>Rs.{shipping_charges}</Form.Label>
+                                <Form.Label>{translate('rs')}{shipping_charges}</Form.Label>
                             </InputGroup>
                         </Col>
                         <Col >
-                            <Form.Label className='rs_label'>Total</Form.Label>
+                            <Form.Label className='rs_label'>{translate('total')}</Form.Label>
                             <InputGroup className='center'>
-                                <Form.Label>Rs.{props.sub_total + shipping_charges}</Form.Label>
+                                <Form.Label>{translate('rs')}{props.sub_total + shipping_charges}</Form.Label>
                             </InputGroup>
                         </Col>
                     </Row>
@@ -627,10 +664,10 @@ function ProcedeOrder(props) {
                 <Form.Group as={Card.Body}>
                     <Row className='p-0 m-0'>
                         <Col>
-                            <MyButton onClick={props.cancel} block={true}>Cancel</MyButton>
+                            <MyButton onClick={props.cancel} block={true}>{translate('cancel')}</MyButton>
                         </Col>
                         <Col>
-                            <MyButton onClick={confirmOrder} block={true}>Confirm Order</MyButton>
+                            <MyButton onClick={confirmOrder} block={true}>{translate('confirm_order')}</MyButton>
                         </Col>
                     </Row>
                 </Form.Group>

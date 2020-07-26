@@ -26,6 +26,11 @@ import { faHeart } from '@fortawesome/free-regular-svg-icons';
 import BreadcrumbRow from '../../components/breadcrumb-row'
 React.useLayoutEffect = React.useEffect
 
+import translate from '../../../i18n/translate'
+import TranslateFormControl from '../../../i18n/translate-form-control'
+import TranslateOption from '../../../i18n/translate-option'
+
+
 export async function getServerSideProps(context) {
     let categories_list = []
     let sub_categories_list = []
@@ -33,15 +38,15 @@ export async function getServerSideProps(context) {
     const { product } = context.query
 
     const url = MuhalikConfig.PATH + '/api/categories/categories';
-    await axios.get(url).then((response) => {
-        categories_list = response.data.category.docs,
-            sub_categories_list = response.data.sub_category.docs
+    await axios.get(url).then((res) => {
+        categories_list = res.data.category.docs,
+            sub_categories_list = res.data.sub_category.docs
     }).catch((error) => {
     })
 
-    const url_1 = MuhalikConfig.PATH + `/api/products/product/${product}`;
-    await axios.get(url_1).then((response) => {
-        single_product = response.data.data[0]
+    const url_1 = MuhalikConfig.PATH + `/api/products/product-by-id/${product}`;
+    await axios.get(url_1).then((res) => {
+        single_product = res.data.data[0]
     }).catch((error) => {
     })
 
@@ -73,13 +78,13 @@ function Product(props) {
     useLayoutEffect(() => {
         getData()
         if (props.single_product != '')
-            getSingleProduct()
+            getVendor()
     }, []);
     async function getData() {
         const _token = await getDecodedTokenFromStorage()
         if (_token !== null) {
             setToken(_token)
-            getCartCount()
+            getCartCount(_token._id)
         }
         const undecoded_token = await getTokenFromStorage()
         if (undecoded_token !== null) {
@@ -87,18 +92,18 @@ function Product(props) {
         }
     }
 
-    async function getCartCount() {
-        const url = MuhalikConfig.PATH + `/api/users/cart/${token._id}`;
+    async function getCartCount(user_id) {
+        const url = MuhalikConfig.PATH + `/api/users/cart/${user_id}`;
         await axios.get(url).then((res) => {
             setCart_count(res.data.data.length)
         }).catch((error) => {
         })
     }
 
-    async function getSingleProduct() {
-        const url = MuhalikConfig.PATH + `/api/users/${props.single_product.vendor_id}`;
-        await axios.get(url).then((response) => {
-            setVendor(response.data.data[0])
+    async function getVendor() {
+        const url = MuhalikConfig.PATH + `/api/users/user-by-id/${props.single_product.vendor_id}`;
+        await axios.get(url).then((res) => {
+            setVendor(res.data.data[0])
         }).catch((error) => {
         })
     }
@@ -116,7 +121,7 @@ function Product(props) {
                 headers: {
                     'authorization': undecoded_token,
                 }
-            }).then(function (response) {
+            }).then(function (res) {
                 setWish('orange')
             }).catch(function (error) {
                 alert('ERROR: Product not added to wishlist')
@@ -127,7 +132,7 @@ function Product(props) {
                 headers: {
                     'authorization': undecoded_token,
                 }
-            }).then(function (response) {
+            }).then(function (res) {
                 setWish('gray')
             }).catch(function (error) {
                 alert('ERROR: Product not removed from wishlist')
@@ -146,28 +151,28 @@ function Product(props) {
         if (token.full_name == '') {
             Router.push('/login')
         } else if (cart == 0 || cart == 'Quantity') {
-            setCartError('Select quantity first')
+            setCartError(translate('select_quantity_first'))
         } else {
             cartLoading(true)
             if (cart > 0) {
-                const url = MuhalikConfig.PATH + `/api/users/cart/${token._id}`;
+                const url = MuhalikConfig.PATH + `/api/users/add-to-cart/${token._id}`;
                 await axios.put(url, data, {
                     headers: {
                         'authorization': undecoded_token,
                     }
-                }).then(function (response) {
+                }).then(function (res) {
                     cartLoading(false)
-                    getCartCount()
+                    getCartCount(token._id)
                 }).catch(function (error) {
                     cartLoading(false)
-                    alert('ERROR: Product not added to cart')
+                    alert('Error')
                 });
             }
         }
     }
 
     return (
-        <div className='single_product'>
+        <div className='single_product_style'>
             <Layout
                 role={token.role || ''}
                 name={token.full_name || ''}
@@ -176,6 +181,7 @@ function Product(props) {
                 sub_categories_list={props.sub_categories_list}
                 active_category={category}
                 active_sub_category={sub_category}
+                {...props}
             >
                 {props.single_product == '' ?
                     null
@@ -184,12 +190,12 @@ function Product(props) {
                         <BreadcrumbRow active={product}>
                             <Breadcrumb.Item >
                                 <Link href='/[category]' as={`/${category}`} >
-                                    {category}
+                                    <a> {category}</a>
                                 </Link>
                             </Breadcrumb.Item>
                             <Breadcrumb.Item >
                                 <Link href='/[category]/[sub_category]' as={`/${category}/${sub_category}`} >
-                                    {sub_category}
+                                    <a>{sub_category}</a>
                                 </Link>
                             </Breadcrumb.Item>
                         </BreadcrumbRow>
@@ -226,7 +232,7 @@ function Product(props) {
                 }
             </Layout >
             <style type="text/css">{`
-                .single_product{
+                .single_product_style{
                     min-height: 100vh;
                     background: ${GlobalStyleSheet.body_color};
                     position: absolute;
@@ -234,15 +240,15 @@ function Product(props) {
                     left: 0;
                     right: 0;
                 }
-                .single_product .main-row{
+                .single_product_style .main-row{
                     padding: 2% 5%;
                 }
-                .single_product .single_product_img{
+                .single_product_style .single_product_img{
                     min-width: 100%;
                     max-width: 100%;
                     background: white;
                 }
-                .single_product .single_product_img:hover{
+                .single_product_style .single_product_img:hover{
                     cursor: pointer;
                     background: ${GlobalStyleSheet.body_color};
                 }
@@ -363,7 +369,7 @@ function Product(props) {
                 }
 
                 @media (max-width: 1199px) {
-                    .single_product .main-row{
+                    .single_product_style .main-row{
                         padding: 2% 3%;
                     }
                     .img_col{
@@ -380,7 +386,7 @@ function Product(props) {
                     }
                 }
                 @media (max-width: 991px) {
-                    .single_product .main-row{
+                    .single_product_style .main-row{
                         padding: 2%;
                     }
                     .img_col{
@@ -397,7 +403,7 @@ function Product(props) {
                     }
                 }
                 @media (max-width: 767px) {
-                    .single_product .main-row{
+                    .single_product_style .main-row{
                         padding: 2% 2% 50px 2%;
                     }
                     .img_col{
@@ -417,36 +423,36 @@ function Product(props) {
                     }
                 }
                 @media (max-width: 575px) {
-                    .single_product .main-row{
+                    .single_product_style .main-row{
                         padding: 1.5% 1.5% 50px 1.5%;
                     }
-                    .img_col{
+                    .single_product_style .img_col{
                         border-radius: 5px;
                     }
-                    .larg_img{
+                    .single_product_style .larg_img{
                         padding: 0% 2%;
                         margin: 0% 2%;
                     }
-                    .desc_col{
+                    .single_product_style .desc_col{
                         margin: 2% 0%;
                         border-radius: 5px;
                     }
-                    .vendor_desc_col{
+                    .single_product_style .vendor_desc_col{
                         margin-bottom: 2%;
                     }
 
-                    .display_in_lg_md_sm{
+                    .single_product_style .display_in_lg_md_sm{
                         display: none;
                     }
-                    .display_in_xs{
+                    .single_product_style .display_in_xs{
                         display: block;
                     }
 
-                    .disable_scroll{
+                    .single_product_style .disable_scroll{
                         display: block;
                         margin-top: 2%;
                     }
-                    .disable_scroll {
+                    .single_product_style .disable_scroll {
                         display: inline-flex;
                         background: ${GlobalStyleSheet.body_color};
                         width: 100%;
@@ -454,10 +460,10 @@ function Product(props) {
                         margin: 1% 0%;
                         overflow-y: scroll;
                     }
-                    .disable_scroll::-webkit-scrollbar {
+                    .single_product_style .disable_scroll::-webkit-scrollbar {
                         display: none;
                     }
-                    .disable_scroll {
+                    .single_product_style .disable_scroll {
                         -ms-overflow-style: none;
                     }
                 }
@@ -507,6 +513,7 @@ function SimpleProduct(props) {
                         <Col lg={3} md={3} sm={2} xs={12} className='display_in_lg_md_sm vertical_align_img'>
                             {props.single_product.product_image_link && props.single_product.product_image_link.map((element, index) =>
                                 <MyImages key={element._id}
+                                    undefind={'50px'}
                                     element={element}
                                     index={index == activeImageIndex}
                                     plus={14}
@@ -525,6 +532,7 @@ function SimpleProduct(props) {
                                 {props.single_product.product_image_link && props.single_product.product_image_link.map((element, index) =>
                                     <Col xs={2} key={element._id} className='p-0 m-0'>
                                         <MyImages key={element._id}
+                                            undefind={'250px'}
                                             element={element}
                                             index={index == activeImageIndex}
                                             plus={10}
@@ -538,7 +546,7 @@ function SimpleProduct(props) {
                 </Col>
                 <Col lg={5} md={5} sm={6} xs={12} className='desc_col'>
                     {props.single_product.product_name}
-                    <div className='slope'>Rs. {props.single_product.product_price}</div>
+                    <div className='slope'>{translate('rs')} {props.single_product.product_price}</div>
                     <Row noGutters>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
@@ -566,15 +574,15 @@ function SimpleProduct(props) {
                     </div> */}
 
                     <div className='stock'>
-                        {'Available in Stock'}
-                        <span>Stock: {props.single_product.product_in_stock}</span>
+                        {translate('available_in_stock')}
+                        <span>{translate('stock')}: {props.single_product.product_in_stock}</span>
                     </div>
 
                     <div className='cart'>
                         <Row noGutters>
                             <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
                                 <Form.Control as="select" onChange={(e) => props.setCart(e.target.value)} defaultValue="Choose...">
-                                    <option>Quantity</option>
+                                    <TranslateOption id='quantity' />
                                     {options.map(element =>
                                         element
                                     )}
@@ -586,7 +594,7 @@ function SimpleProduct(props) {
                             <Col className='ml-1'>
                                 <Button variant='success' block disabled={props.loading}
                                     onClick={() => props.handleAddToCart(props.single_product._id, '', '')}>
-                                    {props.loading ? 'Adding' : 'Add to Cart'}
+                                    {props.loading ? translate('adding') : translate('add_to_cart')}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
                                 </Button>
                             </Col>
@@ -651,6 +659,7 @@ function VariableProduct(props) {
                         <Col lg={3} md={3} sm={2} xs={12} className='display_in_lg_md_sm vertical_align_img'>
                             {activeVariation.image_link && activeVariation.image_link.map((element, index) =>
                                 <MyImages key={element._id}
+                                    undefind={'50px'}
                                     element={element}
                                     index={index == activeImageIndex}
                                     plus={14}
@@ -660,7 +669,7 @@ function VariableProduct(props) {
                         </Col>
                         <Col className='larg_img'>
                             <Image ref={ref} className='single_product_img'
-                                style={{ maxHeight: width + 60 || '200px', minHeight: width + 60 || '200px' }}
+                                style={{ maxHeight: width + 60 || '300px', minHeight: width + 60 || '300px' }}
                                 src={activeVariation.image_link[activeImageIndex].url}
                             />
                         </Col>
@@ -669,6 +678,7 @@ function VariableProduct(props) {
                                 {activeVariation.image_link && activeVariation.image_link.map((element, index) =>
                                     <Col xs={2} key={element._id} className='p-0 m-0'>
                                         <MyImages key={element._id}
+                                            undefind={'50px'}
                                             element={element}
                                             index={index == activeImageIndex}
                                             plus={10}
@@ -683,11 +693,11 @@ function VariableProduct(props) {
 
                 <Col lg={5} md={5} sm={6} xs={12} className='desc_col'>
                     {props.single_product.product_name}
-                    <div className='slope'>Rs. {activeVariation.price}</div>
+                    <div className='slope'>{translate('rs')} {activeVariation.price}</div>
                     <Row noGutters>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
-                                <div className='product_rating'> Rating: </div>
+                                <div className='product_rating'> {translate('rating')}: </div>
                                 <Badge variant='info' style={{ fontSize: '13px', marginLeft: '5px' }}> {rating_review.rating.overall} </Badge>
                             </div>
                             <ReactStars
@@ -711,15 +721,15 @@ function VariableProduct(props) {
                     </div> */}
 
                     <div className='stock'>
-                        {'Available in Stock'}
-                        <span>Stock: {activeVariation.stock}</span>
+                        {translate('available_in_stock')}
+                        <span>{translate('stock')}: {activeVariation.stock}</span>
                     </div>
 
                     <div className='cart'>
                         <Row noGutters>
                             <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
                                 <Form.Control as="select" onChange={(e) => props.setCart(e.target.value)} >
-                                    <option>Quantity</option>
+                                    <TranslateOption id='quantity' />
                                     {options.map(element =>
                                         element
                                     )}
@@ -731,7 +741,7 @@ function VariableProduct(props) {
                             <Col className='ml-1'>
                                 <Button variant='success' block disabled={props.loading}
                                     onClick={() => props.handleAddToCart(props.single_product._id, activeVariation._id, activeVariationIndex)}>
-                                    {props.loading ? 'Adding' : 'Add to Cart'}
+                                    {props.loading ? translate('adding') : translate('add_to_cart')}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
                                 </Button>
                             </Col>
@@ -854,7 +864,7 @@ function MyImages(props) {
             <Image ref={ref} className='my_image_img'
                 style={{
                     border: props.index ? '1px solid black' : '1px solid lightgray',
-                    maxHeight: width + props.plus || '200px', minHeight: width + props.plus || '200px'
+                    maxHeight: width + props.plus || props.undefind, minHeight: width + props.plus || props.undefind
                 }}
                 src={props.element.url}
                 onClick={props.setData}
@@ -893,35 +903,21 @@ function MyImages(props) {
 function VendorInfo(props) {
     let rating = {
         overall: 0,
-        one_star: 5,
+        one_star: 0,
         two_star: 0,
         three_star: 0,
         four_star: 0,
         five_star: 0
     }
-    if ('rating' in props.vendor) {
+    if (props.vendor && 'rating' in props.vendor) {
         rating = props.vendor.rating_review
-    }
-
-    let delivered = 0
-    let cancelled = 0
-    let returned = 0
-
-    if ('delivered' in props.vendor) {
-        rating = props.vendor.delivered
-    }
-    if ('cancelled' in props.vendor) {
-        rating = props.vendor.cancelled
-    }
-    if ('returned' in props.vendor) {
-        rating = props.vendor.returned
     }
 
     return (
         <div className='vendor_info'>
             <label className='product_label'>Shop Info</label>
             <label className='text-center w-100 pb-0 mb-0'>
-                {'shop_name' in props.vendor ? props.vendor.shop_name : '-'}
+                {props.vendor && 'shop_name' in props.vendor ? props.vendor.shop_name : '-'}
             </label>
             <hr className='pt-0 mt-1' />
             <Row noGutters className='_div'>
@@ -972,26 +968,6 @@ function VendorInfo(props) {
             </div>
 
             <hr />
-            {/* <div className='d-flex flex-column align-items-center justify-content-center' style={{ marginLeft: '-25px' }}>
-                <div className='delivered_slope'>
-                    <div > Delivered: </div>
-                    <Badge variant='success' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
-                        {delivered}
-                    </Badge>
-                </div>
-                <div className='cancelled_slope'>
-                    <div > Cancelled: </div>
-                    <Badge variant='warning' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
-                        {cancelled}
-                    </Badge>
-                </div>
-                <div className='returned_slope'>
-                    <div > Returned: </div>
-                    <Badge variant='danger' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
-                        {returned}
-                    </Badge>
-                </div>
-            </div> */}
             <style type="text/css">{`
                 ._div{
                     font-size: 13px;
@@ -1173,18 +1149,18 @@ function TabComponent(props) {
     return (
         <div className='tab_component'>
             <Tabs defaultActiveKey="Description" id="uncontrolled-tab-example" className='outer_tabs'>
-                <Tab eventKey="Description" title="Description" className='p-3'>
+                <Tab eventKey="Description" title={translate('description')} className='p-3'>
                     {'product_description' in props.single_product ?
                         <div style={{ fontSize: '12px', color: 'gray' }}>
                             {props.single_product.product_description}
                         </div>
                         :
-                        <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>No Description</label>
+                        <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>{translate('no_description')}</label>
                     }
                 </Tab>
-                <Tab eventKey="Specifications" title="Specifications" className='p-3'>
+                <Tab eventKey="Specifications" title={translate('specifications')} className='p-3'>
                     {props.custom_fields.length == 0 ?
-                        <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>No Specifications</label>
+                        <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>{translate('no_specifications')}</label>
                         :
                         <Table borderless size="sm" >
                             <tbody>
@@ -1197,14 +1173,13 @@ function TabComponent(props) {
                             </tbody>
                         </Table>
                     }
-
                 </Tab>
-                <Tab eventKey="RatingAndReviews" title="Rating & Reviews" className='p-2'>
+                <Tab eventKey="RatingAndReviews" title={translate('rating_reviews')} className='p-2'>
                     <Tabs defaultActiveKey="Rating" id="uncontrolled-tab-example" className='inner_tabs'>
-                        <Tab eventKey="Rating" title="Rating">
+                        <Tab eventKey="Rating" title={translate('rating')}>
                             <Row className='pt-3 pb-3'>
                                 <Col lg={4} md={4} sm={4} xs={4} className='d-flex flex-column align-items-center  justify-content-center'>
-                                    <div className='text-center' style={{ fontSize: '12px', color: 'gray', marginBottom: '5px' }}>Overall Rating</div>
+                                    <div className='text-center' style={{ fontSize: '12px', color: 'gray', marginBottom: '5px' }}>{translate('overall_rating')}</div>
                                     <div className='text-center' style={{ fontSize: '20px', color: 'orange' }}>
                                         {rating_review.rating.overall}
                                     </div>
@@ -1251,9 +1226,9 @@ function TabComponent(props) {
                                 </Col>
                             </Row>
                         </Tab>
-                        <Tab eventKey="Reviews" title="Reviews" style={{ overflowY: 'scroll', maxHeight: '300px' }}>
+                        <Tab eventKey="Reviews" title={translate('reviews')} style={{ overflowY: 'scroll', maxHeight: '300px' }}>
                             {rating_review.reviews == [] ?
-                                <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>No Reviews</label>
+                                <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>{translate('no_reviews')}</label>
                                 :
                                 rating_review.reviews && rating_review.reviews.map((element, index) =>
                                     <div key={element._id} className='review'>
@@ -1268,10 +1243,10 @@ function TabComponent(props) {
                             }
                         </Tab>
                         {props.token.role != '' ?
-                            <Tab eventKey="GiveReview" title="Give Review" >
+                            <Tab eventKey="GiveReview" title={translate('give_review')} >
                                 <Row className='pt-2 pb-2 pl-5 pr-5'>
                                     <div className='d-inline-flex align-items-center'>
-                                        <div style={{ fontSize: '13px', marginRight: '10px' }}>Rate Product</div>
+                                        <div style={{ fontSize: '13px', marginRight: '10px' }}>{translate('rate_product')}</div>
                                         <ReactStars
                                             count={5}
                                             value={rating}
@@ -1282,7 +1257,13 @@ function TabComponent(props) {
                                         />
                                     </div>
                                     <InputGroup className='mt-1 mb-3'>
-                                        <Form.Control as="textarea" onChange={(e) => handleSetReview(e)} isInvalid={reviewError} placeholder='Type your review here' rows="3" />
+                                        <TranslateFormControl
+                                            id='enter_review'
+                                            as="textarea"
+                                            onChange={(e) => handleSetReview(e)}
+                                            isInvalid={reviewError}
+                                            rows="3"
+                                        />
                                         <Form.Control.Feedback type="invalid">
                                             {reviewError}
                                         </Form.Control.Feedback>
@@ -1290,7 +1271,7 @@ function TabComponent(props) {
                                     <Button block size='sm' variant='outline-primary'
                                         onClick={handleSetRating}
                                         disabled={rating == '' ? true : false}
-                                    >Rate</Button>
+                                    >{translate('rate')}</Button>
                                 </Row>
                             </Tab>
                             :
@@ -1393,6 +1374,10 @@ function TabComponent(props) {
                     .star_rating span{
                         width: 200px;
                     }
+                    .tab_component{
+                        min-height: 200px;
+                        margin: 2% 0%;
+                    }
                 }
             `}</style>
         </div>
@@ -1404,7 +1389,7 @@ function RelatedProducts(props) {
     const [ref, { x, y, width }] = useDimensions();
     return (
         <div className='related_products'>
-            <label className='header'>Related Products</label>
+            <label className='header'>{translate('related_categories')}</label>
             <Row noGutters>
                 {props.products && props.products.map((element, index) =>
                     props.current_product_id != element._id ?
@@ -1416,13 +1401,13 @@ function RelatedProducts(props) {
                                         src={element.product_image_link[0].url}
                                     />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
+                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_price}</label>
                                 </div>
                                 :
                                 <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
+                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_variations[0].price}</label>
                                 </div>
                             }
                         </Card>

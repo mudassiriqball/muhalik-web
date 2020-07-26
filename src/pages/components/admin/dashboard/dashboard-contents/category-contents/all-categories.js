@@ -476,167 +476,153 @@ class AllCategories extends React.Component {
                 </CardAccordion> */}
 
                 {/* All Categories */}
-                <Card>
-                    <Card.Header>
-                        All Categories
-                    </Card.Header>
-                    <Card.Body>
-                        <Form.Row style={{ margin: '0% 5%' }}>
-                            <Form.Group as={Col}>
-                                <InputGroup>
-                                    <InputGroup.Prepend >
-                                        <Form.Control as="select" variant="primary" size='sm'
-                                            value={this.state.searchType} onChange={(e) => this.setState({ searchType: e.target.value })}>
-                                            <option>Category</option>
-                                            <option>Sub Category</option>
-                                        </Form.Control>
-                                    </InputGroup.Prepend>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        placeholder="Search Here"
-                                        name="search"
-                                        value={this.state.filterStr}
-                                        onChange={(e) => this.handleFilterStrChange(e)}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Form.Row>
-                        <hr />
-                        {this.state.categories_list && this.state.categories_list.map((element, index) =>
-                            <div key={index}>
-                                <Form.Row>
-                                    <Col>
+                <CardAccordion title={'All Categories'}>
+                    <Form.Row style={{ margin: '0% 5%' }}>
+                        <Form.Group as={Col}>
+                            <InputGroup>
+                                <InputGroup.Prepend >
+                                    <Form.Control as="select" variant="primary" size='sm'
+                                        value={this.state.searchType} onChange={(e) => this.setState({ searchType: e.target.value })}>
+                                        <option>Category</option>
+                                        <option>Sub Category</option>
+                                    </Form.Control>
+                                </InputGroup.Prepend>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    placeholder="Search Here"
+                                    name="search"
+                                    value={this.state.filterStr}
+                                    onChange={(e) => this.handleFilterStrChange(e)}
+                                />
+                            </InputGroup>
+                        </Form.Group>
+                    </Form.Row>
+                    <hr />
+                    {this.state.categories_list && this.state.categories_list.map((element, index) =>
+                        <div key={index}>
+                            <Form.Row>
+                                <Col>
+                                    <Form.Group as={Form.Row}>
+                                        <Form.Control
+                                            type="text"
+                                            size="sm"
+                                            name="sku"
+                                            value={element.value}
+                                            disabled={element.label}
+                                            onChange={(e) => this.handleCategoryChange(e, index)}
+                                            isInvalid={element.error}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {element.error}
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+                                    {!element.label ?
                                         <Form.Group as={Form.Row}>
-                                            <Form.Control
-                                                type="text"
-                                                size="sm"
-                                                name="sku"
-                                                value={element.value}
-                                                disabled={element.label}
-                                                onChange={(e) => this.handleCategoryChange(e, index)}
-                                                isInvalid={element.error}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                                {element.error}
-                                            </Form.Control.Feedback>
+                                            <InputGroup>
+                                                <Form.File
+                                                    className="position-relative"
+                                                    required
+                                                    style={{ fontSize: '13px' }}
+                                                    name="file"
+                                                    onChange={(e) => this.handleCategoryImgChange(e, index)}
+                                                    isInvalid={!!this.state.imgError}
+                                                    id="validationFormik07"
+                                                />
+                                            </InputGroup>
                                         </Form.Group>
-                                        {!element.label ?
-                                            <Form.Group as={Form.Row}>
-                                                <InputGroup>
-                                                    <Form.File
-                                                        className="position-relative"
-                                                        required
-                                                        style={{ fontSize: '13px' }}
-                                                        name="file"
-                                                        onChange={(e) => this.handleCategoryImgChange(e, index)}
-                                                        isInvalid={!!this.state.imgError}
-                                                        id="validationFormik07"
-                                                    />
-                                                </InputGroup>
-                                            </Form.Group>
-                                            :
-                                            null
-                                        }
-                                        <Row>
-                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                                <Button type="submit" className='d-inline-flex' variant={element.label ? "outline-primary" : "outline-success"} size="sm"
-                                                    onClick={element.label ? () => this.handleEditCategoryClick(index) : () => this.handleUpdateCategoryClick(index)}
-                                                    disabled={element.label ? false : element.error}
-                                                >
-                                                    {element.label ? ' Edit ' : ' Update '}
-                                                    {element.label ? null : element.isLoading ? <Spinner animation="grow" size="sm" /> : null}
-                                                </Button>
-                                            </Form.Group>
-
-                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                                <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"}
-                                                    size="sm" block style={styles.submit_btn}
-                                                    onClick={element.label ? null : () => this.handleCancelCategoryClick(index)}
-                                                    disabled={element.label ? true : false}
-                                                >
-                                                    {element.label ? ' Delete ' : ' Cancel '}
-                                                </Button>
-                                            </Form.Group>
-                                        </Row>
-                                    </Col>
-                                    <Col>
-                                        <Image src={element.url} fluid style={{ width: '100%', maxHeight: '150px', borderRadius: '5px' }} />
-                                    </Col>
-                                </Form.Row>
-                                <hr className='pb-0 pt-0 mt-0' />
-
-
-
-
-
-                                <Form.Row >
-                                    {this.state.sub_categories_list.map((e, i) => (element._id == e.category_id) ?
-                                        <Col lg={6} md={6} sm={12} xs={12} key={e._id}>
-                                            <Form.Row>
-                                                <Form.Group as={Col} lg="auto" md="auto" sm={8} xs={12}>
-                                                    <Form.Control
-                                                        type="text"
-                                                        size="sm"
-                                                        name="sku"
-                                                        value={e.value}
-                                                        disabled={e.label}
-                                                        onChange={(event) => this.handleSubCategoryChange(event, i)}
-                                                        isInvalid={e.error}
-                                                    />
-                                                    <Form.Control.Feedback type="invalid">
-                                                        {e.error}
-                                                    </Form.Control.Feedback>
-                                                </Form.Group>
-                                                <div className='mr-auto'></div>
-                                                <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                                    <Button type="submit" className='d-inline-flex' variant={e.label ? "outline-primary" : "outline-success"} size="sm" block
-                                                        onClick={e.label ? () => this.handleEditSubCategoryClick(i) : () => this.handleUpdateSubCategoryClick(i)}
-                                                        disabled={e.label ? false : e.error}
-                                                    >
-                                                        {e.label ? ' Edit ' : ' Update '}
-                                                        {e.label ? null : e.isUpdateLoading ? <Spinner animation="grow" size="sm" /> : null}
-                                                    </Button>
-                                                </Form.Group>
-                                                <div className='sm_xs_show mr-auto'></div>
-                                                <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
-                                                    <Button type="submit" className='d-inline-flex' variant={e.label ? "outline-danger" : "outline-primary"} size="sm" block
-                                                        disabled={e.label ? true : false}
-                                                        onClick={
-                                                            e.label ?
-                                                                () => this.setState({
-                                                                    showConfirmDeleteModal: true,
-                                                                    delete_category_id: e._id,
-                                                                    delete_category_name: e.value,
-                                                                    index: i
-                                                                })
-                                                                :
-                                                                () => this.handleCancelSubCategoryClick(i)}
-                                                    >
-                                                        {e.label ? ' Delete ' : ' Cancel '}
-                                                        {e.label ? e.isDeleteLoading ? <Spinner animation="grow" size="sm" /> : null : null}
-                                                    </Button>
-                                                </Form.Group>
-                                            </Form.Row>
-                                        </Col>
                                         :
                                         null
-                                    )}
-                                </Form.Row>
-                                <div className='w-100 mt-5 mb-2' style={{ background: 'lightgray', minHeight: '5px' }}></div>
-                            </div>
-                        )}
-                    </Card.Body>
-                </Card>
-                <style type="text/css">{`
-                    .all_categories .card{
-                        margin: 2%;
-                    }
-                    .all_categories .card_header{
-                        background: ${GlobalStyleSheet.card_header_background};
-                        font-size: ${GlobalStyleSheet.card_header_fontsize};
-                    }
-                `}</style>
+                                    }
+                                    <Row>
+                                        <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                            <Button type="submit" className='d-inline-flex' variant={element.label ? "outline-primary" : "outline-success"} size="sm"
+                                                onClick={element.label ? () => this.handleEditCategoryClick(index) : () => this.handleUpdateCategoryClick(index)}
+                                                disabled={element.label ? false : element.error}
+                                            >
+                                                {element.label ? ' Edit ' : ' Update '}
+                                                {element.label ? null : element.isLoading ? <Spinner animation="grow" size="sm" /> : null}
+                                            </Button>
+                                        </Form.Group>
+
+                                        <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                            <Button type="submit" variant={element.label ? "outline-danger" : "outline-primary"}
+                                                size="sm" block style={styles.submit_btn}
+                                                onClick={element.label ? null : () => this.handleCancelCategoryClick(index)}
+                                                disabled={element.label ? true : false}
+                                            >
+                                                {element.label ? ' Delete ' : ' Cancel '}
+                                            </Button>
+                                        </Form.Group>
+                                    </Row>
+                                </Col>
+                                <Col>
+                                    <Image src={element.url} fluid style={{ width: '100%', maxHeight: '150px', borderRadius: '5px' }} />
+                                </Col>
+                            </Form.Row>
+                            <hr className='pb-0 pt-0 mt-0' />
+
+
+
+
+
+                            <Form.Row >
+                                {this.state.sub_categories_list.map((e, i) => (element._id == e.category_id) ?
+                                    <Col lg={6} md={6} sm={12} xs={12} key={e._id}>
+                                        <Form.Row>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm={8} xs={12}>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    name="sku"
+                                                    value={e.value}
+                                                    disabled={e.label}
+                                                    onChange={(event) => this.handleSubCategoryChange(event, i)}
+                                                    isInvalid={e.error}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {e.error}
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                            <div className='mr-auto'></div>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                                <Button type="submit" className='d-inline-flex' variant={e.label ? "outline-primary" : "outline-success"} size="sm" block
+                                                    onClick={e.label ? () => this.handleEditSubCategoryClick(i) : () => this.handleUpdateSubCategoryClick(i)}
+                                                    disabled={e.label ? false : e.error}
+                                                >
+                                                    {e.label ? ' Edit ' : ' Update '}
+                                                    {e.label ? null : e.isUpdateLoading ? <Spinner animation="grow" size="sm" /> : null}
+                                                </Button>
+                                            </Form.Group>
+                                            <div className='sm_xs_show mr-auto'></div>
+                                            <Form.Group as={Col} lg="auto" md="auto" sm="auto" xs="auto">
+                                                <Button type="submit" className='d-inline-flex' variant={e.label ? "outline-danger" : "outline-primary"} size="sm" block
+                                                    disabled={e.label ? true : false}
+                                                    onClick={
+                                                        e.label ?
+                                                            () => this.setState({
+                                                                showConfirmDeleteModal: true,
+                                                                delete_category_id: e._id,
+                                                                delete_category_name: e.value,
+                                                                index: i
+                                                            })
+                                                            :
+                                                            () => this.handleCancelSubCategoryClick(i)}
+                                                >
+                                                    {e.label ? ' Delete ' : ' Cancel '}
+                                                    {e.label ? e.isDeleteLoading ? <Spinner animation="grow" size="sm" /> : null : null}
+                                                </Button>
+                                            </Form.Group>
+                                        </Form.Row>
+                                    </Col>
+                                    :
+                                    null
+                                )}
+                            </Form.Row>
+                            <div className='w-100 mt-5 mb-2' style={{ background: 'lightgray', minHeight: '5px' }}></div>
+                        </div>
+                    )}
+                </CardAccordion>
                 <style jsx>
                     {`
                         @media only screen and (min-width: 768px){
@@ -646,7 +632,7 @@ class AllCategories extends React.Component {
                         }
                     `}
                 </style>
-            </div>
+            </div >
         )
     }
 }

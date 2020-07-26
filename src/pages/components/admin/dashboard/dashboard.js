@@ -19,7 +19,7 @@ import ProductFields from './dashboard-contents/product-contents/product-fields'
 // Category
 import AddCategory from './dashboard-contents/category-contents/add-category'
 import AllCategories from './dashboard-contents/category-contents/all-categories'
-
+import HomeScreenCategories from './dashboard-contents/category-contents/home-screen-categories'
 
 import Inventory from './dashboard-contents/inventory';
 import Orders from './dashboard-contents/orders'
@@ -38,7 +38,7 @@ const Dashboard = props => {
     const [show_category, setShow_category] = React.useState(false);
 
     return (
-        <div>
+        <div className='admin_dashboard'>
             <Tab.Container id="dashboard-tabs" defaultActiveKey="Dashboard"  >
                 <Row noGutters>
                     {/* Show/Hide Tabs & Tabs-Content when screen Switches to Large/Medium,Small,Extra-Small Devices*/}
@@ -46,7 +46,7 @@ const Dashboard = props => {
                         <Nav className="flex-column" variant="pills" style={{ minWidth: '220px', maxWidth: '220px' }}>
                             <Nav.Item style={styles.image_div}>
                                 <p>
-                                    <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
+                                    <Image src={props.avatar} roundedCircle thumbnail fluid style={styles.image} />
                                     <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
                                 </p>
                             </Nav.Item>
@@ -115,17 +115,24 @@ const Dashboard = props => {
                             </Nav.Item>
                             {show_category ?
                                 <div>
-                                    <div className="product_submenu">
-                                        <Nav.Link eventKey="AddCategory" style={styles.product_submenu_link} >
+                                    <div className="categories_submenue">
+                                        <Nav.Link eventKey="AddCategory" style={styles.categories_submenu_link} >
                                             <FontAwesomeIcon size="xs" icon={faPlusCircle} style={styles.fontawesome} />
                                             <div className="mr-auto"> Add Category</div>
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                         </Nav.Link>
                                     </div>
-                                    <div className="product_submenu">
-                                        <Nav.Link eventKey="AllCategories" style={styles.product_submenu_link} >
+                                    <div className="categories_submenue">
+                                        <Nav.Link eventKey="AllCategories" style={styles.categories_submenu_link} >
                                             <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
                                             <div className="mr-auto"> All Categories</div>
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                    <div className="categories_submenue">
+                                        <Nav.Link eventKey="HomeScreenCategories" style={styles.categories_submenu_link} >
+                                            <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                            <div className="mr-auto"> Home Screen Categories</div>
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                         </Nav.Link>
                                     </div>
@@ -208,7 +215,11 @@ const Dashboard = props => {
                                 <NavDropdown className='nav_dropdown' title={
                                     <FontAwesomeIcon icon={faCog} style={styles.cog_fontawesome} />
                                 } id="nav-dropdown" alignRight>
-                                    <NavDropdown.Item onClick={() => Router.push('/user/profile')} className='dropdown_item'>
+                                    <NavDropdown.Item onClick={() => Router.push('/user/profile')} className='profile_md_lg'>
+                                        <FontAwesomeIcon icon={faUserCircle} className='dropdown_fontawesome' />
+                                        Profile
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => Router.push('/user/account')} className='profile_xs_sm'>
                                         <FontAwesomeIcon icon={faUserCircle} className='dropdown_fontawesome' />
                                         Profile
                                     </NavDropdown.Item>
@@ -268,6 +279,9 @@ const Dashboard = props => {
                                 <Tab.Pane eventKey="AllCategories">
                                     <AllCategories {...props} />
                                 </Tab.Pane>
+                                <Tab.Pane eventKey="HomeScreenCategories">
+                                    <HomeScreenCategories {...props} />
+                                </Tab.Pane>
                                 <Tab.Pane eventKey="ProductFields">
                                     <ProductFields {...props} />
                                 </Tab.Pane>
@@ -288,43 +302,76 @@ const Dashboard = props => {
                 </Row>
             </Tab.Container>
             <style type="text/css">{`
-                .dropdown_item{
+                .admin_dashboard .dropdown_item{
                     color: gray;
                     font-size: 13px;
                     display: flex;
                     align-items: center;
                     padding: 3% 5%;
                 }
-                .dropdown_item:hover{
+                .admin_dashboard .dropdown_item:hover{
                     background: ${GlobalStyleSheet.admin_primry_color};
                     color: white;
                 }
-                .dropdown_fontawesome {
+                .admin_dashboard .search_form{
+                    width: 50%;
+                    padding-left: 5%;
+                }
+
+                .admin_dashboard .dropdown_fontawesome {
                     margin: 0px 10px 0px 0px;
                     min-width: 18px;
                     min-height: 18px;
                     max-height: 18px;
                     max-width: 18px;
                 }
-                
-                .search_form{
-                    width: 50%;
-                    padding-left: 5%;
+                .admin_dashboard .profile_md_lg {
+                    display: flex;
+                    color: gray;
+                    font-size: 13px;
+                    display: flex;
+                    align-items: center;
+                    padding: 3% 5%;
                 }
+                .admin_dashboard .profile_md_lg:hover {
+                    background: ${GlobalStyleSheet.admin_primry_color};
+                    color: white;
+                }
+                .admin_dashboard .profile_xs_sm {
+                    display: none;
+                }
+
                 @media (max-width: 991px){
-                    .search_form{
+                    .admin_dashboard .search_form{
                         width: 80%;
                         padding: 0%;
                     }
                 }
+                @media (max-width: 767px) {
+                    .admin_dashboard .profile_md_lg {
+                        display: none;
+                    }
+                    .admin_dashboard .profile_xs_sm {
+                        display: flex;
+                        color: gray;
+                        font-size: 13px;
+                        display: flex;
+                        align-items: center;
+                        padding: 3% 5%;
+                    }
+                }
                 @media (max-width: 575px){
-                    .search_form{
+                    .admin_dashboard .search_form{
                         width: 90%;
                     }
                 }
             `}</style>
             <style jsx>
                 {`
+                .account_settig_dropdown {
+                    display: flex;
+                    align-items: center;
+                }
                 .show_product {
                     display: none;
                 }
@@ -357,7 +404,7 @@ const Dashboard = props => {
                 .nav_link:hover {
                     background: #30313E;
                 }
-                .product_submenu {
+                .categories_submenue {
                     background: ${GlobalStyleSheet.admin_primry_color};
                     border-top: 0.5px solid #434556;
                     border-bottom: 0.5px solid #434556;
@@ -379,9 +426,6 @@ const Dashboard = props => {
                     }
                     .tab_content {
                         display: none;
-                    }
-                    .account_settig_dropdown {
-                        display: none
                     }
                     .wrapper.open {
                         display: none;
@@ -407,13 +451,19 @@ const styles = {
         padding: '2%'
     },
     image: {
-        width: '100px'
+        marginTop: '5px',
+        minWidth: '100px',
+        maxWidth: '100px',
+        minHeight: '100px',
+        maxHeight: '100px',
     },
     muhalik: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
-        fontSize: '16px',
+        fontSize: '14px',
+        margin: '0%',
+        padding: '1%',
         border: 'none',
-        cursor: 'pointer',
+        cursor: 'default',
         background: 'none'
     },
     wrapper_col: {
@@ -455,7 +505,7 @@ const styles = {
         alignItems: 'center',
         height: '45px'
     },
-    product_submenu_link: {
+    categories_submenu_link: {
         color: 'white',
         fontSize: '11px',
         display: 'flex',

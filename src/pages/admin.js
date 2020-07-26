@@ -12,6 +12,7 @@ export async function getServerSideProps(context) {
     let sliders_list = []
     let categories_list = []
     let sub_categories_list = []
+    let home_categories_list = []
 
     let admins_count = 0
     let vendors_count = 5
@@ -23,6 +24,7 @@ export async function getServerSideProps(context) {
     let pending_orders_count = 0
     let delivered_orders_count = 0
     let cancelled_orders_count = 0
+    let return_orders_count = 0
 
     const users_count_url = MuhalikConfig.PATH + '/api/users/users-count';
     await axios.get(users_count_url).then((res) => {
@@ -35,24 +37,32 @@ export async function getServerSideProps(context) {
     }).catch((error) => {
     })
 
-    const order_count_url = MuhalikConfig.PATH + '/api/orders/order-count';
+    const order_count_url = MuhalikConfig.PATH + '/api/orders/all-orders-count';
     await axios.get(order_count_url).then((res) => {
-        pending_orders_count = res.data.pending_orders
-        delivered_orders_count = res.data.delivered_orders
-        cancelled_orders_count = res.data.cancelled_orders
+        pending_orders_count = res.data.pending_orders_count
+        delivered_orders_count = res.data.delivered_orders_count
+        cancelled_orders_count = res.data.cancelled_orders_count
+        return_orders_count = res.data.return_orders_count
     }).catch((error) => {
     })
 
-    const url_1 = MuhalikConfig.PATH + '/api/sliders/';
-    await axios.get(url_1).then((res) => {
+    const sliders_url = MuhalikConfig.PATH + '/api/sliders/sliders';
+    await axios.get(sliders_url).then((res) => {
         sliders_list = res.data.data
     }).catch((error) => {
     })
 
-    const url_2 = MuhalikConfig.PATH + '/api/categories/categories';
-    await axios.get(url_2).then((res) => {
+    const cate_url = MuhalikConfig.PATH + '/api/categories/categories';
+    await axios.get(cate_url).then((res) => {
         categories_list = res.data.category.docs
         sub_categories_list = res.data.sub_category.docs
+    }).catch((error) => {
+    })
+
+    const home_cate_url = MuhalikConfig.PATH + '/api/categories/home-categories';
+    await axios.get(home_cate_url).then((res) => {
+        console.log('hhh:', res.data)
+        home_categories_list = res.data.data
     }).catch((error) => {
     })
 
@@ -68,10 +78,12 @@ export async function getServerSideProps(context) {
             pending_orders_count,
             delivered_orders_count,
             cancelled_orders_count,
+            return_orders_count,
 
             sliders_list,
             categories_list,
-            sub_categories_list
+            sub_categories_list,
+            home_categories_list
         },
     }
 }
@@ -98,6 +110,7 @@ class Admin extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            user: '',
             admins_count: this.props.admins_count,
             vendors_count: this.props.vendors_count,
             new_vendors_count: this.props.new_vendors_count,
@@ -108,6 +121,7 @@ class Admin extends Component {
             pending_orders_count: this.props.pending_orders_count,
             delivered_orders_count: this.props.delivered_orders_count,
             cancelled_orders_count: this.props.cancelled_orders_count,
+            return_orders_count: this.props.return_orders_count,
 
             sideDrawerOpen: false,
             showWrapper: true,
@@ -123,6 +137,7 @@ class Admin extends Component {
 
             categories_list: this.props.categories_list,
             sub_categories_list: this.props.sub_categories_list,
+            home_categories_list: this.props.home_categories_list,
 
             fields_list: [],
             field_requests_list: [],
@@ -163,6 +178,12 @@ class Admin extends Component {
         let _decodedToken = await checkAuth('admin')
         if (_decodedToken != null) {
             this.setState({ decodedToken: _decodedToken })
+            const currentComponent = this
+            const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decodedToken._id}`;
+            await axios.get(user_url).then((res) => {
+                currentComponent.setState({ user: res.data.data[0] })
+            }).catch((error) => {
+            })
         }
     }
 
@@ -199,7 +220,7 @@ class Admin extends Component {
     }
     async reloadSlider() {
         let currentComponent = this
-        const url = MuhalikConfig.PATH + '/api/sliders/';
+        const url = MuhalikConfig.PATH + '/api/sliders/sliders';
         await axios.get(url).then(function (res) {
             currentComponent.setState({
                 sliders_list: res.data.data,
@@ -207,6 +228,18 @@ class Admin extends Component {
         }).catch(function (error) {
             console.log("sliders_list Fetching Error:", error)
             alert('sliders_list error: ', error)
+        })
+    }
+    async reloadHomeCategories() {
+        console.log('reloadHomeCategories')
+        let currentComponent = this
+        const url = MuhalikConfig.PATH + '/api/categories/home-categories';
+        await axios.get(url).then((res) => {
+            currentComponent.setState({
+                home_categories_list: res.data.category
+            });
+        }).catch((error) => {
+            console.log('home_categories_list Fetchig Error: ', error)
         })
     }
     async reloadUsersCount() {
@@ -226,12 +259,13 @@ class Admin extends Component {
     }
     async reloadOrdersCount() {
         let currentComponent = this
-        const users_count_url = MuhalikConfig.PATH + '/api/users/users-count';
+        const users_count_url = MuhalikConfig.PATH + '/api/orders/all-orders-count';
         await axios.get(users_count_url).then((res) => {
             currentComponent.setState({
-                pending_orders_count: res.data.pending_orders,
-                delivered_orders_count: res.data.delivered_orders,
-                cancelled_orders_count: res.data.cancelled_orders,
+                pending_orders_count: res.data.pending_orders_count,
+                delivered_orders_count: res.data.delivered_orders_count,
+                cancelled_orders_count: res.data.cancelled_orders_count,
+                return_orders_count: res.data.return_orders_count,
             })
         }).catch((error) => {
         })
@@ -247,6 +281,7 @@ class Admin extends Component {
             <div style={styles.body}>
                 {/* <AdminLayout> */}
                 <Dashboard
+                    avatar={this.state.user.avatar}
                     admins_count={this.state.admins_count}
                     vendors_count={this.state.vendors_count}
                     new_vendors_count={this.state.new_vendors_count}
@@ -258,11 +293,14 @@ class Admin extends Component {
                     pending_orders_count={this.state.pending_orders_count}
                     delivered_orders_count={this.state.delivered_orders_count}
                     cancelled_orders_count={this.state.cancelled_orders_count}
+                    return_orders_count={this.state.return_orders_count}
                     ordersReloadCountHandler={this.reloadOrdersCount.bind(this)}
 
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
                     categoriesReloadHandler={this.reloadCategories.bind(this)}
+                    home_categories_list={this.state.home_categories_list}
+                    homeCategoriesReloadHandler={this.reloadHomeCategories.bind(this)}
 
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
@@ -278,6 +316,7 @@ class Admin extends Component {
                     logout={this.logout}
                 />
                 <DashboardSideDrawer
+                    avatar={this.state.user.avatar}
                     admins_count={this.state.admins_count}
                     vendors_count={this.state.vendors_count}
                     new_vendors_count={this.state.new_vendors_count}
@@ -289,11 +328,14 @@ class Admin extends Component {
                     pending_orders_count={this.state.pending_orders_count}
                     delivered_orders_count={this.state.delivered_orders_count}
                     cancelled_orders_count={this.state.cancelled_orders_count}
+                    return_orders_count={this.state.return_orders_count}
                     ordersReloadCountHandler={this.reloadOrdersCount.bind(this)}
 
                     categories_list={this.state.categories_list}
+                    home_categories_list={this.state.home_categories_list}
                     sub_categories_list={this.state.sub_categories_list}
                     categoriesReloadHandler={this.reloadCategories.bind(this)}
+                    homeCategoriesReloadHandler={this.reloadHomeCategories.bind(this)}
 
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}

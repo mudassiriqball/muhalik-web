@@ -329,7 +329,7 @@ function VendorTable(props) {
             }
         } else if (method == 'discard') {
             setConfirmModalLoading(true)
-            const _url = MuhalikConfig.PATH + `/api/users/${single_user._id}`;
+            const _url = MuhalikConfig.PATH + `/api/users/user/${single_user._id}`;
             await axios.delete(_url, {
                 headers: { 'authorization': props.token }
             }).then(function (response) {
@@ -358,7 +358,7 @@ function VendorTable(props) {
             }
         }
 
-        const url = MuhalikConfig.PATH + `/api/users/status/${single_user._id}`;
+        const url = MuhalikConfig.PATH + `/api/users/user-status/${single_user._id}`;
         await axios.put(url, data, {
             headers: { 'authorization': props.token }
         }).then(function (response) {

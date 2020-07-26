@@ -63,6 +63,8 @@ class Vendor extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            user: '',
+
             sideDrawerOpen: false,
             showWrapper: true,
 
@@ -75,9 +77,10 @@ class Vendor extends Component {
             pending_orders_count: 0,
             delivered_orders_count: 0,
             cancelled_orders_count: 0,
+            return_orders_count: 0,
 
             token: '',
-            decodedToken: { vendor_id: null, role: '', full_name: '', status: '' },
+            decodedToken: { _id: null, role: '', full_name: '', status: '' },
         }
     }
 
@@ -88,10 +91,16 @@ class Vendor extends Component {
     async authUser() {
         const currentComponent = this
         let _decodedToken = await checkAuth('vendor')
-        const _token = await getTokenFromStorage()
-        if (_decodedToken != null && _token != null) {
+        if (_decodedToken != null) {
+            const _token = await getTokenFromStorage()
             this.setState({ token: _token, decodedToken: _decodedToken })
             this.getOrdersCount()
+            const currentComponent = this
+            const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decodedToken._id}`;
+            await axios.get(user_url).then((res) => {
+                currentComponent.setState({ user: res.data.data[0] })
+            }).catch((error) => {
+            })
         }
     }
 
@@ -116,12 +125,13 @@ class Vendor extends Component {
 
     async getOrdersCount() {
         let currentComponent = this
-        const order_count_url = MuhalikConfig.PATH + `/api/orders/vendor/order-count/${this.state.decodedToken._id}`;
+        const order_count_url = MuhalikConfig.PATH + `/api/orders/user-order-count/${this.state.decodedToken._id}`;
         await axios.get(order_count_url).then((res) => {
             currentComponent.setState({
-                pending_orders_count: res.data.pending_orders,
-                delivered_orders_count: res.data.delivered_orders,
-                cancelled_orders_count: res.data.cancelled_orders,
+                pending_orders_count: res.data.pending_orders_count,
+                delivered_orders_count: res.data.delivered_orders_count,
+                cancelled_orders_count: res.data.cancelled_orders_count,
+                return_orders_count: res.data.return_orders_count,
             })
         }).catch((error) => {
         })
@@ -137,6 +147,7 @@ class Vendor extends Component {
             <div style={styles.body}>
                 {/* <AdminLayout> */}
                 <Dashboard
+                    avatar={this.state.user.avatar}
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
                     field_requests_list={this.state.field_requests_list}
@@ -145,13 +156,15 @@ class Vendor extends Component {
                     pending_orders_count={this.state.pending_orders_count}
                     delivered_orders_count={this.state.delivered_orders_count}
                     cancelled_orders_count={this.state.cancelled_orders_count}
+                    return_orders_count={this.state.return_orders_count}
                     ordersReloadCountHandler={this.getOrdersCount.bind(this)}
 
                     token={this.state.token}
-                    user_name={this.state.decodedToken.full_name}
                     user_id={this.state.decodedToken._id}
+                    user_name={this.state.decodedToken.full_name}
                     user_status={this.state.decodedToken.status}
 
+                    profileHref={'/user/profile'}
                     show={this.state.showWrapper}
                     drawerClickHandler={this.drawerToggleClickHandler}
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
@@ -159,6 +172,7 @@ class Vendor extends Component {
                 />
 
                 <DashboardSideDrawer
+                    avatar={this.state.user.avatar}
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
                     field_requests_list={this.state.field_requests_list}
@@ -167,6 +181,7 @@ class Vendor extends Component {
                     pending_orders_count={this.state.pending_orders_count}
                     delivered_orders_count={this.state.delivered_orders_count}
                     cancelled_orders_count={this.state.cancelled_orders_count}
+                    return_orders_count={this.state.return_orders_count}
                     ordersReloadCountHandler={this.getOrdersCount.bind(this)}
 
                     token={this.state.token}

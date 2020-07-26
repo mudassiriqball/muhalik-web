@@ -24,7 +24,7 @@ export default function vendorOrdersPageLimit(token, vendor_id, refresh, status,
         setLoading(true)
         setError(false)
         let cancle
-        const _url = MuhalikConfig.PATH + `/api/orders/vendor/${vendor_id}`
+        const _url = MuhalikConfig.PATH + `/api/orders/users-orders/${vendor_id}`
         await axios({
             method: 'GET',
             url: _url,

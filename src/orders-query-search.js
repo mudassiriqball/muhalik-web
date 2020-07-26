@@ -21,7 +21,7 @@ export default function ordersQuerySearch(token, refresh, status, fieldName, que
         if (query != null) {
             setLoading(true)
             setError(false)
-            const _url = MuhalikConfig.PATH + `/api/orders/query-search/${status}`
+            const _url = MuhalikConfig.PATH + `/api/orders/all-orders-query-search/${status}`
             await axios({
                 method: 'GET',
                 url: _url,
@@ -30,7 +30,6 @@ export default function ordersQuerySearch(token, refresh, status, fieldName, que
                 },
                 params: { field: fieldName, q: query, page: pageNumber, limit: limit },
             }).then(res => {
-                console.log('rrr:', res.data)
                 setLoading(false)
                 setQueryOrders(prevPro => {
                     return [...new Set([...prevPro, ...res.data.data.docs])]

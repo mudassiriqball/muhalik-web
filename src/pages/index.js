@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap'
 import Head from 'next/head'
+import Router from 'next/router'
 import axios from 'axios'
 import Layout from './components/customer/layout'
 import { getTokenFromStorage, removeTokenFromStorage, getDecodedTokenFromStorage, checkTokenExpAuth } from '../sdk/core/authentication-service';
@@ -25,13 +26,21 @@ let animation =
 
 export async function getServerSideProps(context) {
     let slider_list = []
+    let home_categories_list = []
     let new_products_list = []
     let categories_list = []
     let sub_categories_list = []
     let top_ranking_products_list = []
-    const url = MuhalikConfig.PATH + '/api/sliders/';
+
+    const url = MuhalikConfig.PATH + '/api/sliders/sliders';
     await axios.get(url).then((res) => {
         slider_list = res.data.data
+    }).catch((error) => {
+    })
+
+    const home_categories_url = MuhalikConfig.PATH + '/api/categories/home-categories';
+    await axios.get(home_categories_url).then((res) => {
+        home_categories_list = res.data.data
     }).catch((error) => {
     })
 
@@ -42,7 +51,7 @@ export async function getServerSideProps(context) {
     }).catch((error) => {
     })
 
-    const url_3 = MuhalikConfig.PATH + `/api/products/get`
+    const url_3 = MuhalikConfig.PATH + `/api/products/all-products-query-search`
     await axios({
         method: 'GET',
         url: url_3,
@@ -52,7 +61,7 @@ export async function getServerSideProps(context) {
     }).catch(err => {
     })
 
-    const _url = MuhalikConfig.PATH + `/api/products/get`
+    const _url = MuhalikConfig.PATH + `/api/products/all-products-query-search`
     await axios({
         method: 'GET',
         url: _url,
@@ -65,6 +74,7 @@ export async function getServerSideProps(context) {
     return {
         props: {
             slider_list,
+            home_categories_list,
             new_products_list,
             top_ranking_products_list,
             categories_list,
@@ -80,6 +90,7 @@ class Index extends Component {
             token: { full_name: '', role: '' },
             cart_count: 0,
             slider_list: this.props.slider_list,
+            home_categories_list: this.props.home_categories_list,
             new_products_list: this.props.new_products_list,
             top_ranking_products_list: this.props.top_ranking_products_list,
             categories_list: this.props.categories_list,
@@ -87,6 +98,14 @@ class Index extends Component {
         }
     }
     async componentDidMount() {
+        Router.events.on('routeChangeComplete', () => {
+            window.scroll({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
+            });
+        });
+
         let currentComponent = this
         const _token = await checkTokenExpAuth()
         if (_token !== null) {
@@ -121,9 +140,11 @@ class Index extends Component {
                         categories_list={this.state.categories_list}
                         sub_categories_list={this.state.sub_categories_list}
                         cart_count={this.state.cart_count}
+                        {...this.props}
                     >
                         <SliderCarousel
                             categories_list={this.state.categories_list}
+                            sub_categories_list={this.state.sub_categories_list}
                             slider_list={this.state.slider_list}
                         />
                         <div className='_index'>
@@ -132,6 +153,7 @@ class Index extends Component {
                                 top_ranking_products_list={this.state.top_ranking_products_list}
                                 categories_list={this.state.categories_list}
                                 sub_categories_list={this.state.sub_categories_list}
+                                home_categories_list={this.state.home_categories_list}
                             />
                         </div>
                     </Layout>
@@ -170,6 +192,7 @@ class Index extends Component {
                         padding: 0;
                         margin: 0;
                         font-family: Roboto, Helvetica Neue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+                        // font-family: 'Janna LT Regular خط الجنة'
                     }
 
                     * {

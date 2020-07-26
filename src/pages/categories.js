@@ -11,6 +11,8 @@ import Footer from './components/customer/footer'
 import StickyBottomNavbar from './components/customer/stick-bottom-navbar'
 import Toolbar from './components/toolbar'
 
+import translate from '../i18n/translate'
+
 
 export async function getServerSideProps(context) {
     let categories_list = []
@@ -37,14 +39,14 @@ function Categories({ categories_list, sub_categories_list }) {
             <Toolbar title={'Categories'} />
             <Row className='_row'>
                 {categories_list && categories_list.map((element, index) =>
-                    <Col className='col' lg={4} md={4} sm={12} xs={12}>
+                    <Col key={index} className='col' lg={4} md={4} sm={12} xs={12}>
                         <div>
                             <label className='category' onClick={() => Router.push('/[category]', `/${element.value}`)}>{element.value}</label>
                         </div>
                         <hr className='hr' />
                         {sub_categories_list && sub_categories_list.map((e, i) =>
                             element._id == e.category_id ?
-                                <div>
+                                <div key={i}>
                                     <label className='sub-category' onClick={() => Router.push('/[category]/[sub_category]', `/${element.value}/${e.value}`)}>{e.value}</label>
                                 </div>
                                 :
@@ -104,7 +106,7 @@ function Categories({ categories_list, sub_categories_list }) {
                 }
                 
                 .categories .footer{
-                    display: flex;
+                    display: block;
                 }
                 .categories .sticy-bottom-navbar{
                     display: none;

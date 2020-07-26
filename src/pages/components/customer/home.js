@@ -19,6 +19,7 @@ import Router from 'next/router'
 import MovingLogo from '../moving-logo';
 React.useLayoutEffect = React.useEffect
 
+import translate from '../../../i18n/translate'
 
 const responsive = {
     superLargeDesktop: {
@@ -102,10 +103,10 @@ const Home = (props) => {
                 <Col lg={6} md={12} sm={12} xs={12} style={{ height: '100%' }}>
                     <Card className='first_card'>
                         <Card.Header className='card_header'>
-                            <Link href='products/[component]' as={`/products/new-arrival`}>
+                            <Link href='/products/[component]' as={`/products/new-arrival`}>
                                 <a style={{ fontSize: '15px', width: '100%', color: `${GlobalStyleSheet.primry_color}` }} className='d-inline-flex align-items-center'>
-                                    <label className='mr-auto' >New Arrivals</label>
-                                    <span style={{ color: 'blue', fontSize: '13px' }}> Show More</span>
+                                    <label className='mr-auto' >{translate('new_arrivals')}</label>
+                                    <span style={{ color: 'blue', fontSize: '13px' }}>{translate('show_more')}</span>
                                 </a>
                             </Link>
                         </Card.Header>
@@ -130,8 +131,8 @@ const Home = (props) => {
                                                     src={element.product_image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
                                                 <div className='d-inline-flex align-items-center'>
-                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >Rs.</span>{element.product_price}</label>
-                                                    <div className="text_animation pr-1">NEW</div>
+                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >{translate('rs')}.</span>{element.product_price}</label>
+                                                    <div className="text_animation pr-1">{translate('new')}</div>
                                                 </div>
                                             </div>
                                             :
@@ -139,8 +140,8 @@ const Home = (props) => {
                                                 <Image className='img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
                                                 <div className='d-inline-flex align-items-center'>
-                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >Rs.</span>{element.product_variations[0].price || '-'}</label>
-                                                    <div className="text_animation pr-1">NEW</div>
+                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >{translate('rs')}.</span>{element.product_variations[0].price || '-'}</label>
+                                                    <div className="text_animation pr-1">{translate('new')}</div>
                                                 </div>
                                             </div>
                                         }
@@ -156,8 +157,8 @@ const Home = (props) => {
                             <div className='mr-auto' ></div>
                             <Link href='products/[component]' as={`/products/top-ranking`}>
                                 <a style={{ fontSize: '15px', width: '100%', color: `${GlobalStyleSheet.primry_color}` }} className='d-inline-flex align-items-center'>
-                                    <label className='mr-auto' >Top Ranking</label>
-                                    <span style={{ color: 'blue', fontSize: '13px' }}> Show More</span>
+                                    <label className='mr-auto' >{translate('top_ranking')}</label>
+                                    <span style={{ color: 'blue', fontSize: '13px' }}>{translate('show_more')}</span>
                                 </a>
                             </Link>
                         </Card.Header>
@@ -183,8 +184,8 @@ const Home = (props) => {
 
                                                 <label className='my_label'>{element.product_name}</label>
                                                 <div className='d-inline-flex align-items-center'>
-                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >Rs.</span>{element.product_price}</label>
-                                                    <div className="text_animation pr-1">TOP</div>
+                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >{translate('rs')}.</span>{element.product_price}</label>
+                                                    <div className="text_animation pr-1">{translate('top')}</div>
                                                 </div>
                                             </div>
                                             :
@@ -192,8 +193,8 @@ const Home = (props) => {
                                                 <Image className='img' style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }} src={element.product_variations[0].image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
                                                 <div className='d-inline-flex align-items-center'>
-                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >Rs.</span>{element.product_variations[0].price || '-'}</label>
-                                                    <div className="text_animation pr-1">TOP</div>
+                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >{translate('rs')}.</span>{element.product_variations[0].price || '-'}</label>
+                                                    <div className="text_animation pr-1">{translate('top')}</div>
                                                 </div>
                                             </div>
 
@@ -206,7 +207,7 @@ const Home = (props) => {
                 </Col>
             </Row>
 
-            {categories && categories.map((element, index) =>
+            {props.home_categories_list && props.home_categories_list.map((element, index) =>
                 <CategoryCard
                     key={element._id}
                     element={element}
@@ -378,7 +379,7 @@ function CategoryCard(props) {
                     </Row>
                     {loading &&
                         <Row noGutters className='box_shadow'>
-                            <LoadingCard />
+                            <LoadingCategoryCard />
                         </Row>
                     }
                 </Card.Body>
@@ -451,15 +452,14 @@ function CategoryProducts(props) {
         <Card as={Col} lg={2} md={3} sm={3} xs={4} className="category_product_card">
             {props.element.product_type == "simple-product" ?
                 <div className='category_card_div'
-                    onClick={() => Router.push('/[category]/[sub_category]/[product]',
-                        `/${props.element.category.value}/${props.element.sub_category.value}/${props.element._id}`)}
+                    onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${props.element.category.value}/${props.element.sub_category.value}/${props.element._id}`)}
                 >
                     <Image ref={ref} className='category_product_img'
                         style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
                         src={props.element.product_image_link[0].url} />
 
                     <label className='my_label'>{props.element.product_name}</label>
-                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{props.element.product_price}</label>
+                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{props.element.product_price}</label>
                 </div>
                 :
                 <div className='category_card_div'
@@ -470,7 +470,7 @@ function CategoryProducts(props) {
                         style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
                         src={props.element.product_variations[0].image_link[0].url} />
                     <label className='my_label'>{props.element.product_name}</label>
-                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{props.element.product_variations[0].price}</label>
+                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{props.element.product_variations[0].price}</label>
                 </div>
             }
             <style type="text/css">{`
@@ -518,22 +518,36 @@ function CategoryProducts(props) {
     )
 }
 
-function LoadingCard(props) {
+function LoadingCategoryCard(props) {
     const [ref, { x, y, width }] = useDimensions();
     let loadingCard = ['0', '1', '2', '3', '4', '5', '6']
 
     return (
         <>
             {loadingCard.map((element, index) =>
-                <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='category_product_card'>
-                    <div className='loading_card_div'>
-                        <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
-                            <MovingLogo />
+                isMobile ?
+                    index < 6 ?
+                        <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='category_product_card'>
+                            <div className='loading_card_div'>
+                                <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
+                                    <MovingLogo />
+                                </div>
+                                <label className='my_label'>{'-'}</label>
+                                <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
+                            </div>
+                        </Card>
+                        :
+                        null
+                    :
+                    <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='category_product_card'>
+                        <div className='loading_card_div'>
+                            <div ref={ref} className=' loadin_img_div' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} >
+                                <MovingLogo />
+                            </div>
+                            <label className='my_label'>{'-'}</label>
+                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
                         </div>
-                        <label className='my_label'>{'-'}</label>
-                        <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
-                    </div>
-                </Card>
+                    </Card>
             )}
             <style type="text/css">{`
                 .category_product_card{
@@ -613,7 +627,7 @@ function OnlyProducts(props) {
     }, []);
     return (
         <div className='only_products'>
-            <label className='header'>You May Like</label>
+            <label className='header'>{translate('you_may_like')}</label>
             <Row noGutters>
                 {_products && _products.map((element, index) =>
                     _products.length == (index + 1) ?
@@ -625,13 +639,13 @@ function OnlyProducts(props) {
                                         src={element.product_image_link[0].url}
                                     />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
+                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_price}</label>
                                 </div>
                                 :
                                 <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
+                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_variations[0].price}</label>
                                 </div>
                             }
                         </Card>
@@ -644,13 +658,13 @@ function OnlyProducts(props) {
                                         src={element.product_image_link[0].url}
                                     />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
+                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_price}</label>
                                 </div>
                                 :
                                 <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
+                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_variations[0].price}</label>
                                 </div>
                             }
                         </Card>
@@ -666,7 +680,7 @@ function OnlyProducts(props) {
                                             <MovingLogo />
                                         </div>
                                         <label className='my_label'>{'-'}</label>
-                                        <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
+                                        <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
                                     </div>
                                 </Card>
                                 :
@@ -678,7 +692,7 @@ function OnlyProducts(props) {
                                         <MovingLogo />
                                     </div>
                                     <label className='my_label'>{'-'}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
+                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
                                 </div>
                             </Card>
                     )}

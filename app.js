@@ -110,8 +110,8 @@ app
       });
     });
 
-    app.use(accessControls);
     app.use(cors());
+    app.use(accessControls);
 
     const UsersRoutes = require("./api/routes/users.routes");
     const ProductsRoutes = require("./api/routes/products.routes");

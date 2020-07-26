@@ -17,7 +17,7 @@ export default function ChangrProfilePicture(props) {
         formData.append('myImage', img)
 
         console.log('token:', props._id)
-        const url = MuhalikConfig.PATH + `/api/users/avatar/${props._id}`
+        const url = MuhalikConfig.PATH + `/api/users/user-avatar/${props._id}`
         axios.put(url, formData, {
             headers: {
                 'content-type': 'multipart/form-data',

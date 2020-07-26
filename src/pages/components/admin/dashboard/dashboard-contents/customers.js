@@ -286,7 +286,7 @@ function CustomerTable(props) {
             }
         }
 
-        const url = MuhalikConfig.PATH + `/api/users/status/${single_user._id}`;
+        const url = MuhalikConfig.PATH + `/api/users/user-status/${single_user._id}`;
         await axios.put(url, data, {
             headers: { 'authorization': props.token }
         }).then(function (response) {

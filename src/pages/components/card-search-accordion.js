@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 
 export default function CardSearchAccordion(props) {
     const [searchType, setSearchType] = useState('')
-    const [searchValue, setSearchValue] = useState('')
+    const [searchValue, setSearchValue] = useState(props.value)
     const [options, setOptions] = useState([])
     function handleSearchEnterPress(e) {
         var key = e.keyCode || e.which;
@@ -15,13 +15,9 @@ export default function CardSearchAccordion(props) {
         }
     }
 
-    function handleSearchBtnClick(e) {
-        if (e.target.value != '') {
-            setSearchValue(e.target.value)
-        } else {
-            props.setIsSearch(false)
-            setSearchValue(e.target.value)
-        }
+    function handleSearchBtnClick(value) {
+        setSearchValue(value)
+        props.handleSearch(searchType, value)
     }
 
     useEffect(() => {
@@ -116,13 +112,14 @@ export default function CardSearchAccordion(props) {
                                             name="search"
                                             onKeyPress={(e) => handleSearchEnterPress(e)}
                                             value={searchValue}
-                                            onChange={(e) => handleSearchBtnClick(e)}
+                                            onChange={(e) => handleSearchBtnClick(e.target.value)}
                                         />
-                                        <InputGroup.Append >
-                                            <Button size='sm' variant='light' onClick={() => props.handleSearch(searchType, searchValue)}>
-                                                {'Search'}
+                                        {searchValue && <InputGroup.Append >
+                                            <Button size='sm' variant='danger' onClick={() => handleSearchBtnClick('')}>
+                                                {'x'}
                                             </Button>
                                         </InputGroup.Append>
+                                        }
                                     </InputGroup>
                                 </Col>
                             </Row>

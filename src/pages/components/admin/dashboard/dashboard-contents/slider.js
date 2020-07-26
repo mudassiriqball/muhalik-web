@@ -49,7 +49,7 @@ class Slider extends Component {
         formData.append('sub_category', this.state.sub_category.value)
         formData.append('myImage', this.state.img)
 
-        const url = MuhalikConfig.PATH + '/api/sliders/';
+        const url = MuhalikConfig.PATH + '/api/sliders/add-slider';
         await axios.post(url, formData, {
             headers: {
                 'content-type': 'multipart/form-data',
@@ -190,7 +190,7 @@ class Slider extends Component {
             let formData = new FormData()
             formData.append('myImage', copyArray[index].newImg)
 
-            const url = MuhalikConfig.PATH + `/api/sliders/${copyArray[index]._id}`
+            const url = MuhalikConfig.PATH + `/api/sliders/sliders/${copyArray[index]._id}`
             await axios.put(url, formData, {
                 headers: {
                     'content-type': 'multipart/form-data',
@@ -233,7 +233,7 @@ class Slider extends Component {
         });
         const currentComponent = this
 
-        const url = MuhalikConfig.PATH + `/api/sliders/${copyArray[index]._id}`
+        const url = MuhalikConfig.PATH + `/api/sliders/slider/${copyArray[index]._id}`
         await axios.delete(url, {
             headers: {
                 'authorization': this.state.token,

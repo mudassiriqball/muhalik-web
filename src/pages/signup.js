@@ -19,6 +19,10 @@ import Toolbar from './components/toolbar';
 import { checkAuth } from '../sdk/core/authentication-service'
 import MyButton from './components/buttons/my-btn'
 
+import translate from '../i18n/translate'
+import TranslateFormControl from '../i18n/translate-form-control'
+import TranslateOption from '../i18n/translate-option'
+
 
 // RegEx for phone number validation
 const phoneRegExp = /^\+(?:[0-9]?){6,14}[0-9]$/;
@@ -26,39 +30,39 @@ const phoneRegExp = /^\+(?:[0-9]?){6,14}[0-9]$/;
 // /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
 
 const schema = yup.object({
-    mobile: yup.string().required("Enter Mobile Number"),
+    mobile: yup.string().required(translate('enter_mobile_nmbr')),
 
-    full_name: yup.string().required("Enter Full Name")
-        .min(5, "Must have at least 5 characters")
-        .max(25, "Can't be longer than 25 characters"),
+    full_name: yup.string().required(translate('enter_full_name'))
+        .min(5, translate('min_full_name'))
+        .max(25, translate('max_full_name')),
 
     verification_code: yup.string(),
 
-    email: yup.string().email("Must be a valid email address")
-        .max(100, "Can't be longer than 100 characters"),
+    email: yup.string().email(translate('enter_valid_email'))
+        .max(100, translate('email_max')),
 
-    password: yup.string().required("Enter Password")
-        .min(8, "Password must have at least 8 characters")
-        .max(20, "Can't be longer than 20 characters"),
+    password: yup.string().required(translate('enter_password'))
+        .min(8, translate('password_min'))
+        .max(20, translate('password_max')),
 
-    confirm_password: yup.string().required("Enter Confirm Password").when("password", {
+    confirm_password: yup.string().required(translate('enter_confirm_password')).when("password", {
         is: val => (val && val.length > 0 ? true : false),
         then: yup.string().oneOf(
             [yup.ref("password")],
-            "Passwords must match"
+            translate('passwrd_match')
         )
     }),
 
-    countary: yup.string().required("Select Countary"),
-    city: yup.string().required("Enter City Name")
-        .min(3, "Must have at least 3 characters")
-        .max(30, "Can't be longer than 30 characters"),
+    countary: yup.string().required(translate('select_country')),
+    city: yup.string().required(translate('enter_city'))
+        .min(3, translate('city_mix'))
+        .max(30, translate('city_max')),
 
-    gender: yup.string().required("Enter Gender"),
+    gender: yup.string().required(translate('enter_gender')),
 
-    address: yup.string().required("Enter Address")
-        .min(3, "Must have at least 3 characters")
-        .max(100, "Can't be longer than 100 characters"),
+    address: yup.string().required(translate('enter_address'))
+        .min(3, translate('adress_min'))
+        .max(100, translate('address_max')),
 
     role: yup.string(),
 });
@@ -101,7 +105,7 @@ class Signup extends Component {
             const url = MuhalikConfig.PATH + `/api/users/check-mobile/${mobileNumber}`;
             await axios.get(url).then((response) => {
                 currentComponent.setState({
-                    mobileError: 'This number already exists',
+                    mobileError: translate('number_already_exists'),
                     feedback: '',
                     isCodeSended: false,
                     isCodeVerified: false,
@@ -122,7 +126,7 @@ class Signup extends Component {
                         currentComponent.setState({
                             isCodeSended: true,
                             mobileError: '',
-                            feedback: 'Code Sended, Check your number',
+                            feedback: translate('code_sended'),
                             sendCodeLoading: false,
                         })
                         let delay = 1000
@@ -135,7 +139,7 @@ class Signup extends Component {
                         }, delay)
                     }).catch(function (error) {
                         currentComponent.setState({
-                            mobileError: 'Error: Code not sended',
+                            mobileError: translate('code_not_sended'),
                             feedback: '',
                             isCodeSended: false,
                             isCodeVerified: false,
@@ -146,7 +150,7 @@ class Signup extends Component {
         } else {
             this.setState({
                 isCodeSended: false,
-                mobileError: 'Enter valid number with countary code',
+                mobileError: translate('enter_valid_number'),
                 feedback: '',
                 isCodeVerified: false,
             })
@@ -159,13 +163,13 @@ class Signup extends Component {
         confirmationResult.confirm(code).then(function (result) {
             currentComponent.setState({
                 isCodeVerified: true,
-                feedback: 'Number Verified',
+                feedback: translate('number_verified'),
                 verificationCodeError: '',
                 isResendCode: false,
             })
         }).catch(function (error) {
             currentComponent.setState({
-                verificationCodeError: 'Invalid Code, Try again',
+                verificationCodeError: translate('invalid_code'),
                 feedback: '',
             })
         });
@@ -175,10 +179,10 @@ class Signup extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    userRegister(data, currentComponent) {
+    async userRegister(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/register';
         if (this.state.isCodeVerified && this.state.isCodeSended) {
-            axios.post(url, data).then(function (response) {
+            await axios.post(url, data).then(function (response) {
                 currentComponent.setState({
                     isLoading: false,
                     showToast: true,
@@ -189,12 +193,12 @@ class Signup extends Component {
                 Router.push('/login');
                 return true;
             }).catch(function (error) {
-                currentComponent.setState({ isLoading: false });
-                currentComponent.setState({ serverErrorMsg: error.response.data.message })
+                currentComponent.setState({ isLoading: false, serverErrorMsg: error.response.data.message })
+                alert(translate('signup_failed'))
                 return false;
             })
         } else {
-            alert('Please first varify your mobile number!')
+            alert(translate('verify_your_nmbr'))
         }
     }
 
@@ -240,8 +244,8 @@ class Signup extends Component {
                                 <AlertModal
                                     onHide={(e) => this.setState({ showToast: false })}
                                     show={this.state.showToast}
-                                    header={'Success'}
-                                    message={'Account Created Successfully'}
+                                    header={translate('succss')}
+                                    message={translate('account_created')}
                                     iconname={faThumbsUp}
                                     color={'green'}
                                 />
@@ -256,8 +260,8 @@ class Signup extends Component {
                                                 <Col lg={12} md={12} sm={12} xs={12} className='mahaalk_col'>
                                                     <Image src="muhalik.jpg" roundedCircle fluid style={styles.image} />
                                                     <div className='d-flex flex-column ml-3'>
-                                                        <div className="text-center welcome_note" >Welcome To Mahaalk </div>
-                                                        <div className="text-center welcome_note" >Create Your Acount </div>
+                                                        <div className="text-center welcome_note" >{translate('welcome_to_mahaalk')} </div>
+                                                        <div className="text-center welcome_note" >{translate('creat_account')} </div>
                                                     </div>
                                                 </Col>
                                             </Form.Row>
@@ -265,7 +269,7 @@ class Signup extends Component {
 
                                             <Form.Row>
                                                 <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
-                                                    <Form.Label style={styles.label}>Mobile Number <span>*</span>
+                                                    <Form.Label style={styles.label}>{translate('mobile_number')} <span>*</span>
                                                         {this.state.isCodeVerified ?
                                                             null
                                                             :
@@ -296,7 +300,7 @@ class Signup extends Component {
                                                             }}
                                                             disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
                                                             className='append_button' variant='success' >
-                                                            <div className='append_button'>{this.state.isCodeSended ? 'Resend' : 'Send Code'}</div>
+                                                            <div className='append_button'>{this.state.isCodeSended ? traslate('resend') : translate('send_code')}</div>
                                                             {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                         </MyButton>
                                                         <Form.Control.Feedback type="invalid">
@@ -313,23 +317,21 @@ class Signup extends Component {
                                                                         mobileError: '',
                                                                         verificationCodeError: '',
                                                                     })
-                                                                }>Change Number</a>
+                                                                }>{translate('change_nmbr')}</a>
                                                                 :
                                                                 null
                                                             }
                                                         </div>
-
                                                     </InputGroup>
                                                 </Form.Group>
 
-
                                                 <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
-                                                    <Form.Label style={styles.label}>Verification Code <span> * </span></Form.Label>
+                                                    <Form.Label style={styles.label}>{translate('verification_code')} <span> * </span></Form.Label>
                                                     <InputGroup>
-                                                        <Form.Control
+                                                        <TranslateFormControl
+                                                            id='verification_code'
                                                             style={{ marginRight: '4px' }}
                                                             type="text"
-                                                            placeholder="Verification Code"
                                                             name="verification_code"
                                                             value={values.verification_code}
                                                             onChange={handleChange}
@@ -341,7 +343,7 @@ class Signup extends Component {
                                                                 onClick={() => this.handleVerifyVarificationCode(values.verification_code)}
                                                                 disabled={this.state.isCodeVerified}
                                                             >
-                                                                <div className='append_button'>{this.state.isCodeVerified ? 'Verified' : 'Verify'}</div>
+                                                                <div className='append_button'>{this.state.isCodeVerified ? translate('verified') : translate('verify')}</div>
                                                             </MyButton>
                                                             : null
                                                         }
@@ -352,20 +354,13 @@ class Signup extends Component {
                                                 </Form.Group>
                                             </Form.Row>
 
-
-
-
-
-                                            {/* <hr className='mt-0 pt-0' /> */}
-
-
                                             <Form.Row>
                                                 <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
-                                                    <Form.Label style={styles.label}>Full Name<span>*</span></Form.Label>
+                                                    <Form.Label style={styles.label}>{translate('full_name')}<span>*</span></Form.Label>
                                                     <InputGroup>
-                                                        <Form.Control
+                                                        <TranslateFormControl
+                                                            id='enter_full_name'
                                                             type="text"
-                                                            placeholder="Full Name"
                                                             name="full_name"
                                                             value={values.full_name}
                                                             onChange={handleChange}
@@ -377,43 +372,36 @@ class Signup extends Component {
                                                     </InputGroup>
                                                 </Form.Group>
                                                 <Form.Group as={Col} lg={3} md={3} sm={6} xs={12}>
-                                                    <Form.Label style={styles.label}>Gender
-                                                        <span> * </span>
-                                                    </Form.Label>
+                                                    <Form.Label style={styles.label}>{translate('gender')}<span> * </span> </Form.Label>
                                                     <Form.Control
                                                         as="select"
-
                                                         aria-describedby="gender"
                                                         name="gender"
                                                         value={values.gender}
                                                         onChange={handleChange}
                                                         isInvalid={touched.gender && errors.gender}
                                                     >
-                                                        <option>Select</option>
-                                                        <option> Male </option>
-                                                        <option> Female </option>
-                                                        <option> Other </option>
+                                                        <TranslateOption id='select' />
+                                                        <TranslateOption id='male' />
+                                                        <TranslateOption id='female' />
+                                                        <TranslateOption id='other' />
                                                     </Form.Control>
                                                     <Form.Control.Feedback type="invalid">
                                                         {errors.gender}
                                                     </Form.Control.Feedback>
                                                 </Form.Group>
                                                 <Form.Group as={Col} lg={3} md={3} sm={6} xs={12}>
-                                                    <Form.Label style={styles.label}>Countary
-                                                        <span> * </span>
-                                                    </Form.Label>
+                                                    <Form.Label style={styles.label}> {translate('country')} <span> * </span> </Form.Label>
                                                     <Form.Control
                                                         as="select"
-
-                                                        aria-describedby="countary"
+                                                        aria-describedby={translate('country')}
                                                         name="countary"
                                                         value={values.countary}
                                                         onChange={handleChange}
                                                         isInvalid={touched.countary && errors.countary}
                                                     >
-                                                        <option>Select</option>
-                                                        <option> KSA </option>
-                                                        <option> Pak </option>
+                                                        <TranslateOption id='select' />
+                                                        <TranslateOption id='ksa' />
                                                     </Form.Control>
                                                     <Form.Control.Feedback type="invalid">
                                                         {errors.countary}
@@ -421,14 +409,11 @@ class Signup extends Component {
                                                 </Form.Group>
 
                                                 <Form.Group as={Col} lg={3} md={3} sm={6} xs={12}>
-                                                    <Form.Label style={styles.label}>City
-                                                        <span> * </span>
-                                                    </Form.Label>
+                                                    <Form.Label style={styles.label}>{translate('city')} <span> * </span> </Form.Label>
                                                     <InputGroup>
-                                                        <Form.Control
+                                                        <TranslateFormControl
+                                                            id='enter_city'
                                                             type="text"
-
-                                                            placeholder="Enter City Name"
                                                             name="city"
                                                             value={values.city}
                                                             onChange={handleChange}
@@ -440,14 +425,11 @@ class Signup extends Component {
                                                     </InputGroup>
                                                 </Form.Group>
                                                 <Form.Group as={Col} lg={9} md={9} sm={12} xs={12}>
-                                                    <Form.Label style={styles.label}>Address
-                                                        <span> * </span>
-                                                    </Form.Label>
+                                                    <Form.Label style={styles.label}> {translate('address')} <span> * </span> </Form.Label>
                                                     <InputGroup>
-                                                        <Form.Control
+                                                        <TranslateFormControl
+                                                            id='enter_address'
                                                             type="text"
-
-                                                            placeholder="Enter Address"
                                                             name="address"
                                                             value={values.address}
                                                             onChange={handleChange}
@@ -462,10 +444,9 @@ class Signup extends Component {
 
                                             <Form.Row>
                                                 <Form.Group as={Col} lg={4} md={4} sm={12} xs={12} controlId="validationEmail">
-                                                    <Form.Label style={styles.label}>Email Address</Form.Label>
+                                                    <Form.Label style={styles.label}>{translate('email')}</Form.Label>
                                                     <Form.Control
                                                         type="email"
-
                                                         placeholder="mr.x@gmail.com"
                                                         name="email"
                                                         value={values.email}
@@ -477,13 +458,11 @@ class Signup extends Component {
                                                     </Form.Control.Feedback>
                                                 </Form.Group>
                                                 <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                                                    <Form.Label style={styles.label}>Password <span>*</span></Form.Label>
+                                                    <Form.Label style={styles.label}>{translate('password')} <span>*</span></Form.Label>
                                                     <InputGroup>
-                                                        <Form.Control
+                                                        <TranslateFormControl
+                                                            id='enter_password'
                                                             type={hide ? 'password' : 'text'}
-
-                                                            placeholder="Enter Password"
-                                                            aria-describedby="inputGroup"
                                                             name="password"
                                                             value={values.password}
                                                             onChange={handleChange}
@@ -500,20 +479,18 @@ class Signup extends Component {
                                                     </InputGroup>
                                                 </Form.Group>
                                                 <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                                                    <Form.Label style={styles.label}>Confirm Password <span>*</span></Form.Label>
+                                                    <Form.Label style={styles.label}>{translate('confirm_password')} <span>*</span></Form.Label>
                                                     <InputGroup>
-                                                        <Form.Control
+                                                        <TranslateFormControl
+                                                            id='reenter_password'
                                                             type={hide ? 'password' : 'text'}
-
-                                                            placeholder="Re-enter Password"
-                                                            aria-describedby="confirm_password"
                                                             name="confirm_password"
                                                             value={values.confirm_password}
                                                             onChange={handleChange}
                                                             isInvalid={touched.confirm_password && errors.confirm_password}
                                                         />
                                                         <InputGroup.Append>
-                                                            <MyButton variant='success' onClick={this.showPassword} className='append_button'>
+                                                            <MyButton onClick={this.showPassword}>
                                                                 {eyeBtn}
                                                             </MyButton>
                                                         </InputGroup.Append>
@@ -525,19 +502,19 @@ class Signup extends Component {
                                             </Form.Row>
                                             <Form.Row>
                                                 <Form.Label className="text-center" style={styles.label}>
-                                                    By creating acount, you agree to Mahaalk's
-                                                        <span>
-                                                        <Link href="./help/terms-and-conditions"><a> Terms & Conditions </a></Link>
+                                                    {translate('by_creating_account')}
+                                                    <span>
+                                                        <Link href="./help/terms-and-conditions"><a>{translate('terms_conditions')} </a></Link>
                                                     </span>
-                                                                and
-                                                            <span>
-                                                        <Link href="./help/privacy-statement"><a> Privacy Statement </a></Link>
+                                                    {translate('and')}
+                                                    <span>
+                                                        <Link href="./help/privacy-statement"><a>{translate('privacy_statement')}</a></Link>
                                                     </span>
                                                 </Form.Label>
                                                 <Form.Label className="text-center" style={styles.label}>
-                                                    Already have an account...
-                                                            <span>
-                                                        <Link href="login"><a>Login</a></Link>
+                                                    {translate('already_have_account')}
+                                                    <span>
+                                                        <Link href="login"><a>{translate('login')}</a></Link>
                                                     </span>
                                                 </Form.Label>
                                             </Form.Row>
@@ -552,7 +529,7 @@ class Signup extends Component {
                                                         onSubmit={handleSubmit}
                                                         variant='success'
                                                         disabled={this.state.isLoading || !this.state.isCodeVerified} block>
-                                                        {this.state.isLoading ? 'Registering' : 'Register'}
+                                                        {this.state.isLoading ? translate('signing') : translate('signup')}
                                                         {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                     </MyButton>
                                                 </Form.Group>

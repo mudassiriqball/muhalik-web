@@ -72,7 +72,7 @@ export default class Orders extends Component {
             }
         }
 
-        const url = MuhalikConfig.PATH + `/api/orders/${this.state.single_order._id}`;
+        const url = MuhalikConfig.PATH + `/api/orders/user-order-status/${this.state.single_order._id}`;
         await axios.put(url, data, {
             headers: { 'authorization': currentComponent.props.token }
         }).then(function (response) {
@@ -344,13 +344,13 @@ function Order(props) {
             }
         }
 
-        const url = MuhalikConfig.PATH + `/api/orders/${single_order._id}`;
+        const url = MuhalikConfig.PATH + `/api/orders/user-order-status/${single_order._id}`;
         await axios.put(url, data, {
             headers: { 'authorization': props.token }
         }).then(function (response) {
             setConfirmModalLoading(false)
             setShowConfirmModal(false)
-            setAlertModalMsg(`Order Status Updated  successfully`)
+            setAlertModalMsg(`Order Status Updated successfully`)
             setShowAlertModal(true)
             props.ordersReloadCountHandler()
             props.setRefresh()

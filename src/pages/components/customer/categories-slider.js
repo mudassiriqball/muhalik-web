@@ -1,6 +1,7 @@
 import { Row, Col, Image, Nav } from 'react-bootstrap'
 import GlobalStyleSheet from '../../../styleSheet'
 import Link from 'next/link'
+import Router from 'next/router'
 
 const CategoriesSlider = (props) => {
     return (
@@ -9,11 +10,11 @@ const CategoriesSlider = (props) => {
                 {props.categories_list && props.categories_list.map((element, index) =>
                     <Link href='/[category]' as={`/${element.value}`} key={index} >
                         {props.active_category == element.value ?
-                            <a className='item' style={{ color: 'blue' }}>
+                            <a className='item' style={{ color: 'blue' }} onClick={() => Router.push('/[category]', `/${element.value}`)}>
                                 {element.value}
                             </a>
                             :
-                            <a className='item'>
+                            <a className='item' onClick={() => Router.push('/[category]', `/${element.value}`)}>
                                 {element.value}
                             </a>
                         }

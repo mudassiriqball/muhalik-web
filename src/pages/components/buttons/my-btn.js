@@ -11,6 +11,7 @@ export default function MyButton(props) {
                 id={props.id}
                 disabled={props.disabled}
                 block={props.block}
+                style={props.style}
             >
                 {props.children}
             </Button>

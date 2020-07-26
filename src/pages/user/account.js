@@ -32,13 +32,15 @@ import PendingOrders from '../components/profile/pending-orders'
 import DeliveredOrders from '../components/profile/delivered-orders'
 import CancelledOrders from '../components/profile/cancelled-orders'
 
+import translate from '../../i18n/translate'
+
 
 function Account() {
     const [token, setToken] = useState({ role: '', full_name: '', status: '' })
     const [undecoded_token, setUndecodedToken] = useState('')
 
     const [user, setUser] = useState('')
-    const [view, setView] = useState('')
+    const [view, setView] = useState('account')
     const [cart_count, setCart_count] = useState(0)
 
     const [showAlertModal, setShowAlertModal] = useState(false)
@@ -71,7 +73,7 @@ function Account() {
         }
     }
     async function getUser(id) {
-        const user_url = MuhalikConfig.PATH + `/api/users/user/${id}`;
+        const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${id}`;
         await axios.get(user_url).then((res) => {
             setUser(res.data.data[0])
         }).catch((error) => {
@@ -79,7 +81,7 @@ function Account() {
     }
     function handleUrlChange() {
         if (window.location.href == `${MuhalikConfig.PATH} + /user/account`) {
-            setView('')
+            setView('account')
         } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?my-profile`) {
             setView('my_profile')
         } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?change-profile-picture`) {
@@ -98,13 +100,12 @@ function Account() {
         } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?cancelled-orders` && user.role == 'customer') {
             setView('cancelled_orders')
         } else {
-            history.pushState(null, '', '/user/account')
-            setView('')
+            history.replaceState(null, '', '/user/account')
+            setView('account')
         }
     }
 
     function handleShowAlert(msg) {
-        alert('ghuss yas')
         setAlertMsg(msg)
         setShowAlertModal(true)
     }
@@ -131,25 +132,25 @@ function Account() {
             <AlertModal
                 onHide={(e) => setShowAlertModal(false)}
                 show={showAlertModal}
-                header={'Success'}
+                header={translate('success')}
                 message={alertMsg}
                 iconname={faThumbsUp}
                 color={'green'}
             />
             <Toolbar title={'Account'} />
-            {view == '' ?
-                <ListGroup >
+            {view == 'account' ?
+                <ListGroup style={{ marginBottom: '50px' }}>
                     <div className='w-100 p-1'></div>
 
                     {user == '' ?
-                        <ListGroup.Item className='d-inline-flex align-items-center'>
+                        <ListGroup.Item className='d-flex flex-column'>
                             <div className='d-inline-flex align-items-center mb-2'>
                                 <FontAwesomeIcon icon={faUserCircle} style={styles.account_fontawesome} />
-                                <Link href='login' className='label'><a>Login</a></Link>
+                                <Link href='/login'><a>{translate('login')}</a></Link>
                             </div>
                             <div className='d-inline-flex align-items-center'>
-                                <div className='mr-auto label'>Don't have account? </div>
-                                <Link href='signup' className='label align-items-center'><a> Register </a></Link>
+                                <div className='mr-auto label'> {translate('dont_have_account')} </div>
+                                <Link href='/signup'><a> {translate('signup')} </a></Link>
                             </div>
                         </ListGroup.Item>
                         :
@@ -166,50 +167,53 @@ function Account() {
                                 <div className='d-inline-flex align-items-center'>
                                     <div className='mr-auto'></div>
                                     <Nav.Link className='p-0'
-                                        onClick={() => { history.pushState(null, '', '/user/account?my-profile'), setView('my_profile') }}
-                                    > View </Nav.Link>
+                                        onClick={() => { history.replaceState(null, '', '/user/account?my-profile'), setView('my_profile') }}
+                                    > {translate('view')} </Nav.Link>
                                 </div>
                             </ListGroup.Item>
                             <ListGroup.Item action className='list_item'
-                                onClick={() => { history.pushState(null, '', `/user/account?${user.role == 'vendor' ? 'shop-address' : 'my-address'}`), setView('address') }}
+                                onClick={() => { history.replaceState(null, '', `/user/account?${user.role == 'vendor' ? 'shop-address' : 'my-address'}`), setView('address') }}
                             >
                                 <FontAwesomeIcon icon={faHome} style={styles.fontawesome} />
-                                <div className='label'>{user.role == 'vendor' ? 'Shop Address' : 'My Address'}</div>
+                                <div className='label'>{user.role == 'vendor' ? translate('shop_address') : translate('address')}</div>
                                 <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                             </ListGroup.Item>
                             <ListGroup.Item action className='list_item'
-                                onClick={() => { history.pushState(null, '', '/user/account?change-profile-picture'), setView('change_picture') }}
+                                onClick={() => { history.replaceState(null, '', '/user/account?change-profile-picture'), setView('change_picture') }}
                             >
                                 <FontAwesomeIcon icon={faImage} style={styles.fontawesome} />
-                                <div className='label'>Change Picture</div>
+                                <div className='label'> {translate('change_picture')}</div>
                                 <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                             </ListGroup.Item>
                             <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
                                 <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
-                                <div className='label'>Change Password</div>
+                                <div className='label'> {translate('change_password')}</div>
                                 <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                             </ListGroup.Item>
+
+                            <div className='w-100 p-1'></div>
                             {user.role == 'customer' ?
                                 <>
+                                    <ListGroup.Item disabled>{translate('my_orders')}</ListGroup.Item>
                                     <ListGroup.Item action className='list_item'
-                                        onClick={() => { history.pushState(null, '', '/user/account?pending-orders'), setView('pending_orders') }}
+                                        onClick={() => { history.replaceState(null, '', '/user/account?pending-orders'), setView('pending_orders') }}
                                     >
                                         <FontAwesomeIcon icon={faClock} style={styles.fontawesome} />
-                                        <div className='label'>Pendings</div>
+                                        <div className='label'>{translate('pending')}</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                                     </ListGroup.Item>
                                     <ListGroup.Item action className='list_item'
-                                        onClick={() => { history.pushState(null, '', '/user/account?delivered-orders'), setView('delivered_orders') }}
+                                        onClick={() => { history.replaceState(null, '', '/user/account?delivered-orders'), setView('delivered_orders') }}
                                     >
                                         <FontAwesomeIcon icon={faThumbsUp} style={styles.fontawesome} />
-                                        <div className='label'>Delivered</div>
+                                        <div className='label'>{translate('delivered')}</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                                     </ListGroup.Item>
                                     <ListGroup.Item action className='list_item'
-                                        onClick={() => { history.pushState(null, '', '/user/account?cancelled-orders'), setView('cancelled_orders') }}
+                                        onClick={() => { history.replaceState(null, '', '/user/account?cancelled-orders'), setView('cancelled_orders') }}
                                     >
                                         <FontAwesomeIcon icon={faBan} style={styles.fontawesome} />
-                                        <div className='label'>Cancelled</div>
+                                        <div className='label'>{translate('cancelled')}</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                                     </ListGroup.Item>
                                 </>
@@ -220,38 +224,29 @@ function Account() {
                     }
 
                     <div className='w-100 p-1'></div>
-                    {user.role == 'customer' && <>
-                        <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
-                            <FontAwesomeIcon icon={faSuitcase} style={styles.fontawesome} />
-                            <div className='label'>My Orders</div>
-                            <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                        </ListGroup.Item>
-                        <div className='w-100 p-1'></div>
-                    </>
-                    }
 
                     {token.role == '' || token.role == 'customer' ?
                         <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
                             <FontAwesomeIcon icon={faDollarSign} style={styles.fontawesome} />
-                            <div className='label'>Sell on Mahaalk</div>
+                            <div className='label'>{translate('sell_on_mahaalk')}</div>
                             <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                         </ListGroup.Item>
                         :
                         <ListGroup.Item className='list_item' action onClick={() => Router.push(dashboard_href)}>
                             <FontAwesomeIcon icon={faTachometerAlt} style={styles.fontawesome} />
-                            <div className='label'>Go to Dashboard</div>
+                            <div className='label'>{translate('go_to_dashbord')}</div>
                             <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                         </ListGroup.Item>
                     }
                     <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
                         <FontAwesomeIcon icon={faLanguage} style={styles.fontawesome} />
-                        <div className='label'>Language & Currency</div>
+                        <div className='label'> {translate('language_currency')}</div>
                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                     </ListGroup.Item>
 
                     {token.role == 'customer' && <ListGroup.Item className='list_item' action>
                         <FontAwesomeIcon icon={faDownload} style={styles.fontawesome} />
-                        <div className='label'>Get Mahaalk's App</div>
+                        <div className='label'>{translate('get_app')}</div>
                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                     </ListGroup.Item>
                     }
@@ -261,8 +256,8 @@ function Account() {
                     {token.full_name != '' && <ListGroup.Item action onClick={logout} className='list_item'>
                         <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
                         <div className='label'>
-                            Logout
-                        {loading && <Spinner size='sm' variant='primary' animation='grow' />}
+                            {translate('logout')}
+                            {loading && <Spinner size='sm' variant='primary' animation='grow' />}
                         </div>
                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                     </ListGroup.Item>
@@ -270,25 +265,12 @@ function Account() {
                 </ListGroup>
                 :
                 <>
-                    {view == 'manage_account' && <ManageAccount
-                        _id={user._id}
-                        role={user.role}
-                        full_name={user.full_name}
-                        shop_name={user.shop_name}
-                        address={user.address}
-                        shop_address={user.shop_address}
-                        countary={user.countary}
-                        city={user.city}
-                        avatar={user.avatar}
-                        mobile={user.mobile}
-                        email={user.email}
-                        setView={(value) => setView(value)}
-                    />}
                     {view == 'my_profile' && <MyProfile
                         token={undecoded_token}
                         _id={user._id}
                         role={user.role}
                         full_name={user.full_name}
+                        gender={user.gender}
                         mobile={user.mobile}
                         email={user.email}
                         showAlert={(msg) => handleShowAlert(msg)}
@@ -314,21 +296,6 @@ function Account() {
                         reloadUser={() => getUser(token._id)}
                     />}
 
-                    {view == 'manage_orders' && <ManageOrders
-                        _id={user._id}
-                        role={user.role}
-                        full_name={user.full_name}
-                        shop_name={user.shop_name}
-                        address={user.address}
-                        shop_address={user.shop_address}
-                        countary={user.countary}
-                        city={user.city}
-                        avatar={user.avatar}
-                        mobile={user.mobile}
-                        email={user.email}
-                        setView={(value) => setView(value)}
-                        setView={(value) => setView(value)}
-                    />}
                     {view == 'pending_orders' && <PendingOrders
                         _id={user._id}
                         role={user.role}
@@ -380,9 +347,7 @@ function Account() {
             </div>
 
             <style type="text/css">{`
-                .account a {
-                    font-size: 13px;
-                }
+                
                 .account {
                     min-height: 100vh;
                     background: ${GlobalStyleSheet.body_color};
@@ -390,6 +355,9 @@ function Account() {
                     top: 0;
                     left: 0;
                     right: 0;
+                }
+                .account a {
+                    font-size: 13px;
                 }
                 .account .list_item {
                     padding-top: 4.5%;

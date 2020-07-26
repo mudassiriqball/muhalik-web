@@ -18,6 +18,7 @@ import ProductFields from './dashboard-contents/product-contents/product-fields'
 // Category
 import AddCategory from './dashboard-contents/category-contents/add-category'
 import AllCategories from './dashboard-contents/category-contents/all-categories'
+import HomeScreenCategories from './dashboard-contents/category-contents/home-screen-categories'
 
 import Inventory from './dashboard-contents/inventory';
 import Orders from './dashboard-contents/orders'
@@ -44,7 +45,7 @@ const DashboardSideDrawer = props => {
                         {/* Links */}
                         <Nav.Item style={styles.image_div}>
                             <p>
-                                <Image src="muhalik.jpg" roundedCircle thumbnail fluid style={styles.image} />
+                                <Image src={props.avatar} roundedCircle thumbnail fluid style={styles.image} />
                                 <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
                             </p>
                         </Nav.Item>
@@ -114,16 +115,23 @@ const DashboardSideDrawer = props => {
                         {show_category ?
                             <div>
                                 <div className="product_submenu">
-                                    <Nav.Link eventKey="AddCategory" onClick={props.click} style={styles.product_submenu_link} >
+                                    <Nav.Link eventKey="AddCategory" onClick={props.click} style={styles.categories_submenu_link} >
                                         <FontAwesomeIcon size="xs" icon={faPlusCircle} style={styles.fontawesome} />
                                         <div className="mr-auto"> Add Category</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                     </Nav.Link>
                                 </div>
                                 <div className="product_submenu">
-                                    <Nav.Link eventKey="AllCategories" onClick={props.click} style={styles.product_submenu_link} >
+                                    <Nav.Link eventKey="AllCategories" onClick={props.click} style={styles.categories_submenu_link} >
                                         <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
                                         <div className="mr-auto"> All Categories</div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                                <div className="product_submenu">
+                                    <Nav.Link eventKey="HomeScreenCategories" onClick={props.click} style={styles.categories_submenu_link} >
+                                        <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                        <div className="mr-auto">Home Screen Categories</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                     </Nav.Link>
                                 </div>
@@ -205,6 +213,9 @@ const DashboardSideDrawer = props => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="AllCategories">
                                 <AllCategories {...props} />
+                            </Tab.Pane>
+                            <Tab.Pane eventKey="HomeScreenCategories">
+                                <HomeScreenCategories {...props} />
                             </Tab.Pane>
                             <Tab.Pane eventKey="Slider">
                                 <Slider {...props} />
@@ -296,16 +307,20 @@ const styles = {
         padding: '2%'
     },
     image: {
-        width: '80px'
+        marginTop: '5px',
+        minWidth: '100px',
+        maxWidth: '100px',
+        minHeight: '100px',
+        maxHeight: '100px',
     },
     muhalik: {
         color: `${GlobalStyleSheet.admin_primry_color}`,
-        fontSize: '16px',
+        fontSize: '14px',
+        margin: '0%',
+        padding: '1%',
         border: 'none',
-        cursor: 'pointer',
-        background: 'none',
-        padding: '0px',
-        margin: '0px'
+        cursor: 'default',
+        background: 'none'
     },
     nav_link: {
         color: 'white',
@@ -314,7 +329,7 @@ const styles = {
         alignItems: 'center',
         height: '45px'
     },
-    product_submenu_link: {
+    categories_submenu_link: {
         color: 'white',
         fontSize: '11px',
         display: 'flex',

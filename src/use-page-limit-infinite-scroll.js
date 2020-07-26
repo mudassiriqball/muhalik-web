@@ -6,11 +6,13 @@ export default function usePageLimitInfiniteScroll(isAppend, pageNumber, limit) 
     const [_loading, setLoading] = useState('')
     const [_error, setError] = useState('')
     const [_products, setProducts] = useState([])
-    const [_hasMore, setHasMore] = useState('')
-
+    const [_hasMore, setHasMore] = useState(false)
+    const [_pages, setPages] = useState(0)
+    const [_total, setTotal] = useState(0)
     useEffect(() => {
         if (isAppend == false)
-            setProducts([])
+            setProducts([]
+            )
     }, [pageNumber])
     useEffect(() => {
         getData()
@@ -20,7 +22,7 @@ export default function usePageLimitInfiniteScroll(isAppend, pageNumber, limit) 
         setLoading(true)
         setError(false)
         let cancle
-        const _url = MuhalikConfig.PATH + `/api/products/`
+        const _url = MuhalikConfig.PATH + `/api/products/all-products`
         await axios({
             method: 'GET',
             url: _url,
@@ -31,13 +33,21 @@ export default function usePageLimitInfiniteScroll(isAppend, pageNumber, limit) 
                 return [...new Set([...prevProducts, ...res.data.data])]
             })
             setHasMore(res.data.data.length > 0)
+            setTotal(res.data.total)
+            let count = res.data.total / 20
+            let rounded = Math.floor(count);
+            let decimal = count - rounded;
+            if (decimal > 0) {
+                setPages(rounded + 1)
+            } else {
+                setPages(rounded)
+            }
             setLoading(false)
         }).catch(err => {
             if (axios.isCancel(err)) return
             setError(true)
-            console.log('Error---->:', err)
         })
         return () => cancle()
     }
-    return { _loading, _error, _products, _hasMore }
+    return { _loading, _error, _products, _pages, _total, _hasMore }
 }

@@ -25,6 +25,8 @@ import PendingOrders from '../components/profile/pending-orders'
 import DeliveredOrders from '../components/profile/delivered-orders'
 import CancelledOrders from '../components/profile/cancelled-orders'
 
+import translate from '../../i18n/translate'
+
 
 export async function getServerSideProps(context) {
     let categories_list = []
@@ -89,7 +91,7 @@ export default function Profile(props) {
         } else if (window.location.href == `${MuhalikConfig.PATH} + /user/profile?cancelled-orders` && user.role == 'customer') {
             setView('cancelled_orders')
         } else {
-            history.pushState(null, '', '/user/profile?manage-account')
+            history.replaceState(null, '', '/user/profile?manage-account')
             setView('manage_account')
         }
     }
@@ -102,15 +104,15 @@ export default function Profile(props) {
             setUndecodedToken(_undecoded_token)
             await getUser(_token._id)
 
-            const count_url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
-            await axios.get(count_url).then((res) => {
+            const cart_count_url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
+            await axios.get(cart_count_url).then((res) => {
                 setCart_count(res.data.data.length)
             }).catch((error) => {
             })
         }
     }
     async function getUser(id) {
-        const user_url = MuhalikConfig.PATH + `/api/users/user/${id}`;
+        const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${id}`;
         await axios.get(user_url).then((res) => {
             setUser(res.data.data[0])
         }).catch((error) => {
@@ -162,48 +164,48 @@ export default function Profile(props) {
                         <Col lg={3} md={3}>
                             <ListGroup variant="flush" >
                                 <ListGroup.Item style={{ color: view == 'manage_account' || view == 'my_profile' || view == 'change_picture' || view == 'address' ? 'blue' : null }}
-                                    onClick={() => { history.pushState(null, '', '/user/profile?manage-account'), setView('manage_account') }}
+                                    onClick={() => { history.replaceState(null, '', '/user/profile?manage-account'), setView('manage_account') }}
                                 >
                                     {'Manage Account'}
                                 </ListGroup.Item>
                                 <ListGroup.Item style={{ color: view == 'my_profile' && 'blue' }}
-                                    onClick={() => { history.pushState(null, '', '/user/profile?my-profile'), setView('my_profile') }}
+                                    onClick={() => { history.replaceState(null, '', '/user/profile?my-profile'), setView('my_profile') }}
                                 >
-                                    {'My Profile'}
+                                    {translate('my_profile')}
                                 </ListGroup.Item>
                                 <ListGroup.Item style={{ color: view == 'address' && 'blue' }}
-                                    onClick={() => { history.pushState(null, '', `/user/profile?${user.role == 'vendor' ? 'shop-address' : 'my-address'}`), setView('address') }}
+                                    onClick={() => { history.replaceState(null, '', `/user/profile?${user.role == 'vendor' ? 'shop-address' : 'my-address'}`), setView('address') }}
                                 >
-                                    {user.role == 'vendor' ? 'Shop Address' : 'My Address'}
+                                    {user.role == 'vendor' ? translate('shop_address') : translate('address')}
                                 </ListGroup.Item>
                                 <ListGroup.Item style={{ color: view == 'change_picture' && 'blue' }}
-                                    onClick={() => { history.pushState(null, '', '/user/profile?change-profile-picture'), setView('change_picture') }}
+                                    onClick={() => { history.replaceState(null, '', '/user/profile?change-profile-picture'), setView('change_picture') }}
                                 >
-                                    {'Change Picture'}
+                                    {translate('change_picture')}
                                 </ListGroup.Item>
-                                <ListGroup.Item onClick={() => Router.push('/reset-password')}>Change Password</ListGroup.Item>
+                                <ListGroup.Item onClick={() => Router.push('/reset-password')}>{translate('change_password')}</ListGroup.Item>
                             </ListGroup>
                             {user.role == 'customer' &&
                                 <ListGroup variant="flush" >
                                     <ListGroup.Item style={{ color: view == 'manage_orders' || view == 'pending_orders' || view == 'delivered_orders' || view == 'cancelled_orders' ? 'blue' : null }}
-                                        onClick={() => { history.pushState(null, '', '/user/profile?manage-orders'), setView('manage_orders') }}
+                                        onClick={() => { history.replaceState(null, '', '/user/profile?manage-orders'), setView('manage_orders') }}
                                     >
-                                        {'Manage Orders'}
+                                        {translate('my_orders')}
                                     </ListGroup.Item>
                                     <ListGroup.Item style={{ color: view == 'pending_orders' && 'blue' }}
-                                        onClick={() => { history.pushState(null, '', '/user/profile?pending-orders'), setView('pending_orders') }}
+                                        onClick={() => { history.replaceState(null, '', '/user/profile?pending-orders'), setView('pending_orders') }}
                                     >
-                                        {'Pending'}
+                                        {translate('pending')}
                                     </ListGroup.Item>
                                     <ListGroup.Item style={{ color: view == 'delivered_orders' && 'blue' }}
-                                        onClick={() => { history.pushState(null, '', '/user/profile?delivered-orders'), setView('delivered_orders') }}
+                                        onClick={() => { history.replaceState(null, '', '/user/profile?delivered-orders'), setView('delivered_orders') }}
                                     >
-                                        {'Delivered'}
+                                        {translate('delivered')}
                                     </ListGroup.Item>
                                     <ListGroup.Item style={{ color: view == 'cancelled_orders' && 'blue' }}
-                                        onClick={() => { history.pushState(null, '', '/user/profile?cancelled-orders'), setView('cancelled_orders') }}
+                                        onClick={() => { history.replaceState(null, '', '/user/profile?cancelled-orders'), setView('cancelled_orders') }}
                                     >
-                                        {'Cancelled'}
+                                        {translate('cancelled')}
                                     </ListGroup.Item>
                                 </ListGroup>
                             }
@@ -228,6 +230,7 @@ export default function Profile(props) {
                                 _id={user._id}
                                 role={user.role}
                                 full_name={user.full_name}
+                                gender={user.gender}
                                 mobile={user.mobile}
                                 email={user.email}
                                 showAlert={(msg) => handleShowAlert(msg)}

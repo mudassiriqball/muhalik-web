@@ -2,15 +2,14 @@ import { Navbar, Nav, NavDropdown, Row, Col } from 'react-bootstrap'
 import GlobalStyleSheet from '../../../styleSheet'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-    faUser, faHome, faTh, faStoreAlt, faShoppingCart
-} from '@fortawesome/free-solid-svg-icons'
-import {
-    faUserCircle
-} from '@fortawesome/free-regular-svg-icons'
-
+import { faUser, faHome, faTh, faStoreAlt, faShoppingCart } from '@fortawesome/free-solid-svg-icons'
+import { faUserCircle } from '@fortawesome/free-regular-svg-icons'
 import { faProductHunt, faBuromobelexperte } from '@fortawesome/free-brands-svg-icons';
+
 import MuhalikConfig from '../../../sdk/muhalik.config'
+
+import translate from '../../../i18n/translate'
+
 
 const StickyBottomNavbar = () => {
     const [isSticky, setSticky] = React.useState(true);
@@ -42,7 +41,7 @@ const StickyBottomNavbar = () => {
             setCurentHref('categories')
         } else if (window.location.href == `${MuhalikConfig.PATH} + /cart`) {
             setCurentHref('cart')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /account`) {
+        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account`) {
             setCurentHref('account')
         }
     });
@@ -58,17 +57,17 @@ const StickyBottomNavbar = () => {
                             }}
                         >
                             <FontAwesomeIcon icon={faHome} style={styles.fontawesome} />
-                        Home
-                    </Nav.Link>
+                            {translate('home')}
+                        </Nav.Link>
                         <div className='mr-auto'></div>
-                        <Nav.Link href="categories" className='nav_link'
+                        <Nav.Link href="/categories" className='nav_link'
                             style={{
                                 color: curentHref == 'categories' ? `${GlobalStyleSheet.primry_color}` : '#a6a6a6'
                             }}
                         >
                             <FontAwesomeIcon icon={faBuromobelexperte} style={styles.Categories_fontawesome} />
-                        Categories
-                    </Nav.Link>
+                            {translate('categories')}
+                        </Nav.Link>
                         <div className='mr-auto'></div>
                         <Nav.Link href="/cart" className='nav_link'
                             style={{
@@ -76,7 +75,7 @@ const StickyBottomNavbar = () => {
                             }}
                         >
                             <FontAwesomeIcon icon={faShoppingCart} style={styles.fontawesome} />
-                            Cart
+                            {translate('cart')}
                         </Nav.Link>
 
                         <div className='mr-auto'></div>
@@ -86,8 +85,8 @@ const StickyBottomNavbar = () => {
                             }}
                         >
                             <FontAwesomeIcon icon={faUserCircle} style={styles.fontawesome} />
-                        Account
-                    </Nav.Link>
+                            {translate('cart')}
+                        </Nav.Link>
                     </Nav>
                 </Navbar>
             </div>
