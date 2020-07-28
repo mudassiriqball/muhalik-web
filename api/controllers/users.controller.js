@@ -96,7 +96,7 @@ usersController.registerUser = async (req, res) => {
 // Set avatar
 usersController.set_avatar = async (req, res) => {
 
-  const _id = req.params._id;
+  const _id=req.params._id;
   const url = req.files[0].location;
   try {
     Users.findOneAndUpdate(
@@ -148,22 +148,14 @@ usersController.getAll = async (req, res) => {
 };
 
 usersController.get_user = async (req, res) => {
-  let user;
+  let users;
   try {
-    user = await Users.find({ _id: req.params._id });
-    if (user) {
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: user,
-      });
-    } else {
-      res.status(500).send({
-        code: 500,
-        message: "User does not exists",
-      });
-    }
-
+    users = await Users.find({ _id: req.params._id });
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: users,
+    });
   } catch (error) {
     console.log("error", error);
     return res.status(500).send(error);
@@ -370,18 +362,18 @@ usersController.get_cart = async (req, res) => {
     });
   }
   let user;
-  let check = [];
+  let check=[];
   const _id = req.params._id;
   try {
     user = await Users.find({ _id: _id }, { cart: 1, _id: 0 });
-    for (let index = 0; index < user[0].cart.length; index++) {
+    for (let index = 0; index < user[0].cart.length; index++) {      
       check.push(user[0].cart[index]);
     }
     if (user) {
       res.status(200).send({
         code: 200,
         message: "Successful",
-        data: check,
+         data:check,
       });
     } else {
       res.status(500).send({
@@ -425,92 +417,92 @@ usersController.get_total_specific_users = async (req, res) => {
 usersController.get_users_by_query = async (req, res) => {
   let user;
   try {
-    if (req.query.field === "_id") {
-      console.log("aa gya 1");
-      user = await Users.paginate(
-        { role: req.params._role, _id: req.query.q, status: req.query.status },
-        {
-          limit: parseInt(req.query.limit),
-          page: parseInt(req.query.page),
+      if (req.query.field === "_id") {
+        console.log("aa gya 1");
+        user = await Users.paginate(
+          { role:req.params._role,_id: req.query.q,status:req.query.status },
+          {
+            limit: parseInt(req.query.limit),
+            page: parseInt(req.query.page),
+          }
+        );
+        if (user) {
+          res.status(200).send({
+            code: 200,
+            message: "Successful",
+            data: user,
+          });
+        } else {
+          res.status(500).send({
+            code: 500,
+            message: "Does Not Exist",
+          });
         }
-      );
-      if (user) {
-        res.status(200).send({
-          code: 200,
-          message: "Successful",
-          data: user,
-        });
-      } else {
-        res.status(500).send({
-          code: 500,
-          message: "Does Not Exist",
-        });
-      }
-    } else if (req.query.field === "full_name") {
-      user = await Users.paginate(
-        { role: req.params._role, full_name: req.query.q, status: req.query.status },
-        {
-          limit: parseInt(req.query.limit),
-          page: parseInt(req.query.page),
+      } else if (req.query.field === "full_name") {
+        user = await Users.paginate(
+          { role:req.params._role,full_name: req.query.q,status:req.query.status },
+          {
+            limit: parseInt(req.query.limit),
+            page: parseInt(req.query.page),
+          }
+        );
+        if (user) {
+          res.status(200).send({
+            code: 200,
+            message: "Successful",
+            data: user,
+          });
+        } else {
+          res.status(500).send({
+            code: 500,
+            message: "Does Not Exist",
+          });
         }
-      );
-      if (user) {
-        res.status(200).send({
-          code: 200,
-          message: "Successful",
-          data: user,
-        });
-      } else {
-        res.status(500).send({
-          code: 500,
-          message: "Does Not Exist",
-        });
-      }
-    } else if (req.query.field === "city") {
-      user = await Users.paginate(
-        { role: req.params._role, city: req.query.q, status: req.query.status },
-        {
-          limit: parseInt(req.query.limit),
-          page: parseInt(req.query.page),
+      } else if (req.query.field === "city") {
+        user = await Users.paginate(
+          { role:req.params._role,city: req.query.q,status:req.query.status },
+          {
+            limit: parseInt(req.query.limit),
+            page: parseInt(req.query.page),
+          }
+        );
+        if (user) {
+          res.status(200).send({
+            code: 200,
+            message: "Successful",
+            data: user,
+          });
+        } else {
+          res.status(500).send({
+            code: 500,
+            message: "Does Not Exist",
+          });
         }
-      );
-      if (user) {
-        res.status(200).send({
-          code: 200,
-          message: "Successful",
-          data: user,
-        });
-      } else {
-        res.status(500).send({
-          code: 500,
-          message: "Does Not Exist",
-        });
-      }
-    } else if (req.query.field === "mobile") {
-      console.log("aa gya mobile", req.query.q);
-      var mobile = req.query.q;
-      mobile = mobile.trim();
-      mobile = "+" + mobile;
-      user = await Users.paginate(
-        { role: req.params._role, mobile: mobile, status: req.query.status },
-        {
-          limit: parseInt(req.query.limit),
-          page: parseInt(req.query.page),
+      } else if (req.query.field === "mobile") {
+        console.log("aa gya mobile",req.query.q);
+         var mobile=req.query.q;
+         mobile=mobile.trim();
+         mobile="+"+mobile;
+        user = await Users.paginate(
+          { role:req.params._role,mobile: mobile,status:req.query.status },
+          {
+            limit: parseInt(req.query.limit),
+            page: parseInt(req.query.page),
+          }
+        );
+        if (user) {
+          res.status(200).send({
+            code: 200,
+            message: "Successful",
+            data: user,
+          });
+        } else {
+          res.status(500).send({
+            code: 500,
+            message: "Does Not Exist",
+          });
         }
-      );
-      if (user) {
-        res.status(200).send({
-          code: 200,
-          message: "Successful",
-          data: user,
-        });
-      } else {
-        res.status(500).send({
-          code: 500,
-          message: "Does Not Exist",
-        });
       }
-    }
   } catch (error) {
     console.log("error", error);
     return res.status(500).send(error);
@@ -613,8 +605,8 @@ usersController.add_to_cart = async (req, res) => {
 };
 
 usersController.update_profile = async (req, res) => {
-  const body = req.body;
-  const _id = req.params._id;
+  const body=req.body;
+  const _id=req.params._id;
   try {
     Users.findOneAndUpdate(
       { _id: _id },
@@ -690,15 +682,15 @@ usersController.deleteCartData = async (req, res) => {
 };
 
 usersController.delete_cart = async (req, res) => {
-  try {
+  try{
     const _id = req.params._id;
-    const result = await Users.update({ _id: _id }, { $unset: { cart: "" } }
+    const result = await Users.update({_id:_id},{$unset:{cart:""}}
     );
     res.status(200).send({
       code: 200,
       message: "Deleted Successfully",
     });
-  } catch (error) {
+  }catch (error) {
     return res.status(500).send(error);
   }
 };

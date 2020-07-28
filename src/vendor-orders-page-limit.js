@@ -16,15 +16,12 @@ export default function vendorOrdersPageLimit(token, vendor_id, refresh, status,
         getData()
     }, [status, pageNumber, refresh])
 
-    useEffect(() => {
-
-    }, [vendor_orders_total])
 
     async function getData() {
         setLoading(true)
         setError(false)
         let cancle
-        const _url = MuhalikConfig.PATH + `/api/orders/users-orders/${vendor_id}`
+        const _url = MuhalikConfig.PATH + `/api/orders/vendor-orders/${vendor_id}`
         await axios({
             method: 'GET',
             url: _url,

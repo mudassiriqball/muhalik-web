@@ -27,7 +27,6 @@ orderController.place_order = async (req, res) => {
         ) {
           found = true;
           let array = {
-            index: index,
             variation_id: body.products[index].variation_id,
             quantity: body.products[index].quantity,
             stock: search[0].product_variations[0].stock,
@@ -42,7 +41,6 @@ orderController.place_order = async (req, res) => {
         if (search[0].product_in_stock < body.products[index].quantity) {
           found = true;
           let array1 = {
-            index: index,
             product_id: body.products[index].p_id,
             quantity: body.products[index].quantity,
             stock: search[0].product_in_stock,
@@ -52,8 +50,8 @@ orderController.place_order = async (req, res) => {
       }
     }
     if (found === true) {
-      res.status(210).send({
-        code: 210,
+      res.status(500).send({
+        code: 500,
         message: "You Have To Change Quantity Of Some Products",
         data: data,
       });
@@ -266,6 +264,19 @@ orderController.get_vendor_query_search_orders = async (req, res) => {
   }
 };
 
+orderController.get_customer_orders = async (req, res) => {
+  try {
+    const order = await Orders.paginate({ c_id: req.params._id })
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: order,
+    });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
 orderController.get_all_orders_count = async (req, res) => {
   try {
     const pending_orders_count = await Orders.countDocuments({ status: "pending" });
@@ -273,7 +284,7 @@ orderController.get_all_orders_count = async (req, res) => {
       status: "delivered",
     });
     const cancelled_orders_count = await Orders.countDocuments({ status: "cancelled" });
-    const return_orders_count = await Orders.countDocuments({ status: "return" });
+    const returned_orders_count = await Orders.countDocuments({ status: "return" });
 
     res.status(200).send({
       code: 200,
@@ -281,7 +292,7 @@ orderController.get_all_orders_count = async (req, res) => {
       pending_orders_count,
       delivered_orders_count,
       cancelled_orders_count,
-      return_orders_count,
+      returned_orders_count,
     });
   } catch (error) {
     return res.status(500).send(error);
@@ -302,7 +313,7 @@ orderController.get_vendor_orders_count = async (req, res) => {
       "products.vendor_id": req.params._id,
       status: "cancelled",
     });
-    const return_orders_count = await Orders.countDocuments({
+    const returned_orders_count = await Orders.countDocuments({
       "products.vendor_id": req.params._id,
       status: "return",
     });
@@ -312,7 +323,7 @@ orderController.get_vendor_orders_count = async (req, res) => {
       pending_orders_count,
       delivered_orders_count,
       cancelled_orders_count,
-      return_orders_count,
+      returned_orders_count,
     });
   } catch (error) {
     return res.status(500).send(error);

@@ -1,9 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Row, Col, Card, Image } from 'react-bootstrap'
 import { useRouter } from 'next/router'
-import SliderCarousel from './components/customer/slider-carousel'
-import Layout from './components/customer/layout';
-import useQueryInfiniteScroll from '../use-query-infinite-scroll'
+import SliderCarousel from '../../components/customer/slider-carousel'
+import Layout from '../../components/customer/layout';
+import useQueryInfiniteScroll from '../../../use-query-infinite-scroll'
 import useDimensions from "react-use-dimensions";
 import Router from 'next/router'
 import {
@@ -15,16 +15,16 @@ import {
 import {
     removeTokenFromStorage,
     getDecodedTokenFromStorage
-} from '../sdk/core/authentication-service';
+} from '../../../sdk/core/authentication-service';
 import axios from 'axios'
-import MuhalikConfig from '../sdk/muhalik.config'
-import GlobalStyleSheet from '../styleSheet'
+import MuhalikConfig from '../../../sdk/muhalik.config'
+import GlobalStyleSheet from '../../../styleSheet'
 import Link from 'next/link'
-import BreadcrumbRow from './components/breadcrumb-row'
+import BreadcrumbRow from '../../components/breadcrumb-row'
 React.useLayoutEffect = React.useEffect
-import MovingLogo from './components/moving-logo'
+import MovingLogo from '../../components/moving-logo'
 
-import translate from '../i18n/translate'
+import translate from '../../../i18n/translate'
 
 
 export async function getServerSideProps(context) {
@@ -111,7 +111,7 @@ export default function Category(props) {
     }, [category]);
 
     function handleProductClick(element) {
-        Router.push('/[category]/[sub_category]/[product]', `/${category}/${element.sub_category.value}/${element._id}`)
+        Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${category}/${element.sub_category.value}/${element._id}`)
     }
     return (
         <div className='_category'>
@@ -141,7 +141,7 @@ export default function Category(props) {
                             <div className='related_categories_heading'>{translate('related_categories')}</div>
                             {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
                                 element.category_id == current_category_id ?
-                                    <Link key={index} href='/[category]/[sub_category]' as={`/${category}/${element.value}`} >
+                                    <Link key={index} href='/products/category/[category]/[sub_category]' as={`/products/category/${category}/${element.value}`} >
                                         <a >
                                             {element.value}
                                         </a>

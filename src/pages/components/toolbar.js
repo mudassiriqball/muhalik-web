@@ -30,7 +30,7 @@ export default function Toolbar(props) {
                         <FontAwesomeIcon icon={faArrowLeft} style={styles.fontawesome} />
                     </Nav.Link>
                     <div className='mr-auto'></div>
-                    <Navbar.Brand className='logo' onClick={() => Router.push('/')} >
+                    <Navbar.Brand className='logo' onClick={props.home} >
                         <Image src="/muhalik.jpg" className='mahaalk_img' fluid />
                         <h4 className="text_animation">.com</h4>
                     </Navbar.Brand>

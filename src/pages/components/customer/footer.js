@@ -8,7 +8,6 @@ import {
 
 import translate from '../../../i18n/translate'
 
-
 const Footer = () => (
     <div className='customer_footer'>
         <div style={styles.footer}>

@@ -120,7 +120,7 @@ export default class Orders extends Component {
           <>
             <TitleRow icon={faEdit} title={' Admin Dashboard / Orders'} />
             <Row className='Card' noGutters>
-              <Col lg={4} md={4} sm={4} xs={12} className='p-0 m-0'>
+              <Col lg={12} md={12} sm={12} xs={12} className='p-0 m-0'>
                 <CountColoredCard
                   count={this.props.pending_orders_count}
                   header={'Pending'}
@@ -140,6 +140,14 @@ export default class Orders extends Component {
                 <CountColoredCard
                   count={this.props.cancelled_orders_count}
                   header={'Cancelled'}
+                  background={'lightblue'}
+                  iconname={faBan}
+                />
+              </Col>
+              <Col lg={4} md={4} sm={4} xs={12} className='p-0 m-0'>
+                <CountColoredCard
+                  count={this.props.returned_orders_count}
+                  header={'Returned'}
                   background={'orange'}
                   iconname={faBan}
                 />
@@ -628,7 +636,7 @@ function OrderTable(props) {
 function ViewOrder(props) {
   let componentRef = React.useRef();
   return (
-    <div>
+    <div className='_view_order'>
       <TitleRow icon={faEdit} title={`Admin Dashboard / Vendors / ${props.single_order.full_name}`} />
       <Form.Row style={{ margin: ' 0% 2%', display: 'flex', alignItems: 'center' }} >
         <Button size='sm' variant='outline-primary' className="mr-auto mt-2" onClick={props.back}> Back </Button>
@@ -659,8 +667,6 @@ function ViewOrder(props) {
         </>
         }
 
-
-
         <ReactToPrint
           trigger={() => <Button size='sm' variant='primary' className='mt-2 ml-4'> Print </Button>}
           content={() => componentRef.current}
@@ -672,6 +678,9 @@ function ViewOrder(props) {
       <Card className='view_user' ref={componentRef}>
         <Card.Body>
           <Row>
+            <Form.Group as={Col} lg={12} md={12} sm={12} xs={12} className='logo_col'>
+              <Image src='/muhalik.png' className='logo' />
+            </Form.Group>
             <p className='p'><span>Order Info</span></p>
             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
               <Form.Label className='form_label'>Placed On</Form.Label>
@@ -769,11 +778,25 @@ function ViewOrder(props) {
         </Card.Body>
       </Card>
       <style type="text/css">{`
+        ._view_order .logo_logo {
+          display: none;
+        }
         .print_style {
             display: flex;
             padding-top: 80px;
             min-width: 100%;
             max-width: 100%;
+        }
+        .print_style .logo_col {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .print_style .logo_col .logo {
+          min-width: 100px;
+          max-width: 100px;
+          min-height: 100px;
+          max-height: 100px;
         }
         .print_style .form_group {
             min-width: 25%;

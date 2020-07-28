@@ -233,7 +233,7 @@ const Toolbar = (props) => {
                             <Row noGutters onMouseLeave={() => categoryMouseLeave()} >
                                 <Col style={{ overflowY: 'auto', zIndex: 1, minHeight: '500px', maxHeight: '500px', }}>
                                     {props.categories_list && props.categories_list.map((element, index) =>
-                                        <Link href='/[category]' as={`/${element.value}`} key={index} >
+                                        <Link key={index} href='/products/category/[category]' as={`/products/category/${element.value}`} >
                                             {props.active_category == element.value ?
                                                 <a style={{ color: 'blue' }} className="category_list_item" onMouseOver={() => categoryMouseEnter(index)} onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
                                                     <Image src={element.url} roundedCircle fluid style={{ width: '30px', maxWidth: '30px', minHeight: '30px', maxHeight: '30px', marginRight: '10px' }} />
@@ -252,7 +252,7 @@ const Toolbar = (props) => {
                                 <Col style={{ minHeight: '500px', maxHeight: '50px', overflowY: 'auto', boxShadow: '-2px 0px 10px 1px rgba(0,0,0,0.12)' }}>
                                     {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
                                         element.category_id == category_id._id ?
-                                            <Link href='/[category]/[sub_category]' as={`/${category_id.value}/${element.value}`} key={index} >
+                                            <Link href='/products/category/[category]/[sub_category]' as={`/products/category/${category_id.value}/${element.value}`} key={index} >
                                                 {props.active_sub_category == element.value ?
                                                     <a style={{ color: 'blue' }} className="category_list_item" onClick={() => { setIsCategoryOpen(false), setHoverCategory(false) }}>
                                                         {element.value}

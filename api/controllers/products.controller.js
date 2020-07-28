@@ -173,9 +173,9 @@ productsController.addProduct = async (req, res) => {
 
 productsController.get_vendor_product_query_search = async (req, res) => {
   var ObjectId = mongoose.Types.ObjectId;
-  const _id = new ObjectId(req.params._id);
+    const _id = new ObjectId(req.params._id);
   try {
-    if (req.query.field === "category") {
+     if (req.query.field === "category") {
       let query = {};
       query = await Categories.findOne({ label: req.query.q }, { _id: 1 });
 
@@ -185,17 +185,13 @@ productsController.get_vendor_product_query_search = async (req, res) => {
           message: "Does Not Exist",
         });
       } else {
-        const total = await Products.countDocuments({
-          vendor_id: _id,
-          category: query._id
-        });
+        const total = await Products.countDocuments({vendor_id:_id,
+          category: query._id});
 
         const products = await Products.aggregate([
           {
-            $match: {
-              vendor_id: _id,
-              category: query._id
-            },
+            $match: { vendor_id:_id,
+              category: query._id },
           },
           {
             $lookup: {
@@ -238,12 +234,11 @@ productsController.get_vendor_product_query_search = async (req, res) => {
           message: "Does Not Exist",
         });
       } else {
-        const total = await Products.countDocuments({ vendor_id: _id, sub_category: query._id });
+        const total = await Products.countDocuments({vendor_id:_id,sub_category: query._id});
         const products = await Products.aggregate([
           {
-            $match: {
-              vendor_id: _id, sub_category: query._id
-            },
+            $match: { 
+              vendor_id:_id,sub_category: query._id },
           },
           {
             $lookup: {
@@ -325,25 +320,47 @@ productsController.get_vendor_product_query_search = async (req, res) => {
   }
 };
 productsController.get_products = async (req, res) => {
-  let products;
   try {
     if (req.query.q === "new-arrival") {
       var datetime = new Date();
       datetime.setMonth(datetime.getMonth() - 1);
-      const total = await Products.countDocuments({ entry_date: { $gte: new Date(datetime) } });
-      products = await Products.paginate(
-        { entry_date: { $gte: new Date(datetime) } },
+      const total = await Products.countDocuments({entry_date: { $gte: new Date(datetime) } });
+      const products = await Products.aggregate([
         {
-          limit: parseInt(req.query.limit),
-          page: parseInt(req.query.page),
-        }
-      );
+          $match: { entry_date: { $gte: new Date(datetime) } },
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $lookup: {
+            from: "sub_categories",
+            localField: "sub_category",
+            foreignField: "_id",
+            as: "sub_category",
+          },
+        },
+        { $unwind: "$sub_category" },
+        {
+          $skip: (req.query.page - 1) * req.query.limit,
+        },
+        {
+          $limit: parseInt(req.query.limit),
+        },
+      ]);
       res.status(200).send({
         code: 200,
         message: "Successful",
-        data: products.docs,
+        data: products,
         total
       });
+    
     } else if (req.query.field === "category") {
       let query = {};
       query = await Categories.findOne({ label: req.query.q }, { _id: 1 });
@@ -354,7 +371,7 @@ productsController.get_products = async (req, res) => {
           message: "Does Not Exist",
         });
       } else {
-        const total = await Products.countDocuments({ category: query._id });
+        const total = await Products.countDocuments({category: query._id});
         const products = await Products.aggregate([
           {
             $match: { category: query._id },
@@ -400,7 +417,7 @@ productsController.get_products = async (req, res) => {
           message: "Does Not Exist",
         });
       } else {
-        const total = await Products.countDocuments({ sub_category: query._id });
+        const total = await Products.countDocuments({sub_category: query._id});
         const products = await Products.aggregate([
           {
             $match: { sub_category: query._id },
@@ -572,6 +589,53 @@ productsController.get_product_by_id = async (req, res) => {
   }
 };
 
+productsController.get_all_product_by_id = async (req, res) => {
+  try {
+    var ObjectId = mongoose.Types.ObjectId;
+    const _id = new ObjectId(req.params._id);
+    const products = await Products.aggregate([
+      {
+        $match: {
+          _id: _id,
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      {
+        $lookup: {
+          from: "sub_categories",
+          localField: "sub_category",
+          foreignField: "_id",
+          as: "sub_category",
+        },
+      },
+      { $unwind: "$sub_category" },
+    ]);
+    if (products.length) {
+      res.status(200).send({
+        code: 200,
+        message: "Successful",
+        data: products,
+      });
+    } else {
+      res.status(500).send({
+        code: 500,
+        message: "This Product Does Not Exists",
+      });
+    }
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
+
 // {
 //   $project: {
 //     product_name: 1,
@@ -586,10 +650,8 @@ productsController.get_vendor_products = async (req, res) => {
   try {
     var ObjectId = mongoose.Types.ObjectId;
     const _id = new ObjectId(req.params._id);
-    const total = await Products.countDocuments({
-      vendor_id: _id,
-      isdeleted: false
-    });
+    const total = await Products.countDocuments({vendor_id: _id,
+      isdeleted: false});
     const products = await Products.aggregate([
       {
         $match: {

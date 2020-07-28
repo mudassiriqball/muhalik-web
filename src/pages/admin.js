@@ -24,7 +24,7 @@ export async function getServerSideProps(context) {
     let pending_orders_count = 0
     let delivered_orders_count = 0
     let cancelled_orders_count = 0
-    let return_orders_count = 0
+    let returned_orders_count = 0
 
     const users_count_url = MuhalikConfig.PATH + '/api/users/users-count';
     await axios.get(users_count_url).then((res) => {
@@ -42,7 +42,7 @@ export async function getServerSideProps(context) {
         pending_orders_count = res.data.pending_orders_count
         delivered_orders_count = res.data.delivered_orders_count
         cancelled_orders_count = res.data.cancelled_orders_count
-        return_orders_count = res.data.return_orders_count
+        returned_orders_count = res.data.returned_orders_count
     }).catch((error) => {
     })
 
@@ -78,7 +78,7 @@ export async function getServerSideProps(context) {
             pending_orders_count,
             delivered_orders_count,
             cancelled_orders_count,
-            return_orders_count,
+            returned_orders_count,
 
             sliders_list,
             categories_list,
@@ -121,7 +121,7 @@ class Admin extends Component {
             pending_orders_count: this.props.pending_orders_count,
             delivered_orders_count: this.props.delivered_orders_count,
             cancelled_orders_count: this.props.cancelled_orders_count,
-            return_orders_count: this.props.return_orders_count,
+            returned_orders_count: this.props.returned_orders_count,
 
             sideDrawerOpen: false,
             showWrapper: true,
@@ -265,7 +265,7 @@ class Admin extends Component {
                 pending_orders_count: res.data.pending_orders_count,
                 delivered_orders_count: res.data.delivered_orders_count,
                 cancelled_orders_count: res.data.cancelled_orders_count,
-                return_orders_count: res.data.return_orders_count,
+                returned_orders_count: res.data.returned_orders_count,
             })
         }).catch((error) => {
         })
@@ -293,7 +293,7 @@ class Admin extends Component {
                     pending_orders_count={this.state.pending_orders_count}
                     delivered_orders_count={this.state.delivered_orders_count}
                     cancelled_orders_count={this.state.cancelled_orders_count}
-                    return_orders_count={this.state.return_orders_count}
+                    returned_orders_count={this.state.returned_orders_count}
                     ordersReloadCountHandler={this.reloadOrdersCount.bind(this)}
 
                     categories_list={this.state.categories_list}
@@ -328,7 +328,7 @@ class Admin extends Component {
                     pending_orders_count={this.state.pending_orders_count}
                     delivered_orders_count={this.state.delivered_orders_count}
                     cancelled_orders_count={this.state.cancelled_orders_count}
-                    return_orders_count={this.state.return_orders_count}
+                    returned_orders_count={this.state.returned_orders_count}
                     ordersReloadCountHandler={this.reloadOrdersCount.bind(this)}
 
                     categories_list={this.state.categories_list}

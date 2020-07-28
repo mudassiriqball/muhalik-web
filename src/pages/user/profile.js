@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Router from 'next/router'
 import axios from 'axios'
-import Link from 'next/link'
 import { Row, Col, ListGroup } from 'react-bootstrap'
+
+import { faUserCircle, faImage, faThumbsUp, faClock } from '@fortawesome/free-regular-svg-icons'
+
+
 import MuhalikConfig from '../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../styleSheet'
-import StickyBottomNavbar from '../components/customer/stick-bottom-navbar'
 import { getDecodedTokenFromStorage, removeTokenFromStorage, getTokenFromStorage } from '../../sdk/core/authentication-service'
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBan, faCheckDouble, faHistory, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { faEdit, faThumbsUp, faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 
 import Layout from '../components/customer/layout';
 import AlertModal from '../components/alert-modal'
@@ -21,12 +19,9 @@ import Address from '../components/profile/address'
 import ChangeProfilePicture from '../components/profile/change-profile-picture'
 
 import ManageOrders from '../components/profile/manage-orders'
-import PendingOrders from '../components/profile/pending-orders'
-import DeliveredOrders from '../components/profile/delivered-orders'
-import CancelledOrders from '../components/profile/cancelled-orders'
+import Orders from '../components/profile/orders'
 
 import translate from '../../i18n/translate'
-
 
 export async function getServerSideProps(context) {
     let categories_list = []
@@ -61,41 +56,15 @@ export default function Profile(props) {
     const [loading, setLoading] = useState(false)
     const [dashboard_href, setdashboard_href] = useState('/')
 
+    const [pending_orders_count, setPending_orders_count] = useState(0)
+    const [delivered_orders_count, setDelivered_orders_count] = useState(0)
+    const [cancelled_orders_count, setCancelled_orders_count] = useState(0)
+    const [returned_orders_count, setReturned_orders_count] = useState(0)
+
+    const [isOrderDisabled, setIsOrderDisabled] = useState(false)
     useEffect(() => {
-        handleUrlChange()
-        window.addEventListener('popstate', (event) => handleUrlChange(event), false);
         getData()
-        return () => {
-            window.removeEventListener('popstate', (event) => handleUrlChange(event), false);
-        }
     }, [])
-
-    function handleUrlChange() {
-        if (window.location.href == `${MuhalikConfig.PATH} + /user/profile?manage-account`) {
-            setView('manage_account')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/profile?my-profile`) {
-            setView('my_profile')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/profile?change-profile-picture`) {
-            setView('change_picture')
-            console.log('change_picture:', view)
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/profile?shop-address` || window.location.href == `${MuhalikConfig.PATH} + /user/profile?my-address`) {
-            setView('address')
-        }
-
-        else if (window.location.href == `${MuhalikConfig.PATH} + /user/profile?orders` && user.role == 'customer') {
-            setView('manage_orders')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/profile?pending-orders` && user.role == 'customer') {
-            setView('pending_orders')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/profile?delivered-orders` && user.role == 'customer') {
-            setView('delivered_orders')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/profile?cancelled-orders` && user.role == 'customer') {
-            setView('cancelled_orders')
-        } else {
-            history.replaceState(null, '', '/user/profile?manage-account')
-            setView('manage_account')
-        }
-    }
-
     async function getData() {
         const _token = await getDecodedTokenFromStorage()
         const _undecoded_token = await getTokenFromStorage()
@@ -109,6 +78,15 @@ export default function Profile(props) {
                 setCart_count(res.data.data.length)
             }).catch((error) => {
             })
+
+            const order_count_url = MuhalikConfig.PATH + `/api/orders/user-orders-count/${_token._id}`;
+            await axios.get(order_count_url).then((res) => {
+                setPending_orders_count(res.data.pending_orders_count),
+                    setDelivered_orders_count(res.data.delivered_orders_count),
+                    setCancelled_orders_count(res.data.cancelled_orders_count),
+                    setReturned_orders_count(res.data.returned_orders_count)
+            }).catch((error) => {
+            })
         }
     }
     async function getUser(id) {
@@ -119,10 +97,14 @@ export default function Profile(props) {
         })
     }
 
-    function handleShowAlert(msg) {
-        setAlertMsg(msg)
-        setShowAlertModal(true)
-    }
+    useEffect(() => {
+        if (view == 'pending_orders' || view == 'cancelled_orders' || view == 'delivered_orders' || view == 'returned_orders') {
+            setIsOrderDisabled(true)
+            setTimeout(() => {
+                setIsOrderDisabled(false)
+            }, 3000);
+        }
+    }, [view])
 
     useEffect(() => {
         if (token.role == 'vendor') {
@@ -131,9 +113,13 @@ export default function Profile(props) {
             setdashboard_href('/admin')
         }
         return () => {
-            setdashboard_href('/')
         }
     }, [token])
+
+    function handleShowAlert(msg) {
+        setAlertMsg(msg)
+        setShowAlertModal(true)
+    }
 
     function logout() {
         setLoading(true)
@@ -152,34 +138,36 @@ export default function Profile(props) {
                 color={'green'}
             />
             <Layout
+                home={() => Router.push('/')}
                 role={token.role || ''}
                 name={token.full_name || ''}
                 logout={logout}
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
+                {...props}
             >
                 <div className='_div'>
                     <Row>
                         <Col lg={3} md={3}>
                             <ListGroup variant="flush" >
                                 <ListGroup.Item style={{ color: view == 'manage_account' || view == 'my_profile' || view == 'change_picture' || view == 'address' ? 'blue' : null }}
-                                    onClick={() => { history.replaceState(null, '', '/user/profile?manage-account'), setView('manage_account') }}
+                                    onClick={() => { setView('manage_account') }}
                                 >
                                     {'Manage Account'}
                                 </ListGroup.Item>
                                 <ListGroup.Item style={{ color: view == 'my_profile' && 'blue' }}
-                                    onClick={() => { history.replaceState(null, '', '/user/profile?my-profile'), setView('my_profile') }}
+                                    onClick={() => { setView('my_profile') }}
                                 >
                                     {translate('my_profile')}
                                 </ListGroup.Item>
                                 <ListGroup.Item style={{ color: view == 'address' && 'blue' }}
-                                    onClick={() => { history.replaceState(null, '', `/user/profile?${user.role == 'vendor' ? 'shop-address' : 'my-address'}`), setView('address') }}
+                                    onClick={() => { setView('address') }}
                                 >
                                     {user.role == 'vendor' ? translate('shop_address') : translate('address')}
                                 </ListGroup.Item>
                                 <ListGroup.Item style={{ color: view == 'change_picture' && 'blue' }}
-                                    onClick={() => { history.replaceState(null, '', '/user/profile?change-profile-picture'), setView('change_picture') }}
+                                    onClick={() => { setView('change_picture') }}
                                 >
                                     {translate('change_picture')}
                                 </ListGroup.Item>
@@ -187,25 +175,30 @@ export default function Profile(props) {
                             </ListGroup>
                             {user.role == 'customer' &&
                                 <ListGroup variant="flush" >
-                                    <ListGroup.Item style={{ color: view == 'manage_orders' || view == 'pending_orders' || view == 'delivered_orders' || view == 'cancelled_orders' ? 'blue' : null }}
-                                        onClick={() => { history.replaceState(null, '', '/user/profile?manage-orders'), setView('manage_orders') }}
+                                    <ListGroup.Item style={{ color: view == 'manage_orders' || view == 'pending_orders' || view == 'delivered_orders' || view == 'cancelled_orders' || view == 'returned_orders' ? 'blue' : null }}
+                                        onClick={() => { setView('manage_orders') }}
                                     >
                                         {translate('my_orders')}
                                     </ListGroup.Item>
-                                    <ListGroup.Item style={{ color: view == 'pending_orders' && 'blue' }}
-                                        onClick={() => { history.replaceState(null, '', '/user/profile?pending-orders'), setView('pending_orders') }}
+                                    <ListGroup.Item disabled={isOrderDisabled} style={{ color: view == 'pending_orders' && 'blue' }}
+                                        onClick={() => { setView('pending_orders') }}
                                     >
                                         {translate('pending')}
                                     </ListGroup.Item>
-                                    <ListGroup.Item style={{ color: view == 'delivered_orders' && 'blue' }}
-                                        onClick={() => { history.replaceState(null, '', '/user/profile?delivered-orders'), setView('delivered_orders') }}
+                                    <ListGroup.Item disabled={isOrderDisabled} style={{ color: view == 'delivered_orders' && 'blue' }}
+                                        onClick={() => { setView('delivered_orders') }}
                                     >
                                         {translate('delivered')}
                                     </ListGroup.Item>
-                                    <ListGroup.Item style={{ color: view == 'cancelled_orders' && 'blue' }}
-                                        onClick={() => { history.replaceState(null, '', '/user/profile?cancelled-orders'), setView('cancelled_orders') }}
+                                    <ListGroup.Item disabled={isOrderDisabled} style={{ color: view == 'cancelled_orders' && 'blue' }}
+                                        onClick={() => { setView('cancelled_orders') }}
                                     >
                                         {translate('cancelled')}
+                                    </ListGroup.Item>
+                                    <ListGroup.Item disabled={isOrderDisabled} style={{ color: view == 'returned_orders' && 'blue' }}
+                                        onClick={() => { setView('returned_orders') }}
+                                    >
+                                        {translate('returned')}
                                     </ListGroup.Item>
                                 </ListGroup>
                             }
@@ -259,68 +252,41 @@ export default function Profile(props) {
                             {view == 'manage_orders' && <ManageOrders
                                 _id={user._id}
                                 role={user.role}
-                                full_name={user.full_name}
-                                shop_name={user.shop_name}
-                                address={user.address}
-                                shop_address={user.shop_address}
-                                countary={user.countary}
-                                city={user.city}
-                                avatar={user.avatar}
-                                mobile={user.mobile}
-                                email={user.email}
-                                setView={(value) => setView(value)}
+                                pending_orders_count={pending_orders_count}
+                                delivered_orders_count={delivered_orders_count}
+                                cancelled_orders_count={cancelled_orders_count}
+                                returned_orders_count={returned_orders_count}
                                 setView={(value) => setView(value)}
                             />}
-                            {view == 'pending_orders' && <PendingOrders
+                            {view == 'pending_orders' && <Orders
+                                token={undecoded_token}
                                 _id={user._id}
-                                role={user.role}
-                                full_name={user.full_name}
-                                shop_name={user.shop_name}
-                                address={user.address}
-                                shop_address={user.shop_address}
-                                countary={user.countary}
-                                city={user.city}
-                                avatar={user.avatar}
-                                mobile={user.mobile}
-                                email={user.email}
+                                status={'pending'}
                                 setView={(value) => setView(value)}
                             />}
-                            {view == 'delivered_orders' && <DeliveredOrders
+                            {view == 'delivered_orders' && <Orders
+                                token={undecoded_token}
                                 _id={user._id}
-                                role={user.role}
-                                full_name={user.full_name}
-                                shop_name={user.shop_name}
-                                address={user.address}
-                                shop_address={user.shop_address}
-                                countary={user.countary}
-                                city={user.city}
-                                avatar={user.avatar}
-                                mobile={user.mobile}
-                                email={user.email}
+                                status={'delivered'}
                                 setView={(value) => setView(value)}
                             />}
-                            {view == 'cancelled_orders' && <CancelledOrders
+                            {view == 'cancelled_orders' && <Orders
+                                token={undecoded_token}
                                 _id={user._id}
-                                role={user.role}
-                                full_name={user.full_name}
-                                shop_name={user.shop_name}
-                                address={user.address}
-                                shop_address={user.shop_address}
-                                countary={user.countary}
-                                city={user.city}
-                                avatar={user.avatar}
-                                mobile={user.mobile}
-                                email={user.email}
+                                status={'cancelled'}
                                 setView={(value) => setView(value)}
                             />}
-
+                            {view == 'returned_orders' && <Orders
+                                token={undecoded_token}
+                                _id={user._id}
+                                status={'returned'}
+                                setView={(value) => setView(value)}
+                            />}
                         </Col>
                     </Row>
 
                 </div>
             </Layout>
-
-
             <style type="text/css">{`
                 .profile {
                     min-height: 100vh;
@@ -330,7 +296,6 @@ export default function Profile(props) {
                     left: 0;
                     right: 0;
                 }
-
                 .profile ._div {
                     margin: 1% 7% 20% 7%;
                 }
@@ -353,7 +318,7 @@ export default function Profile(props) {
                     cursor: pointer;
                 }
                 .profile .list-group-item:hover {
-                    background: white;
+                    background: ${GlobalStyleSheet.primary_text_light_color};
                     color: blue;
                 }
 
@@ -361,39 +326,11 @@ export default function Profile(props) {
                     padding: 0%;
                     margin: 0%;
                 }
-                .profile .card_col {
-                    padding: 5px;
-                }
-                .profile .heading {
-                    font-size: 18px;
-                    margin: 10px 5px;
-                }
-                .profile .card {
-                    border: none;
-                }
-                .profile .card-header {
-                    display: inline-flex;
-                    align-items: center;
-                    font-size: 15px;
-                    font-weight: bold;
-                    background: white;
-                    border: none;
-                    color: gray;
-                    padding-bottom: 0%;
-                }
+               
                 .profile a {
                     font-size: 11px;
                 }
-                .profile .label {
-                    font-size: 13px;
-                    width: 100%;
-                    color: gray;
-                }
-                .profile .address_label {
-                    font-size: 11px;
-                    width: 100%;
-                    color: gray;
-                }
+              
                 @media (max-width: 1199px){
                     .profile ._div {
                         margin: 1% 3% 20% 3%;

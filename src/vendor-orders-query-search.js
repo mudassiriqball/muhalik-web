@@ -21,7 +21,7 @@ export default function vendorOrdersQuerySearch(token, vendor_id, refresh, statu
         if (query != '') {
             setLoading(true)
             setError(false)
-            const _url = MuhalikConfig.PATH + `/api/orders/user-orders-query-search/${vendor_id}`
+            const _url = MuhalikConfig.PATH + `/api/orders/vendor-orders-query-search/${vendor_id}`
             await axios({
                 method: 'GET',
                 url: _url,

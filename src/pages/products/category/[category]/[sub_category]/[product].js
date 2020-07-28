@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
 import { Row, Col, Card, Image, Button, Form, Breadcrumb, Table, Tab, Nav, Badge, Tabs, InputGroup, Spinner } from 'react-bootstrap'
 import { useRouter } from 'next/router'
-import Layout from '../../components/customer/layout';
+import Layout from '../../../../components/customer/layout';
 import useDimensions from "react-use-dimensions";
 import Router from 'next/router'
 import {
@@ -14,21 +14,21 @@ import {
     removeTokenFromStorage,
     getDecodedTokenFromStorage,
     getTokenFromStorage
-} from '../../../sdk/core/authentication-service';
+} from '../../../../../sdk/core/authentication-service';
 import axios from 'axios'
-import MuhalikConfig from '../../../sdk/muhalik.config'
-import GlobalStyleSheet from '../../../styleSheet'
+import MuhalikConfig from '../../../../../sdk/muhalik.config'
+import GlobalStyleSheet from '../../../../../styleSheet'
 import Link from 'next/link'
-import useQueryInfiniteScroll from '../../../use-query-infinite-scroll'
+import useQueryInfiniteScroll from '../../../../../use-query-infinite-scroll'
 import ReactStars from "react-rating-stars-component";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-regular-svg-icons';
-import BreadcrumbRow from '../../components/breadcrumb-row'
+import BreadcrumbRow from '../../../../components/breadcrumb-row'
 React.useLayoutEffect = React.useEffect
 
-import translate from '../../../i18n/translate'
-import TranslateFormControl from '../../../i18n/translate-form-control'
-import TranslateOption from '../../../i18n/translate-option'
+import translate from '../../../../../i18n/translate'
+import TranslateFormControl from '../../../../../i18n/translate-form-control'
+import TranslateOption from '../../../../../i18n/translate-option'
 
 
 export async function getServerSideProps(context) {
@@ -188,16 +188,16 @@ function Product(props) {
                     :
                     <div className='main-row'>
                         <BreadcrumbRow active={product}>
-                            <Breadcrumb.Item >
-                                <Link href='/[category]' as={`/${category}`} >
+                            <div className='breadcrumb-item'>
+                                <Link href='/products/category/[category]' as={`/products/category/${category}`} >
                                     <a> {category}</a>
                                 </Link>
-                            </Breadcrumb.Item>
-                            <Breadcrumb.Item >
-                                <Link href='/[category]/[sub_category]' as={`/${category}/${sub_category}`} >
+                            </div>
+                            <div className='breadcrumb-item'>
+                                <Link href='/products/category/[category]/[sub_category]' as={`/products/category/${category}/${sub_category}`} >
                                     <a>{sub_category}</a>
                                 </Link>
-                            </Breadcrumb.Item>
+                            </div>
                         </BreadcrumbRow>
 
                         <Row noGutters>
@@ -635,7 +635,7 @@ function VariableProduct(props) {
             two_star: 0,
             three_star: 0,
             four_star: 0,
-            five_star: 0
+            five_star: 0,
         },
         reviews: []
     }
@@ -1395,7 +1395,7 @@ function RelatedProducts(props) {
                     props.current_product_id != element._id ?
                         <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                             {element.product_type == "simple-product" ?
-                                <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img'
                                         style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
                                         src={element.product_image_link[0].url}
@@ -1404,7 +1404,7 @@ function RelatedProducts(props) {
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_price}</label>
                                 </div>
                                 :
-                                <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_variations[0].price}</label>

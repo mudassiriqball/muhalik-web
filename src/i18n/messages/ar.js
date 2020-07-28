@@ -1,306 +1,182 @@
-// import { LOCALES } from '../locales'
-
-// export default {
-//     [LOCALES.ARABIC]: {
-//         'mahaalk': 'Mahaalk',
-//         'success': 'نجاح',
-//         'and': '  أو  ',
-//         'login': 'تسجيل الدخول',
-//         'signup': ' سجل ',
-//         'logging': 'تسجيل الدخول',
-//         'delete': 'Delete',
-//         'rs': 'Rs',
-//         'related_categories': 'Related Categories',
-
-//         // Toolbar
-//         'go_to_dashbord': 'الذهاب إلى لوحة القيادة',
-//         'sell_on_mahaalk': 'بيع على ماهالك',
-//         'get_app': 'احصل على التطبيق',
-//         'services': 'خدمات',
-//         'help': 'مساعدة',
-//         'profile': 'الملف الشخصي',
-//         'my_orders': 'طلباتي',
-//         'logout': 'تسجيل خروج',
-//         'search': 'بحث',
-//         'cart': 'عربة التسوق',
-//         'categories': 'التصنيفات',
-
-//         // Login, Signup,  Vendor Signup
-//         'login_to_mahaalk': 'محالك مع تسجيل الدخول',
-//         'mobile_number': 'رقم الهاتف المحمول',
-//         'enter_mobile_nmbr': 'أدخل رقم الهاتف المحمول',
-
-//         'full_name': 'الاسم الكامل',
-//         'enter_full_name': 'أدخل الاسم الكامل',
-//         'min_full_name': 'يجب أن يحتوي على 5 أحرف على الأقل',
-//         'max_full_name': 'لا يمكن أن يزيد عن 25 حرفًا',
-
-//         'email': 'عنوان البريد الالكترونى',
-//         'enter_valid_email': 'يجب أن يكون عنوان بريد إلكتروني صالح',
-//         'email_max': 'لا يمكن أن يزيد عن 100 حرف',
-
-//         'password': 'كلمه السر',
-//         'enter_password': 'أدخل كلمة المرور',
-//         'password_min': 'يجب أن يحتوي عل8 أحرف على الأقل',
-//         'password_max': 'لا يمكن أن يزيد عن 20 حرف',
-//         'confirm_password': 'تأكيد كلمة المرور',
-//         'reenter_password': 'اعادة ادخال كلمة السر',
-//         'enter_confirm_password': 'أدخل تأكيد كلمة المرور',
-//         'password_match': 'يجب ان تتطابق كلمات المرور',
-
-//         'select_country': 'حدد الدولة',
-//         'city': 'City',
-//         'enter_city': 'أدخل اسم المدينة',
-//         'city_min': 'يجب أن يحتوي على 3 أحرف على الأقل',
-//         'city_max': 'لا يمكن أن يزيد عن 30 حرف',
-
-//         'address': 'عنوان',
-//         'enter_address': 'أدخل العنوان',
-//         'address_min': 'يجب أن يحتوي على 3 أحرف على الأقل',
-//         'address_max': 'لا يمكن أن يزيد عن 100 حرف',
-
-//         'shop_name': 'اسم المحل',
-//         'enter_shop_name': 'أدخل اسم المتجر',
-//         'shop_name_min': 'يجب أن يحتوي على 3 أحرف على الأقل',
-//         'shop_name_max': 'لا يمكن أن يزيد عن 50 حرف',
-
-//         'shop_category': 'فئة المتجر',
-//         'enter_category': 'أدخل فئة',
-
-//         'shop_address': 'عنوان المحل',
-//         'enter_shop_address': 'أدخل عنوان المحل',
-//         'min_shop_address': 'يجب أن يحتوي على 5 أحرف على الأقل',
-//         'max_shop_address': 'لا يمكن أن يزيد عن 200 حرف',
-
-//         'number_already_exists': 'هذا الرقم موجود بالفعل',
-//         'code_sended': 'تم إرسال الرمز ، تحقق من رقمك',
-//         'code_not_sended': 'خطأ: لم يتم إرسال الرمز',
-//         'enter_valid_number': 'أدخل رقمًا صالحًا برمز البلد',
-//         'nmbr_verified': 'تم التحقق من الرقم',
-//         'invalid_code': 'رمز غير صالح: حاول مرة أخرى',
-//         'verify_your_nmbr': 'يرجى التحقق أولا من رقم هاتفك المحمول!',
-//         'signup_failed': 'فشل تسجيل المستخدم ، حاول مرة أخرى لاحقًا',
-
-//         'resend': 'إعادة إرسال',
-//         'send_code': 'أرسل الرمز',
-//         'change_nmbr': 'تغيير رقم',
-//         'verification_code': 'شيفرة التأكيد',
-//         'number_verified': 'تم التحقق من الرقم',
-//         'verified': 'تم التحقق',
-//         'verify': 'تحقق',
-//         'gender': 'جنس',
-//         'select': 'تحديد',
-//         'male': 'الذكر',
-//         'female': 'أنثى',
-//         'other': 'آخر',
-//         'country': 'بلد',
-//         'ksa': 'السعودية',
-
-//         'welcome_to_mahaalk': 'أهلا وسهلا بك إلى ماهالك',
-//         'creat_account': 'أنشئ حسابك',
-
-
-//         'forgot_password': 'هل نسيت كلمة المرور؟',
-//         'dont_have_account': ' لا تملك حساب؟  ',
-//         'terms_conditions': 'البنود و الظروف',
-//         'by_logging_in': '  بتسجيل الدخول ، أنت توافق على ماهالك',
-//         'by_creating_account': '  من خلال إنشاء حساب ، فإنك توافق على ماهالك',
-//         'already_have_account': ' هل لديك حساب...',
-//         'privacy_statement': 'بيان الخصوصية',
-
-//         'account_created': 'الحساب اقيم بنجاح',
-//         'signing': 'توقيع',
-
-
-//         'description': 'Fuck off'
-
-
-//     }
-// }
-
-
-import { LOCALES } from '../locales'
+﻿import { LOCALES } from '../locales'
 
 export default {
     [LOCALES.ARABIC]: {
-        'mahaalk': 'Mahaalk',
-        'success': 'Success',
-        'and': 'and',
-        'login': 'Login',
-        'logging': 'Logging',
-        'signup': 'Signup',
-        'logout': 'Logout',
-        'delete': 'Delete',
-        'rs': 'Rs',
-        'related_categories': 'Related Categories',
+        'mahaalk': 'محلك',
+        'success': 'تم',
+        'and': 'و',
+        'login': 'دخول',
+        'logging': 'تسجيل دخول',
+        'signup': 'اشترك',
+        'logout': 'تسجيل خروج',
+        'delete': 'حذف',
+        'rs': 'ريال سعودي',
+        'related_categories': 'فئات ذات صلة',
 
         // Toolbar
-        'go_to_dashbord': 'Go To Dashboard',
-        'sell_on_mahaalk': 'Sell on Mahaalk',
-        'get_app': 'Get the App',
-        'services': 'Services',
-        'help': 'Help',
-        'profile': 'Profile',
-        'my_orders': 'My Orders',
-        'search': 'Search',
-        'cart': 'Cart',
-        'categories': 'Categories',
+        'go_to_dashbord': 'الصفحة  الرئيسية',
+        'sell_on_mahaalk': 'البيع في محلك',
+        'get_app': 'احصل على التطبيق',
+        'services': 'خدمة العملاء',
+        'help': 'المساعدة',
+        'profile': 'الصفحه الشخصية',
+        'my_orders': 'طلباتي',
+        'search': 'بحث',
+        'cart': 'السلة',
+        'categories': 'فئات',
 
         // Footer
-        'copyright': 'Copyright@ 2020',
-        'online_shopping_site': 'Online Shopping Website',
-        'follow_us': 'Follow Us',
-        'payment_methods': 'Payment Method:',
-        'need_help': 'Need Help?',
-        'contact_us': 'Contact Us',
-        'submit_issue': 'Submit Issue',
-        'about_us': 'About Us',
-        'know_about_us': 'Know More About Us',
-        'mahaalk_team': 'Mahaalk\'s Team',
-        'be_part_mahaalk': 'Be Mahaalk\'s Part',
-        'learn_more': 'Learn More',
+        'copyright': 'جميع الحقوق محفوظة',
+        'online_shopping_site': 'موقعناعلى الانترنت',
+        'follow_us': 'تابعنا على ',
+        'payment_methods': 'طرق الدفع',
+        'need_help': 'هل تحتاج لمساعدة؟',
+        'contact_us': 'اتصل',
+        'submit_issue': 'ارسال الشكوى',
+        'about_us': 'عنا',
+        'know_about_us': 'اعرف عنا',
+        'mahaalk_team': 'فريق محلك',
+        'be_part_mahaalk': 'انضم الينا',
+        'learn_more': 'اعرف اكثر',
 
 
         // Login, Signup,  Vendor Signup
-        'login_to_mahaalk': 'Login To Mahaalk',
-        'mobile_number': 'Mobile Number',
-        'enter_mobile_nmbr': 'Enter Mobile Number',
+        'login_to_mahaalk': 'تسجيل الدخول الى محلك',
+        'mobile_number': 'رقم الجوال',
+        'enter_mobile_nmbr': 'ادخل رقم الجوال',
 
-        'full_name': 'Full Name',
-        'enter_full_name': 'Enter Full Name',
-        'min_full_name': 'Must have at least 5 characters',
-        'max_full_name': 'Can\'t be longer than 25 characters',
+        // 'full_name': 'Full Name',' الاسم الكامل',
+        // 'enter_full_name': 'Enter Full Name', ادخل الاسم الكامل
+        // 'min_full_name': 'Must have at least 5 characters', الرجاء ادخال اكثر من 5 احرف
+        // 'max_full_name': 'Can\'t be longer than 25 characters', لا يمكنك ادخال اكثر من 25 حرف
 
-        'email': 'Email Address',
-        'enter_valid_email': 'Must be a valid email address',
-        'email_max': 'Can\'t be longer than 100 characters',
+        // 'email': 'Email Address', البريد الالكتروني
+        // 'enter_valid_email': 'Must be a valid email address', ادخل البريد اللكتروني
+        // 'email_max': 'Can\'t be longer than 100 characters', لا يمكنك ادخال اكثر من 100 حرف
 
-        'password': 'Password',
-        'enter_password': 'Enter Password',
-        'password_min': 'Password must have at least 8 characters',
-        'password_max': 'Can\'t be longer than 20 characters',
-        'confirm_password': 'Confirm Password',
-        'reenter_password': 'Re-enter Password',
-        'enter_confirm_password': 'Enter Confirm Password',
-        'password_match': 'Passwords must match',
+        // 'password': 'Password', كلمة المرور
+        // 'enter_password': 'Enter Password', ادخل كلمة المرور
+        // 'password_min': 'Password must have at least 8 characters', الرجاء ادخال 8 احرف
+        // 'password_max': 'Can\'t be longer than 20 characters', لا يمكنك ادخال اكثر من 20 حرف
+        // 'confirm_password': 'Confirm Password', تأكيد كلمة المرور
+        // 'reenter_password': 'Re-enter Password', اعادة ادخال كلمة المرور
+        // 'enter_confirm_password': 'Enter Confirm Password', ادخل تأكيد كلمة المرور
+        // 'password_match': 'Passwords must match', كلمة المرور متطابقة
 
-        'select_country': 'Select Country',
-        'city': 'City',
-        'enter_city': 'Enter City Name',
-        'city_min': 'Must have at least 3 characters',
-        'city_max': 'Can\'t be longer than 30 characters',
+        // 'select_country': 'Select Country', اختر البلد
+        // 'city': 'City', المدينة
+        // 'enter_city': 'Enter City Name', ادخل المدينة
+        // 'city_min': 'Must have at least 3 characters', الرجاء ادخال اكثر من 3 احرف
+        // 'city_max': 'Can\'t be longer than 30 characters', لا يمكنك ادخال اكثر من 30 حرف
 
-        'address': 'Address',
-        'enter_address': 'Enter Address',
-        'address_min': 'Must have at least 3 characters',
-        'address_max': 'Can\'t be longer than 100 characters',
+        // 'address': 'Address', العنوان
+        // 'enter_address': 'Enter Address', ادخل العنوان
+        // 'address_min': 'Must have at least 3 characters', الرجاء ادخال اكثر من 3 احرف
+        // 'address_max': 'Can\'t be longer than 100 characters', لا يمكنك ادخال اكثر من 100 حرف
 
-        'shop_name': 'Shop Name',
-        'enter_shop_name': 'Enter Shop Name',
-        'shop_name_min': 'Must have at least 3 characters',
-        'shop_name_max': 'Can\'t be longer than 50 characters',
+        // 'shop_name': 'Shop Name', اسم المحل
+        // 'enter_shop_name': 'Enter Shop Name', ادخل اسم المحل
+        // 'shop_name_min': 'Must have at least 3 characters', الرجاء ادخال اكثر من 3 احرف
+        // 'shop_name_max': 'Can\'t be longer than 50 characters', لا يمكنك اضافة اكثر من 50 حرف
 
-        'shop_category': 'Shop Category',
-        'enter_category': 'Enter category',
+        // 'shop_category': 'Shop Category', فئة المحل
+        // 'enter_category': 'Enter category', ادخل فئة المحل
 
-        'shop_address': 'Shop Address',
-        'enter_shop_address': 'Enter Shop Address',
-        'min_shop_address': 'Must have at least 5 characters',
-        'max_shop_address': 'Can\'t be longer than 200 characters',
+        // 'shop_address': 'Shop Address', عنوان المحل
+        // 'enter_shop_address': 'Enter Shop Address', ادخل عنوان المحل
+        // 'min_shop_address': 'Must have at least 5 characters', الرجاء ادخال اكثر من 5 احرف
+        // 'max_shop_address': 'Can\'t be longer than 200 characters', لا يمكنك اضافة اكثر من 200 حرف
 
-        'number_already_exists': 'This number already exists',
-        'code_sended': 'Code Sended, Check your number',
-        'code_not_sended': 'Error: Code not sended',
-        'enter_valid_number': 'Enter valid number with country code',
-        'nmbr_verified': 'Number Verified',
-        'invalid_code': 'Invalid Code, Try again',
-        'verify_your_nmbr': 'Please first verify your mobile number!',
-        'signup_failed': 'User Signup Failed, Try again later',
+        // 'number_already_exists': 'This number already exists', الرقم موجود مسبقا
+        // 'code_sended': 'Code Sended, Check your number', تم ارسال الرمز
+        // 'code_not_sended': 'Error: Code not sended', لم يتم ارسال الرمز
+        // 'enter_valid_number': 'Enter valid number with country code', ادخل رمز البلد
+        // 'nmbr_verified': 'Number Verified', تحقق من الرقم
+        // 'invalid_code': 'Invalid Code, Try again', الرمز غير صحيح
+        // 'verify_your_nmbr': 'Please first verify your mobile number!', تحقق من الرقم
+        // 'signup_failed': 'User Signup Failed, Try again later', فشل التسجيل
 
-        'resend': 'Resend',
-        'send_code': 'Send Code',
-        'change_nmbr': 'Change Number',
-        'verification_code': 'Verification Code',
-        'number_verified': 'Number Verified',
-        'verified': 'Verified',
-        'verify': 'Verify',
-        'gender': 'Gender',
-        'select': 'Select',
-        'male': 'Male',
-        'female': 'Female',
-        'other': 'Other',
-        'country': 'Country',
-        'ksa': 'KSA',
+        // 'resend': 'Resend', ارسال
+        // 'send_code': 'Send Code', ارسال الرمز
+        // 'change_nmbr': 'Change Number', تغير الرقم
+        // 'verification_code': 'Verification Code', تحقق من الرمز
+        // 'number_verified': 'Number Verified', تأكد من الرقم
+        // 'verified': 'Verified', مؤكد
+        // 'verify': 'Verify', تأكيد
+        // 'gender': 'Gender', الجنس
+        // 'select': 'Select', اختر
+        // 'male': 'Male', ذكر
+        // 'female': 'Female', انثى
+        // 'other': 'Other', اخرى
+        // 'country': 'Country', البلد
+        // 'ksa': 'KSA', المملكة العربية السعودية
 
-        'welcome_to_mahaalk': 'Welcome To Mahaalk',
-        'creat_account': 'Create Your Account',
-
-
-        'forgot_password': 'Forgot Password?',
-        'dont_have_account': 'Don\'t have an account? ',
-        'terms_conditions': 'Terms & Conditions',
-        'by_logging_in': 'By logging in, you agree to Mahaalk\'s',
-        'by_creating_account': 'By creating account, you agree to Mahaalk\'s',
-        'already_have_account': 'Already have an account...',
-        'privacy_statement': 'Privacy Statement',
-
-        'account_created': 'Account Created Successfully',
-        'signing': 'Signing up',
-
-        // Account, Profile
-        'view': 'View',
-        'change_picture': 'Change Picture',
-        'change_password': 'Change Password',
-        'pending': 'Pending',
-        'delivered': 'Delivered',
-        'cancelled': 'Cancelled',
-        'language_currency': 'Language & Currency',
-        'my_profile': 'My Profile',
-
-        // Cart
-        'continue_shopping': 'Continue Shopping ',
-        'select_all': 'Select All',
-        'sub_total': 'Sub Total',
-        'shipping_charges': 'Shipping Charges',
-        'total': 'Total',
-        'procede_order': ' Procede to Order',
-
-        // Product
-        'description': 'Description',
-        'no_description': 'No Description',
-        'specifications': 'Specifications',
-        'no_specifications': 'No Specifications',
-        'overall_rating': 'Overall Rating',
-        'rating_reviews': 'Rating & Reviews',
-        'rating': 'Rating',
-        'reviews': 'Reviews',
-        'no_reviews': 'No Reviews',
-        'give_review': 'Give Review',
-        'rate_product': 'Rate Product',
-        'enter_review': 'Type your review here',
-        'rate': 'Rate',
+        // 'welcome_to_mahaalk': 'Welcome To Mahaalk', حياك في محلك
+        // 'creat_account': 'Create Your Account', انشاء حساب
 
 
-        // Home
-        'new': 'NEW',
-        'show_more': 'Show More',
-        'top_ranking': 'Top Ranking',
-        'new_arrivals': 'New Arrivals',
-        'top': 'TOP',
-        'you_may_like': 'You May Like',
+        // 'forgot_password': 'Forgot Password?', نسيت الرقم السري 
+        // 'dont_have_account': 'Don\'t have an account? ', ليس لدي حساب
+        // 'terms_conditions': 'Terms & Conditions', الشروط
+        // 'by_logging_in': 'By logging in, you agree to Mahaalk\'s', تسجيل دخول بواسطة
 
-        //  Sticky Bottom Navbar
-        'home': 'Home',
+        // 'by_creating_account': 'By creating account, you agree to Mahaalk\'s', انشاء حساب بواسطة
+        // 'already_have_account': 'Already have an account...', لديه حساب مسجل 
+        // 'privacy_statement': 'Privacy Statement', بيان الخصوصية
+
+        // 'account_created': 'Account Created Successfully', تم انشاء الحساب
+        // 'signing': 'Signing up', اشتراك_تسجيل الدخول
+
+        // // Account, Profile
+        // 'view': 'View', عرض
+        // 'change_picture': 'Change Picture', تغير الصورة
+        // 'change_password': 'Change Password', تغير كلمة المرور
+        // 'pending': 'Pending', قيد الانتظار
+        // 'delivered': 'Delivered', تم التوصيل
+        // 'cancelled': 'Cancelled', الغيت
+        // 'language_currency': 'Language & Currency', العملة
+        // 'my_profile': 'My Profile', صفحتي الشخصية
+
+        // // Cart
+        // 'continue_shopping': 'Continue Shopping ', استمر في التسوق
+        // 'select_all': 'Select All', تحديد الكل
+        // 'sub_total': 'Sub Total', قيمة الطلب
+        // 'shipping_charges': 'Shipping Charges', رسوم الشحن
+        // 'total': 'Total', الاجمالي
+        // 'procede_order': ' Procede to Order', متابعة الطلب
+
+        // // Product
+        // 'description': 'Description', وصف
+        // 'no_description': 'No Description', بدون وصف
+        // 'specifications': 'Specifications', مواصفات
+        // 'no_specifications': 'No Specifications', بدون مواصفات
+        // 'overall_rating': 'Overall Rating', تقيم العام
+        // 'rating_reviews': 'Rating & Reviews', مراجعات التقيم
+        // 'rating': 'Rating', التقيم
+        // 'reviews': 'Reviews', المراجعات
+        // 'no_reviews': 'No Reviews', بدون مراجعات
+        // 'give_review': 'Give Review', اعطنا رايك
+        // 'rate_product': 'Rate Product', تقيم المنتج
+        // 'enter_review': 'Type your review here', اختر التقيم
+        // 'rate': 'Rate', تقيم
 
 
-        // Slider Carosuel
-        'all_categories': 'All categories',
+        // // Home
+        // 'new': 'NEW', جديد
+        // 'show_more': 'Show More', ارني المزيد
+        // 'top_ranking': 'Top Ranking', افضل تقيم
+        // 'new_arrivals': 'New Arrivals', وصل حديثا
+        // 'top': 'TOP', الافضل
+        // 'you_may_like': 'You May Like', قد يعجبك
+
+        // //  Sticky Bottom Navbar
+        // 'home': 'Home', الصفحة الرئيسية
 
 
+        // // Slider Carosuel
+        // 'all_categories': 'All categories', جميع الفئات
 
-        'available_in_stock': 'Available in Stock',
-        'stock': 'Stock',
-        'quantity': 'Quantity',
+
 
 
     }

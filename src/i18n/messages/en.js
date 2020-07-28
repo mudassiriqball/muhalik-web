@@ -199,6 +199,27 @@ export default {
         'shipping_address': 'Shipping Address',
         'manage_orders': 'Manage Orders',
         'manage_account': 'Manage Account',
+        'upload': 'Upload',
+        'uploading': 'Uploading',
+        'change_profile_picture': 'Change Profile Picture',
+        'profile_picture_updated': 'Profile Picture Updated Successfully',
+        'my_address': 'My Address',
+        'pending_orders': 'Pending Orders',
+        'delivered_orders': 'Delivered Orders',
+        'cancelled_orders': 'Cancelled Orders',
+        'returned_orders': 'Returned Orders',
+        'order_id': 'Order Id',
+        'placed_on': 'Placed On',
+        'print': 'Print',
+        'quan': 'Quan',
+        'returned': 'Returned',
+        'mobile': 'Mobile',
+        'EDIT': 'EDIT',
+        'VIEW': 'VIEW',
+        'personel_info': 'Personel Info',
 
     }
 }
+
+
+{/* naseem, 787 , 0301 6067875, 8.30 */ }

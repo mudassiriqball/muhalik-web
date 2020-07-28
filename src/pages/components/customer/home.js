@@ -125,7 +125,8 @@ const Home = (props) => {
                                 {props.new_products_list && props.new_products_list.map((element, index) =>
                                     <Card key={element._id} className="product_card">
                                         {element.product_type == "simple-product" ?
-                                            <div className='card_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                            <div className='card_div'
+                                                onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                                 <Image className='img' ref={ref}
                                                     style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }}
                                                     src={element.product_image_link[0].url} />
@@ -136,7 +137,8 @@ const Home = (props) => {
                                                 </div>
                                             </div>
                                             :
-                                            <div className='card_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                            <div className='card_div'
+                                                onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                                 <Image className='img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
                                                 <div className='d-inline-flex align-items-center'>
@@ -177,7 +179,8 @@ const Home = (props) => {
                                 {props.top_ranking_products_list && props.top_ranking_products_list.map((element, index) =>
                                     <Card key={element._id} className="product_card">
                                         {element.product_type == "simple-product" ?
-                                            <div className='card_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/products/top-ranking/${element._id}`)}>
+                                            <div className='card_div'
+                                                onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                                 <Image className='img' ref={ref}
                                                     style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }}
                                                     src={element.product_image_link[0].url} />
@@ -189,7 +192,8 @@ const Home = (props) => {
                                                 </div>
                                             </div>
                                             :
-                                            <div className='card_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/products/top-ranking/${element._id}`)}>
+                                            <div className='card_div'
+                                                onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                                 <Image className='img' style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }} src={element.product_variations[0].image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
                                                 <div className='d-inline-flex align-items-center'>
@@ -350,10 +354,10 @@ function CategoryCard(props) {
         <div className='CategoryCard' ref={lastProducrRef}>
             <Card as={Row} className='category_card'>
                 <Card.Header className='d-inline-flex align-items-center'>
-                    <Link href='' href='/[category]' as={`/${props.element.value}`}>
+                    <Link href='/products/category/[category]' as={`/products/category/${props.element.value}`}>
                         <a style={{ fontSize: '13px', width: '100%', color: `${GlobalStyleSheet.primary_text_color}` }} className='d-inline-flex align-items-center'>
                             <label className='mr-auto category_heading' >{props.element.value}</label>
-                            {' Show More'}
+                            {translate('show_more')}
                         </a>
                     </Link>
                 </Card.Header>
@@ -452,7 +456,7 @@ function CategoryProducts(props) {
         <Card as={Col} lg={2} md={3} sm={3} xs={4} className="category_product_card">
             {props.element.product_type == "simple-product" ?
                 <div className='category_card_div'
-                    onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${props.element.category.value}/${props.element.sub_category.value}/${props.element._id}`)}
+                    onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${props.element.category.value}/${props.element.sub_category.value}/${props.element._id}`)}
                 >
                     <Image ref={ref} className='category_product_img'
                         style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
@@ -463,8 +467,8 @@ function CategoryProducts(props) {
                 </div>
                 :
                 <div className='category_card_div'
-                    onClick={() => Router.push('/[category]/[sub_category]/[product]',
-                        `/${props.element.category.value}/${props.element.sub_category.value}/${props.element._id}`)}
+                    onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]',
+                        `/products/category/${props.element.category.value}/${props.element.sub_category.value}/${props.element._id}`)}
                 >
                     <Image ref={ref} className='category_product_img'
                         style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
@@ -633,7 +637,7 @@ function OnlyProducts(props) {
                     _products.length == (index + 1) ?
                         <Card ref={lastProducrRef} key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                             {element.product_type == "simple-product" ?
-                                <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img'
                                         style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
                                         src={element.product_image_link[0].url}
@@ -642,7 +646,7 @@ function OnlyProducts(props) {
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_price}</label>
                                 </div>
                                 :
-                                <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_variations[0].price}</label>
@@ -652,7 +656,7 @@ function OnlyProducts(props) {
                         :
                         <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                             {element.product_type == "simple-product" ?
-                                <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img'
                                         style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
                                         src={element.product_image_link[0].url}
@@ -661,7 +665,7 @@ function OnlyProducts(props) {
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_price}</label>
                                 </div>
                                 :
-                                <div className='only_products_div' onClick={() => Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
                                     <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_variations[0].price}</label>

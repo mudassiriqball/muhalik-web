@@ -29,6 +29,7 @@ const schema = yup.object({
 import * as decode from 'jwt-decode'
 import Router from 'next/router'
 import MyButton from './components/buttons/my-btn';
+import MySubmitButton from './components/buttons/my-submit-btn';
 class Login extends Component {
 
     constructor(props) {
@@ -192,7 +193,7 @@ class Login extends Component {
                                                 </Form.Label>
                                             </Form.Row>
                                             <Form.Row className='p-0 m-0'>
-                                                <MyButton onClick={this.showPassword} onClick={handleSubmit} disabled={this.state.isLoading} block={true}>
+                                                <MyButton onClick={handleSubmit} disabled={this.state.isLoading} block={true}>
                                                     {this.state.isLoading ? translate('logging') : translate('login')}
                                                     {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
                                                 </MyButton>

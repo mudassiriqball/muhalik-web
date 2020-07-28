@@ -6,6 +6,7 @@ let GlobalStyleSheet = {
     primry_hover_color: '#491d48',
 
     primry_text_color: 'white',
+    primary_text_light_color: '#cccccc',
 
     admin_primry_color: '#4e5065',
     primary_text_color: 'white',

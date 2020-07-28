@@ -77,7 +77,7 @@ class Vendor extends Component {
             pending_orders_count: 0,
             delivered_orders_count: 0,
             cancelled_orders_count: 0,
-            return_orders_count: 0,
+            returned_orders_count: 0,
 
             token: '',
             decodedToken: { _id: null, role: '', full_name: '', status: '' },
@@ -131,7 +131,7 @@ class Vendor extends Component {
                 pending_orders_count: res.data.pending_orders_count,
                 delivered_orders_count: res.data.delivered_orders_count,
                 cancelled_orders_count: res.data.cancelled_orders_count,
-                return_orders_count: res.data.return_orders_count,
+                returned_orders_count: res.data.returned_orders_count,
             })
         }).catch((error) => {
         })
@@ -156,7 +156,7 @@ class Vendor extends Component {
                     pending_orders_count={this.state.pending_orders_count}
                     delivered_orders_count={this.state.delivered_orders_count}
                     cancelled_orders_count={this.state.cancelled_orders_count}
-                    return_orders_count={this.state.return_orders_count}
+                    returned_orders_count={this.state.returned_orders_count}
                     ordersReloadCountHandler={this.getOrdersCount.bind(this)}
 
                     token={this.state.token}
@@ -181,7 +181,7 @@ class Vendor extends Component {
                     pending_orders_count={this.state.pending_orders_count}
                     delivered_orders_count={this.state.delivered_orders_count}
                     cancelled_orders_count={this.state.cancelled_orders_count}
-                    return_orders_count={this.state.return_orders_count}
+                    returned_orders_count={this.state.returned_orders_count}
                     ordersReloadCountHandler={this.getOrdersCount.bind(this)}
 
                     token={this.state.token}

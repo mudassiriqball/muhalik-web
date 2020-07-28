@@ -11,27 +11,13 @@ import { getDecodedTokenFromStorage, removeTokenFromStorage, getTokenFromStorage
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faArrowAltCircleLeft, faUser, faUserPlus, faDownload, faSuitcase,
-    faLanguage, faShoppingCart, faPowerOff, faHandHoldingUsd, faDollarSign, faTachometerAlt, faLock, faHome, faChevronRight, faBan
+    faDownload, faLanguage, faPowerOff, faDollarSign,
+    faTachometerAlt, faLock, faHome, faChevronRight, faBan, faTimes
 } from '@fortawesome/free-solid-svg-icons'
-import {
-    faUserCircle, faHeart, faImage, faThumbsUp, faClock
-} from '@fortawesome/free-regular-svg-icons'
+import { faUserCircle, faImage, faThumbsUp, faClock } from '@fortawesome/free-regular-svg-icons'
 
 
-import AlertModal from '../components/alert-modal'
 import Toolbar from '../components/toolbar'
-
-import ManageAccount from '../components/profile/manage-account'
-import MyProfile from '../components/profile/my-profile'
-import Address from '../components/profile/address'
-import ChangeProfilePicture from '../components/profile/change-profile-picture'
-
-import ManageOrders from '../components/profile/manage-orders'
-import PendingOrders from '../components/profile/pending-orders'
-import DeliveredOrders from '../components/profile/delivered-orders'
-import CancelledOrders from '../components/profile/cancelled-orders'
-
 import translate from '../../i18n/translate'
 
 
@@ -40,23 +26,15 @@ function Account() {
     const [undecoded_token, setUndecodedToken] = useState('')
 
     const [user, setUser] = useState('')
-    const [view, setView] = useState('account')
     const [cart_count, setCart_count] = useState(0)
-
-    const [showAlertModal, setShowAlertModal] = useState(false)
-    const [alertMsg, setAlertMsg] = useState('')
 
     const [loading, setLoading] = useState(false)
     const [dashboard_href, setdashboard_href] = useState('/')
 
     useEffect(() => {
-        handleUrlChange()
-        window.addEventListener('popstate', (event) => handleUrlChange(event), false);
         getData()
-        return () => {
-            window.removeEventListener('popstate', (event) => handleUrlChange(event), false);
-        }
     }, [])
+
     async function getData() {
         const _token = await getDecodedTokenFromStorage()
         const _undecoded_token = await getTokenFromStorage()
@@ -79,36 +57,6 @@ function Account() {
         }).catch((error) => {
         })
     }
-    function handleUrlChange() {
-        if (window.location.href == `${MuhalikConfig.PATH} + /user/account`) {
-            setView('account')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?my-profile`) {
-            setView('my_profile')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?change-profile-picture`) {
-            setView('change_picture')
-            console.log('change_picture:', view)
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?shop-address` || window.location.href == `${MuhalikConfig.PATH} + /user/account?my-address`) {
-            setView('address')
-        }
-
-        else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?orders` && user.role == 'customer') {
-            setView('manage_orders')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?pending-orders` && user.role == 'customer') {
-            setView('pending_orders')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?delivered-orders` && user.role == 'customer') {
-            setView('delivered_orders')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account?cancelled-orders` && user.role == 'customer') {
-            setView('cancelled_orders')
-        } else {
-            history.replaceState(null, '', '/user/account')
-            setView('account')
-        }
-    }
-
-    function handleShowAlert(msg) {
-        setAlertMsg(msg)
-        setShowAlertModal(true)
-    }
 
     useEffect(() => {
         if (token.role == 'vendor') {
@@ -129,217 +77,124 @@ function Account() {
 
     return (
         <div className='account'>
-            <AlertModal
-                onHide={(e) => setShowAlertModal(false)}
-                show={showAlertModal}
-                header={translate('success')}
-                message={alertMsg}
-                iconname={faThumbsUp}
-                color={'green'}
-            />
             <Toolbar title={'Account'} />
-            {view == 'account' ?
-                <ListGroup style={{ marginBottom: '50px' }}>
-                    <div className='w-100 p-1'></div>
+            <ListGroup style={{ marginBottom: '50px' }}>
+                <div className='w-100 p-1'></div>
 
-                    {user == '' ?
+                {token == '' ?
+                    <ListGroup.Item className='d-flex flex-column'>
+                        <div className='d-inline-flex align-items-center mb-2'>
+                            <FontAwesomeIcon icon={faUserCircle} style={styles.account_fontawesome} />
+                            <Link href='/login'><a>{translate('login')}</a></Link>
+                        </div>
+                        <div className='d-inline-flex align-items-center'>
+                            <div className='mr-auto label'> {translate('dont_have_account')} </div>
+                            <Link href='/signup'><a> {translate('signup')} </a></Link>
+                        </div>
+                    </ListGroup.Item>
+                    :
+                    <>
                         <ListGroup.Item className='d-flex flex-column'>
-                            <div className='d-inline-flex align-items-center mb-2'>
-                                <FontAwesomeIcon icon={faUserCircle} style={styles.account_fontawesome} />
-                                <Link href='/login'><a>{translate('login')}</a></Link>
+                            <div className='d-inline-flex align-items-center'>
+                                <Image src={user.avatar} roundedCircle thumbnail fluid
+                                    style={{ minWidth: '100px', maxWidth: '100px', minHeight: '100px', maxHeight: '100px' }} />
+                                <div style={{ fontSize: '14px', margin: 'auto' }}>
+                                    <div >{user.full_name}</div>
+                                    <div >{user.mobile}</div>
+                                </div>
                             </div>
                             <div className='d-inline-flex align-items-center'>
-                                <div className='mr-auto label'> {translate('dont_have_account')} </div>
-                                <Link href='/signup'><a> {translate('signup')} </a></Link>
+                                <div className='mr-auto'></div>
+                                <Nav.Link className='p-0' onClick={() => Router.push('/user/account/personel-info')}> {translate('view')} </Nav.Link>
                             </div>
                         </ListGroup.Item>
-                        :
-                        <>
-                            <ListGroup.Item className='d-flex flex-column'>
-                                <div className='d-inline-flex align-items-center'>
-                                    <Image src={user.avatar} roundedCircle thumbnail fluid
-                                        style={{ minWidth: '100px', maxWidth: '100px', minHeight: '100px', maxHeight: '100px' }} />
-                                    <div style={{ fontSize: '14px', margin: 'auto' }}>
-                                        <div >{user.full_name}</div>
-                                        <div >{user.mobile}</div>
-                                    </div>
-                                </div>
-                                <div className='d-inline-flex align-items-center'>
-                                    <div className='mr-auto'></div>
-                                    <Nav.Link className='p-0'
-                                        onClick={() => { history.replaceState(null, '', '/user/account?my-profile'), setView('my_profile') }}
-                                    > {translate('view')} </Nav.Link>
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item action className='list_item'
-                                onClick={() => { history.replaceState(null, '', `/user/account?${user.role == 'vendor' ? 'shop-address' : 'my-address'}`), setView('address') }}
-                            >
-                                <FontAwesomeIcon icon={faHome} style={styles.fontawesome} />
-                                <div className='label'>{user.role == 'vendor' ? translate('shop_address') : translate('address')}</div>
-                                <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                            </ListGroup.Item>
-                            <ListGroup.Item action className='list_item'
-                                onClick={() => { history.replaceState(null, '', '/user/account?change-profile-picture'), setView('change_picture') }}
-                            >
-                                <FontAwesomeIcon icon={faImage} style={styles.fontawesome} />
-                                <div className='label'> {translate('change_picture')}</div>
-                                <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                            </ListGroup.Item>
-                            <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
-                                <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
-                                <div className='label'> {translate('change_password')}</div>
-                                <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                            </ListGroup.Item>
-
-                            <div className='w-100 p-1'></div>
-                            {user.role == 'customer' ?
-                                <>
-                                    <ListGroup.Item disabled>{translate('my_orders')}</ListGroup.Item>
-                                    <ListGroup.Item action className='list_item'
-                                        onClick={() => { history.replaceState(null, '', '/user/account?pending-orders'), setView('pending_orders') }}
-                                    >
-                                        <FontAwesomeIcon icon={faClock} style={styles.fontawesome} />
-                                        <div className='label'>{translate('pending')}</div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                                    </ListGroup.Item>
-                                    <ListGroup.Item action className='list_item'
-                                        onClick={() => { history.replaceState(null, '', '/user/account?delivered-orders'), setView('delivered_orders') }}
-                                    >
-                                        <FontAwesomeIcon icon={faThumbsUp} style={styles.fontawesome} />
-                                        <div className='label'>{translate('delivered')}</div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                                    </ListGroup.Item>
-                                    <ListGroup.Item action className='list_item'
-                                        onClick={() => { history.replaceState(null, '', '/user/account?cancelled-orders'), setView('cancelled_orders') }}
-                                    >
-                                        <FontAwesomeIcon icon={faBan} style={styles.fontawesome} />
-                                        <div className='label'>{translate('cancelled')}</div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                                    </ListGroup.Item>
-                                </>
-                                :
-                                null
-                            }
-                        </>
-                    }
-
-                    <div className='w-100 p-1'></div>
-
-                    {token.role == '' || token.role == 'customer' ?
-                        <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
-                            <FontAwesomeIcon icon={faDollarSign} style={styles.fontawesome} />
-                            <div className='label'>{translate('sell_on_mahaalk')}</div>
+                        <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/my-address')}>
+                            <FontAwesomeIcon icon={faHome} style={styles.fontawesome} />
+                            <div className='label'>{user.role == 'vendor' ? translate('shop_address') : translate('address')}</div>
                             <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                         </ListGroup.Item>
-                        :
-                        <ListGroup.Item className='list_item' action onClick={() => Router.push(dashboard_href)}>
-                            <FontAwesomeIcon icon={faTachometerAlt} style={styles.fontawesome} />
-                            <div className='label'>{translate('go_to_dashbord')}</div>
+                        <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/change-picture')}>
+                            <FontAwesomeIcon icon={faImage} style={styles.fontawesome} />
+                            <div className='label'> {translate('change_picture')}</div>
                             <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                         </ListGroup.Item>
-                    }
+                        <ListGroup.Item className='list_item' action onClick={() => Router.push('/reset-password')}>
+                            <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
+                            <div className='label'> {translate('change_password')}</div>
+                            <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                        </ListGroup.Item>
+
+                        <div className='w-100 p-1'></div>
+                        {token.role == 'customer' ?
+                            <>
+                                <ListGroup.Item disabled>{translate('my_orders')}</ListGroup.Item>
+                                <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/pending`)} >
+                                    <FontAwesomeIcon icon={faClock} style={styles.fontawesome} />
+                                    <div className='label'>{translate('pending')}</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                                </ListGroup.Item>
+                                <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/delivered`)} >
+                                    <FontAwesomeIcon icon={faThumbsUp} style={styles.fontawesome} />
+                                    <div className='label'>{translate('delivered')}</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                                </ListGroup.Item>
+                                <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/cancelled`)}>
+                                    <FontAwesomeIcon icon={faTimes} style={styles.fontawesome} />
+                                    <div className='label'>{translate('cancelled')}</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                                </ListGroup.Item>
+                                <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/returned`)}>
+                                    <FontAwesomeIcon icon={faBan} style={styles.fontawesome} />
+                                    <div className='label'>{translate('returned')}</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                                </ListGroup.Item>
+                            </>
+                            :
+                            null
+                        }
+                    </>
+                }
+
+                <div className='w-100 p-1'></div>
+
+                {token.role == '' || token.role == 'customer' ?
                     <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
-                        <FontAwesomeIcon icon={faLanguage} style={styles.fontawesome} />
-                        <div className='label'> {translate('language_currency')}</div>
+                        <FontAwesomeIcon icon={faDollarSign} style={styles.fontawesome} />
+                        <div className='label'>{translate('sell_on_mahaalk')}</div>
                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                     </ListGroup.Item>
-
-                    {token.role == 'customer' && <ListGroup.Item className='list_item' action>
-                        <FontAwesomeIcon icon={faDownload} style={styles.fontawesome} />
-                        <div className='label'>{translate('get_app')}</div>
+                    :
+                    <ListGroup.Item className='list_item' action onClick={() => Router.push(dashboard_href)}>
+                        <FontAwesomeIcon icon={faTachometerAlt} style={styles.fontawesome} />
+                        <div className='label'>{translate('go_to_dashbord')}</div>
                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                     </ListGroup.Item>
-                    }
+                }
+                <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
+                    <FontAwesomeIcon icon={faLanguage} style={styles.fontawesome} />
+                    <div className='label'> {translate('language_currency')}</div>
+                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                </ListGroup.Item>
 
-                    <div className='w-100 p-1'></div>
+                {token.role == 'customer' && <ListGroup.Item className='list_item' action>
+                    <FontAwesomeIcon icon={faDownload} style={styles.fontawesome} />
+                    <div className='label'>{translate('get_app')}</div>
+                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                </ListGroup.Item>
+                }
 
-                    {token.full_name != '' && <ListGroup.Item action onClick={logout} className='list_item'>
-                        <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
-                        <div className='label'>
-                            {translate('logout')}
-                            {loading && <Spinner size='sm' variant='primary' animation='grow' />}
-                        </div>
-                        <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                    </ListGroup.Item>
-                    }
-                </ListGroup>
-                :
-                <>
-                    {view == 'my_profile' && <MyProfile
-                        token={undecoded_token}
-                        _id={user._id}
-                        role={user.role}
-                        full_name={user.full_name}
-                        gender={user.gender}
-                        mobile={user.mobile}
-                        email={user.email}
-                        showAlert={(msg) => handleShowAlert(msg)}
-                        reloadUser={() => getUser(token._id)}
-                    />}
-                    {view == 'address' && <Address
-                        token={undecoded_token}
-                        _id={user._id}
-                        role={user.role}
-                        shop_name={user.shop_name}
-                        address={user.address}
-                        shop_address={user.shop_address}
-                        countary={user.countary}
-                        city={user.city}
-                        showAlert={(msg) => handleShowAlert(msg)}
-                        reloadUser={() => getUser(token._id)}
-                    />}
-                    {view == 'change_picture' && <ChangeProfilePicture
-                        token={undecoded_token}
-                        _id={user._id}
-                        avatar={user.avatar}
-                        showAlert={(msg) => handleShowAlert(msg)}
-                        reloadUser={() => getUser(token._id)}
-                    />}
+                <div className='w-100 p-1'></div>
 
-                    {view == 'pending_orders' && <PendingOrders
-                        _id={user._id}
-                        role={user.role}
-                        full_name={user.full_name}
-                        shop_name={user.shop_name}
-                        address={user.address}
-                        shop_address={user.shop_address}
-                        countary={user.countary}
-                        city={user.city}
-                        avatar={user.avatar}
-                        mobile={user.mobile}
-                        email={user.email}
-                        setView={(value) => setView(value)}
-                    />}
-                    {view == 'delivered_orders' && <DeliveredOrders
-                        _id={user._id}
-                        role={user.role}
-                        full_name={user.full_name}
-                        shop_name={user.shop_name}
-                        address={user.address}
-                        shop_address={user.shop_address}
-                        countary={user.countary}
-                        city={user.city}
-                        avatar={user.avatar}
-                        mobile={user.mobile}
-                        email={user.email}
-                        setView={(value) => setView(value)}
-                    />}
-                    {view == 'cancelled_orders' && <CancelledOrders
-                        _id={user._id}
-                        role={user.role}
-                        full_name={user.full_name}
-                        shop_name={user.shop_name}
-                        address={user.address}
-                        shop_address={user.shop_address}
-                        countary={user.countary}
-                        city={user.city}
-                        avatar={user.avatar}
-                        mobile={user.mobile}
-                        email={user.email}
-                        setView={(value) => setView(value)}
-                    />}
-                </>
-            }
+                {token.full_name != '' && <ListGroup.Item action onClick={logout} className='list_item'>
+                    <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
+                    <div className='label'>
+                        {translate('logout')}
+                        {loading && <Spinner size='sm' variant='primary' animation='grow' />}
+                    </div>
+                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                </ListGroup.Item>
+                }
+            </ListGroup>
 
 
             <div className='sticy-bottom-navbar'>
@@ -347,7 +202,6 @@ function Account() {
             </div>
 
             <style type="text/css">{`
-                
                 .account {
                     min-height: 100vh;
                     background: ${GlobalStyleSheet.body_color};
@@ -355,6 +209,8 @@ function Account() {
                     top: 0;
                     left: 0;
                     right: 0;
+                    padding: 0px;
+                    margin: 0px;
                 }
                 .account a {
                     font-size: 13px;

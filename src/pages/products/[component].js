@@ -107,7 +107,7 @@ export default function ComponentPage(props) {
     }
 
     function handleProductClick(element) {
-        Router.push('/[category]/[sub_category]/[product]', `/${element.category.value}/${element.sub_category.value}/${element._id}`)
+        Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)
     }
 
     return (

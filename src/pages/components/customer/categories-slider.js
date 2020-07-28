@@ -8,13 +8,13 @@ const CategoriesSlider = (props) => {
         <>
             <div className='category_container'>
                 {props.categories_list && props.categories_list.map((element, index) =>
-                    <Link href='/[category]' as={`/${element.value}`} key={index} >
+                    <Link href='/products/category/[category]' as={`/products/category/${element.value}`} key={index} >
                         {props.active_category == element.value ?
-                            <a className='item' style={{ color: 'blue' }} onClick={() => Router.push('/[category]', `/${element.value}`)}>
+                            <a className='item' style={{ color: 'blue' }} onClick={() => Router.push('/products/category/[category]', `/products/category/${element.value}`)}>
                                 {element.value}
                             </a>
                             :
-                            <a className='item' onClick={() => Router.push('/[category]', `/${element.value}`)}>
+                            <a className='item' onClick={() => Router.push('/products/category/[category]', `/products/category/${element.value}`)}>
                                 {element.value}
                             </a>
                         }

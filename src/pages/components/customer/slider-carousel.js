@@ -77,6 +77,7 @@ const SliderCarousel = (props) => {
                                 <ListGroup.Item key={element._id} className='list_item'
                                     onMouseEnter={() => handleMouseEnter(element)}
                                     onMouseLeave={handleMouseOut}
+                                    onClick={() => Router.push('/products/category/[category]', `/products/category/${element.value}`)}
                                 >
                                     <Image src={element.url} roundedCircle fluid style={{ width: '30px', maxWidth: '30px', minHeight: '30px', maxHeight: '30px', marginRight: '10px' }} />
                                     <div>{element.value}</div>
@@ -150,7 +151,7 @@ const SliderCarousel = (props) => {
                 .list_group {
                     -ms-overflow-style: none;
                 }
-
+                
                 .list_outer_item{
                    display: inline-flex;
                     align-items: center;
@@ -185,6 +186,7 @@ const SliderCarousel = (props) => {
                     z-index: 100;
                     border-top-left-radius: 20px;
                     border-bottom-left-radius: 20px;
+                    color: blue;
                 }
                 .slider_carousel .fontawesome{
                     margin-left: auto;
