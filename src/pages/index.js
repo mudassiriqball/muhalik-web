@@ -62,7 +62,6 @@ class Index extends Component {
 
         const url_1 = MuhalikConfig.PATH + '/api/categories/categories';
         await axios.get(url_1).then((res) => {
-            console.log('ggg:', res.data)
             currentComponent.setState({
                 categories_list: res.data.category.docs,
                 sub_categories_list: res.data.sub_category.docs
@@ -157,7 +156,6 @@ class Index extends Component {
     }
 }
 export async function getServerSideProps(context) {
-    console.log('jjjjjjjjjjjjjjllll')
     let slider_list = []
     let home_categories_list = []
     let new_products_list = []
@@ -179,7 +177,6 @@ export async function getServerSideProps(context) {
 
     const url_1 = MuhalikConfig.PATH + '/api/categories/categories';
     await axios.get(url_1).then((res) => {
-        console.log('ggg:', res.data)
         categories_list = res.data.category.docs,
             sub_categories_list = res.data.sub_category.docs
     }).catch((error) => {

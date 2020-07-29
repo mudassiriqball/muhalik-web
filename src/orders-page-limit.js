@@ -14,36 +14,45 @@ export default function ordersPageLimit(token, refresh, status, pageNumber, limi
     }, [refresh])
 
     useEffect(() => {
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+        const getData = () => {
+            setLoading(true)
+            setError(false)
+            let cancle
+            const _url = MuhalikConfig.PATH + `/api/orders/all-orders/${status}`
+            axios({
+                method: 'GET',
+                url: _url,
+                headers: {
+                    'authorization': token
+                },
+                params: { page: pageNumber, limit: limit },
+                cancelToken: new axios.CancelToken(c => cancle = c)
+            }).then(res => {
+                if (unmounted) {
+                    setLoading(false)
+                    setOrders(prevOrder => {
+                        return [...new Set([...prevOrder, ...res.data.data.docs])]
+                    })
+                    setPages(res.data.data.pages)
+                    setTotal(res.data.data.total)
+                }
+            }).catch(err => {
+                if (unmounted) {
+                    setLoading(false)
+                    if (axios.isCancel(err)) return
+                    setError(true)
+                }
+            })
+        }
         getData()
+        return () => {
+            unmounted = false
+            source.cancel();
+        };
     }, [status, pageNumber, refresh])
 
-    async function getData() {
-        setLoading(true)
-        setError(false)
-        let cancle
-        const _url = MuhalikConfig.PATH + `/api/orders/all-orders/${status}`
-        await axios({
-            method: 'GET',
-            url: _url,
-            headers: {
-                'authorization': token
-            },
-            params: { page: pageNumber, limit: limit },
-            cancelToken: new axios.CancelToken(c => cancle = c)
-        }).then(res => {
-            setLoading(false)
-            setOrders(prevOrder => {
-                return [...new Set([...prevOrder, ...res.data.data.docs])]
-            })
-            setPages(res.data.data.pages)
-            setTotal(res.data.data.total)
-        }).catch(err => {
-            setLoading(false)
-            if (axios.isCancel(err)) return
-            setError(true)
-            console.log(`Error ${status}:`, err)
-        })
-        return () => cancle()
-    }
     return { orders_loading, orders_error, orders, orders_pages, orders_total }
 }

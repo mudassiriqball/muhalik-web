@@ -14,36 +14,44 @@ export default function usersPageLimit(token, refresh, url, pageNumber, limit) {
     }, [refresh])
 
     useEffect(() => {
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+        const getData = () => {
+            setLoading(true)
+            setError(false)
+            const _url = MuhalikConfig.PATH + `/api/users/${url}`
+            axios({
+                method: 'GET',
+                url: _url,
+                headers: {
+                    'authorization': token
+                },
+                params: { page: pageNumber, limit: limit },
+                cancelToken: source.token
+            }).then(res => {
+                if (unmounted) {
+                    setLoading(false)
+                    setUsers(prevPro => {
+                        return [...new Set([...prevPro, ...res.data.data.docs])]
+                    })
+                    setPages(res.data.data.pages)
+                    setTotal(res.data.data.total)
+                }
+            }).catch(err => {
+                if (unmounted) {
+                    setLoading(false)
+                    if (axios.isCancel(err)) return
+                    setError(true)
+                }
+            })
+        }
         getData()
+        return () => {
+            unmounted = false
+            source.cancel();
+        };
     }, [url, pageNumber, refresh])
 
-    async function getData() {
-        setLoading(true)
-        setError(false)
-        let cancle
-        const _url = MuhalikConfig.PATH + `/api/users/${url}`
-        await axios({
-            method: 'GET',
-            url: _url,
-            headers: {
-                'authorization': token
-            },
-            params: { page: pageNumber, limit: limit },
-            cancelToken: new axios.CancelToken(c => cancle = c)
-        }).then(res => {
-            setLoading(false)
-            setUsers(prevPro => {
-                return [...new Set([...prevPro, ...res.data.data.docs])]
-            })
-            setPages(res.data.data.pages)
-            setTotal(res.data.data.total)
-        }).catch(err => {
-            setLoading(false)
-            if (axios.isCancel(err)) return
-            setError(true)
-            console.log(`Error : ${url}`, err)
-        })
-        return () => cancle()
-    }
     return { users_loading, users_error, users, users_pages, users_total }
 }

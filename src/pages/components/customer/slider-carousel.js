@@ -40,19 +40,13 @@ const SliderCarousel = (props) => {
         }
     }
 
-
-
     function handleSubMouseEnter() {
         sub = false
         console.log('sub in:', cat, sub)
     }
 
     function handleSubMouseOut() {
-        sub = true
-        console.log('sub out:', cat, sub)
-        if (cat == true) {
-            setCategoryHover(false)
-        }
+        setCategoryHover(false)
     }
 
 

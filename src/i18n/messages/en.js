@@ -217,6 +217,12 @@ export default {
         'EDIT': 'EDIT',
         'VIEW': 'VIEW',
         'personel_info': 'Personel Info',
+        'related_products': 'Related Products',
+        'review_added': 'Your Review Successfully Added',
+        'rating': 'Rating',
+        'error': 'Error',
+        'placing_order': 'Placing Order',
+
 
     }
 }

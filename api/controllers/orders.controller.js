@@ -27,6 +27,7 @@ orderController.place_order = async (req, res) => {
         ) {
           found = true;
           let array = {
+            index: index,
             variation_id: body.products[index].variation_id,
             quantity: body.products[index].quantity,
             stock: search[0].product_variations[0].stock,
@@ -41,6 +42,7 @@ orderController.place_order = async (req, res) => {
         if (search[0].product_in_stock < body.products[index].quantity) {
           found = true;
           let array1 = {
+            index: index,
             product_id: body.products[index].p_id,
             quantity: body.products[index].quantity,
             stock: search[0].product_in_stock,
@@ -50,8 +52,8 @@ orderController.place_order = async (req, res) => {
       }
     }
     if (found === true) {
-      res.status(500).send({
-        code: 500,
+      res.status(201).send({
+        code: 201,
         message: "You Have To Change Quantity Of Some Products",
         data: data,
       });

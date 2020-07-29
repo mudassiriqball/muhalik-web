@@ -69,7 +69,7 @@ export default function Category(props) {
     let loadingCard = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
         '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
 
-    const { loading, error, products, hasMore } = useQueryInfiniteScroll(fieldName, query, pageNumber, isMobile ? '12' : '24')
+    const { loading, error, products, pages, total, hasMore } = useQueryInfiniteScroll(fieldName, query, pageNumber, isMobile ? '12' : '24')
 
     useEffect(() => {
         getData()
@@ -151,13 +151,7 @@ export default function Category(props) {
                             )}
                         </Col>
                         <Col className='products_col'>
-                            {products == '' ?
-                                <Row className='p-5 w-100'>
-                                    <div className='w-100'>
-                                        <h5 className='text-center w-100'>No Data Found</h5>
-                                    </div>
-                                </Row>
-                                :
+                            {total > 0 ?
                                 <>
                                     <Row noGutters className='id_row'>
                                         {products && products.map((element, index) => {
@@ -225,6 +219,12 @@ export default function Category(props) {
                                         </Row>
                                     }
                                 </>
+                                :
+                                <Row className='h-100 p-5 w-100'>
+                                    <div className='h-100 w-100 d-flex justify-content-center align-items-center'>
+                                        <h5 className='text-center w-100'>No Data Found</h5>
+                                    </div>
+                                </Row>
                             }
                         </Col>
                     </Row>

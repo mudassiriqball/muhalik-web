@@ -292,15 +292,14 @@ function CustomerTable(props) {
         }).then(function (response) {
             setConfirmModalLoading(false)
             setShowConfirmModal(false)
-            setAlertModalMsg(`Vendor ${method}  successfully`)
+            setAlertModalMsg(`Customer ${method}  successfully`)
             setShowAlertModal(true)
             props.setRefresh()
             props.usersReloadCountHandler()
         }).catch(function (error) {
             setConfirmModalLoading(false)
             setShowConfirmModal(false)
-            alert(`User ${method} failed: `);
-            console.log(`User ${method} failed: `, error)
+            alert('Error')
         });
     }
 
@@ -345,7 +344,7 @@ function CustomerTable(props) {
                                     setMethod('restrict')
                                     setSingle_customer(element)
                                     setShowConfirmModal(true)
-                                    setConfirmModalMsg('Restrict Vendor?')
+                                    setConfirmModalMsg('Restrict Customer?')
                                     setConfirmModalColor('red')
                                     setIconname(faBan)
                                 }}
@@ -353,7 +352,7 @@ function CustomerTable(props) {
                                     setMethod('unrestrict')
                                     setSingle_customer(element)
                                     setShowConfirmModal(true)
-                                    setConfirmModalMsg('Unrestrict/Unblock Vendor?')
+                                    setConfirmModalMsg('Unrestrict/Unblock Customer?')
                                     setConfirmModalColor('blue')
                                     setIconname(faCheckCircle)
                                 }}
@@ -382,7 +381,7 @@ function CustomerTable(props) {
                                     setMethod('restrict')
                                     setSingle_customer(element)
                                     setShowConfirmModal(true)
-                                    setConfirmModalMsg('Restrict Vendor?')
+                                    setConfirmModalMsg('Restrict Customer?')
                                     setConfirmModalColor('red')
                                     setIconname(faBan)
                                 }}
@@ -390,7 +389,7 @@ function CustomerTable(props) {
                                     setMethod('unrestrict')
                                     setSingle_customer(element)
                                     setShowConfirmModal(true)
-                                    setConfirmModalMsg('Unrestrict/Unblock Vendor?')
+                                    setConfirmModalMsg('Unrestrict/Unblock Customer?')
                                     setConfirmModalColor('blue')
                                     setIconname(faCheckCircle)
                                 }}
@@ -471,31 +470,31 @@ function CustomerTableBody(props) {
             <style jsx>
                 {`
                 th {
-                    text-align: center;
-                    font-size: 14px;
-                    white-space: nowrap;
-                }
-                .customer_table .td {
-                    display: flex;
-                    flex-direction: row;
-                    font-size: 12px;
-                    float: right;
-                    padding: 0%;
-                    margin: 0%;
-                }
+                text- align: center;
+            font - size: 14px;
+            white - space: nowrap;
+        }
+            .customer_table.td {
+                display: flex;
+                flex- direction: row;
+        font - size: 12px;
+        float: right;
+        padding: 0 %;
+        margin: 0 %;
+    }
                 .customer_table td {
-                    font-size: 12px;
-                }
-            `}
+        font - size: 12px;
+    }
+    `}
             </style>
             <style type="text/css">{`
-                .customer_table .delete{
-                    color: #ff4d4d;
-                }
-                .customer_table .delete:hover{
-                    color: #cc0000;
-                }
-            `}</style>
+        .customer_table.delete{
+        color: #ff4d4d;
+    }
+                .customer_table.delete: hover{
+        color: #cc0000;
+    }
+    `}</style>
         </div>
     )
 }
@@ -503,7 +502,7 @@ function CustomerTableBody(props) {
 
 const styles = {
     fontawesome: {
-        color: `${GlobalStyleSheet.admin_primry_color}`,
+        color: `${GlobalStyleSheet.admin_primry_color} `,
         width: '30px',
         height: '30px',
         maxHeight: '30px',
@@ -511,7 +510,7 @@ const styles = {
         float: 'right'
     },
     accordin_fontawesome: {
-        color: `${GlobalStyleSheet.admin_primry_color}`,
+        color: `${GlobalStyleSheet.admin_primry_color} `,
         marginRight: '10%',
         width: '15px',
         height: '15px',

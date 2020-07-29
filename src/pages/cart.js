@@ -2,7 +2,7 @@ import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { Row, Col, Button, Form, Image, Card, Spinner, InputGroup } from 'react-bootstrap'
 import axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faThumbsUp, faTimes } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 import useDimensions from "react-use-dimensions";
 import MuhalikConfig from '../sdk/muhalik.config'
@@ -51,6 +51,9 @@ export default function Cart(props) {
     const [checkAll, setCheckAll] = useState(false)
     const [sub_total, setTotal] = useState(0)
     const [shipping_charges, setShipping_charges] = useState(0)
+
+    const [showErrorAlertModal, setShowErrorAlertModal] = useState(false)
+
     useLayoutEffect(() => {
         setProducts([])
         getData()
@@ -88,10 +91,11 @@ export default function Cart(props) {
 
     useEffect(() => {
         setProducts([])
-        cart_list.forEach((element, index) => {
+        cart_list && cart_list.forEach((element, index) => {
             getProducts(element, index)
         })
     }, [cart_list])
+
     async function getProducts(element, index) {
         const url = MuhalikConfig.PATH + `/api/products/product-by-id/${element.p_id}`;
         await axios.get(url).then(res => {
@@ -231,9 +235,11 @@ export default function Cart(props) {
     }
 
     function handlePlaceOrderError(element) {
+        setShowErrorAlertModal(true)
         let copyArray = Object.assign([], products)
-        let obj = copyArray[element.index]
-        obj[err] = true
+        let obj = {}
+        obj = copyArray[element[0].index]
+        obj['err'] = true
         copyArray[element.index] = obj;
         setProducts(copyArray)
     }
@@ -248,6 +254,14 @@ export default function Cart(props) {
                 sub_categories_list={props.sub_categories_list}
                 {...props}
             >
+                <AlertModal
+                    onHide={(e) => setShowErrorAlertModal(false)}
+                    show={showErrorAlertModal}
+                    header={translate('error')}
+                    message={translate('place_order_error')}
+                    iconname={faTimes}
+                    color={'red'}
+                />
                 <div className='cart'>
                     {isProcedeOrder ?
                         <ProcedeOrder
@@ -282,7 +296,7 @@ export default function Cart(props) {
 
                                         {products && products.map((element, index) =>
                                             <Card key={element._id}>
-                                                <Card.Body className='card_body' style={{ color: element.err ? 'red' : null }}>
+                                                <Card.Body className='card_body' style={{ border: element.err ? '1px solid red' : null }}>
                                                     <Form.Check className='m-0 pr-0' checked={element.check} onChange={(e) => handleCheck(e.target.checked, index)} ></Form.Check>
                                                     {element.product.product_type == "simple-product" ?
                                                         <Row className='w-100 p-0 m-0'>
@@ -474,7 +488,6 @@ export default function Cart(props) {
 function ProcedeOrder(props) {
     const [loading, setLoading] = useState(false)
     const [showAlertModal, setShowAlertModal] = useState(false)
-    const [showErrorAlertModal, setsetShowErrorAlertModal] = useState(false)
 
     const [name, setName] = useState('')
     const [city, setCity] = useState('')
@@ -541,15 +554,15 @@ function ProcedeOrder(props) {
                     }
                 }).then((res) => {
                     setLoading(false)
-                    if (res.data.status == 200) {
+                    if (res.data.code == 200) {
                         setShowAlertModal(true)
                         props.clearCart()
-                    } else if (res.data.status == 201) {
-                        console.log('gagagagg:', res.data)
-                        setShowErrorAlertModal(true)
+                    } else if (res.data.code == 201) {
+                        props.cancel()
                         props.handlePlaceOrderError(res.data.data)
                     }
                 }).catch((error) => {
+                    console.log('kkkk:', error)
                     alert('Not  Added')
                 })
         }
@@ -572,14 +585,6 @@ function ProcedeOrder(props) {
                 show={showAlertModal}
                 header={'Success'}
                 message={translate('order_placed')}
-                iconname={faThumbsUp}
-                color={'green'}
-            />
-            <AlertModal
-                onHide={(e) => setShowErrorAlertModal(false)}
-                show={showErrorAlertModal}
-                header={'Success'}
-                message={translate('place_order_error')}
                 iconname={faThumbsUp}
                 color={'green'}
             />
@@ -667,7 +672,10 @@ function ProcedeOrder(props) {
                             <MyButton onClick={props.cancel} block={true}>{translate('cancel')}</MyButton>
                         </Col>
                         <Col>
-                            <MyButton onClick={confirmOrder} block={true}>{translate('confirm_order')}</MyButton>
+                            <MyButton onClick={confirmOrder} block={true}>
+                                {loading ? translate('placing_order') : translate('confirm_order')}
+                                {loading ? <Spinner size='sm' animation='grow' /> : null}
+                            </MyButton>
                         </Col>
                     </Row>
                 </Form.Group>

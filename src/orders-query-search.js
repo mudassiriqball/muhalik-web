@@ -14,34 +14,45 @@ export default function ordersQuerySearch(token, refresh, status, fieldName, que
     }, [fieldName, query, refresh])
 
     useEffect(() => {
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+        const getData = () => {
+            if (query != null) {
+                setLoading(true)
+                setError(false)
+                const _url = MuhalikConfig.PATH + `/api/orders/all-orders-query-search/${status}`
+                axios({
+                    method: 'GET',
+                    url: _url,
+                    headers: {
+                        'authorization': token
+                    },
+                    params: { field: fieldName, q: query, page: pageNumber, limit: limit },
+                }).then(res => {
+                    if (unmounted) {
+                        setLoading(false)
+                        setQueryOrders(prevPro => {
+                            return [...new Set([...prevPro, ...res.data.data.docs])]
+                        })
+                        setPages(res.data.data.pages)
+                        setTotal(res.data.data.total)
+                    }
+                }).catch(err => {
+                    if (unmounted) {
+                        setLoading(false)
+                        if (axios.isCancel(err)) return
+                        setError(true)
+                    }
+                })
+            }
+        }
         getData()
+        return () => {
+            unmounted = false
+            source.cancel();
+        };
     }, [fieldName, query, pageNumber, refresh])
 
-    async function getData() {
-        if (query != null) {
-            setLoading(true)
-            setError(false)
-            const _url = MuhalikConfig.PATH + `/api/orders/all-orders-query-search/${status}`
-            await axios({
-                method: 'GET',
-                url: _url,
-                headers: {
-                    'authorization': token
-                },
-                params: { field: fieldName, q: query, page: pageNumber, limit: limit },
-            }).then(res => {
-                setLoading(false)
-                setQueryOrders(prevPro => {
-                    return [...new Set([...prevPro, ...res.data.data.docs])]
-                })
-                setPages(res.data.data.pages)
-                setTotal(res.data.data.total)
-            }).catch(err => {
-                setLoading(false)
-                console.log('Error->:', err)
-                setError(true)
-            })
-        }
-    }
     return { orders_query_loading, orders_query_error, query_orders, orders_query_pages, orders_query_total }
 }

@@ -22,9 +22,11 @@ import Link from 'next/link'
 import useQueryInfiniteScroll from '../../../../../use-query-infinite-scroll'
 import ReactStars from "react-rating-stars-component";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart } from '@fortawesome/free-regular-svg-icons';
+import { faHeart, faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import BreadcrumbRow from '../../../../components/breadcrumb-row'
 React.useLayoutEffect = React.useEffect
+
+import AlertModal from '../../../../components/alert-modal'
 
 import translate from '../../../../../i18n/translate'
 import TranslateFormControl from '../../../../../i18n/translate-form-control'
@@ -62,12 +64,13 @@ export async function getServerSideProps(context) {
 
 function Product(props) {
     const router = useRouter()
+    const [single_product, setSingle_product] = useState(props.single_product)
     const { category, sub_category, product } = router.query
 
     const [token, setToken] = useState({ role: '', full_name: '' })
     const [undecoded_token, setUndecoded_token] = useState('')
 
-    const { loading, products } = useQueryInfiniteScroll('sub-category', props.single_product == '' ? null : props.single_product.sub_category.value, '1', isMobile ? '6' : '8')
+    const { loading, error, products, pages, total, hasMore } = useQueryInfiniteScroll('sub-category', props.single_product == '' ? null : props.single_product.sub_category.value, '1', isMobile ? '6' : '8')
     const [vendor, setVendor] = useState({})
     const [wish, setWish] = useState('gray')
     const [_loading, cartLoading] = useState(false)
@@ -171,6 +174,14 @@ function Product(props) {
         }
     }
 
+    async function reloadProduct() {
+        const url_1 = MuhalikConfig.PATH + `/api/products/product-by-id/${product}`;
+        await axios.get(url_1).then((res) => {
+            setSingle_product(res.data.data[0])
+        }).catch((error) => {
+        })
+    }
+
     return (
         <div className='single_product_style'>
             <Layout
@@ -183,7 +194,7 @@ function Product(props) {
                 active_sub_category={sub_category}
                 {...props}
             >
-                {props.single_product == '' ?
+                {single_product == '' ?
                     null
                     :
                     <div className='main-row'>
@@ -201,33 +212,41 @@ function Product(props) {
                         </BreadcrumbRow>
 
                         <Row noGutters>
-                            {props.single_product.product_type == "simple-product" ?
+                            {single_product.product_type == "simple-product" ?
                                 <SimpleProduct
-                                    single_product={props.single_product}
+                                    single_product={single_product}
                                     vendor={vendor}
                                     token={token}
+                                    undecoded_token={undecoded_token}
                                     wish={wish}
                                     addToWishlist={addToWishlist}
                                     setCart={(value) => { setCart(value), setCartError('') }}
                                     cartError={cartError}
                                     handleAddToCart={handleAddToCart}
                                     loading={_loading}
+                                    reloadProduct={reloadProduct}
                                 />
                                 :
                                 <VariableProduct
-                                    single_product={props.single_product}
+                                    single_product={single_product}
                                     vendor={vendor}
                                     token={token}
+                                    undecoded_token={undecoded_token}
                                     wish={wish}
                                     addToWishlist={addToWishlist}
                                     setCart={(value) => { setCart(value), setCartError('') }}
                                     cartError={cartError}
                                     handleAddToCart={handleAddToCart}
                                     loading={_loading}
+                                    reloadProduct={reloadProduct}
                                 />
                             }
                         </Row>
-                        <RelatedProducts products={products} current_product_id={props.single_product._id} />
+                        <RelatedProducts
+                            products={products}
+                            current_product_id={props.single_product._id}
+                            totl={total}
+                        />
                     </div>
                 }
             </Layout >
@@ -612,6 +631,8 @@ function SimpleProduct(props) {
                 custom_fields={props.single_product.custom_fields}
                 single_product={props.single_product}
                 token={props.token}
+                undecoded_token={props.undecoded_token}
+                reloadProduct={props.reloadProduct}
             />
             <style type="text/css">{`
                 .simple_product{
@@ -827,6 +848,8 @@ function VariableProduct(props) {
                 item={activeVariation.item}
                 single_product={props.single_product}
                 token={props.token}
+                undecoded_token={props.undecoded_token}
+                reloadProduct={props.reloadProduct}
             />
             <style type="text/css">{`
                 .variable_product{
@@ -1092,6 +1115,9 @@ function TabComponent(props) {
     const [review, setReview] = useState('')
     const [reviewError, setReviewError] = useState('')
 
+    const [loading, setLoading] = useState(false)
+    const [showAlertModal, setShowAlertModal] = useState(false)
+
     let rating_review = {
         rating: {
             overall: 0,
@@ -1116,8 +1142,8 @@ function TabComponent(props) {
     function ratingChanged(newRating) {
         setRating(newRating)
     }
-
     function handleSetRating() {
+        setLoading(true)
         let parameters = {}
         if (props.single_product.product_type == "simple-product") {
             parameters = { _id: props.single_product._id }
@@ -1132,12 +1158,17 @@ function TabComponent(props) {
         axios({
             method: 'PUT',
             url: _url,
+            headers: { 'authorization': props.undecoded_token },
             params: parameters,
             data: { rating: rating, review: review, c_name: props.token.full_name }
         }).then(res => {
-            alert('Add ho gya')
+            setRating(0)
+            setReview('')
+            setLoading(false)
+            setShowAlertModal(true)
+            props.reloadProduct()
         }).catch(err => {
-            console.log('Error:', err)
+            alert('Error')
         })
     }
 
@@ -1148,6 +1179,14 @@ function TabComponent(props) {
 
     return (
         <div className='tab_component'>
+            <AlertModal
+                onHide={(e) => setShowAlertModal(false)}
+                show={showAlertModal}
+                header={translate('success')}
+                message={translate('review_added')}
+                iconname={faThumbsUp}
+                color={'green'}
+            />
             <Tabs defaultActiveKey="Description" id="uncontrolled-tab-example" className='outer_tabs'>
                 <Tab eventKey="Description" title={translate('description')} className='p-3'>
                     {'product_description' in props.single_product ?
@@ -1226,7 +1265,7 @@ function TabComponent(props) {
                                 </Col>
                             </Row>
                         </Tab>
-                        <Tab eventKey="Reviews" title={translate('reviews')} style={{ overflowY: 'scroll', maxHeight: '300px' }}>
+                        <Tab eventKey="Reviews" title={translate('reviews')} style={{ overflowY: 'auto', maxHeight: '300px' }}>
                             {rating_review.reviews == [] ?
                                 <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>{translate('no_reviews')}</label>
                                 :
@@ -1234,7 +1273,7 @@ function TabComponent(props) {
                                     <div key={element._id} className='review'>
                                         <div>
                                             <label>{element.c_name}</label>
-                                            <span>{element.entry_date}</span>
+                                            <span>{element.entry_date.substring(0, 10)}</span>
                                         </div>
                                         {element.review}
                                         <hr />
@@ -1263,6 +1302,7 @@ function TabComponent(props) {
                                             onChange={(e) => handleSetReview(e)}
                                             isInvalid={reviewError}
                                             rows="3"
+                                            value={review}
                                         />
                                         <Form.Control.Feedback type="invalid">
                                             {reviewError}
@@ -1271,7 +1311,10 @@ function TabComponent(props) {
                                     <Button block size='sm' variant='outline-primary'
                                         onClick={handleSetRating}
                                         disabled={rating == '' ? true : false}
-                                    >{translate('rate')}</Button>
+                                    >
+                                        {loading ? translate('rating') : translate('rate')}
+                                        {loading ? <Spinner size='sm' animation='grow' /> : null}
+                                    </Button>
                                 </Row>
                             </Tab>
                             :
@@ -1282,7 +1325,8 @@ function TabComponent(props) {
             </Tabs>
             <style type="text/css">{`
                 .tab_component{
-                    min-height: 400px;
+                    min-height: 300px;
+                    max-height: 500px;
                     margin: 2% 0%;
                     background: white;
                 }
@@ -1376,6 +1420,7 @@ function TabComponent(props) {
                     }
                     .tab_component{
                         min-height: 200px;
+                        max-height: 400px;
                         margin: 2% 0%;
                     }
                 }
@@ -1389,31 +1434,39 @@ function RelatedProducts(props) {
     const [ref, { x, y, width }] = useDimensions();
     return (
         <div className='related_products'>
-            <label className='header'>{translate('related_categories')}</label>
+            <label className='header'>{translate('related_products')}</label>
             <Row noGutters>
-                {props.products && props.products.map((element, index) =>
-                    props.current_product_id != element._id ?
-                        <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
-                            {element.product_type == "simple-product" ?
-                                <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
-                                    <Image ref={ref} className='only_product_img'
-                                        style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
-                                        src={element.product_image_link[0].url}
-                                    />
-                                    <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_price}</label>
-                                </div>
-                                :
-                                <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
-                                    <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
-                                    <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_variations[0].price}</label>
-                                </div>
-                            }
-                        </Card>
-                        :
-                        null
-                )}
+                {props.total > 0 ?
+                    props.products && props.products.map((element, index) =>
+                        props.current_product_id != element._id ?
+                            <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                                {element.product_type == "simple-product" ?
+                                    <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                        <Image ref={ref} className='only_product_img'
+                                            style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
+                                            src={element.product_image_link[0].url}
+                                        />
+                                        <label className='my_label'>{element.product_name}</label>
+                                        <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_price}</label>
+                                    </div>
+                                    :
+                                    <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
+                                        <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
+                                        <label className='my_label'>{element.product_name}</label>
+                                        <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_variations[0].price}</label>
+                                    </div>
+                                }
+                            </Card>
+                            :
+                            null
+                    )
+                    :
+                    <Row className='h-100 p-5 w-100'>
+                        <div className='h-100 w-100 d-flex justify-content-center align-items-center'>
+                            <h5 className='text-center w-100'>No Data Found</h5>
+                        </div>
+                    </Row>
+                }
             </Row>
             <style type="text/css">{`
                 .related_products .header{
@@ -1476,5 +1529,3 @@ function RelatedProducts(props) {
 }
 
 export default Product
-
-
