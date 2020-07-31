@@ -38,7 +38,7 @@ const DashboardSideDrawer = props => {
 
     return (
         <div>
-            <Tab.Container id="dashboard-tabs" defaultActiveKey="Dashboard">
+            <Tab.Container id="dashboard-tabs" defaultActiveKey="Vendors">
                 {/* Side Drawer Components */}
                 <div className={drawerClasses}>
                     <Nav className="flex-column" variant="pills">
@@ -49,7 +49,7 @@ const DashboardSideDrawer = props => {
                                 <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
                             </p>
                         </Nav.Item>
-                        <Nav.Item>
+                        {/* <Nav.Item>
                             <div className="nav_link">
                                 <Nav.Link eventKey="Dashboard" onClick={props.click} style={styles.nav_link}>
                                     <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
@@ -57,7 +57,7 @@ const DashboardSideDrawer = props => {
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
-                        </Nav.Item>
+                        </Nav.Item> */}
                         <Nav.Item>
                             <div className="nav_link">
                                 <Nav.Link eventKey="Vendors" onClick={props.click} style={styles.nav_link}>
@@ -190,9 +190,9 @@ const DashboardSideDrawer = props => {
                 <div className="tabs_side_drawer_tab_content" >
                     <Col sm={"auto"} style={{ padding: '0px' }}>
                         <Tab.Content>
-                            <Tab.Pane eventKey="Dashboard">
+                            {/* <Tab.Pane eventKey="Dashboard">
                                 <AdminDashboard />
-                            </Tab.Pane>
+                            </Tab.Pane> */}
                             <Tab.Pane eventKey="Vendors">
                                 <Vendors {...props} />
                             </Tab.Pane>

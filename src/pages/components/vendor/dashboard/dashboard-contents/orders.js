@@ -299,16 +299,20 @@ function Order(props) {
 
   const [iconname, setIconname] = useState(null)
 
+  const [start_date, setStart_date] = useState(new Date("2020/01/01"))
+  const [end_date, setEnd_date] = useState(new Date())
+
   const { vendor_orders_loading, vendor_orders_error, vendor_orders, vendor_orders_pages, vendor_orders_total } =
     vendorOrdersPageLimit(props.token, props.user_id, props.refresh, props.status, pageNumber, '20')
   const { vendor_orders_query_loading, vendor_orders_query_error, vendor_query_orders, vendor_orders_query_pages, vendor_orders_query_total } =
-    vendorOrdersQuerySearch(props.token, props.user_id, props.refresh, props.status, fieldName, query, queryPageNumber, '20')
+    vendorOrdersQuerySearch(props.token, props.user_id, props.refresh, props.status, fieldName, query, queryPageNumber, '20', start_date, end_date)
 
-  // console.log(`${props.status}`, vendor_orders)
-  async function handleSearch(type, value) {
+  async function handleSearch(type, value, start, end) {
     if (value != '') {
       setFieldName(type)
       setQuery(value)
+      setStart_date(start)
+      setEnd_date(end)
       setIsSearch(true)
     } else {
       setIsSearch(false)

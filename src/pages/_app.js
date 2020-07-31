@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-multi-carousel/lib/styles.css";
+import "react-datepicker/dist/react-datepicker.css";
+
 import Router from 'next/router'
 import MuhalikConfig from '../sdk/muhalik.config'
 

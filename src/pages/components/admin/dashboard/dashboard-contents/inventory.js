@@ -40,15 +40,20 @@ export default function Inventory(props) {
     const [queryPageNumber, setQueryPageNumber] = useState(1)
     const [query, setQuery] = useState('')
 
+    const [start_date, setStart_date] = useState(new Date("2020/01/01"))
+    const [end_date, setEnd_date] = useState(new Date())
+
     const { admin_inventory_loading, admin_inventory_products, admin_inventory_pages, admin_inventory_total } =
         adminInventoryPageLimit(refresh_count, limitPageNumber, '20')
     const { admin_inventory_query_loading, admin_inventory_query_products, admin_inventory_query_pages, admin_inventory_query_total } =
-        adminInventoryQuerySearch(refresh_count, fieldName, query, queryPageNumber, '20')
+        adminInventoryQuerySearch(refresh_count, fieldName, query, queryPageNumber, '20', start_date, end_date)
 
-    async function handleSearch(searchType, searchValue) {
+    async function handleSearch(searchType, searchValue, start, end) {
         if (searchValue != '') {
             setFieldName(searchType)
             setQuery(searchValue)
+            setStart_date(start)
+            setEnd_date(end)
             setIsSearch(true)
         } else {
             setIsSearch(false)

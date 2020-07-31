@@ -39,7 +39,7 @@ const Dashboard = props => {
 
     return (
         <div className='admin_dashboard'>
-            <Tab.Container id="dashboard-tabs" defaultActiveKey="Dashboard"  >
+            <Tab.Container id="dashboard-tabs" defaultActiveKey="Vendors"  >
                 <Row noGutters>
                     {/* Show/Hide Tabs & Tabs-Content when screen Switches to Large/Medium,Small,Extra-Small Devices*/}
                     <div className={wprapper_Casses} style={styles.wrapper_col}>
@@ -50,7 +50,7 @@ const Dashboard = props => {
                                     <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
                                 </p>
                             </Nav.Item>
-                            <Nav.Item>
+                            {/* <Nav.Item>
                                 <div className="nav_link">
                                     <Nav.Link eventKey="Dashboard" style={styles.nav_link} onClick={() => setShow_category(false)}>
                                         <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
@@ -58,7 +58,7 @@ const Dashboard = props => {
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                     </Nav.Link>
                                 </div>
-                            </Nav.Item>
+                            </Nav.Item> */}
                             <Nav.Item>
                                 <div className="nav_link">
                                     <Nav.Link eventKey="Vendors" style={styles.nav_link} onClick={() => setShow_category(false)}>
@@ -239,9 +239,9 @@ const Dashboard = props => {
                         {/* Tab Content for Large Devices */}
                         <div className="tab_content">
                             <Tab.Content style={{ height: `calc(100vh - 65px)`, overflowY: 'auto' }}>
-                                <Tab.Pane eventKey="Dashboard">
+                                {/* <Tab.Pane eventKey="Dashboard">
                                     <AdminDashboard />
-                                </Tab.Pane>
+                                </Tab.Pane> */}
                                 <Tab.Pane eventKey="Vendors">
                                     <Vendors {...props} />
                                 </Tab.Pane>

@@ -81,7 +81,7 @@ function Account() {
             <ListGroup style={{ marginBottom: '50px' }}>
                 <div className='w-100 p-1'></div>
 
-                {token == '' ?
+                {token.full_name == '' ?
                     <ListGroup.Item className='d-flex flex-column'>
                         <div className='d-inline-flex align-items-center mb-2'>
                             <FontAwesomeIcon icon={faUserCircle} style={styles.account_fontawesome} />

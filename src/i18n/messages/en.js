@@ -222,7 +222,18 @@ export default {
         'rating': 'Rating',
         'error': 'Error',
         'placing_order': 'Placing Order',
-
+        'customer_restricted': 'Customer Restricted Successfully',
+        'customer_unrestricted': 'Customer Unrestricted Successfully',
+        'ID': 'ID',
+        'shop_now': 'Shop Now',
+        'added_to_cart': 'Product Successfully Added t Cart',
+        'shop_info': 'Shop Info',
+        'no_results_found': 'No Result Found',
+        'we_are_sorry_serch': 'We are sory, no matching results found for your search',
+        'out_of_stock': 'Out of Stock',
+        'no_data_found': 'No Data Found',
+        'we_are_sorry_product': 'We are sory, we can\'t find this product',
+        'enter_valid_value': 'Enter Valid Value',
 
     }
 }

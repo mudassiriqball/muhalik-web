@@ -273,7 +273,7 @@ function VendorTable(props) {
     const [queryPageNumber, setQueryPageNumber] = useState(1)
     const [isSearch, setIsSearch] = useState(false)
     const [fieldName, setFieldName] = useState('')
-    const [query, setQuery] = useState(null)
+    const [query, setQuery] = useState('')
 
     const [single_user, setSingle_vendor] = useState({})
     // Confirm Modal
@@ -288,14 +288,20 @@ function VendorTable(props) {
 
     const [iconname, setIconname] = useState(null)
 
+    const [start_date, setStart_date] = useState(new Date("2020/01/01"))
+    const [end_date, setEnd_date] = useState(new Date())
+
 
     const { users_loading, users_error, users, users_pages, users_total } = usersPageLimit(props.token, props.refresh, props.url, '1', '20')
-    const { users_query_loading, users_query_error, query_users, users_query_pages, users_query_total } = usersQuerySearch(props.token, props.refresh, props.role, props.status, fieldName, query, queryPageNumber, '20')
+    const { users_query_loading, users_query_error, query_users, users_query_pages, users_query_total } =
+        usersQuerySearch(props.token, props.refresh, props.role, props.status, fieldName, query, queryPageNumber, '20', start_date, end_date)
 
-    async function handleSearch(type, value) {
+    async function handleSearch(type, value, start, end) {
         if (value != '') {
             setFieldName(type)
             setQuery(value)
+            setStart_date(start)
+            setEnd_date(end)
             setIsSearch(true)
         } else {
             setIsSearch(false)

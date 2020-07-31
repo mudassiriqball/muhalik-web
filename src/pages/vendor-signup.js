@@ -299,7 +299,7 @@ class VendorSignup extends Component {
                                                             }}
                                                             disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
                                                         >
-                                                            <div className='append_button'>{this.state.isCodeSended ? traslate('resend') : translate('send_code')}</div>
+                                                            <div className='append_button'>{this.state.isCodeSended ? translate('resend') : translate('send_code')}</div>
                                                             {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                         </MyButton>
                                                         {/* </InputGroup.Append> */}

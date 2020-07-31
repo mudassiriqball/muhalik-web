@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import moment from 'moment'
 import MuhalikConfig from './sdk/muhalik.config'
 
-export default function usersQuerySearch(token, refresh, role, status, fieldName, query, pageNumber, limit) {
+export default function usersQuerySearch(token, refresh, role, status, fieldName, query, pageNumber, limit, start_date, end_date) {
     const [users_query_loading, setLoading] = useState(false)
     const [users_query_error, setError] = useState('')
     const [query_users, setUsers] = useState([])
@@ -11,7 +12,7 @@ export default function usersQuerySearch(token, refresh, role, status, fieldName
 
     useEffect(() => {
         setUsers([])
-    }, [fieldName, query, refresh])
+    }, [fieldName, query, refresh, start_date, end_date])
 
     useEffect(() => {
         let unmounted = true
@@ -28,7 +29,10 @@ export default function usersQuerySearch(token, refresh, role, status, fieldName
                     headers: {
                         'authorization': token
                     },
-                    params: { status: status, field: fieldName, q: query, page: pageNumber, limit: limit },
+                    params: {
+                        status: status, field: fieldName, q: query, page: pageNumber, limit: limit,
+                        start_date: moment(start_date).format('YYYY-MM-DD'), end_date: moment(end_date).format('YYYY-MM-DD')
+                    },
                     cancelToken: source.token
                 }).then(res => {
                     if (unmounted) {
@@ -53,7 +57,7 @@ export default function usersQuerySearch(token, refresh, role, status, fieldName
             unmounted = false
             source.cancel();
         };
-    }, [fieldName, query, pageNumber, refresh])
+    }, [fieldName, query, pageNumber, refresh, start_date, end_date])
 
     return { users_query_loading, users_query_error, query_users, users_query_pages, users_query_total }
 }

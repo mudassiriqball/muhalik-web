@@ -2,7 +2,13 @@ const usersController = {};
 const Users = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
+var AWS = require("aws-sdk");
+const mongoose = require("mongoose");
 
+var s3 = new AWS.S3({
+  secretAccessKey: "nKZSmn0MFET9TEtEy4kUrksDjzkMFBQdt+x6+aPc",
+  accessKeyId: "AKIAIYECX324S27WGWFQ",
+});
 //Post Methods
 usersController.loginUser = async (req, res) => {
   try {
@@ -95,10 +101,20 @@ usersController.registerUser = async (req, res) => {
 
 // Set avatar
 usersController.set_avatar = async (req, res) => {
+  const _id = req.params._id;
 
-  const _id=req.params._id;
-  const url = req.files[0].location;
   try {
+    const user = await Users.findOne({ _id: _id });
+    const token = user.avatar;
+    const filenameToRemove = token.split("/").slice(-1)[0];
+    s3.deleteObject(
+      {
+        Bucket: "slider-images",
+        Key: filenameToRemove,
+      },
+      function (err, data) { }
+    );
+    const url = req.files[0].location;
     Users.findOneAndUpdate(
       { _id: _id },
       {
@@ -214,6 +230,7 @@ usersController.get_admins = async (req, res) => {
 // Get Disapproved Vendor
 usersController.get_new_vendors = async (req, res) => {
   let user;
+
   try {
     user = await Users.paginate(
       {
@@ -245,9 +262,13 @@ usersController.get_new_vendors = async (req, res) => {
 // Get Only vendors details
 usersController.get_vendors = async (req, res) => {
   let user;
+
   try {
     user = await Users.paginate(
-      { role: "vendor", status: "approved" },
+      {
+        role: "vendor",
+        status: "approved",
+      },
       {
         limit: parseInt(req.query.limit),
         page: parseInt(req.query.page),
@@ -273,9 +294,13 @@ usersController.get_vendors = async (req, res) => {
 // Get Restricted Vendor
 usersController.get_restricted_vendors = async (req, res) => {
   let user;
+
   try {
     user = await Users.paginate(
-      { status: "restricted", role: "vendor" },
+      {
+        status: "restricted",
+        role: "vendor",
+      },
       {
         limit: parseInt(req.query.limit),
         page: parseInt(req.query.page),
@@ -303,7 +328,10 @@ usersController.get_customers = async (req, res) => {
   let user;
   try {
     user = await Users.paginate(
-      { role: "customer", status: "approved" },
+      {
+        role: "customer",
+        status: "approved",
+      },
       {
         limit: parseInt(req.query.limit),
         page: parseInt(req.query.page),
@@ -331,7 +359,10 @@ usersController.get_restricted_customers = async (req, res) => {
   let user;
   try {
     user = await Users.paginate(
-      { status: "restricted", role: "customer" },
+      {
+        status: "restricted",
+        role: "customer",
+      },
       {
         limit: parseInt(req.query.limit),
         page: parseInt(req.query.page),
@@ -362,18 +393,18 @@ usersController.get_cart = async (req, res) => {
     });
   }
   let user;
-  let check=[];
+  let check = [];
   const _id = req.params._id;
   try {
     user = await Users.find({ _id: _id }, { cart: 1, _id: 0 });
-    for (let index = 0; index < user[0].cart.length; index++) {      
+    for (let index = 0; index < user[0].cart.length; index++) {
       check.push(user[0].cart[index]);
     }
     if (user) {
       res.status(200).send({
         code: 200,
         message: "Successful",
-         data:check,
+        data: check,
       });
     } else {
       res.status(500).send({
@@ -416,93 +447,81 @@ usersController.get_total_specific_users = async (req, res) => {
 
 usersController.get_users_by_query = async (req, res) => {
   let user;
+  const startdate = req.query.start_date;
+  const enddate = req.query.end_date + "T23:59:59Z";
+
   try {
-      if (req.query.field === "_id") {
-        console.log("aa gya 1");
-        user = await Users.paginate(
-          { role:req.params._role,_id: req.query.q,status:req.query.status },
-          {
-            limit: parseInt(req.query.limit),
-            page: parseInt(req.query.page),
-          }
-        );
-        if (user) {
-          res.status(200).send({
-            code: 200,
-            message: "Successful",
-            data: user,
-          });
-        } else {
-          res.status(500).send({
-            code: 500,
-            message: "Does Not Exist",
-          });
-        }
-      } else if (req.query.field === "full_name") {
-        user = await Users.paginate(
-          { role:req.params._role,full_name: req.query.q,status:req.query.status },
-          {
-            limit: parseInt(req.query.limit),
-            page: parseInt(req.query.page),
-          }
-        );
-        if (user) {
-          res.status(200).send({
-            code: 200,
-            message: "Successful",
-            data: user,
-          });
-        } else {
-          res.status(500).send({
-            code: 500,
-            message: "Does Not Exist",
-          });
-        }
-      } else if (req.query.field === "city") {
-        user = await Users.paginate(
-          { role:req.params._role,city: req.query.q,status:req.query.status },
-          {
-            limit: parseInt(req.query.limit),
-            page: parseInt(req.query.page),
-          }
-        );
-        if (user) {
-          res.status(200).send({
-            code: 200,
-            message: "Successful",
-            data: user,
-          });
-        } else {
-          res.status(500).send({
-            code: 500,
-            message: "Does Not Exist",
-          });
-        }
-      } else if (req.query.field === "mobile") {
-        console.log("aa gya mobile",req.query.q);
-         var mobile=req.query.q;
-         mobile=mobile.trim();
-         mobile="+"+mobile;
-        user = await Users.paginate(
-          { role:req.params._role,mobile: mobile,status:req.query.status },
-          {
-            limit: parseInt(req.query.limit),
-            page: parseInt(req.query.page),
-          }
-        );
-        if (user) {
-          res.status(200).send({
-            code: 200,
-            message: "Successful",
-            data: user,
-          });
-        } else {
-          res.status(500).send({
-            code: 500,
-            message: "Does Not Exist",
-          });
-        }
+    if (req.query.field === "_id") {
+      var ObjectId = mongoose.Types.ObjectId;
+      let _id = 0;
+      try {
+        _id = new ObjectId(req.query.q);
+      } catch (err) {
+        console.log('errr:', err)
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: { docs: [], total: 0, pages: 0 },
+        });
+        return
       }
+      console.log('data:', req.params, req.query, _id)
+
+      user = await Users.paginate(
+        {
+          role: req.params._role,
+          _id: _id,
+          status: req.query.status,
+          entry_date: {
+            $gte: new Date(startdate),
+            $lte: new Date(enddate),
+          },
+        },
+        {
+          limit: parseInt(req.query.limit),
+          page: parseInt(req.query.page),
+        }
+      );
+      if (user) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: user,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
+    } else {
+      const field = req.query.field;
+      const search = {};
+      search[field] = req.query.q;
+      search["role"] = req.params._role;
+      search["status"] = req.query.status;
+
+      search["entry_date"] = { $gte: new Date(startdate), $lte: new Date(enddate) };
+      user = await Users.paginate(
+        search,
+        {
+          limit: parseInt(req.query.limit),
+          page: parseInt(req.query.page),
+        }
+      );
+      if (user) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: user,
+        });
+      } else {
+        res.status(500).send({
+          code: 500,
+          message: "Does Not Exist",
+        });
+      }
+    }
   } catch (error) {
     console.log("error", error);
     return res.status(500).send(error);
@@ -605,8 +624,8 @@ usersController.add_to_cart = async (req, res) => {
 };
 
 usersController.update_profile = async (req, res) => {
-  const body=req.body;
-  const _id=req.params._id;
+  const body = req.body;
+  const _id = req.params._id;
   try {
     Users.findOneAndUpdate(
       { _id: _id },
@@ -682,15 +701,14 @@ usersController.deleteCartData = async (req, res) => {
 };
 
 usersController.delete_cart = async (req, res) => {
-  try{
+  try {
     const _id = req.params._id;
-    const result = await Users.update({_id:_id},{$unset:{cart:""}}
-    );
+    const result = await Users.update({ _id: _id }, { $unset: { cart: "" } });
     res.status(200).send({
       code: 200,
       message: "Deleted Successfully",
     });
-  }catch (error) {
+  } catch (error) {
     return res.status(500).send(error);
   }
 };

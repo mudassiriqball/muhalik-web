@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUsers, faUserPlus, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 
+import CountColoredCard from '../../../count-colored-card'
+
 import GlobalStyleSheet from '../../../../../styleSheet'
 import TitleRow from '../../../title-row';
 
@@ -16,113 +18,40 @@ class AdminDashboard extends React.Component {
                 <TitleRow icon={faTachometerAlt} title={' Admin Dashboard'} />
 
                 <Row style={styles.row}>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Vendoors</Card.Header>
-                                <Card.Body>
-                                    <Row>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                1234
-                                        </Card.Text>
-                                        </Col>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
-                                            </Card.Text>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </div>
+                    <Col lg={3} md={3} sm={12} xs={12} className='p-0 m-0'>
+                        <CountColoredCard
+                            count={this.props.cancelled_orders_count}
+                            header={'Vendors'}
+                            background={'lightblue'}
+                            iconname={''}
+                        />
                     </Col>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Customers</Card.Header>
-                                <Card.Body>
-                                    <Row>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                1234
-                                        </Card.Text>
-                                        </Col>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                <FontAwesomeIcon icon={faUserPlus} style={styles.fontawesome} />
-                                            </Card.Text>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </div>
+                    <Col lg={3} md={3} sm={12} xs={12} className='p-0 m-0'>
+                        <CountColoredCard
+                            count={this.props.cancelled_orders_count}
+                            header={'Customers'}
+                            background={'lightgreen'}
+                            iconname={''}
+                        />
                     </Col>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}> Product Sold </Card.Header>
-                                <Card.Body>
-                                    <Row>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                1234
-                                        </Card.Text>
-                                        </Col>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                <FontAwesomeIcon icon={faThumbsUp} style={styles.fontawesome} />
-                                            </Card.Text>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </div>
+                    <Col lg={3} md={3} sm={12} xs={12} className='p-0 m-0'>
+                        <CountColoredCard
+                            count={this.props.cancelled_orders_count}
+                            header={'Products'}
+                            background={'lightblue'}
+                            iconname={''}
+                        />
                     </Col>
-                    <Col lg={3} md={3} sm={12} xs={12} style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card}>
-                                <Card.Header style={styles.card_header}> Oredrs </Card.Header>
-                                <Card.Body>
-                                    <Row>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                5678
-                                            </Card.Text>
-                                        </Col>
-                                        <Col>
-                                            <Card.Text style={styles.card_text}>
-                                                <FontAwesomeIcon icon={faUsers} style={styles.fontawesome} />
-                                            </Card.Text>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </div>
+                    <Col lg={3} md={3} sm={12} xs={12} className='p-0 m-0'>
+                        <CountColoredCard
+                            count={this.props.cancelled_orders_count}
+                            header={'Orders'}
+                            background={'lightblue'}
+                            iconname={''}
+                        />
                     </Col>
                 </Row>
 
-
-                <Row style={styles.row}>
-                    <Col lg={6} md={6} sm={12} xs={12} style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Vendors</Card.Header>
-                                <Card.Body>
-                                </Card.Body>
-                            </Card>
-                        </div>
-                    </Col>
-                    <Col lg={6} md={6} sm={12} xs={12} style={styles.col}>
-                        <div className="hover">
-                            <Card style={styles.card} >
-                                <Card.Header style={styles.card_header}>Customers</Card.Header>
-                                <Card.Body>
-                                </Card.Body>
-                            </Card>
-                        </div>
-                    </Col>
-                </Row>
                 <style jsx>
                     {`
                         .hover {

@@ -21,7 +21,7 @@ export default function useSearch(query, pageNumber, limit) {
         const getData = () => {
             setLoading(true)
             setError(false)
-            const _url = MuhalikConfig.PATH + `/api/products/all-products-query-search`
+            const _url = MuhalikConfig.PATH + `/api/products/search`
             axios({
                 method: 'GET',
                 url: _url,
@@ -31,18 +31,11 @@ export default function useSearch(query, pageNumber, limit) {
                 if (unmounted) {
                     setLoading(false)
                     setProducts(prevPro => {
-                        return [...new Set([...prevPro, ...res.data.data])]
+                        return [...new Set([...prevPro, ...res.data.data.docs])]
                     })
-                    setHasMore(res.data.data.length > 0)
-                    setTotal(res.data.total)
-                    let count = res.data.total / 20
-                    let rounded = Math.floor(count);
-                    let decimal = count - rounded;
-                    if (decimal > 0) {
-                        setPages(rounded + 1)
-                    } else {
-                        setPages(rounded)
-                    }
+                    setHasMore(res.data.data.docs.length > 0)
+                    setTotal(res.data.data.total)
+                    setPages(res.data.data.pages)
                 }
             }).catch(err => {
                 if (unmounted) {

@@ -13,8 +13,8 @@ router.get("/user-orders-count/:_id", ordersController.get_vendor_orders_count);
 router.get("/all-orders/:_status", ordersController.get_all_orders);
 router.get("/vendor-orders/:_id", ordersController.get_vendors_orders);
 
-router.get("/all-orders-query-search/:_status", ordersController.get_all_query_search_orders);
-router.get("/vendor-orders-query-search/:_id", ordersController.get_vendor_query_search_orders);
+router.get("/all-orders-query-search/:_status", ordersController.get_all_query_search_orders); // check
+router.get("/vendor-orders-query-search/:_id", ordersController.get_vendor_query_search_orders);// check
 
 router.get("/customer-orders/:_id", ordersController.get_customer_orders);
 

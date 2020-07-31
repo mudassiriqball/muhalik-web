@@ -241,13 +241,19 @@ function CustomerTable(props) {
     const [showAlertModal, setShowAlertModal] = useState(false)
     const [alertModalMsg, setAlertModalMsg] = useState(false)
 
-    const { users_loading, users_error, users, users_pages, users_total } = usersPageLimit(props.token, props.refresh, props.url, pageNumber, '20')
-    const { users_query_loading, users_query_error, query_users, users_query_pages, users_query_total } = usersQuerySearch(props.token, props.refresh, props.role, props.status, fieldName, query, queryPageNumber, '20')
+    const [start_date, setStart_date] = useState(new Date("2020/01/01"))
+    const [end_date, setEnd_date] = useState(new Date())
 
-    async function handleSearch(type, value) {
+    const { users_loading, users_error, users, users_pages, users_total } = usersPageLimit(props.token, props.refresh, props.url, pageNumber, '20')
+    const { users_query_loading, users_query_error, query_users, users_query_pages, users_query_total } =
+        usersQuerySearch(props.token, props.refresh, props.role, props.status, fieldName, query, queryPageNumber, '20', start_date, end_date)
+
+    async function handleSearch(type, value, start, end) {
         if (value != '') {
             setFieldName(type)
             setQuery(value)
+            setStart_date(start)
+            setEnd_date(end)
             setIsSearch(true)
         } else {
             setIsSearch(false)
@@ -467,34 +473,32 @@ function CustomerTableBody(props) {
                     )}
                 </tbody>
             </Table>
-            <style jsx>
-                {`
-                th {
-                text- align: center;
-            font - size: 14px;
-            white - space: nowrap;
-        }
-            .customer_table.td {
-                display: flex;
-                flex- direction: row;
-        font - size: 12px;
-        float: right;
-        padding: 0 %;
-        margin: 0 %;
-    }
-                .customer_table td {
-        font - size: 12px;
-    }
-    `}
-            </style>
+            <style jsx>{`
+               th {
+                    text-align: center;
+                    font-size: 14px;
+                    white-space: nowrap;
+                }
+                .td {
+                    display: flex;
+                    flex-direction: row;
+                    font-size: 12px;
+                    float: right;
+                    padding: 0%;
+                    margin: 0%;
+                }
+                td {
+                    font-size: 12px;
+                }
+            `} </style>
             <style type="text/css">{`
-        .customer_table.delete{
-        color: #ff4d4d;
-    }
-                .customer_table.delete: hover{
-        color: #cc0000;
-    }
-    `}</style>
+                .customer_table .delete{
+                    color: #ff4d4d;
+                }
+                .customer_table .delete:hover{
+                    color: #cc0000;
+                }
+            `}</style>
         </div>
     )
 }

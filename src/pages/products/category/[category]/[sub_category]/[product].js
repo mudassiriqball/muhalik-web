@@ -31,12 +31,15 @@ import AlertModal from '../../../../components/alert-modal'
 import translate from '../../../../../i18n/translate'
 import TranslateFormControl from '../../../../../i18n/translate-form-control'
 import TranslateOption from '../../../../../i18n/translate-option'
+import MyButton from '../../../../components/buttons/my-btn';
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 
 export async function getServerSideProps(context) {
     let categories_list = []
     let sub_categories_list = []
     let single_product = []
+
     const { product } = context.query
 
     const url = MuhalikConfig.PATH + '/api/categories/categories';
@@ -51,7 +54,6 @@ export async function getServerSideProps(context) {
         single_product = res.data.data[0]
     }).catch((error) => {
     })
-
 
     return {
         props: {
@@ -70,12 +72,13 @@ function Product(props) {
     const [token, setToken] = useState({ role: '', full_name: '' })
     const [undecoded_token, setUndecoded_token] = useState('')
 
+    const [showAlertModal, setShowAlertModal] = useState(false)
+
     const { loading, error, products, pages, total, hasMore } = useQueryInfiniteScroll('sub-category', props.single_product == '' ? null : props.single_product.sub_category.value, '1', isMobile ? '6' : '8')
     const [vendor, setVendor] = useState({})
     const [wish, setWish] = useState('gray')
     const [_loading, cartLoading] = useState(false)
-    const [cart, setCart] = useState(0)
-    const [cartError, setCartError] = useState('')
+
     const [cart_count, setCart_count] = useState(0)
 
     useLayoutEffect(() => {
@@ -144,33 +147,31 @@ function Product(props) {
     }
 
 
-    async function handleAddToCart(product_id, variation_id, index) {
+
+    async function handleAddToCart(quantity, product_id, variation_id, index) {
         let data = {
             p_id: product_id,
             variation_id: variation_id,
             index: index,
-            quantity: cart
+            quantity: quantity
         }
         if (token.full_name == '') {
             Router.push('/login')
-        } else if (cart == 0 || cart == 'Quantity') {
-            setCartError(translate('select_quantity_first'))
         } else {
             cartLoading(true)
-            if (cart > 0) {
-                const url = MuhalikConfig.PATH + `/api/users/add-to-cart/${token._id}`;
-                await axios.put(url, data, {
-                    headers: {
-                        'authorization': undecoded_token,
-                    }
-                }).then(function (res) {
-                    cartLoading(false)
-                    getCartCount(token._id)
-                }).catch(function (error) {
-                    cartLoading(false)
-                    alert('Error')
-                });
-            }
+            const url = MuhalikConfig.PATH + `/api/users/add-to-cart/${token._id}`;
+            await axios.put(url, data, {
+                headers: {
+                    'authorization': undecoded_token,
+                }
+            }).then(function (res) {
+                cartLoading(false)
+                setShowAlertModal(true)
+                getCartCount(token._id)
+            }).catch(function (error) {
+                cartLoading(false)
+                alert('Error')
+            });
         }
     }
 
@@ -183,7 +184,7 @@ function Product(props) {
     }
 
     return (
-        <div className='single_product_style'>
+        <div className='product_style'>
             <Layout
                 role={token.role || ''}
                 name={token.full_name || ''}
@@ -194,8 +195,21 @@ function Product(props) {
                 active_sub_category={sub_category}
                 {...props}
             >
+                <AlertModal
+                    onHide={(e) => setShowAlertModal(false)}
+                    show={showAlertModal}
+                    header={'Success'}
+                    message={translate('added_to_cart')}
+                    iconname={faThumbsUp}
+                    color={'green'}
+                />
                 {single_product == '' ?
-                    null
+                    <Row className='h-100 p-5 w-100'>
+                        <div className='h-100 w-100'>
+                            <h5 className='text-center w-100 pt-5'>{translate('out_of_stock')}</h5>
+                            <label className='text-center w-100 pt-1 pb-5'>{translate('we_are_sorry_product')}</label>
+                        </div>
+                    </Row>
                     :
                     <div className='main-row'>
                         <BreadcrumbRow active={product}>
@@ -220,8 +234,6 @@ function Product(props) {
                                     undecoded_token={undecoded_token}
                                     wish={wish}
                                     addToWishlist={addToWishlist}
-                                    setCart={(value) => { setCart(value), setCartError('') }}
-                                    cartError={cartError}
                                     handleAddToCart={handleAddToCart}
                                     loading={_loading}
                                     reloadProduct={reloadProduct}
@@ -234,8 +246,6 @@ function Product(props) {
                                     undecoded_token={undecoded_token}
                                     wish={wish}
                                     addToWishlist={addToWishlist}
-                                    setCart={(value) => { setCart(value), setCartError('') }}
-                                    cartError={cartError}
                                     handleAddToCart={handleAddToCart}
                                     loading={_loading}
                                     reloadProduct={reloadProduct}
@@ -251,7 +261,7 @@ function Product(props) {
                 }
             </Layout >
             <style type="text/css">{`
-                .single_product_style{
+                .product_style {
                     min-height: 100vh;
                     background: ${GlobalStyleSheet.body_color};
                     position: absolute;
@@ -259,56 +269,56 @@ function Product(props) {
                     left: 0;
                     right: 0;
                 }
-                .single_product_style .main-row{
+                .product_style .main-row{
                     padding: 2% 5%;
                 }
-                .single_product_style .single_product_img{
+                .product_style .single_product_img{
                     min-width: 100%;
                     max-width: 100%;
                     background: white;
                 }
-                .single_product_style .single_product_img:hover{
+                .product_style .single_product_img:hover{
                     cursor: pointer;
                     background: ${GlobalStyleSheet.body_color};
                 }
 
-                .display_in_xs{
+                .product_style .display_in_xs{
                     display: none;
                 }
-                .display_in_lg_md_sm{
+                .product_style .display_in_lg_md_sm{
                     display: block;
                 }
                 
-                .img_col{
+                .product_style .img_col{
                     padding: 2%;
                     background: white;
                 }
-                .vertical_align_img{
+                .product_style .vertical_align_img{
                     min-width: 14.2857142857%;
                     max-width: 14.2857142857%;
                     margin: 0%;
                     padding: 0%;
                 }
-                .larg_img{
+                .product_style .larg_img{
                     padding: 0%;
                     margin: 0%;
                 }
-                .desc_col{
+                .product_style .desc_col{
                     padding: 2% 4%;
                     background: white;
                 }
-                .vendor_desc_col{
+                .product_style .vendor_desc_col{
                     padding: 2% 2% 2% 3%;
                     border-left: 0.5px solid lightgray;
                     background: white;
                 }
 
-                .price_label{
+                .product_style .price_label{
                     width: 100%;
                     margin: 2% 0%;
                 }
 
-                .slope{
+                .product_style .slope{
                     width: 40%;
                     height:40px;
                     margin: 2% 0%;
@@ -320,7 +330,7 @@ function Product(props) {
                     overflow: visible;
                     position: relative;
                 }
-                .slope:after {
+                .product_style .slope:after {
                     content: "";
                     position: absolute;
                     display: block;
@@ -332,7 +342,7 @@ function Product(props) {
                     border-right: solid 30px transparent;
                 }
 
-                .stock{
+                .product_style .stock{
                     font-size: 16px;
                     width: 100%;
                     background: #d6f5d6;
@@ -340,7 +350,7 @@ function Product(props) {
                     padding: 2%;
                     margin: 2% 0%;
                 }
-                .stock span{
+                .product_style .stock span{
                     font-size: 13px;
                     width: 100%;
                     display: flex;
@@ -348,17 +358,17 @@ function Product(props) {
                     padding: 2% 2% 0% 2%;
                     border-top: 1px solid lightgray;
                 }
-                .cart{
+                .product_style .cart{
                     margin: 5% 0%;
                 }
 
-                .rating_review_col{
+                .product_style .rating_review_col{
                     font-size: 12px;
                     color: gray;
                     align-items: center;
                 }
                 
-                .product_label{
+                .product_style .product_label{
                     font-size: 18px;
                     color: gray;
                     width: 100%;
@@ -366,75 +376,75 @@ function Product(props) {
                     text-align: center;
                 }
 
-                .add_to_wish_list{
+                .product_style .add_to_wish_list{
                     color: gray;
                     margin: 3% 0%;
                     align-items: center;
                 }
-                .add_to_wish_list label{
+                .product_style .add_to_wish_list label{
                     padding: 0%;
                     margin-right: 4%;
                 }
-                .add_to_wish_list .font_awsome{
+                .product_style .add_to_wish_list .font_awsome{
                     color: ${wish};
                     min-width: 15px;
                     max-width: 15px;
                     min-height: 15px;
                     max-height: 15px;
                 }
-                .add_to_wish_list .font_awsome:hover{
+                .product_style .add_to_wish_list .font_awsome:hover{
                     color: orange;
                     cursor: pointer;
                 }
 
                 @media (max-width: 1199px) {
-                    .single_product_style .main-row{
+                    .product_style .main-row{
                         padding: 2% 3%;
                     }
-                    .img_col{
+                    .product_style .img_col{
                         padding: 2% 0% 2% 2%;
                     }
-                    .vertical_align_img{
+                    .product_style .vertical_align_img{
                         padding: 0% 1%;
                     }
-                    .desc_col{
+                    .product_style .desc_col{
                         padding: 2% 1% 2% 2%;
                     }
-                    .vendor_desc_col{
+                    .product_style .vendor_desc_col{
                         padding: 2%;
                     }
                 }
                 @media (max-width: 991px) {
-                    .single_product_style .main-row{
+                    .product_style .main-row{
                         padding: 2%;
                     }
-                    .img_col{
+                    .product_style .img_col{
                         padding: 2% 0% 2% 2%;
                     }
-                    .vertical_align_img{
+                    .product_style .vertical_align_img{
                         padding: 0% 1% 0% 2%;
                     }
-                    .desc_col{
+                    .product_style .desc_col{
                         padding: 2% 1% 2% 2%;
                     }
-                    .vendor_desc_col{
+                    .product_style .vendor_desc_col{
                         padding: 2% 1% 2% 1%;
                     }
                 }
                 @media (max-width: 767px) {
-                    .single_product_style .main-row{
+                    .product_style .main-row{
                         padding: 2% 2% 50px 2%;
                     }
-                    .img_col{
+                    .product_style .img_col{
                         padding: 2%;
                     }
-                    .vertical_align_img{
+                    .product_style .vertical_align_img{
                         padding: 0% 0% 0% 3%;
                     }
-                    .desc_col{
+                    .product_style .desc_col{
                         padding: 2%;
                     }
-                    .vendor_desc_col{
+                    .product_style .vendor_desc_col{
                         margin: 2% 0%;
                         border-radius: 5px;
                         padding: %;
@@ -442,36 +452,36 @@ function Product(props) {
                     }
                 }
                 @media (max-width: 575px) {
-                    .single_product_style .main-row{
+                    .product_style .main-row{
                         padding: 1.5% 1.5% 50px 1.5%;
                     }
-                    .single_product_style .img_col{
+                    .product_style .img_col{
                         border-radius: 5px;
                     }
-                    .single_product_style .larg_img{
+                    .product_style .larg_img{
                         padding: 0% 2%;
                         margin: 0% 2%;
                     }
-                    .single_product_style .desc_col{
+                    .product_style .desc_col{
                         margin: 2% 0%;
                         border-radius: 5px;
                     }
-                    .single_product_style .vendor_desc_col{
+                    .product_style .vendor_desc_col{
                         margin-bottom: 2%;
                     }
 
-                    .single_product_style .display_in_lg_md_sm{
+                    .product_style .display_in_lg_md_sm{
                         display: none;
                     }
-                    .single_product_style .display_in_xs{
+                    .product_style .display_in_xs{
                         display: block;
                     }
 
-                    .single_product_style .disable_scroll{
+                    .product_style .disable_scroll{
                         display: block;
                         margin-top: 2%;
                     }
-                    .single_product_style .disable_scroll {
+                    .product_style .disable_scroll {
                         display: inline-flex;
                         background: ${GlobalStyleSheet.body_color};
                         width: 100%;
@@ -479,10 +489,10 @@ function Product(props) {
                         margin: 1% 0%;
                         overflow-y: scroll;
                     }
-                    .single_product_style .disable_scroll::-webkit-scrollbar {
+                    .product_style .disable_scroll::-webkit-scrollbar {
                         display: none;
                     }
-                    .single_product_style .disable_scroll {
+                    .product_style .disable_scroll {
                         -ms-overflow-style: none;
                     }
                 }
@@ -512,16 +522,17 @@ function SimpleProduct(props) {
         },
         reviews: []
     }
-    let options = []
-
-    for (let i = 0; i < props.single_product.product_in_stock; i++) {
-        options.push(
-            <option key={i}>{i + 1}</option>
-        )
-    }
-
     if ('rating_review' in props.single_product) {
         rating_review = props.single_product.rating_review;
+    }
+
+    const [quantity, setQuantity] = useState(1)
+
+    function handleSetQuantityMinus() {
+        setQuantity(quantity - 1)
+    }
+    function handleSetQuantityPlus() {
+        setQuantity(quantity + 1)
     }
 
     return (
@@ -569,7 +580,7 @@ function SimpleProduct(props) {
                     <Row noGutters>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
-                                <div className='product_rating'> Rating: </div>
+                                <div className='product_rating'>{translate('rating')}: </div>
                                 <Badge variant='info' style={{ fontSize: '13px', marginLeft: '5px' }}> {rating_review.rating.overall} </Badge>
                             </div>
                             <ReactStars
@@ -582,15 +593,10 @@ function SimpleProduct(props) {
                             />
                         </Col>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
-                            <div>Reviews </div>
+                            <div>{translate('reviews')} </div>
                             <div>{rating_review.reviews.length}</div>
                         </Col>
                     </Row>
-
-                    {/* <div className='add_to_wish_list'>
-                        <label>Add to Wishlist</label>
-                        <FontAwesomeIcon icon={faHeart} className='font_awsome' onClick={() => props.addToWishlist(props.single_product._id)} />
-                    </div> */}
 
                     <div className='stock'>
                         {translate('available_in_stock')}
@@ -600,22 +606,31 @@ function SimpleProduct(props) {
                     <div className='cart'>
                         <Row noGutters>
                             <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
-                                <Form.Control as="select" onChange={(e) => props.setCart(e.target.value)} defaultValue="Choose...">
-                                    <TranslateOption id='quantity' />
-                                    {options.map(element =>
-                                        element
-                                    )}
-                                </Form.Control>
-                                <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
-                                    {props.cartError}
-                                </Form.Row>
+                                <InputGroup>
+                                    <InputGroup.Prepend>
+                                        <MyButton onClick={handleSetQuantityMinus} disabled={quantity == 1}>
+                                            <FontAwesomeIcon icon={faMinus} className='fontawesome' />
+                                        </MyButton>
+                                    </InputGroup.Prepend>
+                                    <Form.Control
+                                        style={{ maxWidth: '80px', textAlign: 'center' }}
+                                        type='number'
+                                        value={quantity}
+                                        disabled={true}
+                                    />
+                                    <InputGroup.Prepend>
+                                        <MyButton onClick={handleSetQuantityPlus} disabled={quantity == props.single_product.product_in_stock}>
+                                            <FontAwesomeIcon icon={faPlus} className='fontawesome' />
+                                        </MyButton>
+                                    </InputGroup.Prepend>
+                                </InputGroup>
                             </Form.Group>
                             <Col className='ml-1'>
-                                <Button variant='success' block disabled={props.loading}
-                                    onClick={() => props.handleAddToCart(props.single_product._id, '', '')}>
+                                <MyButton block disabled={props.loading}
+                                    onClick={() => props.handleAddToCart(quantity, props.single_product._id, '', '')}>
                                     {props.loading ? translate('adding') : translate('add_to_cart')}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
-                                </Button>
+                                </MyButton>
                             </Col>
                         </Row>
                     </div>
@@ -637,6 +652,12 @@ function SimpleProduct(props) {
             <style type="text/css">{`
                 .simple_product{
                     width: 100%;
+                }
+                .simple_product .fontawesome {
+                    min-width: 15px;
+                    max-width: 15px;
+                    min-height: 15px;
+                    max-height: 15px;
                 }
             `}</style>
         </div>
@@ -660,12 +681,13 @@ function VariableProduct(props) {
         },
         reviews: []
     }
-    let options = []
 
-    for (let i = 0; i < activeVariation.stock; i++) {
-        options.push(
-            <option key={i}>{i + 1}</option>
-        )
+    const [quantity, setQuantity] = useState(1)
+    function handleSetQuantityMinus() {
+        setQuantity(quantity - 1)
+    }
+    function handleSetQuantityPlus() {
+        setQuantity(quantity + 1)
     }
 
     if ('rating_review' in activeVariation) {
@@ -736,11 +758,6 @@ function VariableProduct(props) {
                         </Col>
                     </Row>
 
-                    {/* <div className='add_to_wish_list'>
-                        <label>Add to Wishlist</label>
-                        <FontAwesomeIcon icon={faHeart} className='font_awsome' onClick={() => props.addToWishlist(props.single_product._id)} />
-                    </div> */}
-
                     <div className='stock'>
                         {translate('available_in_stock')}
                         <span>{translate('stock')}: {activeVariation.stock}</span>
@@ -749,19 +766,28 @@ function VariableProduct(props) {
                     <div className='cart'>
                         <Row noGutters>
                             <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
-                                <Form.Control as="select" onChange={(e) => props.setCart(e.target.value)} >
-                                    <TranslateOption id='quantity' />
-                                    {options.map(element =>
-                                        element
-                                    )}
-                                </Form.Control>
-                                <Form.Row style={{ color: '#DC3545', fontSize: '13px', marginLeft: '2px' }}>
-                                    {props.cartError}
-                                </Form.Row>
+                                <InputGroup>
+                                    <InputGroup.Prepend>
+                                        <MyButton onClick={handleSetQuantityMinus} disabled={quantity == 1}>
+                                            <FontAwesomeIcon icon={faMinus} className='fontawesome' />
+                                        </MyButton>
+                                    </InputGroup.Prepend>
+                                    <Form.Control
+                                        style={{ maxWidth: '80px', textAlign: 'center' }}
+                                        type='number'
+                                        value={quantity}
+                                        disabled={true}
+                                    />
+                                    <InputGroup.Prepend>
+                                        <MyButton onClick={handleSetQuantityPlus} disabled={quantity == activeVariation.stock}>
+                                            <FontAwesomeIcon icon={faPlus} className='fontawesome' />
+                                        </MyButton>
+                                    </InputGroup.Prepend>
+                                </InputGroup>
                             </Form.Group>
                             <Col className='ml-1'>
                                 <Button variant='success' block disabled={props.loading}
-                                    onClick={() => props.handleAddToCart(props.single_product._id, activeVariation._id, activeVariationIndex)}>
+                                    onClick={() => props.handleAddToCart(quantity, props.single_product._id, activeVariation._id, activeVariationIndex)}>
                                     {props.loading ? translate('adding') : translate('add_to_cart')}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
                                 </Button>
@@ -780,26 +806,6 @@ function VariableProduct(props) {
                                 </div>
                             </div>
                         )}
-                        {/* {props.single_product.product_variations[0].item.map((element, index) =>
-                            <div className='item'>
-                                <div className='item_name_div'>
-                                    {element.name}: <span style={{ color: 'black', fontSize: '16px' }}>{activeVariation.item[index].value}</span>
-                                </div>
-                                <div>
-                                    {props.single_product.product_variations.map((e, i) =>
-                                        <Button block size='sm' variant={activeVariationIndex == i ? 'primary' : 'outline-secondary'} className='item_value_btn'
-                                            onClick={() => {
-                                                setActiveVariation(e),
-                                                    setActiveVariationIndex(i),
-                                                    setActiveImageIndex(0)
-                                            }}
-                                        >
-                                            {e.item[index].value}
-                                        </Button>
-                                    )}
-                                </div>
-                            </div>
-                        )} */}
                     </div>
                     <hr />
                     <div className='display_in_lg_md_sm'>
@@ -874,6 +880,12 @@ function VariableProduct(props) {
                 .variable_product .item_value_btn{
                     margin: 1%;
                 }
+                .variable_product .fontawesome {
+                    min-width: 15px;
+                    max-width: 15px;
+                    min-height: 15px;
+                    max-height: 15px;
+                }
             `}</style>
         </div >
     )
@@ -938,12 +950,12 @@ function VendorInfo(props) {
 
     return (
         <div className='vendor_info'>
-            <label className='product_label'>Shop Info</label>
+            <label className='product_label'>{translate('shop_info')}</label>
             <label className='text-center w-100 pb-0 mb-0'>
                 {props.vendor && 'shop_name' in props.vendor ? props.vendor.shop_name : '-'}
             </label>
             <hr className='pt-0 mt-1' />
-            <Row noGutters className='_div'>
+            <Row noGutters className='abc'>
                 <div > Rating: </div>
                 <Badge variant='info' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
                     {rating.overall}
@@ -992,7 +1004,7 @@ function VendorInfo(props) {
 
             <hr />
             <style type="text/css">{`
-                ._div{
+                .vendor_info .abc{
                     font-size: 13px;
                     color: gray;
                     display: inline-flex;
@@ -1001,20 +1013,20 @@ function VendorInfo(props) {
                     width: 100%;
                 }
 
-                .vendor_rating {
+                .vendor_info .vendor_rating {
                     display: inline-flex;
                     align-items: center;
                     font-size: 14px;
                     color: orange;
                     justify-content: center;
                 }
-                .vendor_rating label{
+                .vendor_info .vendor_rating label{
                      color: gray;
                      padding: 0px;
                      margin: 0px;
                      font-size: 13px;
                 }
-                .vendor_rating span{
+                .vendor_info .vendor_rating span{
                     width: 60%;
                     min-height: 10px;
                     max-height: 10px;
@@ -1023,30 +1035,30 @@ function VendorInfo(props) {
                     margin: 0% 5px 0% 10px;
                     border-radius: 2px;
                 }
-                .vendor_rating span:after {
+                .vendor_info .vendor_rating span:after {
                     content:'';
                     position:absolute;
                     background: orange;
                     top:0; bottom:0;
                     left:0;
                 }
-                .one_stars_vendor_rating span:after{
+                .vendor_info .one_stars_vendor_rating span:after{
                     width: calc(${rating.one_star}% / 10);
                 }
-                .two_stars_vendor_rating span:after{
+                .vendor_info .two_stars_vendor_rating span:after{
                     width: calc(${rating.two_star}% / 10);
                 }
-                .three_stars_vendor_rating span:after{
+                .vendor_info .three_stars_vendor_rating span:after{
                     width: cals(${rating.three_star}% / 10);
                 }
-                .four_stars_vendor_rating span:after{
+                .vendor_info .four_stars_vendor_rating span:after{
                     width: calc(${rating.four_star}% / 10);
                 }
-                .five_stars_vendor_rating span:after{
+                .vendor_info .five_stars_vendor_rating span:after{
                     width: calc(${rating.five_star}% / 10);
                 }
                 
-                .delivered_slope , .cancelled_slope, .returned_slope {
+                .vendor_info .delivered_slope , .cancelled_slope, .returned_slope {
                     width: 70%;
                     height:30px;
                     margin: 2% 0%;
@@ -1060,16 +1072,16 @@ function VendorInfo(props) {
                     align-items: center;
                     justify-content: center;
                 }
-                .delivered_slope{
+                .vendor_info .delivered_slope{
                     background: #adebbb;
                 } 
-                .cancelled_slope{
+                .vendor_info .cancelled_slope{
                     background: #ffe699;
                 }
-                .returned_slope {
+                .vendor_info .returned_slope {
                     background: #ff9999;
                 }
-                .delivered_slope:after {
+                .vendor_info .delivered_slope:after {
                     content: "";
                     position: absolute;
                     display: block;
@@ -1080,7 +1092,7 @@ function VendorInfo(props) {
                     border-top: solid 30px #adebbb;
                     border-right: solid 30px transparent;
                 }
-                .cancelled_slope:after {
+                .vendor_info .cancelled_slope:after {
                     content: "";
                     position: absolute;
                     display: block;
@@ -1091,7 +1103,7 @@ function VendorInfo(props) {
                     border-top: solid 30px #ffe699;
                     border-right: solid 30px transparent;
                 }
-                .returned_slope:after {
+                .vendor_info .returned_slope:after {
                     content: "";
                     position: absolute;
                     display: block;
@@ -1102,8 +1114,6 @@ function VendorInfo(props) {
                     border-top: solid 30px #ff9999;
                     border-right: solid 30px transparent;
                 }
-
-
             `}</style>
         </div >
     )
@@ -1330,26 +1340,26 @@ function TabComponent(props) {
                     margin: 2% 0%;
                     background: white;
                 }
-                td{
+                .tab_component td{
                     font-size: 12px;
                     padding: 0.5% 3%;
                     color: gray;
                 }
 
-                .star_rating {
+                .tab_component .star_rating {
                     padding-left: 5%;
                    display: inline-flex;
                     align-items: center;
                     font-size: 14px;
                     color: orange;
                 }
-                .star_rating  label{
+                .tab_component .star_rating  label{
                      color: gray;
                      padding: 0px;
                      margin: 0px;
                      font-size: 13px;
                 }                
-                .star_rating span{
+                .tab_component .star_rating span{
                     width: 350px;
                     min-height: 10px;
                     max-height: 10px;
@@ -1358,67 +1368,67 @@ function TabComponent(props) {
                     margin: 0% 5px 0% 10px;
                     border-radius: 2px;
                 }
-                .star_rating span:after {
+                .tab_component .star_rating span:after {
                     content:'';
                     position:absolute;
                     background: orange;
                     top:0; bottom:0;
                     left:0;
                 }
-                .one_stars_rating span:after{
+                .tab_component .one_stars_rating span:after{
                     width: calc(${rating_review.rating.one_star}% / 10);
                 }
-                .two_stars_rating span:after{
+                .tab_component .two_stars_rating span:after{
                     width: calc(${rating_review.rating.two_star}% / 10);
                 }
-                .three_stars_rating span:after{
+                .tab_component .three_stars_rating span:after{
                     width: calc(${rating_review.rating.three_star}% / 10);
                 }
-                .four_stars_rating span:after{
+                .tab_component .four_stars_rating span:after{
                     width: calc(${rating_review.rating.four_star}% / 10);
                 }
-                .five_stars_rating span:after{
+                .tab_component .five_stars_rating span:after{
                     width: calc(${rating_review.rating.five_star}% / 10);
                 }
 
-                .review{
+                .tab_component .review{
                     margin: 2%;
                     font-size: 12px;
                     color: gray;
                 }
-                .review label{
+                .tab_component .review label{
                     color: black;
                     font-size: 14px;
                 }
-                .review span{
+                .tab_component .review span{
                     float: right;
                     color: gray;
                     font-size: 12px;
                 }
 
-                .give_review{
+                .tab_component .give_review{
                     width: 100%;
                     margin: 2%;
                 }
                 @media (max-width: 767px) {
-                    .star_rating span{
+                    .tab_component .star_rating span{
                         width: 300px;
                     }
                 }
                 @media (max-width: 575px) {
-                    .outer_tabs{
+                    .tab_component .outer_tabs{
                         font-size: 13px;
                     }
-                    .inner_tabs{
+                    .tab_component .inner_tabs{
                         font-size: 12px;
                     }
-                    .star_rating {
+                    .tab_component .star_rating {
                         padding-left: 14%;
                     }
-                    .star_rating span{
+                    .tab_component .star_rating span{
                         width: 200px;
                     }
-                    .tab_component{
+                    .tab_component .tab_component{
                         min-height: 200px;
                         max-height: 400px;
                         margin: 2% 0%;
@@ -1463,7 +1473,7 @@ function RelatedProducts(props) {
                     :
                     <Row className='h-100 p-5 w-100'>
                         <div className='h-100 w-100 d-flex justify-content-center align-items-center'>
-                            <h5 className='text-center w-100'>No Data Found</h5>
+                            <h5 className='text-center w-100'>{translate('no_data_found')}</h5>
                         </div>
                     </Row>
                 }
@@ -1481,7 +1491,7 @@ function RelatedProducts(props) {
                     background: none;
                     border: none;
                 }
-                .my_label{
+                .related_products .my_label{
                     text-overflow: ellipsis;
                     overflow: hidden;
                     white-space: nowrap; 
@@ -1511,7 +1521,7 @@ function RelatedProducts(props) {
                     margin-bottom: 5px;
                 }    
                 @media (min-width: 1200px) {
-                    .only_products_card{
+                    .related_products .only_products_card{
                         max-width: 14.285714285714285714285714285714%;
                     }
                 }

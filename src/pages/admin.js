@@ -61,7 +61,6 @@ export async function getServerSideProps(context) {
 
     const home_cate_url = MuhalikConfig.PATH + '/api/categories/home-categories';
     await axios.get(home_cate_url).then((res) => {
-        console.log('hhh:', res.data)
         home_categories_list = res.data.data
     }).catch((error) => {
     })
@@ -149,29 +148,38 @@ class Admin extends Component {
         }
     }
 
+    ummounted = true
+    CancelToken = axios.CancelToken;
+    source = this.CancelToken.source();
+
     async componentDidMount() {
         this.authUser()
         const currentComponent = this;
         this.setState({ token: await getTokenFromStorage() })
 
         const url_1 = MuhalikConfig.PATH + '/api/categories/fields';
-        await axios.get(url_1).then(function (res) {
-            currentComponent.setState({
-                fields_list: res.data.data.docs,
-            });
+        await axios.get(url_1, { cancelToken: this.source.token }).then(function (res) {
+            if (this.unmounted) {
+                currentComponent.setState({
+                    fields_list: res.data.data.docs,
+                })
+            }
         }).catch(function (error) {
-            console.log("Fields Fetching Error:", error)
-            // alert('Fields Fetching Error: ', error)
         })
         const url_2 = MuhalikConfig.PATH + '/api/categories/field-requests';
-        await axios.get(url_2).then(function (res) {
-            currentComponent.setState({
-                field_requests_list: res.data.data.docs,
-            });
+        await axios.get(url_2, { cancelToken: this.source.token }).then(function (res) {
+            if (this.unmounted) {
+                currentComponent.setState({
+                    field_requests_list: res.data.data.docs,
+                })
+            }
         }).catch(function (error) {
-            console.log("Field Requests Fetching Error:", error)
-            // alert('field-requests: ', error)
         })
+    }
+
+    componentWillUnmount() {
+        this.source.cancel();
+        this.unmounted = false
     }
 
     async authUser() {
@@ -180,8 +188,10 @@ class Admin extends Component {
             this.setState({ decodedToken: _decodedToken })
             const currentComponent = this
             const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decodedToken._id}`;
-            await axios.get(user_url).then((res) => {
-                currentComponent.setState({ user: res.data.data[0] })
+            await axios.get(user_url, { cancelToken: this.source.token }).then((res) => {
+                if (this.unmounted) {
+                    currentComponent.setState({ user: res.data.data[0] })
+                }
             }).catch((error) => {
             })
         }
@@ -209,11 +219,13 @@ class Admin extends Component {
     async reloadCategories() {
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/categories/categories';
-        await axios.get(url).then((res) => {
-            currentComponent.setState({
-                categories_list: res.data.category.docs,
-                sub_categories_list: res.data.sub_category.docs
-            });
+        await axios.get(url, { cancelToken: this.source.token }).then((res) => {
+            if (this.unmounted) {
+                currentComponent.setState({
+                    categories_list: res.data.category.docs,
+                    sub_categories_list: res.data.sub_category.docs
+                })
+            }
         }).catch((error) => {
             console.log('Caterories Fetchig Error: ', error)
         })
@@ -221,39 +233,42 @@ class Admin extends Component {
     async reloadSlider() {
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/sliders/sliders';
-        await axios.get(url).then(function (res) {
-            currentComponent.setState({
-                sliders_list: res.data.data,
-            });
+        await axios.get(url, { cancelToken: this.source.token }).then(function (res) {
+            if (this.unmounted) {
+                currentComponent.setState({
+                    sliders_list: res.data.data,
+                })
+            }
         }).catch(function (error) {
-            console.log("sliders_list Fetching Error:", error)
-            alert('sliders_list error: ', error)
         })
     }
     async reloadHomeCategories() {
         console.log('reloadHomeCategories')
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/categories/home-categories';
-        await axios.get(url).then((res) => {
-            currentComponent.setState({
-                home_categories_list: res.data.category
-            });
+        await axios.get(url, { cancelToken: this.source.token }).then((res) => {
+            if (this.unmounted) {
+                currentComponent.setState({
+                    home_categories_list: res.data.category
+                })
+            }
         }).catch((error) => {
-            console.log('home_categories_list Fetchig Error: ', error)
         })
     }
     async reloadUsersCount() {
         let currentComponent = this
         const users_count_url = MuhalikConfig.PATH + '/api/users/users-count';
         await axios.get(users_count_url).then((res) => {
-            currentComponent.setState({
-                admins_count: res.data.admins_count,
-                vendors_count: res.data.vendors_count,
-                new_vendors_count: res.data.new_vendors_count,
-                restricted_vendors_count: res.data.restricted_vendors_count,
-                customers_count: res.data.customers_count,
-                restricted_customers_count: res.data.restricted_customers_count,
-            })
+            if (this.unmounted) {
+                currentComponent.setState({
+                    admins_count: res.data.admins_count,
+                    vendors_count: res.data.vendors_count,
+                    new_vendors_count: res.data.new_vendors_count,
+                    restricted_vendors_count: res.data.restricted_vendors_count,
+                    customers_count: res.data.customers_count,
+                    restricted_customers_count: res.data.restricted_customers_count,
+                })
+            }
         }).catch((error) => {
         })
     }
@@ -261,12 +276,14 @@ class Admin extends Component {
         let currentComponent = this
         const users_count_url = MuhalikConfig.PATH + '/api/orders/all-orders-count';
         await axios.get(users_count_url).then((res) => {
-            currentComponent.setState({
-                pending_orders_count: res.data.pending_orders_count,
-                delivered_orders_count: res.data.delivered_orders_count,
-                cancelled_orders_count: res.data.cancelled_orders_count,
-                returned_orders_count: res.data.returned_orders_count,
-            })
+            if (this.unmounted) {
+                currentComponent.setState({
+                    pending_orders_count: res.data.pending_orders_count,
+                    delivered_orders_count: res.data.delivered_orders_count,
+                    cancelled_orders_count: res.data.cancelled_orders_count,
+                    returned_orders_count: res.data.returned_orders_count,
+                })
+            }
         }).catch((error) => {
         })
     }

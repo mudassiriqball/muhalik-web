@@ -1,26 +1,56 @@
-import { Accordion, Card, Button, InputGroup, Row, Col, Form } from 'react-bootstrap';
+import { Accordion, Card, Button, InputGroup, Row, Col, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import GlobalStyleSheet from '../../styleSheet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useEffect } from 'react';
 
+import DatePicker from "react-datepicker";
+import moment from "moment"
+
 export default function CardSearchAccordion(props) {
-    const [searchType, setSearchType] = useState('')
-    const [searchValue, setSearchValue] = useState(props.value)
     const [options, setOptions] = useState([])
+
+    const [searchType, setSearchType] = useState('_id')
+    const [searchValue, setSearchValue] = useState(props.value)
+
+    const [start_date, setStart_date] = useState(new Date("2020/01/01"))
+    const [end_date, setEnd_date] = useState(new Date())
+
     function handleSearchEnterPress(e) {
         var key = e.keyCode || e.which;
         if (key == 13) {
-            props.handleSearch(searchType, searchValue)
+            props.handleSearch(searchType, searchValue, start_date, end_date)
         }
     }
 
     function handleSearchBtnClick(value) {
         setSearchValue(value)
-        props.handleSearch(searchType, value)
+        props.handleSearch(searchType, value, start_date, end_date)
     }
 
+
+    function handleSetStartDate(date) {
+        setStart_date(date)
+    }
+    function handleSetEndDate(date) {
+        setEnd_date(date)
+    }
+    const ref = React.createRef();
+    const DatePickerBtn = React.forwardRef((props, ref) => (
+        <OverlayTrigger
+            placement="top"
+            overlay={<Tooltip>{props.tooltip}</Tooltip>}
+        >
+            <Button size='sm' variant='light' onClick={props.onClick}>
+                <div style={{ whiteSpace: 'nowrap' }}>{props.value}</div>
+            </Button>
+        </OverlayTrigger>
+    ))
+
     useEffect(() => {
+        // const datePicker = document.getElementsByClassName("react-datepicker__input-container")[0];
+        // datePicker.childNodes[0].setAttribute("readOnly", true);
+
         setOptions([])
         setOptions(prevPro => {
             return [...new Set([...prevPro, { value: '_id', name: 'ID' }])]
@@ -33,7 +63,7 @@ export default function CardSearchAccordion(props) {
                 return [...new Set([...prevPro, { value: 'category', name: 'Category' }])]
             })
             setOptions(prevPro => {
-                return [...new Set([...prevPro, { value: 'sub_category', name: 'Sub Category' }])]
+                return [...new Set([...prevPro, { value: 'sub-category', name: 'Sub Category' }])]
             })
 
         } else if (props.option == 'vendor') {
@@ -77,21 +107,53 @@ export default function CardSearchAccordion(props) {
         }
     }, [props.option])
 
+
+
     return (
         <>
             <Accordion as={Row} defaultActiveKey="0" style={{ margin: '2%' }} noGutters >
                 <Card className='p-0 m-0 w-100'>
                     <Card.Header as={Row} className='card_toggle_header'>
-                        <Col lg={2} md={2} sm='auto' xs='auto' className='accordian_col'>
-                            <Form.Label className='p-0 m-0'>{props.title}</Form.Label>
-                        </Col>
-                        <Col className='display_in_sm_xs accordian_col'>
+                        <Col lg={12} md={12} sm={12} sm={12}>
                             <Accordion.Toggle as={Card.Header} eventKey="0" className='searc_accordian_card_toggle'>
-                                <FontAwesomeIcon size="xs" icon={faSlidersH} className='search_accordian_fontawesome' />
+                                <Form.Label className='p-0 mr-auto'>{props.title}</Form.Label>
+                                <FontAwesomeIcon icon={faSlidersH} className='search_accordian_fontawesome' />
                             </Accordion.Toggle>
                         </Col>
-                        <Col lg={7} md={7} sm={12} xs={12} className='accordian_col md_padding'>
+
+                        <Col lg={12} md={12} sm={12} xs={12} className='accordian_col md_padding'>
                             <Row noGutters>
+                                <Col lg='auto' md='auto' sm={12} xs={12}>
+                                    <Row className='m-0 date_row' noGutters>
+                                        <Col className='date_col'>
+                                            <DatePicker
+                                                className='start_date_picker'
+                                                dateFormat={'yyyy-MM-dd'}
+                                                minDate={new Date("2020/01/01")}
+                                                maxDate={end_date}
+                                                selected={start_date}
+                                                onChange={handleSetStartDate}
+                                                customInput={<DatePickerBtn ref={ref} tooltip={'Start Date'} />}
+                                                popperPlacement="bottom-start"
+                                            />
+                                        </Col>
+                                        <Col lg='auto' md='auto' sm='auto' xs='auto' className='d-flex align-items-center justify-content-center p-2'>
+                                            to
+                                        </Col>
+                                        <Col className='date_col'>
+                                            <DatePicker
+                                                dateFormat={'yyyy-MM-dd'}
+                                                minDate={start_date}
+                                                maxDate={new Date()}
+                                                selected={end_date}
+                                                todayButton="Today"
+                                                onChange={handleSetEndDate}
+                                                customInput={<DatePickerBtn ref={ref} tooltip={'End Date'} />}
+                                                popperPlacement="auto"
+                                            />
+                                        </Col>
+                                    </Row>
+                                </Col>
                                 <Col lg='auto' md='auto' sm='auto' xs='auto'>
                                     <Form.Control as="select"
                                         variant="dark"
@@ -116,18 +178,16 @@ export default function CardSearchAccordion(props) {
                                         />
                                         {searchValue && <InputGroup.Append >
                                             <Button size='sm' variant='danger' onClick={() => handleSearchBtnClick('')}>
-                                                {'x'}
+                                                {' x '}
                                             </Button>
                                         </InputGroup.Append>
                                         }
+                                        <Button size='sm' variant='light' onClick={() => handleSearchBtnClick(searchValue)}>
+                                            {'Search'}
+                                        </Button>
                                     </InputGroup>
                                 </Col>
                             </Row>
-                        </Col>
-                        <Col className='display_in_lg_md accordian_col'>
-                            <Accordion.Toggle as={Card.Header} eventKey="0" className='searc_accordian_card_toggle'>
-                                <FontAwesomeIcon size="xs" icon={faSlidersH} className='search_accordian_fontawesome' />
-                            </Accordion.Toggle>
                         </Col>
                     </Card.Header>
                     <Accordion.Collapse eventKey="0">
@@ -138,9 +198,18 @@ export default function CardSearchAccordion(props) {
                 </Card>
             </Accordion>
             <style type="text/css">{`
+                .react-datepicker-popper {
+                    z-index: 3;
+                }
+                .date_row {
+                    padding-right: 5%;
+                }
                 .accordian_col{
                     padding: 0%;
                     margin: 0%;
+                }
+                .date_col {
+                    display: block;
                 }
                 .card_toggle_header{
                     background: #595c73;
@@ -195,6 +264,15 @@ export default function CardSearchAccordion(props) {
                     }
                 }
                 @media (max-width: 575px){
+                    .date_row {
+                        padding-left: 0%;
+                    }
+                    .date_col {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        white-space: nowrape;
+                    }
                     .search_accordian_fontawesome{
                         min-width: 15px;
                         max-width: 15px;

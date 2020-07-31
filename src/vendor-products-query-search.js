@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import moment from 'moment'
 import MuhalikConfig from './sdk/muhalik.config'
 
-export default function vendorProductsQuerySearch(token, refresh, vendor_id, fieldName, query, pageNumber, limit) {
+export default function vendorProductsQuerySearch(token, refresh, vendor_id, fieldName, query, pageNumber, limit, start_date, end_date) {
     const [vendor_products_query_loading, setLoading] = useState(false)
     const [vendor_products_query_error, setError] = useState('')
     const [vendor_products_query_products, setProducts] = useState([])
@@ -12,7 +13,7 @@ export default function vendorProductsQuerySearch(token, refresh, vendor_id, fie
 
     useEffect(() => {
         setProducts([])
-    }, [refresh, query])
+    }, [refresh, query, start_date, end_date])
 
     useEffect(() => {
         let unmounted = true
@@ -29,7 +30,10 @@ export default function vendorProductsQuerySearch(token, refresh, vendor_id, fie
                     headers: {
                         'authorization': token
                     },
-                    params: { field: fieldName, q: query, page: pageNumber, limit: limit },
+                    params: {
+                        field: fieldName, q: query, page: pageNumber, limit: limit,
+                        start_date: moment(start_date).format('YYYY-MM-DD'), end_date: moment(end_date).format('YYYY-MM-DD')
+                    },
                     cancelToken: source.token
                 }).then(res => {
                     if (unmounted) {
@@ -62,7 +66,7 @@ export default function vendorProductsQuerySearch(token, refresh, vendor_id, fie
             unmounted = false
             source.cancel();
         };
-    }, [refresh, query, pageNumber])
+    }, [refresh, query, pageNumber, start_date, end_date])
 
     return {
         vendor_products_query_loading, vendor_products_query_error, vendor_products_query_products,

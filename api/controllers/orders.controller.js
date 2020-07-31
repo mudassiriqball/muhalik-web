@@ -185,11 +185,15 @@ orderController.get_vendors_orders = async (req, res) => {
 };
 
 orderController.get_all_query_search_orders = async (req, res) => {
+  const startdate=req.query.start_date;
+  const enddate=req.query.end_date+"T23:59:59Z";
   var q = req.query.q;
-
+  const entry_date="entry_date";
   const search = {};
+
   search["status"] = req.params._status;
   search[req.query.field] = q;
+  search[entry_date]={ $gte: new Date(startdate),$lte: new Date(enddate)};
 
   let order;
   try {
@@ -208,11 +212,14 @@ orderController.get_all_query_search_orders = async (req, res) => {
 };
 
 orderController.get_vendor_query_search_orders = async (req, res) => {
+  const startdate=req.query.start_date;
+  const enddate=req.query.end_date+"T23:59:59Z";
+  const entry_date="entry_date";
   var ObjectId = mongoose.Types.ObjectId;
   const _id = new ObjectId(req.params._id);
 
   var q = req.query.q;
-
+  
   if (req.query.field === "c_id") {
     q = new ObjectId(req.query.q);
   }
@@ -221,6 +228,8 @@ orderController.get_vendor_query_search_orders = async (req, res) => {
   search["products.vendor_id"] = _id;
   search["status"] = req.query.status;
   search[req.query.field] = q;
+  search[entry_date]={ $gte: new Date(startdate),$lte: new Date(enddate)};
+
 
   try {
     const total = await Orders.countDocuments(search);
@@ -267,8 +276,14 @@ orderController.get_vendor_query_search_orders = async (req, res) => {
 };
 
 orderController.get_customer_orders = async (req, res) => {
+  // query: status, page, limit
   try {
-    const order = await Orders.paginate({ c_id: req.params._id })
+    const order = await Orders.paginate({ c_id: req.params._id, status: req.query.status },
+      {
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
+      }
+    )
     res.status(200).send({
       code: 200,
       message: "Successful",

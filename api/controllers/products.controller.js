@@ -172,10 +172,14 @@ productsController.addProduct = async (req, res) => {
 };
 
 productsController.get_vendor_product_query_search = async (req, res) => {
+  const startdate = req.query.start_date;
+  const enddate = req.query.end_date + "T23:59:59Z";
+
   var ObjectId = mongoose.Types.ObjectId;
-    const _id = new ObjectId(req.params._id);
+  const _id = new ObjectId(req.params._id);
+
   try {
-     if (req.query.field === "category") {
+    if (req.query.field === "category") {
       let query = {};
       query = await Categories.findOne({ label: req.query.q }, { _id: 1 });
 
@@ -185,13 +189,25 @@ productsController.get_vendor_product_query_search = async (req, res) => {
           message: "Does Not Exist",
         });
       } else {
-        const total = await Products.countDocuments({vendor_id:_id,
-          category: query._id});
+        const total = await Products.countDocuments({
+          vendor_id: _id,
+          category: query._id,
+          entry_date: {
+            $gte: new Date(startdate),
+            $lte: new Date(enddate),
+          },
+        });
 
         const products = await Products.aggregate([
           {
-            $match: { vendor_id:_id,
-              category: query._id },
+            $match: {
+              vendor_id: _id,
+              category: query._id,
+              entry_date: {
+                $gte: new Date(startdate),
+                $lte: new Date(enddate),
+              },
+            },
           },
           {
             $lookup: {
@@ -222,7 +238,7 @@ productsController.get_vendor_product_query_search = async (req, res) => {
           code: 200,
           message: "Successful",
           data: products,
-          total
+          total,
         });
       }
     } else if (req.query.field === "sub-category") {
@@ -234,11 +250,24 @@ productsController.get_vendor_product_query_search = async (req, res) => {
           message: "Does Not Exist",
         });
       } else {
-        const total = await Products.countDocuments({vendor_id:_id,sub_category: query._id});
+        const total = await Products.countDocuments({
+          vendor_id: _id,
+          sub_category: query._id,
+          entry_date: {
+            $gte: new Date(startdate),
+            $lte: new Date(enddate),
+          },
+        });
         const products = await Products.aggregate([
           {
-            $match: { 
-              vendor_id:_id,sub_category: query._id },
+            $match: {
+              vendor_id: _id,
+              sub_category: query._id,
+              entry_date: {
+                $gte: new Date(startdate),
+                $lte: new Date(enddate),
+              },
+            },
           },
           {
             $lookup: {
@@ -269,14 +298,17 @@ productsController.get_vendor_product_query_search = async (req, res) => {
           code: 200,
           message: "Successful",
           data: products,
-          total
+          total,
         });
       }
     } else {
+      const entry_date = "entry_date";
       const field = req.query.field;
       const search = {};
       search["vendor_id"] = _id;
       search[field] = req.query.q;
+      search[entry_date] = { $gte: new Date(startdate), $lte: new Date(enddate) };
+
       const total = await Products.countDocuments(search);
       const products = await Products.aggregate([
         {
@@ -311,7 +343,7 @@ productsController.get_vendor_product_query_search = async (req, res) => {
         code: 200,
         message: "Successful",
         data: products,
-        total
+        total,
       });
     }
   } catch (error) {
@@ -319,62 +351,43 @@ productsController.get_vendor_product_query_search = async (req, res) => {
     return res.status(500).send(error);
   }
 };
-productsController.get_products = async (req, res) => {
+
+
+productsController.get_admin_products = async (req, res) => {
+  console.log('id', req.query)
+  const startdate = req.query.start_date;
+  const enddate = req.query.end_date + "T23:59:59Z";
   try {
-    if (req.query.q === "new-arrival") {
-      var datetime = new Date();
-      datetime.setMonth(datetime.getMonth() - 1);
-      const total = await Products.countDocuments({entry_date: { $gte: new Date(datetime) } });
-      const products = await Products.aggregate([
-        {
-          $match: { entry_date: { $gte: new Date(datetime) } },
-        },
-        {
-          $lookup: {
-            from: "categories",
-            localField: "category",
-            foreignField: "_id",
-            as: "category",
-          },
-        },
-        { $unwind: "$category" },
-        {
-          $lookup: {
-            from: "sub_categories",
-            localField: "sub_category",
-            foreignField: "_id",
-            as: "sub_category",
-          },
-        },
-        { $unwind: "$sub_category" },
-        {
-          $skip: (req.query.page - 1) * req.query.limit,
-        },
-        {
-          $limit: parseInt(req.query.limit),
-        },
-      ]);
-      res.status(200).send({
-        code: 200,
-        message: "Successful",
-        data: products,
-        total
-      });
-    
-    } else if (req.query.field === "category") {
+    if (req.query.field === "category") {
       let query = {};
       query = await Categories.findOne({ label: req.query.q }, { _id: 1 });
 
-      if (!query._id) {
-        res.status(500).send({
-          code: 500,
-          message: "Does Not Exist",
+      if (!query) {
+        res.status(200).send({
+          code: 200,
+          data: [],
+          total: 0,
         });
+        return
       } else {
-        const total = await Products.countDocuments({category: query._id});
+        const total = await Products.countDocuments({
+          category: query._id,
+          // isdeleted: false,
+          entry_date: {
+            $gte: new Date(startdate),
+            $lte: new Date(enddate),
+          },
+        });
         const products = await Products.aggregate([
           {
-            $match: { category: query._id },
+            $match: {
+              category: query._id,
+              // isdeleted: false,
+              entry_date: {
+                $gte: new Date(startdate),
+                $lte: new Date(enddate),
+              },
+            },
           },
           {
             $lookup: {
@@ -405,22 +418,38 @@ productsController.get_products = async (req, res) => {
           code: 200,
           message: "Successful",
           data: products,
-          total
+          total,
         });
       }
     } else if (req.query.field === "sub-category") {
       let query = {};
       query = await Sub_categories.findOne({ label: req.query.q }, { _id: 1 });
-      if (!query._id) {
-        res.status(500).send({
-          code: 500,
-          message: "Does Not Exist",
+      if (!query) {
+        res.status(200).send({
+          code: 200,
+          data: [],
+          total: 0,
         });
+        return
       } else {
-        const total = await Products.countDocuments({sub_category: query._id});
+        const total = await Products.countDocuments({
+          sub_category: query._id,
+          // isdeleted: false,
+          entry_date: {
+            $gte: new Date(startdate),
+            $lte: new Date(enddate),
+          },
+        });
         const products = await Products.aggregate([
           {
-            $match: { sub_category: query._id },
+            $match: {
+              sub_category: query._id,
+              // isdeleted: false,
+              entry_date: {
+                $gte: new Date(startdate),
+                $lte: new Date(enddate),
+              },
+            },
           },
           {
             $lookup: {
@@ -451,13 +480,29 @@ productsController.get_products = async (req, res) => {
           code: 200,
           message: "Successful",
           data: products,
-          total
+          total,
         });
       }
-    } else {
+    } else if (req.query.field === '_id') {
+      var ObjectId = mongoose.Types.ObjectId;
+      let _id = 0;
+      try {
+        _id = new ObjectId(req.query.q);
+      } catch (err) {
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: [],
+          total: 0,
+        });
+        return
+      }
+      const entry_date = "entry_date";
+
       const field = req.query.field;
       const search = {};
-      search[field] = req.query.q;
+      search[field] = _id;
+      search[entry_date] = { $gte: new Date(startdate), $lte: new Date(enddate) };
       const total = await Products.countDocuments(search);
       const products = await Products.aggregate([
         {
@@ -492,9 +537,315 @@ productsController.get_products = async (req, res) => {
         code: 200,
         message: "Successful",
         data: products,
-        total
+        total,
       });
     }
+    else {
+      const entry_date = "entry_date";
+
+      const field = req.query.field;
+      const search = {};
+      search[field] = req.query.q;
+      search[entry_date] = { $gte: new Date(startdate), $lte: new Date(enddate) };
+      const total = await Products.countDocuments(search);
+      const products = await Products.aggregate([
+        {
+          $match: search,
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $lookup: {
+            from: "sub_categories",
+            localField: "sub_category",
+            foreignField: "_id",
+            as: "sub_category",
+          },
+        },
+        { $unwind: "$sub_category" },
+        {
+          $skip: (req.query.page - 1) * req.query.limit,
+        },
+        {
+          $limit: parseInt(req.query.limit),
+        },
+      ]);
+      res.status(200).send({
+        code: 200,
+        message: "Successful",
+        data: products,
+        total,
+      });
+    }
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
+
+productsController.get_customer_side_products = async (req, res) => {
+  try {
+    if (req.query.q === "new-arrival") {
+      var datetime = new Date();
+      datetime.setMonth(datetime.getMonth() - 1);
+      const total = await Products.countDocuments({
+        isdeleted: false,
+      });
+      const products = await Products.aggregate([
+        {
+          $match: {
+            isdeleted: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $lookup: {
+            from: "sub_categories",
+            localField: "sub_category",
+            foreignField: "_id",
+            as: "sub_category",
+          },
+        },
+        { $unwind: "$sub_category" },
+        {
+          $skip: (req.query.page - 1) * req.query.limit,
+        },
+        {
+          $limit: parseInt(req.query.limit),
+        },
+      ]);
+      res.status(200).send({
+        code: 200,
+        message: "Successful",
+        data: products,
+        total,
+      });
+    } else if (req.query.field === "category") {
+      let query = {};
+      query = await Categories.findOne({ label: req.query.q }, { _id: 1 });
+
+      if (!query) {
+        res.status(200).send({
+          code: 200,
+          data: [],
+          total: 0,
+        });
+        return
+      } else {
+        const total = await Products.countDocuments({
+          category: query._id,
+          isdeleted: false,
+        });
+        const products = await Products.aggregate([
+          {
+            $match: {
+              category: query._id,
+              isdeleted: false,
+            },
+          },
+          {
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "category",
+            },
+          },
+          { $unwind: "$category" },
+          {
+            $lookup: {
+              from: "sub_categories",
+              localField: "sub_category",
+              foreignField: "_id",
+              as: "sub_category",
+            },
+          },
+          { $unwind: "$sub_category" },
+          {
+            $skip: (req.query.page - 1) * req.query.limit,
+          },
+          {
+            $limit: parseInt(req.query.limit),
+          },
+        ]);
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: products,
+          total,
+        });
+      }
+    } else if (req.query.field === "sub-category") {
+      let query = {};
+      query = await Sub_categories.findOne({ label: req.query.q }, { _id: 1 });
+      if (!query) {
+        res.status(200).send({
+          code: 200,
+          data: [],
+          total: 0,
+        });
+        return
+      } else {
+        const total = await Products.countDocuments({
+          sub_category: query._id,
+          isdeleted: false,
+        });
+        const products = await Products.aggregate([
+          {
+            $match: {
+              sub_category: query._id,
+              isdeleted: false,
+            },
+          },
+          {
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "category",
+            },
+          },
+          { $unwind: "$category" },
+          {
+            $lookup: {
+              from: "sub_categories",
+              localField: "sub_category",
+              foreignField: "_id",
+              as: "sub_category",
+            },
+          },
+          { $unwind: "$sub_category" },
+          {
+            $skip: (req.query.page - 1) * req.query.limit,
+          },
+          {
+            $limit: parseInt(req.query.limit),
+          },
+        ]);
+        res.status(200).send({
+          code: 200,
+          message: "Successful",
+          data: products,
+          total,
+        });
+      }
+    }
+    // } else if (req.query.field === '_id') {
+    //   var ObjectId = mongoose.Types.ObjectId;
+    //   let _id = 0;
+    //   try {
+    //     _id = new ObjectId(req.query.q);
+    //   } catch (err) {
+    //     res.status(200).send({
+    //       code: 200,
+    //       message: "Successful",
+    //       data: [],
+    //       total: 0,
+    //     });
+    //     return
+    //   }
+    //   const entry_date = "entry_date";
+
+    //   const field = req.query.field;
+    //   const search = {};
+    //   search[field] = _id;
+    //   search[entry_date] = { $gte: new Date(startdate), $lte: new Date(enddate) };
+    //   const total = await Products.countDocuments(search);
+    //   const products = await Products.aggregate([
+    //     {
+    //       $match: search,
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "categories",
+    //         localField: "category",
+    //         foreignField: "_id",
+    //         as: "category",
+    //       },
+    //     },
+    //     { $unwind: "$category" },
+    //     {
+    //       $lookup: {
+    //         from: "sub_categories",
+    //         localField: "sub_category",
+    //         foreignField: "_id",
+    //         as: "sub_category",
+    //       },
+    //     },
+    //     { $unwind: "$sub_category" },
+    //     {
+    //       $skip: (req.query.page - 1) * req.query.limit,
+    //     },
+    //     {
+    //       $limit: parseInt(req.query.limit),
+    //     },
+    //   ]);
+    //   res.status(200).send({
+    //     code: 200,
+    //     message: "Successful",
+    //     data: products,
+    //     total,
+    //   });
+    // }
+    // else {
+    //   const entry_date = "entry_date";
+
+    //   const field = req.query.field;
+    //   const search = {};
+    //   search[field] = req.query.q;
+    //   search[entry_date] = { $gte: new Date(startdate), $lte: new Date(enddate) };
+    //   const total = await Products.countDocuments(search);
+    //   const products = await Products.aggregate([
+    //     {
+    //       $match: search,
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "categories",
+    //         localField: "category",
+    //         foreignField: "_id",
+    //         as: "category",
+    //       },
+    //     },
+    //     { $unwind: "$category" },
+    //     {
+    //       $lookup: {
+    //         from: "sub_categories",
+    //         localField: "sub_category",
+    //         foreignField: "_id",
+    //         as: "sub_category",
+    //       },
+    //     },
+    //     { $unwind: "$sub_category" },
+    //     {
+    //       $skip: (req.query.page - 1) * req.query.limit,
+    //     },
+    //     {
+    //       $limit: parseInt(req.query.limit),
+    //     },
+    //   ]);
+    //   res.status(200).send({
+    //     code: 200,
+    //     message: "Successful",
+    //     data: products,
+    //     total,
+    //   });
+    // }
   } catch (error) {
     console.log("error", error);
     return res.status(500).send(error);
@@ -503,8 +854,15 @@ productsController.get_products = async (req, res) => {
 
 productsController.get_all_products = async (req, res) => {
   try {
-    const total = await Products.countDocuments();
+    const total = await Products.countDocuments({
+      isdeleted: false,
+    });
     const products = await Products.aggregate([
+      {
+        $match: {
+          isdeleted: false,
+        },
+      },
       {
         $lookup: {
           from: "categories",
@@ -534,7 +892,7 @@ productsController.get_all_products = async (req, res) => {
       code: 200,
       message: "Successful",
       data: products,
-      total
+      total,
     });
   } catch (error) {
     return res.status(500).send(error);
@@ -647,11 +1005,14 @@ productsController.get_all_product_by_id = async (req, res) => {
 // },
 //Get All Products of specific vendor endpoint definition
 productsController.get_vendor_products = async (req, res) => {
+
   try {
     var ObjectId = mongoose.Types.ObjectId;
     const _id = new ObjectId(req.params._id);
-    const total = await Products.countDocuments({vendor_id: _id,
-      isdeleted: false});
+    const total = await Products.countDocuments({
+      vendor_id: _id,
+      isdeleted: false,
+    });
     const products = await Products.aggregate([
       {
         $match: {
@@ -697,7 +1058,7 @@ productsController.get_vendor_products = async (req, res) => {
       code: 200,
       message: "Successful",
       data: products,
-      total
+      total,
     });
   } catch (error) {
     console.log("error", error);
@@ -979,6 +1340,113 @@ productsController.geteverything = async (req, res) => {
   //     }
   //  }
   // },
+};
+
+productsController.get_search_products = async (req, res) => {
+  const query = req.query.q;
+  var regex = new RegExp(["^", query, "$"].join(""), "i");
+
+  let actual_products;
+  let products1 = 0;
+  let products2 = 0;
+  let products3 = 0;
+  let products4 = 0;
+  let set = 0;
+  try {
+    const products = await Products.paginate(
+      { product_name: regex },
+      {
+        limit: parseInt(req.query.limit),
+        page: parseInt(req.query.page),
+      }
+    );
+    if (products.total > 0) {
+      actual_products = products;
+    }
+    if (products.total === 0) {
+      category = await Categories.find({ value: regex }, { _id: 1 });
+      if (category.length > 0) {
+        products1 = await Products.paginate(
+          { category: category[0]._id },
+          {
+            limit: parseInt(req.query.limit),
+            page: parseInt(req.query.page),
+          }
+        );
+        if (products1.total > 0) {
+          actual_products = products1;
+        }
+        else {
+          set = 1;
+        }
+      }
+      else {
+        set = 1;
+      }
+    }
+
+    if (set === 1) {
+      sub_category = await Sub_categories.find({ value: regex }, { _id: 1 });
+      if (sub_category.length > 0) {
+        products2 = await Products.paginate(
+          { sub_category: sub_category[0]._id },
+          {
+            limit: parseInt(req.query.limit),
+            page: parseInt(req.query.page),
+          }
+        );
+        if (products2.total > 0) {
+          actual_products = products2;
+        }
+        else {
+          set = 2
+        }
+      }
+      else {
+        set = 2
+      }
+    }
+
+    if (set === 2) {
+      products3 = await Products.paginate(
+        { product_name: new RegExp(query, "i") },
+        {
+          limit: parseInt(req.query.limit),
+          page: parseInt(req.query.page),
+        }
+      );
+      if (products3.total > 0) {
+        actual_products = products3;
+      }
+      else {
+        set = 3
+      }
+    }
+
+    if (set === 3) {
+      products4 = await Products.paginate(
+        { "product_tags.label": regex },
+        {
+          limit: parseInt(req.query.limit),
+          page: parseInt(req.query.page),
+        }
+      );
+      if (products4.total > 0) {
+        actual_products = products4;
+      }
+      else {
+        set = 4;
+      }
+    }
+    res.status(200).send({
+      code: 200,
+      message: "Successful",
+      data: actual_products,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error);
+  }
 };
 
 module.exports = productsController;

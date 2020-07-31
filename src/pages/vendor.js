@@ -84,8 +84,16 @@ class Vendor extends Component {
         }
     }
 
+    ummounted = true
+    CancelToken = axios.CancelToken;
+    source = this.CancelToken.source();
+
     async componentDidMount() {
         this.authUser();
+    }
+    componentWillUnmount() {
+        this.source.cancel();
+        this.unmounted = false
     }
 
     async authUser() {
@@ -97,8 +105,10 @@ class Vendor extends Component {
             this.getOrdersCount()
             const currentComponent = this
             const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decodedToken._id}`;
-            await axios.get(user_url).then((res) => {
-                currentComponent.setState({ user: res.data.data[0] })
+            await axios.get(user_url, { cancelToken: this.source.token }).then((res) => {
+                if (this.unmounted) {
+                    currentComponent.setState({ user: res.data.data[0] })
+                }
             }).catch((error) => {
             })
         }
@@ -126,13 +136,15 @@ class Vendor extends Component {
     async getOrdersCount() {
         let currentComponent = this
         const order_count_url = MuhalikConfig.PATH + `/api/orders/user-order-count/${this.state.decodedToken._id}`;
-        await axios.get(order_count_url).then((res) => {
-            currentComponent.setState({
-                pending_orders_count: res.data.pending_orders_count,
-                delivered_orders_count: res.data.delivered_orders_count,
-                cancelled_orders_count: res.data.cancelled_orders_count,
-                returned_orders_count: res.data.returned_orders_count,
-            })
+        await axios.get(order_count_url, { cancelToken: this.source.token }).then((res) => {
+            if (this.unmounted) {
+                currentComponent.setState({
+                    pending_orders_count: res.data.pending_orders_count,
+                    delivered_orders_count: res.data.delivered_orders_count,
+                    cancelled_orders_count: res.data.cancelled_orders_count,
+                    returned_orders_count: res.data.returned_orders_count,
+                })
+            }
         }).catch((error) => {
         })
     }
@@ -145,7 +157,6 @@ class Vendor extends Component {
 
         return (
             <div style={styles.body}>
-                {/* <AdminLayout> */}
                 <Dashboard
                     avatar={this.state.user.avatar}
                     categories_list={this.state.categories_list}

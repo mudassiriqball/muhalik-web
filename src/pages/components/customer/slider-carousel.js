@@ -106,7 +106,7 @@ const SliderCarousel = (props) => {
                                     />
                                     <Carousel.Caption>
                                         <label className='carosuel_label'>{element.sub_category}</label>
-                                        <MyButton size='sm' style={{ paddingLeft: '5%', paddingRight: '5%' }} onClick={() => Router.push('/[category]/[sub_category]', `/${element.category}/${element.sub_category}`)}>Shop Now</MyButton>
+                                        <MyButton size='sm' style={{ paddingLeft: '5%', paddingRight: '5%' }} onClick={() => Router.push('/products/category/[category]/[sub_category]', `/products/category/${element.category}/${element.sub_category}`)}>{translate('shop_now')}</MyButton>
                                     </Carousel.Caption>
                                 </Carousel.Item>
                             )}

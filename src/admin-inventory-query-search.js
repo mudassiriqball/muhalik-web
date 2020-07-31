@@ -1,15 +1,23 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import moment from 'moment'
 import MuhalikConfig from './sdk/muhalik.config'
 import Router from 'next/router'
 
-export default function adminInventoryQuerySearch(refresh_count, fieldName, query, pageNumber, limit) {
+export default function adminInventoryQuerySearch(refresh_count, fieldName, query, pageNumber, limit, start_date, end_date) {
     const [admin_inventory_query_loading, setLoading] = useState(false)
     const [admin_inventory_query_error, setError] = useState('')
     const [admin_inventory_query_products, setProducts] = useState([])
     const [admin_inventory_query_hasMore, setHasMore] = useState(false)
     const [admin_inventory_query_pages, setPages] = useState(0)
     const [admin_inventory_query_total, setTotal] = useState(0)
+
+    useEffect(() => {
+        setProducts([])
+        return () => {
+
+        }
+    }, [query, start_date, end_date])
 
     useEffect(() => {
         let unmounted = true
@@ -20,11 +28,14 @@ export default function adminInventoryQuerySearch(refresh_count, fieldName, quer
                 setLoading(true)
                 setError(false)
                 let cancle
-                const _url = MuhalikConfig.PATH + `/api/products/all-products-query-search`
+                const _url = MuhalikConfig.PATH + `/api/products/admin-products-query-search`
                 axios({
                     method: 'GET',
                     url: _url,
-                    params: { field: fieldName, q: query, page: pageNumber, limit: limit },
+                    params: {
+                        field: fieldName, q: query, page: pageNumber, limit: limit,
+                        start_date: moment(start_date).format('YYYY-MM-DD'), end_date: moment(end_date).format('YYYY-MM-DD')
+                    },
                     cancelToken: new axios.CancelToken(c => cancle = c)
                 }).then(res => {
                     if (unmounted) {
@@ -57,7 +68,7 @@ export default function adminInventoryQuerySearch(refresh_count, fieldName, quer
             unmounted = false
             source.cancel();
         };
-    }, [query, pageNumber])
+    }, [query, pageNumber, , start_date, end_date])
 
     return {
         admin_inventory_query_loading,

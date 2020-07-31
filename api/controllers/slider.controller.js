@@ -19,7 +19,19 @@ sliderController.add_slider = async (req, res) => {
   const body = req.body;
 
   try {
-    var datetime = new Date();
+    let date_ob = new Date();
+    let date = ("0" + date_ob.getDate()).slice(-2);
+
+// current month
+let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+
+// current year
+let year = date_ob.getFullYear();
+var check=year+"-"+month+"-"+date;
+console.log(check);
+    var datetime = new Date(check);
+    // var check=datetime.getFullYear() + "-" + datetime.getMonth() + "-" + datetime.getDate();
+
     body.entry_date = datetime;
     body.url = url;
     const slider = new Slider(body);
@@ -48,7 +60,6 @@ sliderController.get_slider = async (req, res) => {
     return res.status(500).send(error);
   }
 };
-
 
 // Put Methods
 sliderController.update_slider = async (req, res) => {
@@ -97,7 +108,6 @@ sliderController.update_slider = async (req, res) => {
     }
   }
 };
-
 
 // Delete Methods
 sliderController.delete_slider = async (req, res) => {

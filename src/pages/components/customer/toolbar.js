@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link'
 import Router from 'next/router'
+import axios from 'axios'
 
-import { Navbar, Nav, InputGroup, Image, NavDropdown, Dropdown, Row, Col, OverlayTrigger, Popover, Badge } from 'react-bootstrap'
+import { Navbar, Nav, InputGroup, Image, NavDropdown, ListGroup, Dropdown, Row, Col, OverlayTrigger, Popover, Badge } from 'react-bootstrap'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faPowerOff, faStoreAlt, faChevronRight, faListUl, faShoppingCart, faSuitcaseRolling } from '@fortawesome/free-solid-svg-icons'
@@ -17,8 +18,10 @@ import GlobalStyleSheet from '../../../styleSheet'
 import translate from '../../../i18n/translate'
 import TranslateFormControl from '../../../i18n/translate-form-control'
 
+import MuhalikConfig from '../../../sdk/muhalik.config'
 
 const Toolbar = (props) => {
+
     let loggedIn = false
     let dashboard_href = ''
     if (props.role == '') {
@@ -42,6 +45,9 @@ const Toolbar = (props) => {
 
     const [category_id, setCategory_id] = useState('')
 
+    const [tags, setTags] = useState([])
+    const [showSuggestions, setShowSuggestions] = useState(false)
+    const [suggestions, setSuggestions] = useState([])
 
     const [isSticky, setSticky] = useState(false);
     const ref = useRef(null);
@@ -51,13 +57,39 @@ const Toolbar = (props) => {
         }
     };
     useEffect(() => {
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+        const getSuggestions = () => {
+            const _url = MuhalikConfig.PATH + `/api/categories/tags`
+            axios({
+                method: 'GET',
+                url: _url,
+                cancelToken: source.token
+            }).then(res => {
+                if (unmounted) {
+                    setTags(res.data.data)
+                }
+            }).catch(err => {
+                if (unmounted) {
+                    if (axios.isCancel(err)) return
+                }
+            })
+        }
+
+        getSuggestions()
+
         if (props.currLang == 'en') {
             setSelectedLang("English")
         } else {
             setSelectedLang("العربية")
         }
+
         window.addEventListener('scroll', handleScroll);
+
         return () => {
+            unmounted = false
+            source.cancel();
             window.removeEventListener('scroll', () => handleScroll);
         };
     }, []);
@@ -83,14 +115,33 @@ const Toolbar = (props) => {
         setCategory_id('')
     }
 
+    function handleSetSearchValue(val) {
+        setSearchValue(val)
+        if (val)
+            if (val != '') {
+                setShowSuggestions(true)
+            } else {
+                setShowSuggestions(false)
+            }
+        setSuggestions([])
+        let array = []
+        tags && tags.forEach((element, index) => {
+            if (element.includes(val)) {
+                array.push(element)
+            }
+        })
+        setSuggestions(array)
+    }
     function handleSearchEnterPress(e) {
         var key = e.keyCode || e.which;
         if (key == 13) {
-            handleSearch()
+            handleSearch(searchValue)
         }
     }
-    async function handleSearch() {
-        Router.push('/search/[search]', `/search/${searchValue}`)
+    function handleSearch(val) {
+        setSearchValue(val)
+        setShowSuggestions(false)
+        Router.push('/search/[search]', `/search/${val}`)
     }
 
     function logout() {
@@ -182,22 +233,31 @@ const Toolbar = (props) => {
                         <h4 className="display_in_md_lg text_animation">.com</h4>
                     </Navbar.Brand>
                     <InputGroup className='input_group'>
-                        <TranslateFormControl
-                            id='search_here'
-                            type="text"
-                            size='md'
-                            value={searchValue}
-                            onKeyPress={(e) => handleSearchEnterPress(e)}
-                            onChange={(e) => setSearchValue(e.target.value)}
-                        />
-                        <InputGroup.Append>
-                            <MyButton onClick={handleSearch}>
-                                <div className='display_in_md_lg pr-1'>{translate('search')}</div>
-                                <FontAwesomeIcon className='serch-icon' icon={faSearch} style={styles.search_fontawesome} />
-                            </MyButton>
-                        </InputGroup.Append>
+                        <>
+                            <TranslateFormControl
+                                id='search_here'
+                                type="text"
+                                size='md'
+                                value={searchValue}
+                                onKeyPress={(e) => handleSearchEnterPress(e)}
+                                onChange={(e) => handleSetSearchValue(e.target.value)}
+                            />
+                            <InputGroup.Append>
+                                <MyButton onClick={() => handleSearch(searchValue)}>
+                                    <div className='display_in_md_lg pr-1'>{translate('search')}</div>
+                                    <FontAwesomeIcon className='serch-icon' icon={faSearch} style={styles.search_fontawesome} />
+                                </MyButton>
+                            </InputGroup.Append>
+                        </>
+                        {showSuggestions != '' &&
+                            <ListGroup variant="flush" className='suggestions'>
+                                {suggestions && suggestions.map((element, index) =>
+                                    <ListGroup.Item as='a' key={index} action onClick={() => handleSearch(element)} >{element}</ListGroup.Item>
+                                )}
+
+                            </ListGroup>
+                        }
                     </InputGroup>
-                    {/* <Nav className=""> */}
                     <Nav.Link href='/cart' className='display_in_md_lg nav_link pb-0 mb-0'>
                         <div className='cart_div'>
                             <FontAwesomeIcon icon={faShoppingCart} style={styles.second_nav_fontawesome} />
@@ -205,7 +265,6 @@ const Toolbar = (props) => {
                         </div>
                         {translate('cart')}
                     </Nav.Link>
-                    {/* </Nav> */}
                 </Navbar>
             </div>
 
@@ -219,9 +278,7 @@ const Toolbar = (props) => {
                     >
                         <Dropdown.Toggle as={Nav.Link} className='third_nav_link'
                             style={{
-                                // border: hoverCategory ? '1px solid lightgray' : null,
                                 background: hoverCategory ? 'white' : null,
-                                // margin: hoverCategory ? '-1px' : '0px',
                                 color: hoverCategory ? `${GlobalStyleSheet.primry_color}` : 'white',
                             }}>
                             <FontAwesomeIcon icon={faListUl} style={hoverCategory ? styles.third_nav_fontawesome_hover : styles.third_nav_fontawesome} />
@@ -270,73 +327,47 @@ const Toolbar = (props) => {
                             </Row>
                         </Dropdown.Menu>
                     </ Dropdown>
-                    {/* <div className='align-self-center' style={{ color: 'white' }}>|</div> */}
-                    {/* Shops */}
-                    {/* <Dropdown
-                            onMouseOver={() => { setIsShopOpen(true), setHoverShops(true) }}
-                            onMouseLeave={() => { setIsShopOpen(false), setHoverShops(false) }}
-                            show={isShopOpen}
-                        >
-                            <Dropdown.Toggle as={Nav.Link} className='third_nav_link'
-                                style={{
-                                    paddingLeft: '1vw',
-                                    paddingRight: '1vw',
-                                    border: hoverShops ? '1px solid lightgray' : null,
-                                    background: hoverShops ? 'white' : null,
-                                    margin: hoverShops ? '-1px' : '0px',
-                                    color: hoverShops ? `${GlobalStyleSheet.primry_color}` : 'white'
-                                }}>
-                                <FontAwesomeIcon icon={faStoreAlt} style={hoverShops ? styles.third_nav_fontawesome_hover : styles.third_nav_fontawesome} />
-                                <div style={{ color: hoverShops ? `${GlobalStyleSheet.primry_color}` : 'white' }}> Shops </div>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu style={{ minWidth: '80vw', minHeight: '45vw', left: '-1px', borderTop: 'none', borderTopLeftRadius: '0px' }} className='m-0 pt-3'>
-                                <Row noGutters>
-                                    <h1>Shops Will Show Here</h1>
-                                </Row>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                        <div className='align-self-center' style={{ color: 'white' }}>|</div> */}
-                    {/* Products */}
-                    {/* <Dropdown
-                            onMouseOver={() => { setIsProductOpen(true), setHoverProducts(true) }}
-                            onMouseLeave={() => { setIsProductOpen(false), setHoverProducts(false) }}
-                            show={isProductOpen}
-                        >
-                            <Dropdown.Toggle as={Nav.Link} className='third_nav_link'
-                                style={{
-                                    paddingLeft: '1vw',
-                                    paddingRight: '1vw',
-                                    border: hoverProducts ? '1px solid lightgray' : null,
-                                    background: hoverProducts ? 'white' : null,
-                                    margin: hoverProducts ? '-1px' : '0px',
-                                    color: hoverProducts ? `${GlobalStyleSheet.primry_color}` : 'white'
-                                }}>
-                                <FontAwesomeIcon icon={faProductHunt} style={hoverProducts ? styles.third_nav_fontawesome_hover : styles.third_nav_fontawesome} />
-                                <div style={{ color: hoverProducts ? `${GlobalStyleSheet.primry_color}` : 'white' }}> Products </div>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu style={{ minWidth: '80vw', left: '-87%', minHeight: '45vw', borderTop: 'none', borderTopLeftRadius: '0px' }} className='m-0 pt-3'>
-                                <Row noGutters >
-                                    <h1>Products Will Show Here</h1>
-                                </Row>
-                            </Dropdown.Menu>
-                        </Dropdown> */}
                 </Nav>
             </Navbar>
             <style type="text/css">{`
-                .mahaalk_img{
+                .customer_toolbar .mahaalk_img{
                     width: 60px;
                     max-width: 60px;
                     height: 60px;
                     max-height: 60px;
                 }
-                .input_group {
-                    margin: 0% 1% 0% 10%;
+                .customer_toolbar .input_group {
+                    margin: 0% 2% 0% 10%;
+                    position: relative;
                 }
-                .cart_div{
+                .customer_toolbar .suggestions {
+                    position: absolute;
+                    top: 40px;
+                    left:0;
+                    right:0;
+                    box-shadow: 1px 1px 10px 1px lightgray;
+                    z-index: 1000;
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                    max-height: 500px;
+                    overflow-y: auto;
+                }
+                .customer_toolbar .suggestions .list-group-item {
+                   border: none;
+                   font-size: 14px;
+                   padding-top: 7px;
+                   padding-bottom: 7px;
+                   color: ${GlobalStyleSheet.admin_primry_color};
+                   cursor: pointer;
+                }
+                .customer_toolbar .suggestions .list-group-item:hover {
+                   color: blue;
+                }
+                .customer_toolbar .cart_div{
                     display: inline-flex;
                     align-items: center;
                 }
-                .cart_badge{
+                .customer_toolbar .cart_badge{
                     margin-top: -20px;
                     margin-left: 3px;
                 }
@@ -344,7 +375,7 @@ const Toolbar = (props) => {
                     padding: 0%;
                     margin: 0%;
                 }
-                .first_nav_link {
+                .customer_toolbar .first_nav_link {
                     font-size: 12.5px;
                     white-space: nowrap;
                     margin: 0px;
@@ -392,37 +423,37 @@ const Toolbar = (props) => {
                 }
                 .customer_toolbar .sticky-inner{
                     align-items: center;
-                    padding: 0.5% 12%;
+                    padding: 0.5% 15%;
                 }
 
-                .btn_search {
+                .customer_toolbar .btn_search {
                     border-top-right-radius: 20px;
                     border-bottom-right-radius: 20px;
                     padding-right: 10px;
                     color: white;
                 }
-                .btn_search:hover{
+                .customer_toolbar .btn_search:hover{
                     color: white;
                 }
-                .btn_search:focus{
+                .customer_toolbar .btn_search:focus{
                     color: white;
                 }
-                .btn_search:active{
+                .customer_toolbar .btn_search:active{
                     color: white;
                 }
-                .btn_search_type {
+                .customer_toolbar .btn_search_type {
                      border-top-left-radius: 20px;
                     border-bottom-left-radius: 20px;
                     padding-left: 10px;
                     color: white;
                 }
-                .btn_search_type:hover{
+                .customer_toolbar .btn_search_type:hover{
                     color: white;
                 }
-                .btn_search_type:focus{
+                .customer_toolbar .btn_search_type:focus{
                     color: white;
                 }
-                .btn_search_type:active{
+                .customer_toolbar .btn_search_type:active{
                     color: white;
                 }
                 .customer_toolbar .nav_link{
@@ -449,7 +480,7 @@ const Toolbar = (props) => {
                 .third_nav_bar{
                     padding: 0.5% 3.7%;
                 }
-                .dropdown_menue {
+                .customer_toolbar .dropdown_menue {
                     min-width: 700px; 
                     min-height: 500px;
                     max-height: 500px; 
@@ -482,13 +513,16 @@ const Toolbar = (props) => {
                     box-shadow: -1px 0px 10px 1px rgba(0,0,0,0.12);
                 }
 
-                .display_in_md_lg{
+                .customer_toolbar .display_in_md_lg{
                     display: flex;
                 }
 
                 @media (max-width: 1199px) {
-                    .third_nav_bar{
+                    .customer_toolbar .third_nav_bar{
                         padding: 0.5% 2.7% 0% 2.7%;
+                    }
+                    .customer_toolbar .sticky-inner{
+                        padding: 0.5% 10%;
                     }
                 }
                 @media (max-width: 991px) {
@@ -506,14 +540,21 @@ const Toolbar = (props) => {
                     .customer_toolbar .display_in_md_lg {
                         display: none;
                     }
-                    .mahaalk_img {
+                    .customer_toolbar .mahaalk_img {
                         width: 50px;
                         max-width: 50px;
                         height: 50px;
                         max-height: 50px;
                     }
+                    .customer_toolbar .suggestions {
+                        max-height: 300px;
+                    }
                 }
                 @media (max-width: 575px) {
+                    .customer_toolbar .input_group {
+                        margin: 0% 1% 0% 2%;
+                        position: relative;
+                    }
                     .customer_toolbar .sticky-inner{
                         padding: 0.5% 2%;
                     }

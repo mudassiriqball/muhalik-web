@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Navbar, Nav, NavDropdown, Row, Col } from 'react-bootstrap'
 import GlobalStyleSheet from '../../../styleSheet'
 import Link from 'next/link'
@@ -12,11 +13,11 @@ import translate from '../../../i18n/translate'
 
 
 const StickyBottomNavbar = () => {
-    const [isSticky, setSticky] = React.useState(true);
-    const [curentHref, setCurentHref] = React.useState('')
+    const [isSticky, setSticky] = useState(true);
+    const [curentHref, setCurentHref] = useState('')
     let curr = 0
 
-    React.useEffect(() => {
+    useEffect(() => {
         curr = window.scrollY
         window.addEventListener('scroll', e => handleScroll(e));
 
@@ -24,6 +25,7 @@ const StickyBottomNavbar = () => {
             window.removeEventListener('scroll', e => handleScroll(e));
         };
     }, []);
+
     const handleScroll = (e) => {
         const window = e.currentTarget;
         if (curr > window.scrollY) {
@@ -34,24 +36,28 @@ const StickyBottomNavbar = () => {
         curr = window.scrollY
     };
 
-    React.useEffect(() => {
-        if (window.location.href == `${MuhalikConfig.PATH} + /` || window.location.href == `${MuhalikConfig.PATH} + /index`) {
+    useEffect(() => {
+        if (window.location.href == MuhalikConfig.PATH + '/' || window.location.href == MuhalikConfig.PATH + '/index') {
             setCurentHref('index')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /categories`) {
+        } else if (window.location.href == MuhalikConfig.PATH + '/categories') {
             setCurentHref('categories')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /cart`) {
+        } else if (window.location.href == MuhalikConfig.PATH + '/cart') {
             setCurentHref('cart')
-        } else if (window.location.href == `${MuhalikConfig.PATH} + /user/account`) {
+        } else if (window.location.href == MuhalikConfig.PATH + '/user/account') {
             setCurentHref('account')
         }
-    });
+        return () => {
+            setCurentHref('')
+        }
+    }, [])
+
     return (
         <div className='stick_bottom_navbar'>
             <div className={`sticky-wrapper${isSticky ? ' sticky' : ''}`}>
                 <Navbar bg="white" className='sticky-inner'>
                     <Nav className="d-inline-flex align-items-center w-100">
                         <div className='mr-auto'></div>
-                        <Nav.Link href="index" className='nav_link'
+                        <Nav.Link href="/" className='nav_link'
                             style={{
                                 color: curentHref == 'index' ? `${GlobalStyleSheet.primry_color}` : '#a6a6a6'
                             }}

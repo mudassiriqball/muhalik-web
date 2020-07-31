@@ -222,7 +222,7 @@ export default function Category(props) {
                                 :
                                 <Row className='h-100 p-5 w-100'>
                                     <div className='h-100 w-100 d-flex justify-content-center align-items-center'>
-                                        <h5 className='text-center w-100'>No Data Found</h5>
+                                        <h5 className='text-center w-100'>{translate('no_data_found')}</h5>
                                     </div>
                                 </Row>
                             }

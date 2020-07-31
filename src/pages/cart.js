@@ -56,34 +56,47 @@ export default function Cart(props) {
 
     useLayoutEffect(() => {
         setProducts([])
-        getData()
-    }, []);
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
 
-    async function getData() {
-        const decoded_token = await getDecodedTokenFromStorage()
-        if (decoded_token !== null) {
-            if (decoded_token.role != 'customer') {
-                Router.push('/')
-            } else {
-                setToken(decoded_token)
-                const url = MuhalikConfig.PATH + `/api/users/cart/${decoded_token._id}`;
-                await axios.get(url).then((res) => {
-                    setCart_list(res.data.data)
-                    setCart_count(res.data.data.length)
-                }).catch((error) => {
-                })
-                if (decoded_token.city == 'riyadh' || decoded_token.city == 'Riyadh') {
-                    setShipping_charges(25)
+        async function getData() {
+            const decoded_token = await getDecodedTokenFromStorage()
+            const _token = await getTokenFromStorage()
+            if (decoded_token !== null) {
+                if (decoded_token.role != 'customer') {
+                    Router.push('/')
                 } else {
-                    setShipping_charges(45)
+                    if (unmounted) {
+                        setToken(decoded_token)
+                        setUndecoded_token(_token)
+
+                        const url = MuhalikConfig.PATH + `/api/users/cart/${decoded_token._id}`;
+                        await axios.get(url, { cancelToken: source.token }).then((res) => {
+                            if (unmounted) {
+                                setCart_list(res.data.data)
+                                setCart_count(res.data.data.length)
+                            }
+                        }).catch((error) => {
+                        })
+                        if (decoded_token.city == 'riyadh' || decoded_token.city == 'Riyadh') {
+                            setShipping_charges(25)
+                        } else {
+                            setShipping_charges(45)
+                        }
+                    }
                 }
             }
-            const _token = await getTokenFromStorage()
-            if (_token !== null) {
-                setUndecoded_token(_token)
-            }
         }
-    }
+
+        getData()
+
+        return () => {
+            unmounted = false
+            source.cancel();
+        };
+    }, []);
+
 
     useEffect(() => {
         calculateTotalPrice()
@@ -91,36 +104,48 @@ export default function Cart(props) {
 
     useEffect(() => {
         setProducts([])
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+
         cart_list && cart_list.forEach((element, index) => {
             getProducts(element, index)
         })
+        async function getProducts(element, index) {
+            const url = MuhalikConfig.PATH + `/api/products/product-by-id/${element.p_id}`;
+            await axios.get(url, { cancelToken: source.token }).then(res => {
+                if (unmounted) {
+                    let obj = {}
+                    obj['_id'] = element._id
+                    obj['p_id'] = element.p_id
+                    obj['variation_id'] = element.variation_id
+                    obj['quantity'] = element.quantity
+                    obj['product'] = res.data.data[0]
+                    obj['check'] = false
+                    obj['isLoading'] = false
+                    if (res.data.data[0].product_type != "simple-product") {
+                        res.data.data[0].product_variations.forEach((e, i) => {
+                            if (e._id == element.variation_id) {
+                                obj['variation'] = e
+                            }
+                        })
+                    }
+                    setProducts(prevPro => {
+                        return [...new Set([...prevPro, obj])]
+                    })
+                }
+            }).catch((error) => {
+                if (unmounted) {
+                    alert('Error')
+                }
+            })
+        }
+        return () => {
+            unmounted = false
+            source.cancel();
+        };
     }, [cart_list])
 
-    async function getProducts(element, index) {
-        const url = MuhalikConfig.PATH + `/api/products/product-by-id/${element.p_id}`;
-        await axios.get(url).then(res => {
-            let obj = {}
-            obj['_id'] = element._id
-            obj['p_id'] = element.p_id
-            obj['variation_id'] = element.variation_id
-            obj['quantity'] = element.quantity
-            obj['product'] = res.data.data[0]
-            obj['check'] = false
-            obj['isLoading'] = false
-            if (res.data.data[0].product_type != "simple-product") {
-                res.data.data[0].product_variations.forEach((e, i) => {
-                    if (e._id == element.variation_id) {
-                        obj['variation'] = e
-                    }
-                })
-            }
-            setProducts(prevPro => {
-                return [...new Set([...prevPro, obj])]
-            })
-        }).catch((error) => {
-            alert('Error')
-        })
-    }
 
     function calculateTotalPrice() {
         let count = 0
@@ -185,6 +210,7 @@ export default function Cart(props) {
                 handleDeleteCart(element._id, index)
             }
         })
+        Router.reload()
     }
 
     async function handleDeleteCart(obj_id, index) {

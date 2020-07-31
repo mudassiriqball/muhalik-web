@@ -25,6 +25,7 @@ import GlobalStyleSheet from '../../styleSheet'
 import Link from 'next/link'
 import MovingLogo from '../components/moving-logo';
 import BreadcrumbRow from '../components/breadcrumb-row';
+import translate from '../../i18n/translate';
 
 React.useLayoutEffect = React.useEffect
 
@@ -67,7 +68,7 @@ export default function ComponentPage(props) {
     let loadingCard = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
         '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
 
-    const { loading, error, products, hasMore } = useQueryInfiniteScroll(fieldName, query, pageNumber, isMobile ? '12' : '28')
+    const { loading, error, products, pages, total, hasMore } = useQueryInfiniteScroll(fieldName, query, pageNumber, isMobile ? '12' : '28')
 
     const observer = useRef()
     const lastProducrRef = useCallback((node) => {
@@ -118,6 +119,7 @@ export default function ComponentPage(props) {
                 logout={logout}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
+                {...props}
             >
                 {/* <SliderCarousel
                     slider_list={props.slider_list}
@@ -128,13 +130,7 @@ export default function ComponentPage(props) {
                         <BreadcrumbRow active={component}>
                         </BreadcrumbRow>
                     </Row>
-                    {products == '' ?
-                        <Row className='p-5 w-100'>
-                            <div className='w-100'>
-                                <h5 className='pt-5 pb-5 text-center w-100'>No Data Found</h5>
-                            </div>
-                        </Row>
-                        :
+                    {total > 0 ?
                         <Row className='products_col'>
                             <Row noGutters className='id_row'>
                                 {products && products.map((element, index) => {
@@ -144,13 +140,13 @@ export default function ComponentPage(props) {
                                                 <div className='only_products_div'>
                                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />
                                                     <label className='my_label'>{element.product_name}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
+                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_price}</label>
                                                 </div>
                                                 :
                                                 <div className='only_products_div'>
                                                     <Image className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                                     <label className='my_label'>{element.product_name}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
+                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_variations[0].price}</label>
                                                 </div>
                                             }
                                         </Card>
@@ -160,13 +156,13 @@ export default function ComponentPage(props) {
                                                 <div className='only_products_div'>
                                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />
                                                     <label className='my_label'>{element.product_name}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_price}</label>
+                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_price}</label>
                                                 </div>
                                                 :
                                                 <div className='only_products_div'>
                                                     <Image className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                                     <label className='my_label'>{element.product_name}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{element.product_variations[0].price}</label>
+                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_variations[0].price}</label>
                                                 </div>
                                             }
                                         </Card>
@@ -184,7 +180,7 @@ export default function ComponentPage(props) {
                                                         <MovingLogo />
                                                     </div>
                                                     <label className='my_label'>{'-'}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
+                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
                                                 </div>
                                             </Card>
                                             :
@@ -196,12 +192,18 @@ export default function ComponentPage(props) {
                                                         <MovingLogo />
                                                     </div>
                                                     <label className='my_label'>{'-'}</label>
-                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >Rs.</span>{'-'}</label>
+                                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
                                                 </div>
                                             </Card>
                                     )}
                                 </Row>
                             }
+                        </Row>
+                        :
+                        <Row className='h-100 p-5 w-100'>
+                            <div className='h-100 w-100 d-flex justify-content-center align-items-center'>
+                                <h5 className='text-center w-100'>{translate('no_data_found')}</h5>
+                            </div>
                         </Row>
                     }
                 </Row>
@@ -214,12 +216,16 @@ export default function ComponentPage(props) {
                     max-height: 50px;
                 }
                 .component_page .main_row{
+                    width: 100%;
                     padding: 1% 4.44% 2% 4.44%;
                 }
                 .component_page .products_col{
+                    width: 100%;
+                    margin: 0%;
+                    padding: 0%;
                     background: white;
                 }
-                .component_page .component_page {
+                .component_page {
                     min-height: 100vh;
                     background: ${GlobalStyleSheet.body_color};
                     position: absolute;
@@ -228,6 +234,7 @@ export default function ComponentPage(props) {
                     right: 0;
                 }
                 .component_page .id_row{
+                    width: 100%;
                     padding: 2%;
                 }
                 .component_page .only_products_card{

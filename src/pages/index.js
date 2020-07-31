@@ -24,7 +24,63 @@ let animation =
         />
     </h3>
 
+export async function getServerSideProps(context) {
+    let slider_list = []
+    let home_categories_list = []
+    let new_products_list = []
+    let categories_list = []
+    let sub_categories_list = []
+    let top_ranking_products_list = []
 
+    const url = MuhalikConfig.PATH + '/api/sliders/sliders';
+    await axios.get(url, { "rejectUnauthorized": false }).then((res) => {
+        slider_list = res.data.data
+    }).catch((error) => {
+    })
+
+    const home_categories_url = MuhalikConfig.PATH + '/api/categories/home-categories';
+    await axios.get(home_categories_url).then((res) => {
+        home_categories_list = res.data.data
+    }).catch((error) => {
+    })
+
+    const url_1 = MuhalikConfig.PATH + '/api/categories/categories';
+    await axios.get(url_1).then((res) => {
+        categories_list = res.data.category.docs,
+            sub_categories_list = res.data.sub_category.docs
+    }).catch((error) => {
+    })
+
+    const url_3 = MuhalikConfig.PATH + `/api/products/all-products-query-search`
+    await axios({
+        method: 'GET',
+        url: url_3,
+        params: { q: "new-arrival", page: 1, limit: 12 },
+    }).then((res) => {
+        top_ranking_products_list = res.data.data
+    }).catch(err => {
+    })
+
+    const _url = MuhalikConfig.PATH + `/api/products/all-products-query-search`
+    await axios({
+        method: 'GET',
+        url: _url,
+        params: { q: "new-arrival", page: 1, limit: 12 },
+    }).then((res) => {
+        new_products_list = res.data.data
+    }).catch(err => {
+    })
+    return {
+        props: {
+            slider_list,
+            home_categories_list,
+            new_products_list,
+            top_ranking_products_list,
+            categories_list,
+            sub_categories_list
+        },
+    }
+}
 
 class Index extends Component {
     constructor(props) {
@@ -40,6 +96,11 @@ class Index extends Component {
             sub_categories_list: this.props.sub_categories_list,
         }
     }
+
+    ummounted = true
+    CancelToken = axios.CancelToken;
+    source = this.CancelToken.source();
+
     async componentDidMount() {
         Router.events.on('routeChangeComplete', () => {
             window.scroll({
@@ -54,20 +115,28 @@ class Index extends Component {
         if (_token !== null) {
             this.setState({ token: _token })
             const url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
-            await axios.get(url).then((res) => {
-                currentComponent.setState({ cart_count: res.data.data.length })
+            await axios.get(url, { cancelToken: this.source.token }).then((res) => {
+                if (this.unmounted) {
+                    currentComponent.setState({ cart_count: res.data.data.length })
+                }
             }).catch((error) => {
             })
         }
 
         const url_1 = MuhalikConfig.PATH + '/api/categories/categories';
-        await axios.get(url_1).then((res) => {
-            currentComponent.setState({
-                categories_list: res.data.category.docs,
-                sub_categories_list: res.data.sub_category.docs
-            })
+        await axios.get(url_1, { cancelToken: this.source.token }).then((res) => {
+            if (this.unmounted) {
+                currentComponent.setState({
+                    categories_list: res.data.category.docs,
+                    sub_categories_list: res.data.sub_category.docs
+                })
+            }
         }).catch((error) => {
         })
+    }
+    componentWillUnmount() {
+        this.source.cancel();
+        this.unmounted = false
     }
 
     render() {
@@ -155,63 +224,7 @@ class Index extends Component {
         );
     }
 }
-export async function getServerSideProps(context) {
-    let slider_list = []
-    let home_categories_list = []
-    let new_products_list = []
-    let categories_list = []
-    let sub_categories_list = []
-    let top_ranking_products_list = []
 
-    const url = MuhalikConfig.PATH + '/api/sliders/sliders';
-    await axios.get(url, { "rejectUnauthorized": false }).then((res) => {
-        slider_list = res.data.data
-    }).catch((error) => {
-    })
-
-    const home_categories_url = MuhalikConfig.PATH + '/api/categories/home-categories';
-    await axios.get(home_categories_url).then((res) => {
-        home_categories_list = res.data.data
-    }).catch((error) => {
-    })
-
-    const url_1 = MuhalikConfig.PATH + '/api/categories/categories';
-    await axios.get(url_1).then((res) => {
-        categories_list = res.data.category.docs,
-            sub_categories_list = res.data.sub_category.docs
-    }).catch((error) => {
-    })
-
-    const url_3 = MuhalikConfig.PATH + `/api/products/all-products-query-search`
-    await axios({
-        method: 'GET',
-        url: url_3,
-        params: { q: "new-arrival", page: 1, limit: 12 },
-    }).then((res) => {
-        top_ranking_products_list = res.data.data
-    }).catch(err => {
-    })
-
-    const _url = MuhalikConfig.PATH + `/api/products/all-products-query-search`
-    await axios({
-        method: 'GET',
-        url: _url,
-        params: { q: "new-arrival", page: 1, limit: 12 },
-    }).then((res) => {
-        new_products_list = res.data.data
-    }).catch(err => {
-    })
-    return {
-        props: {
-            slider_list,
-            home_categories_list,
-            new_products_list,
-            top_ranking_products_list,
-            categories_list,
-            sub_categories_list
-        },
-    }
-}
 // const mapStateToProps = (state) => {
 //     console.log('map store:', state)
 //     return {
