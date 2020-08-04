@@ -21,7 +21,6 @@ import TranslateFormControl from '../../../i18n/translate-form-control'
 import MuhalikConfig from '../../../sdk/muhalik.config'
 
 const Toolbar = (props) => {
-
     let loggedIn = false
     let dashboard_href = ''
     if (props.role == '') {
@@ -56,6 +55,7 @@ const Toolbar = (props) => {
             setSticky(ref.current.getBoundingClientRect().top < 0);
         }
     };
+
     useEffect(() => {
         let unmounted = true
         const CancelToken = axios.CancelToken;
@@ -117,12 +117,11 @@ const Toolbar = (props) => {
 
     function handleSetSearchValue(val) {
         setSearchValue(val)
-        if (val)
-            if (val != '') {
-                setShowSuggestions(true)
-            } else {
-                setShowSuggestions(false)
-            }
+        if (val != '') {
+            setShowSuggestions(true)
+        } else {
+            setShowSuggestions(false)
+        }
         setSuggestions([])
         let array = []
         tags && tags.forEach((element, index) => {
@@ -132,6 +131,8 @@ const Toolbar = (props) => {
         })
         setSuggestions(array)
     }
+
+
     function handleSearchEnterPress(e) {
         var key = e.keyCode || e.which;
         if (key == 13) {
@@ -144,8 +145,11 @@ const Toolbar = (props) => {
         Router.push('/search/[search]', `/search/${val}`)
     }
 
-    function logout() {
-        removeTokenFromStorage(true)
+    async function logout() {
+        if (await removeTokenFromStorage()) {
+            Router.replace('/')
+            Router.reload()
+        }
     }
 
     return (
@@ -199,7 +203,7 @@ const Toolbar = (props) => {
                     {loggedIn ?
                         <Dropdown className='first_nav_link' alignRight>
                             <Dropdown.Toggle as={Nav.Link} className='first_nav_link align-self-end' style={{ borderRight: 'none' }}>
-                                {props.name}
+                                {props.full_name}
                             </Dropdown.Toggle>
                             <Dropdown.Menu style={{ zIndex: 100 }}>
                                 <NavDropdown.Item onClick={() => Router.push('/user/profile')} className='dropdown_item'>
@@ -230,7 +234,7 @@ const Toolbar = (props) => {
                 <Navbar className='sticky-inner' style={{ background: 'white' }}>
                     <Navbar.Brand onClick={() => Router.push('/')} className='d-inline-flex align-items-center p-0 m-0'>
                         <Image src="/muhalik.jpg" className='mahaalk_img' fluid />
-                        <h4 className="display_in_md_lg text_animation">.com</h4>
+                        <h4 className="display_in_md_lg text_animation">Mahaalk.com</h4>
                     </Navbar.Brand>
                     <InputGroup className='input_group'>
                         <>
@@ -351,6 +355,7 @@ const Toolbar = (props) => {
                     padding-bottom: 5px;
                     max-height: 500px;
                     overflow-y: auto;
+                    background: white;
                 }
                 .customer_toolbar .suggestions .list-group-item {
                    border: none;

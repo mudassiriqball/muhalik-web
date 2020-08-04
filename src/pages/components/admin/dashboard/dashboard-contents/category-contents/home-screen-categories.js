@@ -13,6 +13,7 @@ import CardAccordion from '../../../../card-accordion';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import CreatableSelect from 'react-select/creatable';
+import ConfirmModal from '../../../../confirm-modal';
 
 const schema = yup.object({
     sub_category: yup.string()
@@ -23,11 +24,16 @@ class HomeScreenCategories extends Component {
         token: this.props.token,
         isLoading: false,
         showToast: false,
+        toastMsg: '',
+        showConfirmDeleteModal: false,
 
         home_categories_list: this.props.home_categories_list,
         categories_list: this.props.categories_list,
 
         category: '',
+
+        delete_obj: {},
+        delete_index: '',
     };
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -40,23 +46,24 @@ class HomeScreenCategories extends Component {
 
     async addHomeCategory(values, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/categories/home-category';
-        console.log('lll:', this.state.category)
-        await axios.post(url, {
+        let data = {}
+        data = {
             category_id: this.state.category._id,
             value: this.state.category.value,
-            url: this.state.category.urrl
-        }, {
+            url: this.state.category.url
+        }
+        await axios.post(url, data, {
             headers: {
                 'authorization': currentComponent.state.token,
             }
         }).then(function (response) {
-            currentComponent.homeCategoriesReloadHandler
             currentComponent.setState({
                 isLoading: false,
+                toastMsg: 'Home Category Added Successfully',
                 showToast: true,
                 category: '',
             })
-            return true
+            currentComponent.props.homeCategoriesReloadHandler()
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
             try {
@@ -64,19 +71,43 @@ class HomeScreenCategories extends Component {
             } catch (err) {
                 console.log('Request Failed:', error)
             }
-            return false
         });
     }
     handleCategoryChange = (e) => {
         this.setState({ category: e })
     }
 
-    async handleDelete(element, index) {
+    handleDelete(element, index) {
+        this.setState({ showConfirmDeleteModal: true, delete_obj: element, delete_index: index })
+    }
+
+    async handleDeleteHomeCategory() {
+        this.setState({ showConfirmDeleteModal: false })
+        const currentComponent = this
         let copyArray = Object.assign([], this.state.home_categories_list)
-        let obj = copyArray[index]
+        let obj = copyArray[this.state.delete_index]
         obj['isLoading'] = true
-        copyArray[index] = obj
+        copyArray[this.state.delete_index] = obj
+
         this.setState({ home_categories_list: copyArray })
+
+        const url = MuhalikConfig.PATH + `/api/categories/home-category/${this.state.delete_obj._id}`;
+        await axios.delete(url, {
+            headers: {
+                'authorization': currentComponent.state.token,
+            }
+        }).then(function (response) {
+            currentComponent.setState({ toastMsg: 'Home Category Deleted Successfully', showToast: true })
+            currentComponent.props.homeCategoriesReloadHandler()
+        }).catch(function (error) {
+            copyArray[this.state.delete_index].isLoading = false
+            currentComponent.setState({ home_categories_list: copyArray });
+            try {
+                alert('Error: ', error.response.data.message);
+            } catch (err) {
+                console.log('Request Failed:', error)
+            }
+        });
     }
 
     render() {
@@ -91,9 +122,7 @@ class HomeScreenCategories extends Component {
                         this.setState({ isLoading: true });
                         setSubmitting(true);
                         setTimeout(() => {
-                            if (this.addHomeCategory(values, this)) {
-                                this.props.categoriesReloadHandler()
-                            }
+                            this.addHomeCategory(values, this)
                             setSubmitting(false);
                         }, 500);
                     }
@@ -115,9 +144,19 @@ class HomeScreenCategories extends Component {
                                     onHide={(e) => this.setState({ showToast: false })}
                                     show={this.state.showToast}
                                     header={'Success'}
-                                    message={'Home Category Added Successfully'}
+                                    message={this.state.toastMsg}
                                     iconname={faThumbsUp}
                                     color={"#00b300"}
+                                />
+                                <ConfirmModal
+                                    onHide={() => this.setState({ showConfirmDeleteModal: false })}
+                                    show={this.state.showConfirmDeleteModal}
+                                    iconname={faTrash}
+                                    color={'red'}
+                                    title={'Delete Home Category'}
+                                    _id={this.state.delete_obj._id}
+                                    name={this.state.delete_obj.value}
+                                    confirm={this.handleDeleteHomeCategory.bind(this)}
                                 />
                                 <TitleRow icon={faListAlt} title={' Admin Dashboard / Home Screen Categories'} />
                                 <CardAccordion title={'Add New'}>
@@ -147,7 +186,7 @@ class HomeScreenCategories extends Component {
                                         </Form.Group>
                                     </Form.Row>
                                 </CardAccordion>
-                                <CardAccordion title={'Add New'}>
+                                <CardAccordion title={'All Home Categories'}>
                                     {this.state.home_categories_list && this.state.home_categories_list.map((element, index) =>
                                         <Form.Row key={index}>
                                             <Form.Group as={Col} lg={5} md={5} sm={5} xs={12}>
@@ -165,7 +204,7 @@ class HomeScreenCategories extends Component {
                                                 />
                                             </Form.Group>
                                             <Form.Group as={Col} lg={2} md={2} sm={2} xs={12}>
-                                                <Button onClick={() => handleDelete(element, index)} size='sm' disabled={element.isLoading} block className='mt-5'>
+                                                <Button onClick={() => this.handleDelete(element, index)} variant='outline-danger' size='sm' disabled={element.isLoading} block >
                                                     {element.isLoading ? 'Deleting' : 'Delete'}
                                                     {element.isLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                 </Button>

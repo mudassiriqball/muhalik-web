@@ -14,21 +14,24 @@ import Loading from '../loading'
 export default function Orders(props) {
     const [pageNumber, setpageNumber] = useState(1)
     const [orders, setOrders] = useState([])
+    const [unmounted, setunmounted] = useState(true)
 
     const { user_orders_loading, user_orders_error, user_orders, user_orders_pages, user_orders_total, user_order_hasMore } =
-        userOrdersPageLimit(props.token, props._id, props.status, pageNumber, '3')
+        userOrdersPageLimit(props.token, props._id, props.status, pageNumber, '5')
 
-    // const observer = useRef()
-    // const lastProducrRef = useCallback((node) => {
-    //     if (user_orders_loading) return
-    //     if (observer.current) observer.current.disconnect()
-    //     observer.current = new IntersectionObserver(entries => {
-    //         // if (entries[0].isIntersecting && user_order_hasMore) {
-    //         //     setpageNumber(prevPageNumber => prevPageNumber + 1)
-    //         // }
-    //     })
-    //     if (node) observer.current.observe(node)
-    // }, [user_orders_loading, user_order_hasMore])
+    const observer = useRef()
+    const lastProducrRef = useCallback((node) => {
+        if (user_orders_loading) return
+        if (observer.current) observer.current.disconnect()
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && user_order_hasMore) {
+                if (unmounted) {
+                    setpageNumber(pageNumber + 1)
+                }
+            }
+        })
+        if (node) observer.current.observe(node)
+    }, [user_orders_loading, user_order_hasMore])
 
     useEffect(() => {
         setOrders([])
@@ -37,6 +40,7 @@ export default function Orders(props) {
         })
         return () => {
             setOrders([])
+            setunmounted(false)
         }
     }, [user_orders])
 
@@ -90,14 +94,14 @@ export default function Orders(props) {
                             translate('returned_orders')
             }</label>}
             {orders && orders.map((element, index) =>
-                // orders.length === index + 1 ?
-                //     <Card key={index} ref={lastProducrRef} >
-                //         <CardBody element={element} index={index} />
-                //     </Card>
-                //     :
-                <Card key={index} >
-                    <CardBody element={element} index={index} />
-                </Card>
+                orders.length == (index + 1) ?
+                    <Card key={index} ref={lastProducrRef} >
+                        <CardBody element={element} index={index} />
+                    </Card>
+                    :
+                    <Card key={index} >
+                        <CardBody element={element} index={index} />
+                    </Card>
             )}
             {user_orders_loading && <Loading />}
             <style type="text/css">{`

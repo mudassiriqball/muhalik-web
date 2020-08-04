@@ -62,7 +62,7 @@ export default function ChangrProfilePicture(props) {
                     <Form.Group as={Row} className='profile_img_col btn_row mt-5'>
                         <Button variant='light' size='sm' onClick={handleImgUpload} block={true} disabled={img == '' || isLoading} >
                             {isLoading ? translate('uploading') : translate('upload')}
-                            {isLoading ? <Spinner size='md' animation='grow' /> : null}
+                            {isLoading ? <Spinner size='sm' animation='grow' /> : null}
                         </Button>
                     </Form.Group>
                 </Card.Body>

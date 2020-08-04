@@ -7,7 +7,7 @@ import { Row, Col, ListGroup, Nav, Spinner, Image } from 'react-bootstrap'
 import MuhalikConfig from '../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../styleSheet'
 import StickyBottomNavbar from '../components/customer/stick-bottom-navbar'
-import { getDecodedTokenFromStorage, removeTokenFromStorage, getTokenFromStorage } from '../../sdk/core/authentication-service'
+import { removeTokenFromStorage, checkTokenExpAuth } from '../../sdk/core/authentication-service'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -16,58 +16,67 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faUserCircle, faImage, faThumbsUp, faClock } from '@fortawesome/free-regular-svg-icons'
 
-
 import Toolbar from '../components/toolbar'
 import translate from '../../i18n/translate'
 
-
 function Account() {
-    const [token, setToken] = useState({ role: '', full_name: '', status: '' })
-    const [undecoded_token, setUndecodedToken] = useState('')
-
-    const [user, setUser] = useState('')
-    const [cart_count, setCart_count] = useState(0)
+    const [user, setUser] = useState({
+        _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+    })
 
     const [loading, setLoading] = useState(false)
     const [dashboard_href, setdashboard_href] = useState('/')
 
     useEffect(() => {
-        getData()
-    }, [])
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
 
-    async function getData() {
-        const _token = await getDecodedTokenFromStorage()
-        const _undecoded_token = await getTokenFromStorage()
-        if (_token !== null) {
-            setToken(_token)
-            setUndecodedToken(_undecoded_token)
-            await getUser(_token._id)
+        async function getData() {
+            const _decoded_token = await checkTokenExpAuth()
+            if (_decoded_token != null) {
+                setUser(_decoded_token)
+                const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decoded_token._id}`;
+                await axios.get(user_url, { cancelToken: source.token }).then((res) => {
+                    if (unmounted) {
+                        setUser(res.data.data[0])
+                    }
+                }).catch((err) => {
+                    if (axios.isCancel(err)) return
+                })
 
-            const count_url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
-            await axios.get(count_url).then((res) => {
-                setCart_count(res.data.data.length)
-            }).catch((error) => {
-            })
+                const order_count_url = MuhalikConfig.PATH + `/api/orders/user-orders-count/${_decoded_token._id}`;
+                await axios.get(order_count_url).then((res) => {
+                    if (unmounted) {
+                        setPending_orders_count(res.data.pending_orders_count)
+                        setDelivered_orders_count(res.data.delivered_orders_count)
+                        setCancelled_orders_count(res.data.cancelled_orders_count)
+                        setReturned_orders_count(res.data.returned_orders_count)
+                    }
+                }).catch((error) => {
+                })
+            } else {
+                Router.replace('/')
+            }
         }
-    }
-    async function getUser(id) {
-        const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${id}`;
-        await axios.get(user_url).then((res) => {
-            setUser(res.data.data[0])
-        }).catch((error) => {
-        })
-    }
+        getData()
+        return () => {
+            unmounted = false
+            source.cancel();
+        };
+    }, []);
 
     useEffect(() => {
-        if (token.role == 'vendor') {
+        if (user.role == 'vendor') {
             setdashboard_href('/vendor')
-        } else if (token.role == 'admin') {
+        } else if (user.role == 'admin') {
             setdashboard_href('/admin')
         }
         return () => {
             setdashboard_href('/')
         }
-    }, [token])
+    }, [user])
 
     function logout() {
         setLoading(true)
@@ -81,7 +90,7 @@ function Account() {
             <ListGroup style={{ marginBottom: '50px' }}>
                 <div className='w-100 p-1'></div>
 
-                {token.full_name == '' ?
+                {user.full_name == '' ?
                     <ListGroup.Item className='d-flex flex-column'>
                         <div className='d-inline-flex align-items-center mb-2'>
                             <FontAwesomeIcon icon={faUserCircle} style={styles.account_fontawesome} />
@@ -125,7 +134,7 @@ function Account() {
                         </ListGroup.Item>
 
                         <div className='w-100 p-1'></div>
-                        {token.role == 'customer' ?
+                        {user.role == 'customer' ?
                             <>
                                 <ListGroup.Item disabled>{translate('my_orders')}</ListGroup.Item>
                                 <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/pending`)} >
@@ -157,7 +166,7 @@ function Account() {
 
                 <div className='w-100 p-1'></div>
 
-                {token.role == '' || token.role == 'customer' ?
+                {user.role == '' || user.role == 'customer' ?
                     <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
                         <FontAwesomeIcon icon={faDollarSign} style={styles.fontawesome} />
                         <div className='label'>{translate('sell_on_mahaalk')}</div>
@@ -176,7 +185,7 @@ function Account() {
                     <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                 </ListGroup.Item>
 
-                {token.role == 'customer' && <ListGroup.Item className='list_item' action>
+                {user.role == 'customer' && <ListGroup.Item className='list_item' action>
                     <FontAwesomeIcon icon={faDownload} style={styles.fontawesome} />
                     <div className='label'>{translate('get_app')}</div>
                     <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
@@ -185,7 +194,7 @@ function Account() {
 
                 <div className='w-100 p-1'></div>
 
-                {token.full_name != '' && <ListGroup.Item action onClick={logout} className='list_item'>
+                {user.full_name != '' && <ListGroup.Item action onClick={logout} className='list_item'>
                     <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
                     <div className='label'>
                         {translate('logout')}

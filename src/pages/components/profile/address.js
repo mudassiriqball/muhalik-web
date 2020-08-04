@@ -166,7 +166,7 @@ export default function Address(props) {
                     color: ${GlobalStyleSheet.primary_text_light_color};
                 }
                 .address .form_control:disabled {
-                   background: none;
+                    background: none;
                     color: white;
                 }
                 @media (max-width: 1199px){

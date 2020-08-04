@@ -8,7 +8,7 @@ import CardAccordion from '../../../card-accordion';
 import MuhalikConfig from '../../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../../styleSheet'
 import TitleRow from '../../../title-row';
-import AddNew from '../../../vendor/dashboard/dashboard-contents/product-contents/add-new'
+import AddNew from './product-contents/add-new'
 import vendorProductsPageLimit from '../../../../../vendor-products-page-limit';
 import vendorProductsQuerySearch from '../../../../../vendor-products-query-search';
 import useDimensions from "react-use-dimensions";
@@ -19,7 +19,7 @@ import PaginationRow from '../../../pagination-row'
 import Loading from '../../../loading';
 import CardSearchAccordion from '../../../card-search-accordion'
 
-export default function Inventory(props) {
+export default function AllProducts(props) {
 
     const [page, setPage] = useState(1)
     const [queryPage, setQueryPage] = useState(1)
@@ -124,12 +124,15 @@ export default function Inventory(props) {
                     back={() => { setViewProduct(false), setData({}) }}
                     isVariableProduct={data.product_type != "simple-product"}
                     handleShowConfirmModal={() => handleShowConfirmModal(-1)}
-                    edit={() => handleEditProduct(-1)}
+                    edit={() => handleEditProduct(data)}
                 />
                 break;
             case 'edit':
                 return <AddNew
-                    title={'Vendor Dashboard / All Products / Update'}
+                    title={`Vendor Dashboard / All Products / Update / ${data._id}`}
+                    categories_list={props.categories_list}
+                    sub_categories_list={props.sub_categories_list}
+
                     isUpdateProduct={true}
                     _id={data._id}
                     isVariableProduct={data.product_type != 'simple-product'}
@@ -139,12 +142,14 @@ export default function Inventory(props) {
                     handleShowConfirmModal={() => handleShowConfirmModal(-1)}
 
                     productCategory={data.category}
-                    // productSubCategories={data.sub_category}
+                    productSubCategory={data.sub_category}
+                    subCategoryDisabled={false}
 
                     productTags={data.product_tags}
                     warrantyType={data.warranty_type}
-                    simple_product_image_link={data.product_image_link}
+                    product_image_link={data.product_image_link}
                     variationsArray={data.product_variations}
+                    customFieldsArray={data.custom_fields}
                     dangerousGoodsArray={data.dangerous_goods}
 
                     product_name={data.product_name}
@@ -160,12 +165,12 @@ export default function Inventory(props) {
                     warranty_type={data.warranty_type}
                     product_discount={data.product_discount}
                     purchase_note={data.purchase_note}
-                    product_weight={data.product_weight}
-                    dimension_length={data.dimension_length}
-                    dimension_width={data.dimension_width}
-                    dimension_height={data.dimension_height}
-                    shipping_charges={data.shipping_charges}
-                    handling_fee={data.handling_fee}
+                    product_weight={data.product_weight || ''}
+                    dimension_length={data.dimension_length | 1}
+                    dimension_width={data.dimension_width || ''}
+                    dimension_height={data.dimension_height || ''}
+                    shipping_charges={data.shipping_charges || ''}
+                    handling_fee={data.handling_fee || ''}
                 />
                 break;
             default:
@@ -224,34 +229,12 @@ export default function Inventory(props) {
                                     <Row className='_div'>No Data Found</Row>
                         }
                     </CardSearchAccordion >
-                    <style type="text/css">{`
-                        ._div{
-                            display: flex;
-                            justify-content: center;
-                            margin: 5%;
-                        }
-                        .form_label{
-                            font-size: 12px;
-                        }
-                        @media (max-width: 575px){
-                            .search_col{
-                                padding-top: 1%;
-                            }
-                        }
-                    `}</style>
-                    <style jsx >
-                        {`
-                        th{
-                            font-size: 14px;
-                        }
-                    `}
-                    </style>
                 </>
         }
     }
 
     return (
-        <div>
+        <div className='vendor_inventory'>
             <AlertModal
                 onHide={() => setShowModal(false)}
                 show={showModal}
@@ -272,6 +255,31 @@ export default function Inventory(props) {
             />
 
             {renderSwitch(viewProduct)}
+
+            <style type="text/css">{`
+                .vendor_inventory ._div{
+                    display: flex;
+                    justify-content: center;
+                    margin: 5%;
+                }
+                .vendor_inventory .form_label{
+                    font-size: 12px;
+                }
+                .vendor_inventory .form-control:disabled {
+                    background: none;
+                    font-size: 14px;
+                }
+                @media (max-width: 575px){
+                    .vendor_inventory .search_col{
+                        padding-top: 1%;
+                    }
+                }
+            `}</style>
+            <style jsx >{`
+                th {
+                    font-size: 14px;
+                }
+            `}</style>
         </div>
     )
 }
@@ -286,7 +294,7 @@ function ProductTable(props) {
     }, [props.pageNumber])
 
     return (
-        <>
+        <div className='vendor_product_table'>
             <Table responsive bordered hover size="sm">
                 <thead>
                     <tr>
@@ -301,77 +309,75 @@ function ProductTable(props) {
                         <th style={{ textAlign: 'center' }}>Date</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {props.list && props.list.map((element, index) =>
-                        index >= lower_limit && index < upper_limit && <>
-                            {element.product_type == "simple-product" ?
-                                <tr key={index}>
-                                    <td align="center" >{index + 1}</td>
-                                    <td >
-                                        {element._id}
-                                        <div className="td">
-                                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.setViewProduct(element)} >View</Nav.Link>
-                                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.handleEditProduct(element)}>Edit</Nav.Link>
-                                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={() => props.handleShowConfirmModal(element)}>Delete</Nav.Link>
-                                        </div>
-                                    </td>
-                                    <td align="center" >{element.product_name}</td>
-                                    <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
-                                    <td align="center" >
-                                        {element.product_price}
-                                    </td>
-                                    <td align="center" >
-                                        {element.product_in_stock}
-                                    </td>
-                                    <td align="center" >
-                                        {element.category.value}
-                                    </td>
-                                    <td align="center" >
-                                        {element.sub_category.value}
-                                    </td>
-                                    <td align="center" >
-                                        {element.entry_date.substring(0, 10)}
-                                    </td>
-                                </tr>
-                                :
-                                <tr key={index}>
-                                    <td align="center" >{index + 1}</td>
-                                    <td>
-                                        {element._id}
-                                        <div className="td">
-                                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.setViewProduct(element)} >View</Nav.Link>
-                                            <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.handleEditProduct(element)}>Edit</Nav.Link>
-                                            <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={() => props.handleShowConfirmModal(element)}>Delete</Nav.Link>
-                                        </div>
-                                    </td>
-                                    <td align="center" >{element.product_name}</td>
-                                    <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
-                                    <td align="center" >
-                                        {element.product_variations[0].price} ...
+                {props.list && props.list.map((element, index) =>
+                    index >= lower_limit && index < upper_limit && <tbody key={index}>
+                        {element.product_type == "simple-product" ?
+                            <tr >
+                                <td align="center" >{index + 1}</td>
+                                <td >
+                                    {element._id}
+                                    <div className="td">
+                                        <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.setViewProduct(element)} >View</Nav.Link>
+                                        <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.handleEditProduct(element)}>Edit</Nav.Link>
+                                        <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={() => props.handleShowConfirmModal(element)}>Delete</Nav.Link>
+                                    </div>
                                 </td>
-                                    <td align="center" >
-                                        {element.product_variations[0].stock} ...
+                                <td align="center" >{element.product_name}</td>
+                                <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
+                                <td align="center" >
+                                    {element.product_price}
                                 </td>
-                                    <td align="center" >
-                                        {element.category.value}
-                                    </td>
-                                    <td align="center" >
-                                        {element.sub_category.value}
-                                    </td>
-                                    <td align="center" >
-                                        {element.entry_date.substring(0, 10)}
-                                    </td>
-                                </tr>
-                            }
-                        </>
-                    )}
-                </tbody>
+                                <td align="center" >
+                                    {element.product_in_stock}
+                                </td>
+                                <td align="center" >
+                                    {element.category.value}
+                                </td>
+                                <td align="center" >
+                                    {element.sub_category.value}
+                                </td>
+                                <td align="center" >
+                                    {element.entry_date.substring(0, 10)}
+                                </td>
+                            </tr>
+                            :
+                            <tr>
+                                <td align="center" >{index + 1}</td>
+                                <td>
+                                    {element._id}
+                                    <div className="td">
+                                        <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.setViewProduct(element)} >View</Nav.Link>
+                                        <Nav.Link style={styles.nav_link} className='pt-0' onClick={() => props.handleEditProduct(element)}>Edit</Nav.Link>
+                                        <Nav.Link style={styles.nav_link} className='pt-0 delete' onClick={() => props.handleShowConfirmModal(element)}>Delete</Nav.Link>
+                                    </div>
+                                </td>
+                                <td align="center" >{element.product_name}</td>
+                                <td align="center" >{element.product_type == "simple-product" ? 'Simple' : 'Variable'}</td>
+                                <td align="center" >
+                                    {element.product_variations[0].price} ...
+                                </td>
+                                <td align="center" >
+                                    {element.product_variations[0].stock} ...
+                                </td>
+                                <td align="center" >
+                                    {element.category.value}
+                                </td>
+                                <td align="center" >
+                                    {element.sub_category.value}
+                                </td>
+                                <td align="center" >
+                                    {element.entry_date.substring(0, 10)}
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                )}
             </Table >
             <style type="text/css">{`
-                .delete{
+                .vendor_product_table .delete{
                     color: #ff4d4d;
                 }
-                .delete:hover{
+                .vendor_product_table .delete:hover{
                     color: #e60000;
                 }
             `}</style>
@@ -390,7 +396,7 @@ function ProductTable(props) {
                 }
             `}
             </style>
-        </>
+        </div>
     )
 }
 
@@ -415,7 +421,7 @@ const ViewProduct = props => {
     }
 
     return (
-        <>
+        <div className='vendor_view_product'>
             <TitleRow icon={faPlus} title={` Vendor Dashboard / All Products / ${props.data.product_name}`} />
             <Form.Row style={{ margin: ' 1% 2%', display: 'flex', alignItems: 'center' }} >
                 <Button variant='outline-primary' size='sm' className="mr-auto" onClick={props.back}>Back</Button>
@@ -506,13 +512,13 @@ const ViewProduct = props => {
             {props.isVariableProduct ?
                 <CardAccordion title={'Variations'}>
                     {props.data.product_variations && props.data.product_variations.map((element, index) =>
-                        <Accordion key={element._id} defaultActiveKey='0' className='pb-2'>
+                        <Accordion key={index} defaultActiveKey='0' className='pb-2'>
                             <Card>
-                                <Accordion.Toggle as={Card.Header} eventKey={index} className='accordian_toggle'>
+                                <Accordion.Toggle as={Card.Header} eventKey='1' className='accordian_toggle'>
                                     <Form.Label className='p-0 mb-0 ml-0 mr-auto'>ID: {element._id}</Form.Label>
                                     <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.slider_fontawesome} />
                                 </Accordion.Toggle>
-                                <Accordion.Collapse eventKey={index} style={{ padding: '1%' }}>
+                                <Accordion.Collapse eventKey='1' style={{ padding: '1%' }}>
                                     <>
                                         <Row noGutters >
                                             <label className='haeder_label'>Variations</label>
@@ -688,28 +694,28 @@ const ViewProduct = props => {
                 setImgPreview={() => setImgPreview(false)}
             />}
             <style type="text/css">{`
-                .heading_label{
+                .vendor_view_product .heading_label{
                     font-size: 13px;
                     font-weight: bold;
                 }
-                .my_img_div{
+                .vendor_view_product .my_img_div{
                     padding: 2%;
                     cursor: pointer;
                     background: white;
                     cursor: pointer;
                 }
-                .my_img_div:hover{
+                .vendor_view_product .my_img_div:hover{
                     box-shadow: 0px 0px 10px 0.01px gray;
                     transition-timing-function: ease-in;
                     transition: 0.5s;
                     padding: 0% 2% 4% 2%;
                 }
-                .haeder_label{
+                .vendor_view_product .haeder_label{
                     font-size: 13px;
                     font-weight: bold;
                     width: 100%;
                 }
-                .accordian_toggle{
+                .vendor_view_product .accordian_toggle{
                     background: #9a9db1;
                     font-size: 12px;
                     color: white;
@@ -717,22 +723,22 @@ const ViewProduct = props => {
                     display: inline-flex;
                     align-items: center;
                 }
-                .accordian_toggle:hover{
+                .vendor_view_product .accordian_toggle:hover{
                     background: #7d819b;
                 }
-                .field_col{
+                .vendor_view_product .field_col{
                     padding: 0% 2%;
                 }
                 
             `}</style>
-        </>
+        </div>
     )
 }
 
 function ImagePreview(props) {
     const [ref, { x, y, width }] = useDimensions();
     return (
-        <>
+        <div className='vendor_img_preview'>
             <div className="modal-overlay">
                 <div className="modal-body">
                     <div className="close-modal">
@@ -757,7 +763,8 @@ function ImagePreview(props) {
             </div>
             <style jsx>
                 {`
-                   .modal-overlay {
+        <div className='vendor_img_preview'>
+                   . .modal-overlay {
                         position: fixed;
                         top: 0;
                         left: 0;
@@ -768,7 +775,7 @@ function ImagePreview(props) {
                         height: 100%;
                         background: rgba(21, 21, 21, 0.75);
                     }
-                     .modal-body {
+                    .vendor_img_preview .modal-body {
                         position: relative;
                         z-index: 11;
                         margin: 2.5%;
@@ -776,7 +783,7 @@ function ImagePreview(props) {
                         max-width: 100%;
                         max-height: 100%;
                     }
-                    .close-modal {
+                    .vendor_img_preview .close-modal {
                         position: fixed;
                         display: flex;
                         top: 10px;
@@ -784,40 +791,40 @@ function ImagePreview(props) {
                         right: 0;
                         width: 100%;
                     }
-                    .image-container {
+                    .vendor_img_preview .image-container {
                         margin: 2% 30%;
                         display: flex;
                         justify-content: center;
                         align-items: center;
                     }
-                     @media (max-width: 1299px){
-                        .image-container {
+                    @media (max-width: 1299px){
+                        .vendor_img_preview .image-container {
                             margin: 2% 25%;
                         }
                     }
                     @media (max-width: 1199px){
-                        .image-container {
+                        .vendor_img_preview .image-container {
                             margin: 2% 20%;
                         }
                     }
-                     @media (max-width: 991px){
-                        .image-container {
+                    @media (max-width: 991px){
+                        .vendor_img_preview .image-container {
                             margin: 2% 15%;
                         }
                     }
                      @media (max-width: 767px){
-                        .image-container {
+                        .vendor_img_preview .image-container {
                             margin: 2% 10%;
                         }
                     }
                      @media (max-width: 575px){
-                        .image-container {
+                        .vendor_img_preview .image-container {
                             margin: 10% 2%;
                         }
                     }
                 `}
             </style>
-        </>
+        </div>
     )
 }
 

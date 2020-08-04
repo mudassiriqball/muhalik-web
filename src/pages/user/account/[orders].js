@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-
-import { getDecodedTokenFromStorage, getTokenFromStorage } from '../../../sdk/core/authentication-service'
+import axios from 'axios'
+import { getDecodedTokenFromStorage, getTokenFromStorage, checkTokenExpAuth } from '../../../sdk/core/authentication-service'
 import AlertModal from '../../components/alert-modal'
 import Orders from '../../components/profile/orders'
 import Toolbar from '../../components/toolbar'
@@ -12,24 +12,35 @@ export default function MyOrders() {
     const router = useRouter()
     const { orders } = router.query
 
-    const [token, setToken] = useState({ _id: '', role: '', full_name: '', status: '' })
-    const [undecoded_token, setUndecodedToken] = useState('')
+    const [token, setToken] = useState(null)
+    const [user, setUser] = useState({
+        _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+    })
 
     useEffect(() => {
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+
+        async function getData() {
+            const _decoded_token = await checkTokenExpAuth()
+            if (_decoded_token != null) {
+                if (_decoded_token.role != 'customer') {
+                    Router.push('/')
+                } else {
+                    setUser(_decoded_token)
+                    const _token = await getTokenFromStorage()
+                    setToken(_token)
+                }
+            }
+        }
         getData()
         return () => {
-        }
-    }, [])
-
-    async function getData() {
-        const _token = await getDecodedTokenFromStorage()
-        const _undecoded_token = await getTokenFromStorage()
-        if (_token !== null) {
-            setToken(_token)
-            setUndecodedToken(_undecoded_token)
-        }
-    }
-
+            unmounted = false
+            source.cancel();
+        };
+    }, []);
 
     return (
         <div>
@@ -46,8 +57,8 @@ export default function MyOrders() {
             } />
             <Orders
                 isMobile={true}
-                token={undecoded_token}
-                _id={token._id}
+                token={token}
+                _id={user._id}
                 status={orders}
             />
         </div>

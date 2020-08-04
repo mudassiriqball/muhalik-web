@@ -8,7 +8,7 @@ import useDimensions from "react-use-dimensions";
 import MuhalikConfig from '../sdk/muhalik.config'
 import GlobalStyleSheet from '../styleSheet'
 import Layout from './components/customer/layout'
-import { getDecodedTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service'
+import { getDecodedTokenFromStorage, getTokenFromStorage, checkTokenExpAuth } from '../sdk/core/authentication-service'
 import Router from 'next/router'
 import MyButton from './components/buttons/my-btn'
 import AlertModal from './components/alert-modal'
@@ -42,17 +42,22 @@ export default function Cart(props) {
     const [ref, { x, y, width }] = useDimensions();
     const [isProcedeOrder, setIsProcedeOrder] = useState(false)
 
-    const [token, setToken] = useState({ role: '', full_name: '' })
-    const [undecoded_token, setUndecoded_token] = useState('')
+    const [token, setToken] = useState(null)
+    const [user, setUser] = useState({
+        _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+    })
+
     const [cart_list, setCart_list] = useState([])
     const [cart_count, setCart_count] = useState(0)
     const [products, setProducts] = useState([])
 
     const [checkAll, setCheckAll] = useState(false)
-    const [sub_total, setTotal] = useState(0)
+    const [sub_total, setSubTotal] = useState(0)
     const [shipping_charges, setShipping_charges] = useState(0)
 
     const [showErrorAlertModal, setShowErrorAlertModal] = useState(false)
+
 
     useLayoutEffect(() => {
         setProducts([])
@@ -61,29 +66,30 @@ export default function Cart(props) {
         const source = CancelToken.source();
 
         async function getData() {
-            const decoded_token = await getDecodedTokenFromStorage()
-            const _token = await getTokenFromStorage()
-            if (decoded_token !== null) {
-                if (decoded_token.role != 'customer') {
+            const _decoded_token = await checkTokenExpAuth()
+            if (_decoded_token != null) {
+                if (_decoded_token.role != 'customer') {
                     Router.push('/')
                 } else {
                     if (unmounted) {
-                        setToken(decoded_token)
-                        setUndecoded_token(_token)
-
-                        const url = MuhalikConfig.PATH + `/api/users/cart/${decoded_token._id}`;
-                        await axios.get(url, { cancelToken: source.token }).then((res) => {
+                        setUser(_decoded_token)
+                        const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decoded_token._id}`;
+                        await axios.get(user_url, { cancelToken: source.token }).then((res) => {
                             if (unmounted) {
-                                setCart_list(res.data.data)
-                                setCart_count(res.data.data.length)
+                                setUser(res.data.data[0])
+                                setCart_count(res.data.data[0].cart.length)
+                                setCart_list(res.data.data[0].cart)
                             }
-                        }).catch((error) => {
+                        }).catch((err) => {
+                            if (axios.isCancel(err)) return
                         })
-                        if (decoded_token.city == 'riyadh' || decoded_token.city == 'Riyadh') {
+                        if (_decoded_token.city == 'riyadh' || _decoded_token.city == 'Riyadh') {
                             setShipping_charges(25)
                         } else {
                             setShipping_charges(45)
                         }
+                        const _token = await getTokenFromStorage()
+                        setToken(_token)
                     }
                 }
             }
@@ -150,13 +156,16 @@ export default function Cart(props) {
     function calculateTotalPrice() {
         let count = 0
         products.forEach(element => {
+            let discount = 0
             if (element.product.product_type == "simple-product") {
-                count += element.quantity * element.product.product_price
+                // discount = element.product_discount / 100 * element.product.product_price
+                count += (element.product.product_price - element.product.product_discount / 100 * element.product.product_price) * element.quantity
             } else {
-                count += element.quantity * element.variation.price
+                // discount = element.discount / 100 * element.price
+                count += (element.variation.price - element.variation.discount / 100 * element.variation.price) * element.quantity
             }
         })
-        setTotal(count)
+        setSubTotal(count)
     }
 
     function getCartCont(length) {
@@ -218,13 +227,13 @@ export default function Cart(props) {
         copyArray = Object.assign([], products)
         copyArray[index].isLoading = true
         setProducts(copyArray)
-        const _url = MuhalikConfig.PATH + `/api/users/clear-cart-data-by-id/${token._id}`;
+        const _url = MuhalikConfig.PATH + `/api/users/clear-cart-data-by-id/${user._id}`;
         await axios({
             method: 'PUT',
             url: _url,
             params: { obj_id: obj_id },
             headers: {
-                'authorization': undecoded_token
+                'authorization': token
             }
         }).then(res => {
             let copyArray = []
@@ -246,12 +255,12 @@ export default function Cart(props) {
     }
 
     async function handleClearCart() {
-        const _url = MuhalikConfig.PATH + `/api/users/clear-cart/${token._id}`;
+        const _url = MuhalikConfig.PATH + `/api/users/clear-cart/${user._id}`;
         await axios({
             method: 'DELETE',
             url: _url,
             headers: {
-                'authorization': undecoded_token
+                'authorization': token
             }
         }).then(res => {
             Router.reload()
@@ -273,8 +282,8 @@ export default function Cart(props) {
     return (
         <div className='_cart'>
             <Layout
-                role={token.role || ''}
-                name={token.full_name || ''}
+                token={token}
+                user={user}
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
@@ -293,7 +302,7 @@ export default function Cart(props) {
                         <ProcedeOrder
                             products={products}
                             token={token}
-                            undecoded_token={undecoded_token}
+                            user={user}
                             cancel={() => setIsProcedeOrder(false)}
                             shipping_charges={shipping_charges}
                             sub_total={sub_total}
@@ -336,7 +345,7 @@ export default function Cart(props) {
                                                                 <div className='p-0 m-0'>{element.product.product_name}</div>
                                                             </Col>
                                                             <Col className='_padding' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
-                                                                <label>{translate('rs')}{element.product.product_price * element.quantity}</label>
+                                                                <label>{translate('rs')}{(element.product.product_price - element.product.product_discount / 100 * element.product.product_price) * element.quantity}</label>
                                                             </Col>
                                                             <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
                                                                 <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
@@ -367,7 +376,7 @@ export default function Cart(props) {
                                                                 <div className='p-0 m-0'>{element.product.product_name}</div>
                                                             </Col>
                                                             <Col className='_padding' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
-                                                                <label>{translate('rs')}{element.variation.price * element.quantity}</label>
+                                                                <label>{translate('rs')}{(element.variation.price - element.variation.discount / 100 * element.variation.price) * element.quantity}</label>
                                                             </Col>
                                                             <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
                                                                 <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
@@ -377,7 +386,7 @@ export default function Cart(props) {
                                                                     )}
                                                                 </Form.Control>
                                                                 <div className='d-inline-flex mt-auto'>
-                                                                    <Link href='/[category]/[sub_category]/[product]' as={`/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
+                                                                    <Link href='/products/category/[category]/[sub_category]/[product]' as={`/products/category/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
                                                                         <a style={{ fontSize: '12px', marginRight: '10px' }}>{translate('view')}</a>
                                                                     </Link>
                                                                     <div className='delete' onClick={() => handleDeleteCart(element._id, index)}>
@@ -550,7 +559,7 @@ function ProcedeOrder(props) {
                         'vendor_id': element.product.vendor_id,
                         'p_id': element.p_id,
                         'quantity': element.quantity,
-                        'price': element.product.product_price * element.quantity,
+                        'price': (element.product.product_price - (element.product.product_discount / 100 * element.product.product_price)) * element.quantity,
                     })
                 } else {
                     data.push({
@@ -558,12 +567,12 @@ function ProcedeOrder(props) {
                         'p_id': element.p_id,
                         'variation_id': element.variation_id,
                         'quantity': element.quantity,
-                        'price': element.variation.price * element.quantity,
+                        'price': (element.variation.price - (element.variation.discount / 100 * element.variation.price)) * element.quantity,
                     })
                 }
             })
 
-            const url = MuhalikConfig.PATH + `/api/orders/place-order/${props.token._id}`;
+            const url = MuhalikConfig.PATH + `/api/orders/place-order/${props.user._id}`;
             await axios.post(url,
                 {
                     c_name: name,
@@ -576,7 +585,7 @@ function ProcedeOrder(props) {
                 },
                 {
                     headers: {
-                        'authorization': props.undecoded_token
+                        'authorization': props.token
                     }
                 }).then((res) => {
                     setLoading(false)

@@ -32,7 +32,7 @@ export default function Toolbar(props) {
                     <div className='mr-auto'></div>
                     <Navbar.Brand className='logo' onClick={props.home} >
                         <Image src="/muhalik.jpg" className='mahaalk_img' fluid />
-                        <h4 className="text_animation">.com</h4>
+                        <h4 className="text_animation">Mahaalk.com</h4>
                     </Navbar.Brand>
                     <Navbar.Brand className='heading'>{props.title}</Navbar.Brand>
                     <div className='mr-auto'></div>

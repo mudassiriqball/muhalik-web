@@ -1,9 +1,10 @@
 import React, { Component, useState, useRef, useEffect } from 'react'
 import axios from 'axios'
-import { Row, Col, Card, Nav, Table, Form, Button, InputGroup } from 'react-bootstrap'
+import { Row, Col, Card, Nav, Table, Form, Button, InputGroup, Image } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBan, faCheckDouble, faHistory, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faEdit, faThumbsUp, faCheckCircle } from '@fortawesome/free-regular-svg-icons';
+import moment from 'moment'
 
 import CountColoredCard from '../../../count-colored-card'
 import TitleRow from '../../../title-row'
@@ -26,8 +27,6 @@ export default class Orders extends Component {
       isViewOrder: false,
 
       single_order: {},
-      token: this.props.token,
-      user_id: this.props.user_id,
 
       showConfirmModal: false,
       confirmModalLoading: false,
@@ -40,32 +39,31 @@ export default class Orders extends Component {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({
-      token: nextProps.token,
-      user_id: nextProps.user_id
-    });
-  }
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   this.setState({
+  //     token: nextProps.token,
+  //     user_id: nextProps.user_id
+  //   });
+  // }
+
   async handleConfirmed() {
+    this.setState({ confirmModalLoading: true })
     let currentComponent = this
+
     let data = []
     if (this.state.method == 'cancelled') {
-      this.setState({ confirmModalLoading: true })
       data = {
         status: 'cancelled'
       }
     } else if (this.state.method == 'pending') {
-      this.setState({ confirmModalLoading: true })
       data = {
         status: 'pending'
       }
     } else if (this.state.method == 'delivered') {
-      this.setState({ confirmModalLoading: true })
       data = {
         status: 'delivered'
       }
     } else if (this.state.method == 'returned') {
-      this.setState({ confirmModalLoading: true })
       data = {
         status: 'returned'
       }
@@ -83,6 +81,10 @@ export default class Orders extends Component {
         refresh_count: currentComponent.refresh_count + 1,
         isViewOrder: false,
       })
+      let obj = {}
+      obj = currentComponent.state.single_order
+      obj.status = data.status
+      currentComponent.setState({ single_order: obj })
       currentComponent.props.ordersReloadCountHandler()
     }).catch(function (error) {
       currentComponent.setState({
@@ -96,7 +98,7 @@ export default class Orders extends Component {
 
   render() {
     return (
-      <div className='vendor_orders'>
+      <div className='vendor_orders_style'>
         <ConfirmModal
           onHide={() => this.setState({ showConfirmModal: false, confirmModalLoading: false })}
           show={this.state.showConfirmModal}
@@ -153,61 +155,58 @@ export default class Orders extends Component {
                 />
               </Col>
             </Row>
-            {this.state.token != '' && <>
-              <Order
-                header={'Pending Orders'}
-                setView={(element) => this.setState({
-                  isViewOrder: true,
-                  single_order: element,
-                })}
-                token={this.state.token}
-                user_id={this.state.user_id}
-                status={'pending'}
-                refresh={this.state.refresh_count}
-                setRefresh={() => this.setState({ refresh_count: this.state.refresh_count + 1 })}
-                ordersReloadCountHandler={this.props.ordersReloadCountHandler}
-              />
-              <Order
-                header={'Delivered Orders'}
-                setView={(element) => this.setState({
-                  isViewOrder: true,
-                  single_order: element,
-                })}
-                token={this.state.token}
-                user_id={this.state.user_id}
-                status={'delivered'}
-                refresh={this.state.refresh_count}
-                setRefresh={() => this.setState({ refresh_count: this.state.refresh_count + 1 })}
-                ordersReloadCountHandler={this.props.ordersReloadCountHandler}
-              />
-              <Order
-                header={'Cancelled Orders'}
-                setView={(element) => this.setState({
-                  isViewOrder: true,
-                  single_order: element,
-                })}
-                token={this.state.token}
-                user_id={this.state.user_id}
-                status={'cancelled'}
-                refresh={this.state.refresh_count}
-                setRefresh={() => this.setState({ refresh_count: this.state.refresh_count + 1 })}
-                ordersReloadCountHandler={this.props.ordersReloadCountHandler}
-              />
-              <Order
-                header={'Returned Orders'}
-                setView={(element) => this.setState({
-                  isViewOrder: true,
-                  single_order: element,
-                })}
-                token={this.state.token}
-                user_id={this.state.user_id}
-                status={'returned'}
-                refresh={this.state.refresh_count}
-                setRefresh={() => this.setState({ refresh_count: this.state.refresh_count + 1 })}
-                ordersReloadCountHandler={this.props.ordersReloadCountHandler}
-              />
-            </>
-            }
+            <Order
+              header={'Pending Orders'}
+              setView={(element) => this.setState({
+                isViewOrder: true,
+                single_order: element,
+              })}
+              token={this.props.token}
+              user_id={this.props.user_id}
+              status={'pending'}
+              refresh={this.state.refresh_count}
+              setRefresh={() => this.setState({ refresh_count: this.state.refresh_count + 1 })}
+              ordersReloadCountHandler={this.props.ordersReloadCountHandler}
+            />
+            <Order
+              header={'Delivered Orders'}
+              setView={(element) => this.setState({
+                isViewOrder: true,
+                single_order: element,
+              })}
+              token={this.props.token}
+              user_id={this.props.user_id}
+              status={'delivered'}
+              refresh={this.state.refresh_count}
+              setRefresh={() => this.setState({ refresh_count: this.state.refresh_count + 1 })}
+              ordersReloadCountHandler={this.props.ordersReloadCountHandler}
+            />
+            <Order
+              header={'Cancelled Orders'}
+              setView={(element) => this.setState({
+                isViewOrder: true,
+                single_order: element,
+              })}
+              token={this.props.token}
+              user_id={this.props.user_id}
+              status={'cancelled'}
+              refresh={this.state.refresh_count}
+              setRefresh={() => this.setState({ refresh_count: this.state.refresh_count + 1 })}
+              ordersReloadCountHandler={this.props.ordersReloadCountHandler}
+            />
+            <Order
+              header={'Returned Orders'}
+              setView={(element) => this.setState({
+                isViewOrder: true,
+                single_order: element,
+              })}
+              token={this.props.token}
+              user_id={this.props.user_id}
+              status={'returned'}
+              refresh={this.state.refresh_count}
+              setRefresh={() => this.setState({ refresh_count: this.state.refresh_count + 1 })}
+              ordersReloadCountHandler={this.props.ordersReloadCountHandler}
+            />
           </>
           :
           <ViewOrder
@@ -252,7 +251,7 @@ export default class Orders extends Component {
           />
         }
         <style type="text/css">{`
-          .vendor_orders .Card {
+          .vendor_orders_style .Card {
               margin: 1%;
           }
           th {
@@ -260,7 +259,7 @@ export default class Orders extends Component {
               font-size: 14px;
               white-space: nowrap;
           }
-          .vendor_orders .td {
+          .vendor_orders_style .td {
               display: flex;
               flex-direction: row;
               font-size: 12px;
@@ -268,7 +267,7 @@ export default class Orders extends Component {
               padding: 0%;
               margin: 0%;
           }
-          .vendor_orders td {
+          .vendor_orders_style td {
               font-size: 12px;
           }
       `}</style>
@@ -379,7 +378,7 @@ function Order(props) {
   }
 
   return (
-    <div className='vendor_table'>
+    <div className='vendor_orders'>
       <ConfirmModal
         onHide={() => { setShowConfirmModal(false), setConfirmModalLoading(false) }}
         show={showConfirmModal}
@@ -460,7 +459,7 @@ function Order(props) {
                 />
               </>
               :
-              <Row className='_div'>No Data Found</Row>
+              <Row className='no_data'>No Data Found</Row>
           :
           vendor_orders_query_loading ?
             <Loading />
@@ -514,9 +513,18 @@ function Order(props) {
                 />
               </>
               :
-              <Row className='_div'>No Data Found</Row>
+              <Row className='no_data'>No Data Found</Row>
         }
       </CardSearchAccordion>
+      <style type="text/css">{`
+        .vendor_orders .no_data {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 5% 0%;
+        }
+      `}</style>
     </div>
   )
 }
@@ -531,7 +539,7 @@ function OrderTable(props) {
   }, [props.pageNumber])
 
   return (
-    <div className='vendor_table'>
+    <div className='vendor_Order_table'>
       <Table responsive bordered hover size="sm">
         <thead>
           <tr>
@@ -544,6 +552,7 @@ function OrderTable(props) {
             <th>Products</th>
             <th>Sub Total</th>
             <th>Shipping Charges</th>
+            <th>Total</th>
             <th>Date</th>
           </tr>
         </thead>
@@ -554,31 +563,31 @@ function OrderTable(props) {
               <td>
                 {element._id}
                 <div className="td">
+                  <Nav.Link className='pt-0' onClick={() => props.setView(element)} > View </Nav.Link>
                   {props.status == 'pending' && <>
-                    <Nav.Link className='pt-0 success' onClick={() => props.setDelivered(element)} > Delivered </Nav.Link>
-                    <Nav.Link className='pt-0 delete' onClick={() => props.setCancel(element)} > Cancel </Nav.Link>
-                    <Nav.Link className='pt-0 delete' onClick={() => props.setReturned(element)} > Returned </Nav.Link>
+                    <Nav.Link className='pt-0 success' disabled onClick={() => props.setDelivered(element)} > Delivered </Nav.Link>
+                    <Nav.Link className='pt-0 delete' disabled onClick={() => props.setCancel(element)} > Cancel </Nav.Link>
+                    <Nav.Link className='pt-0 delete' disabled onClick={() => props.setReturned(element)} > Returned </Nav.Link>
                   </>
                   }
                   {props.status == 'delivered' && <>
-                    <Nav.Link className='pt-0 warning' onClick={() => props.setPending(element)} > Pending </Nav.Link>
-                    <Nav.Link className='pt-0 delete' onClick={() => props.setCancel(element)} > Cancel </Nav.Link>
-                    <Nav.Link className='pt-0 delete' onClick={() => props.setReturned(element)} > Returned </Nav.Link>
+                    <Nav.Link className='pt-0 warning' disabled onClick={() => props.setPending(element)} > Pending </Nav.Link>
+                    <Nav.Link className='pt-0 delete' disabled onClick={() => props.setCancel(element)} > Cancel </Nav.Link>
+                    <Nav.Link className='pt-0 delete' disabled onClick={() => props.setReturned(element)} > Returned </Nav.Link>
                   </>
                   }
                   {props.status == 'cancelled' && <>
-                    <Nav.Link className='pt-0 warning' onClick={() => props.setPending(element)} > Pending </Nav.Link>
-                    <Nav.Link className='pt-0 success' onClick={() => props.setDelivered(element)} > Delivered </Nav.Link>
-                    <Nav.Link className='pt-0 delete' onClick={() => props.setReturned(element)} > Returned </Nav.Link>
+                    <Nav.Link className='pt-0 warning' disabled onClick={() => props.setPending(element)} > Pending </Nav.Link>
+                    <Nav.Link className='pt-0 success' disabled onClick={() => props.setDelivered(element)} > Delivered </Nav.Link>
+                    <Nav.Link className='pt-0 delete' disabled onClick={() => props.setReturned(element)} > Returned </Nav.Link>
                   </>
                   }
                   {props.status == 'returned' && <>
-                    <Nav.Link className='pt-0 warning' onClick={() => props.setPending(element)} > Pending </Nav.Link>
-                    <Nav.Link className='pt-0 success' onClick={() => props.setDelivered(element)} > Delivered </Nav.Link>
-                    <Nav.Link className='pt-0 delete' onClick={() => props.setCancel(element)} > Cancelled </Nav.Link>
+                    <Nav.Link className='pt-0 warning' disabled onClick={() => props.setPending(element)} > Pending </Nav.Link>
+                    <Nav.Link className='pt-0 success' disabled onClick={() => props.setDelivered(element)} > Delivered </Nav.Link>
+                    <Nav.Link className='pt-0 delete' disabled onClick={() => props.setCancel(element)} > Cancelled </Nav.Link>
                   </>
                   }
-                  <Nav.Link className='pt-0' onClick={() => props.setView(element)} > View </Nav.Link>
                 </div>
               </td>
               <td align="center" >{element.c_id}</td>
@@ -588,48 +597,47 @@ function OrderTable(props) {
               <td align="center" >{element.products.length || ''}</td>
               <td align="center" >{element.sub_total}</td>
               <td align="center" >{element.shipping_charges}</td>
+              <td align="center" >{element.shipping_charges + element.sub_total}</td>
               <td align="center" >{element.entry_date.substring(0, 10) || '-'}</td>
             </tr>
           )}
         </tbody>
       </Table>
-      <style jsx>
-        {`
-        th {
+      <style jsx>{`
+        .vendor_Order_table th {
           text-align: center;
           font-size: 14px;
           white-space: nowrap;
         }
-        .vendor_table .td {
-            display: flex;
-            flex-direction: row;
-            font-size: 12px;
-            float: right;
-            padding: 0%;
-            margin: 0%;
+        .vendor_Order_table .td {
+          display: flex;
+          flex-direction: row;
+          font-size: 12px;
+          float: right;
+          padding: 0%;
+          margin: 0%;
         }
-        .vendor_table td {
-            font-size: 12px;
+        .vendor_Order_table td {
+          font-size: 12px;
         }
-      `}
-      </style>
+      `}</style>
       <style type="text/css">{`
-        .vendor_table .delete{
+        .vendor_Order_table .delete{
             color: #ff4d4d;
         }
-        .vendor_table .delete:hover{
+        .vendor_Order_table .delete:hover{
             color: #cc0000;
         }
-        .vendor_table .success {
+        .vendor_Order_table .success {
           color: #00cc00;
         }
-        .vendor_table .success:hover {
+        .vendor_Order_table .success:hover {
           color: #009900;
         }
-        .vendor_table .warning {
+        .vendor_Order_table .warning {
           color: #ffc107;
         }
-        .vendor_table .warning:hover {
+        .vendor_Order_table .warning:hover {
           color: #cc9900;
         }
     `}</style>
@@ -640,34 +648,34 @@ function OrderTable(props) {
 function ViewOrder(props) {
   let componentRef = React.useRef();
   return (
-    <div className='_view_order'>
+    <div className='vendor_view_order'>
       <TitleRow icon={faEdit} title={`Admin Dashboard / Vendors / ${props.single_order.full_name}`} />
       <Form.Row style={{ margin: ' 0% 2%', display: 'flex', alignItems: 'center' }} >
         <Button size='sm' variant='outline-primary' className="mr-auto mt-2" onClick={props.back}> Back </Button>
 
 
         {props.single_order.status == 'pending' && <>
-          <Button size='sm' variant='outline-success' className="mt-2 ml-1 mr-1" onClick={props.setDelivered}> Delivered </Button>
-          <Button size='sm' variant='outline-danger' className="mt-2 ml-1 mr-1" onClick={props.setCancel}> Cancel </Button>
-          <Button size='sm' variant='outline-primary' className="mt-2 ml-1 mr-1" onClick={props.setReturned}> Returned </Button>
+          <Button size='sm' variant='outline-success' disabled className="mt-2 ml-1 mr-1" onClick={props.setDelivered}> Delivered </Button>
+          <Button size='sm' variant='outline-danger' disabled className="mt-2 ml-1 mr-1" onClick={props.setCancel}> Cancel </Button>
+          <Button size='sm' variant='outline-primary' disabled className="mt-2 ml-1 mr-1" onClick={props.setReturned}> Returned </Button>
         </>
         }
         {props.single_order.status == 'delivered' && <>
-          <Button size='sm' variant='outline-warning' className="mt-2 ml-1 mr-1" onClick={props.setPending}> Pending </Button>
-          <Button size='sm' variant='outline-danger' className="mt-2 ml-1 mr-1" onClick={props.setCancel}> Cancel </Button>
-          <Button size='sm' variant='outline-primary' className="mt-2 ml-1 mr-1" onClick={props.setReturned}> Returned </Button>
+          <Button size='sm' variant='outline-warning' disabled className="mt-2 ml-1 mr-1" onClick={props.setPending}> Pending </Button>
+          <Button size='sm' variant='outline-danger' disabled className="mt-2 ml-1 mr-1" onClick={props.setCancel}> Cancel </Button>
+          <Button size='sm' variant='outline-primary' disabled className="mt-2 ml-1 mr-1" onClick={props.setReturned}> Returned </Button>
         </>
         }
         {props.single_order.status == 'cancelled' && <>
-          <Button size='sm' variant='outline-warning' className="mt-2 ml-1 mr-1" onClick={props.setPending}> Pending </Button>
-          <Button size='sm' variant='outline-success' className="mt-2 ml-1 mr-1" onClick={props.setDelivered}> Delivered </Button>
-          <Button size='sm' variant='outline-primary' className="mt-2 ml-1 mr-1" onClick={props.setReturned}> Returned </Button>
+          <Button size='sm' variant='outline-warning' disabled className="mt-2 ml-1 mr-1" onClick={props.setPending}> Pending </Button>
+          <Button size='sm' variant='outline-success' disabled className="mt-2 ml-1 mr-1" onClick={props.setDelivered}> Delivered </Button>
+          <Button size='sm' variant='outline-primary' disabled className="mt-2 ml-1 mr-1" onClick={props.setReturned}> Returned </Button>
         </>
         }
         {props.single_order.status == 'returned' && <>
-          <Button size='sm' variant='outline-warning' className="mt-2 ml-1 mr-1" onClick={props.setPending}> Pending </Button>
-          <Button size='sm' variant='outline-success' className="mt-2 ml-1 mr-1" onClick={props.setDelivered}> Delivered </Button>
-          <Button size='sm' variant='outline-danger' className="mt-2 ml-1 mr-1" onClick={props.setCancel}> Cancel </Button>
+          <Button size='sm' variant='outline-warning' disabled className="mt-2 ml-1 mr-1" onClick={props.setPending}> Pending </Button>
+          <Button size='sm' variant='outline-success' disabled className="mt-2 ml-1 mr-1" onClick={props.setDelivered}> Delivered </Button>
+          <Button size='sm' variant='outline-danger' disabled className="mt-2 ml-1 mr-1" onClick={props.setCancel}> Cancel </Button>
         </>
         }
 
@@ -682,75 +690,87 @@ function ViewOrder(props) {
       <Card className='view_user' ref={componentRef}>
         <Card.Body>
           <Row>
-            <Form.Group as={Col} lg={12} md={12} sm={12} xs={12} className='logo_col'>
-              <Image src='/muhalik.png' className='logo' />
-            </Form.Group>
+            <div className='logo_col'>
+              <Image src='/muhalik.jpg' className='logo' />
+              <h2 className='p-0 ml-3'>Mahaalk.com</h2>
+            </div>
+
+            <div style={{ minHeight: '30px' }}></div>
             <p className='p'><span>Order Info</span></p>
             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
               <Form.Label className='form_label'>Placed On</Form.Label>
               <InputGroup>
-                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.entry_date.substring(0, 10)} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order.entry_date.substring(0, 10)} disabled={true} />
               </InputGroup>
             </Form.Group>
             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
               <Form.Label className='form_label'>Order Id</Form.Label>
               <InputGroup>
-                <Form.Control type="text" className='form_control' size="sm" value={props.single_order._id} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order._id} disabled={true} />
               </InputGroup>
             </Form.Group>
             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
               <Form.Label className='form_label'>Status</Form.Label>
               <InputGroup>
-                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.status} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order.status} disabled={true} />
               </InputGroup>
             </Form.Group>
 
+            <div style={{ minHeight: '100px' }}></div>
             <p className='p'><span>Custmer Info</span></p>
             <Form.Group as={Col} lg={3} md={6} sm={6} xs={12} className='form_group'>
               <Form.Label className='form_label'>Cutomer Id</Form.Label>
               <InputGroup>
-                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.c_id} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order.c_id} disabled={true} />
               </InputGroup>
             </Form.Group>
             <Form.Group as={Col} lg={3} md={6} sm={6} xs={12} className='form_group'>
               <Form.Label className='form_label'>Mobile</Form.Label>
               <InputGroup>
-                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.mobile || '-'} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order.mobile || '-'} disabled={true} />
               </InputGroup>
             </Form.Group>
             <Form.Group as={Col} lg={3} md={6} sm={6} xs={12} className='form_group'>
               <Form.Label className='form_label'>Name</Form.Label>
               <InputGroup>
-                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.c_name || '-'} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order.c_name || '-'} disabled={true} />
               </InputGroup>
             </Form.Group>
             <Form.Group as={Col} lg={3} md={6} sm={6} xs={12} className='form_group'>
               <Form.Label className='form_label'>City</Form.Label>
               <InputGroup>
-                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.city} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order.city} disabled={true} />
               </InputGroup>
             </Form.Group>
             <Form.Group as={Col} lg={12} md={12} sm={12} xs={12} className='address_form_group'>
               <Form.Label className='form_label'>Address</Form.Label>
               <InputGroup>
-                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.address} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order.address} disabled={true} />
               </InputGroup>
             </Form.Group>
 
+            <div style={{ minHeight: '100px' }}></div>
             <p className='p'><span>Price Info</span></p>
-            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
+            <Form.Group as={Col} lg={4} md={4} sm={4} xs={12} className='form_group'>
               <Form.Label className='form_label'>Sub Total</Form.Label>
               <InputGroup>
-                <Form.Control type="text" size="sm" className='form_control' value={props.single_order.sub_total} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order.sub_total} disabled={true} />
               </InputGroup>
             </Form.Group>
-            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
+            <Form.Group as={Col} lg={4} md={4} sm={4} xs={12} className='form_group'>
               <Form.Label className='form_label'>Shipping Charges</Form.Label>
               <InputGroup>
-                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.shipping_charges} disabled={true} />
+                <Form.Control type="text" size="sm" value={props.single_order.shipping_charges} disabled={true} />
+              </InputGroup>
+            </Form.Group>
+            <Form.Group as={Col} lg={4} md={4} sm={4} xs={12} className='form_group'>
+              <Form.Label className='form_label'>Total</Form.Label>
+              <InputGroup>
+                <Form.Control type="text" size="sm" value={props.single_order.shipping_charges + props.single_order.sub_total} disabled={true} />
               </InputGroup>
             </Form.Group>
 
+            <div style={{ minHeight: '110px' }}></div>
             <p className='p' style={{ marginTop: '10px', marginBottom: '40px' }}><span>Order Details</span></p>
             <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
               <InputGroup>
@@ -760,59 +780,79 @@ function ViewOrder(props) {
                       <th>#</th>
                       <th>Product Id</th>
                       <th>Variation Id</th>
+                      <th>SKU</th>
                       <th>Vendor Id</th>
                       <th>Quantity</th>
                       <th>Price</th>
                     </tr>
                   </thead>
                   {props.single_order.products && props.single_order.products.map((element, index) =>
-                    <tbody>
-                      <td align="center" >{index + 1}</td>
-                      <td align="center" >{element.p_id}</td>
-                      <td align="center" >{element.variation_id}</td>
-                      <td align="center" >{element.vendor_id}</td>
-                      <td align="center" >{element.quantity}</td>
-                      <td align="center" >{element.price}</td>
+                    <tbody key={index}>
+                      <tr>
+                        <td align="center" >{index + 1}</td>
+                        <td align="center" >{element.p_id}</td>
+                        <td align="center" >{element.variation_id || '-'}</td>
+                        <td align="center" >{element.sku || '-'} </td>
+                        <td align="center" >{element.vendor_id}</td>
+                        <td align="center" >{element.quantity}</td>
+                        <td align="center" >{element.price}</td>
+                      </tr>
                     </tbody>
                   )}
                 </Table>
+              </InputGroup>
+            </Form.Group>
+
+            <Form.Group as={Col} lg={12} md={12} sm={12} xs={12} className='print_date'>
+              <Form.Label className='form_label'>Print Date</Form.Label>
+              <InputGroup>
+                <label disabled={true}>{moment(new Date()).format('YYYY-MM-DD')}</label>
               </InputGroup>
             </Form.Group>
           </Row>
         </Card.Body>
       </Card>
       <style type="text/css">{`
-        ._view_order .logo_logo {
-          display: none;
-        }
         .print_style {
             display: flex;
             padding-top: 80px;
             min-width: 100%;
             max-width: 100%;
         }
+        .vendor_view_order .logo_col, .vendor_view_order .print_date {
+            display: none;
+        }
         .print_style .logo_col {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .print_style .print_date {
+          display: block;
+          margin-top: 5%;
         }
         .print_style .logo_col .logo {
-          min-width: 100px;
-          max-width: 100px;
-          min-height: 100px;
-          max-height: 100px;
+            min-width: 100px;
+            max-width: 100px;
+            min-height: 100px;
+            max-height: 100px;
         }
         .print_style .form_group {
             min-width: 25%;
             max-width: 25%;
         }
+        .vendor_view_order .form_label, .print_style .form_label {
+          font-size: 13px;
+          color: gray;
+        }
         .print_style .address_form_group {
             width: 100%;
         }
-        .vendor_orders .view_user {
+        .vendor_view_order .view_user {
             margin: 1% 2%;
         }
-        .vendor_orders .p, .print_style .p {
+        .vendor_view_order .p, .print_style .p {
             width: 100%; 
             text-align: center; 
             border-bottom: 1px solid lightgray; 
@@ -820,18 +860,18 @@ function ViewOrder(props) {
             margin: 20px 20px;
         } 
 
-        .vendor_orders .p span, .print_style .p span {
-            font-size: 13px;
+        .vendor_view_order .p span, .print_style .p span {
+            font-size: 15px;
             color: gray;
             background: white;
-            padding:0 10px;
+            padding: 0px 20px;
         }
-        th {
+        .vendor_view_order th {
             text-align: center;
             font-size: 14px;
             white-space: nowrap;
         }
-        .vendor_orders .td {
+        .vendor_view_order .td {
             display: flex;
             flex-direction: row;
             font-size: 12px;
@@ -839,14 +879,11 @@ function ViewOrder(props) {
             padding: 0%;
             margin: 0%;
         }
-        .vendor_orders td {
+        .vendor_view_order td {
             font-size: 12px;
         }
-        .vendor_orders .form_control:disabled, .print_style .form_control:disabled {
+        .vendor_view_order .form-control:disabled, .print_style .form-control:disabled {
             background: none;
-            border: none;
-            padding-left: 0%;
-            padding-top: 0%;
             font-size: 14px;
             font-weight: bold;
         }

@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
+import Router from 'next/router'
 import axios from 'axios'
 import Dashboard from './components/admin/dashboard/dashboard';
 import DashboardSideDrawer from './components/admin/dashboard/dashboard-side-drawer';
-import AdminLayout from './components/admin/layout/AdminLayout';
 import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config'
-import { checkAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service';
-
+import { checkTokenExpAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service';
 
 export async function getServerSideProps(context) {
     let sliders_list = []
@@ -109,7 +108,6 @@ class Admin extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: '',
             admins_count: this.props.admins_count,
             vendors_count: this.props.vendors_count,
             new_vendors_count: this.props.new_vendors_count,
@@ -143,37 +141,48 @@ class Admin extends Component {
 
             sliders_list: this.props.sliders_list,
 
-            token: '',
-            decodedToken: { role: '', full_name: '', status: '' },
+            token: null,
+            user: {
+                _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+                email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+            }
         }
     }
 
-    ummounted = true
+    unmounted = true
     CancelToken = axios.CancelToken;
     source = this.CancelToken.source();
 
     async componentDidMount() {
-        this.authUser()
-        const currentComponent = this;
-        this.setState({ token: await getTokenFromStorage() })
+        this.getFields()
+        const _decodedToken = await checkTokenExpAuth()
+        if (_decodedToken != null) {
+            await this.authUser(_decodedToken.role)
+            this.setState({ user: _decodedToken })
+            this.getUser(_decodedToken._id)
 
-        const url_1 = MuhalikConfig.PATH + '/api/categories/fields';
-        await axios.get(url_1, { cancelToken: this.source.token }).then(function (res) {
-            if (this.unmounted) {
-                currentComponent.setState({
-                    fields_list: res.data.data.docs,
-                })
+            const _token = await getTokenFromStorage()
+            this.setState({ token: _token })
+        } else {
+            Router.push('/')
+        }
+    }
+
+    async authUser(role) {
+        if (role != 'admin') {
+            Router.push('/')
+        }
+    }
+
+    async getUser(id) {
+        let currentComponent = this
+        const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${id}`;
+        await axios.get(user_url, { cancelToken: this.source.token }).then((res) => {
+            if (currentComponent.unmounted) {
+                currentComponent.setState({ user: res.data.data[0] })
             }
-        }).catch(function (error) {
-        })
-        const url_2 = MuhalikConfig.PATH + '/api/categories/field-requests';
-        await axios.get(url_2, { cancelToken: this.source.token }).then(function (res) {
-            if (this.unmounted) {
-                currentComponent.setState({
-                    field_requests_list: res.data.data.docs,
-                })
-            }
-        }).catch(function (error) {
+        }).catch((err) => {
+            if (axios.isCancel(err)) return
         })
     }
 
@@ -182,20 +191,28 @@ class Admin extends Component {
         this.unmounted = false
     }
 
-    async authUser() {
-        let _decodedToken = await checkAuth('admin')
-        if (_decodedToken != null) {
-            this.setState({ decodedToken: _decodedToken })
-            const currentComponent = this
-            const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decodedToken._id}`;
-            await axios.get(user_url, { cancelToken: this.source.token }).then((res) => {
-                if (this.unmounted) {
-                    currentComponent.setState({ user: res.data.data[0] })
-                }
-            }).catch((error) => {
-            })
-        }
+    async getFields() {
+        const currentComponent = this;
+        const url_1 = MuhalikConfig.PATH + '/api/categories/fields';
+        await axios.get(url_1, { cancelToken: this.source.token }).then((res) => {
+            if (currentComponent.unmounted) {
+                currentComponent.setState({
+                    fields_list: res.data.data.docs,
+                })
+            }
+        }).catch((error) => {
+        })
+        const url_2 = MuhalikConfig.PATH + '/api/categories/field-requests';
+        await axios.get(url_2, { cancelToken: this.source.token }).then((res) => {
+            if (currentComponent.unmounted) {
+                currentComponent.setState({
+                    field_requests_list: res.data.data.docs,
+                })
+            }
+        }).catch((error) => {
+        })
     }
+
 
     drawerToggleClickHandler = () => {
         this.setState(prevState => {
@@ -212,15 +229,13 @@ class Admin extends Component {
         this.setState({ sideDrawerOpen: false });
     };
 
-    logout = () => {
-        removeTokenFromStorage(false)
-    }
+
 
     async reloadCategories() {
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/categories/categories';
         await axios.get(url, { cancelToken: this.source.token }).then((res) => {
-            if (this.unmounted) {
+            if (currentComponent.unmounted) {
                 currentComponent.setState({
                     categories_list: res.data.category.docs,
                     sub_categories_list: res.data.sub_category.docs
@@ -234,22 +249,22 @@ class Admin extends Component {
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/sliders/sliders';
         await axios.get(url, { cancelToken: this.source.token }).then(function (res) {
-            if (this.unmounted) {
+            if (currentComponent.unmounted) {
                 currentComponent.setState({
                     sliders_list: res.data.data,
                 })
             }
         }).catch(function (error) {
+            console.log('reload slider error:', error)
         })
     }
     async reloadHomeCategories() {
-        console.log('reloadHomeCategories')
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/categories/home-categories';
         await axios.get(url, { cancelToken: this.source.token }).then((res) => {
-            if (this.unmounted) {
+            if (currentComponent.unmounted) {
                 currentComponent.setState({
-                    home_categories_list: res.data.category
+                    home_categories_list: res.data.data
                 })
             }
         }).catch((error) => {
@@ -259,7 +274,7 @@ class Admin extends Component {
         let currentComponent = this
         const users_count_url = MuhalikConfig.PATH + '/api/users/users-count';
         await axios.get(users_count_url).then((res) => {
-            if (this.unmounted) {
+            if (currentComponent.unmounted) {
                 currentComponent.setState({
                     admins_count: res.data.admins_count,
                     vendors_count: res.data.vendors_count,
@@ -276,7 +291,7 @@ class Admin extends Component {
         let currentComponent = this
         const users_count_url = MuhalikConfig.PATH + '/api/orders/all-orders-count';
         await axios.get(users_count_url).then((res) => {
-            if (this.unmounted) {
+            if (currentComponent.unmounted) {
                 currentComponent.setState({
                     pending_orders_count: res.data.pending_orders_count,
                     delivered_orders_count: res.data.delivered_orders_count,
@@ -288,6 +303,11 @@ class Admin extends Component {
         })
     }
 
+    async logout() {
+        if (await removeTokenFromStorage()) {
+            Router.replace('/')
+        }
+    }
 
     render() {
         let backdrop;
@@ -298,7 +318,10 @@ class Admin extends Component {
             <div style={styles.body}>
                 {/* <AdminLayout> */}
                 <Dashboard
+                    user={this.state.user}
+                    full_name={this.state.user.full_name}
                     avatar={this.state.user.avatar}
+
                     admins_count={this.state.admins_count}
                     vendors_count={this.state.vendors_count}
                     new_vendors_count={this.state.new_vendors_count}
@@ -321,19 +344,23 @@ class Admin extends Component {
 
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
+                    fieldsReloadHandler={this.getFields.bind(this)}
 
                     sliders_list={this.state.sliders_list}
                     sliderReloadHandler={this.reloadSlider.bind(this)}
 
                     token={this.state.token}
-                    user_name={this.state.decodedToken.full_name}
+                    user_name={this.state.user.full_name}
                     show={this.state.showWrapper}
                     drawerClickHandler={this.drawerToggleClickHandler}
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
-                    logout={this.logout}
+                    logout={this.logout.bind(this)}
                 />
                 <DashboardSideDrawer
+                    user={this.state.user}
+                    full_name={this.state.user.full_name}
                     avatar={this.state.user.avatar}
+
                     admins_count={this.state.admins_count}
                     vendors_count={this.state.vendors_count}
                     new_vendors_count={this.state.new_vendors_count}
@@ -356,15 +383,16 @@ class Admin extends Component {
 
                     fields_list={this.state.fields_list}
                     field_requests_list={this.state.field_requests_list}
+                    fieldsReloadHandler={this.getFields.bind(this)}
 
                     sliders_list={this.state.sliders_list}
                     sliderReloadHandler={this.reloadSlider.bind(this)}
 
                     token={this.state.token}
-                    user_name={this.state.decodedToken.full_name}
+                    user_name={this.state.user.full_name}
                     show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler}
-                    logout={this.logout}
+                    logout={this.logout.bind(this)}
                 />
                 {backdrop}
                 {/* </AdminLayout> */}

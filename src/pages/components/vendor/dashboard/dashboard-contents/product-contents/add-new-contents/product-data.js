@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Form, Col, Row, Card, InputGroup, Button, Toast, Tab, Nav, Tabs, Accordion, Spinner, Dropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -26,7 +27,7 @@ const Group = props => (
 
 const ProductData = props => {
 
-    const [imgError, setImgError] = React.useState('')
+    const [imgError, setImgError] = useState('')
 
     return (
         <Accordion as={Row} style={{ margin: '2%' }} defaultActiveKey="0">
@@ -64,7 +65,14 @@ const ProductData = props => {
                                                 </Nav.Link>
                                             </div>
                                         </Nav.Item>
-
+                                        <Nav.Item>
+                                            <div className="nav_link">
+                                                <Nav.Link eventKey="General" style={styles.nav_link}>
+                                                    <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.product_fontawesome} />
+                                                    <div className="linkName"> General </div>
+                                                </Nav.Link>
+                                            </div>
+                                        </Nav.Item>
                                         {props.isVariableProduct ?
                                             <>
                                                 <Nav.Item>
@@ -85,14 +93,7 @@ const ProductData = props => {
                                                 </Nav.Item>
                                             </>
                                             :
-                                            <Nav.Item>
-                                                <div className="nav_link">
-                                                    <Nav.Link eventKey="General" style={styles.nav_link}>
-                                                        <FontAwesomeIcon size="xs" icon={faSlidersH} style={styles.product_fontawesome} />
-                                                        <div className="linkName"> General </div>
-                                                    </Nav.Link>
-                                                </div>
-                                            </Nav.Item>
+                                            null
                                         }
 
                                         <Nav.Item>
@@ -117,7 +118,25 @@ const ProductData = props => {
                                 <Col style={{ padding: '2%', maxHeight: '80vh', overflow: 'auto' }}>
                                     <Tab.Content >
                                         <Tab.Pane eventKey="General">
-                                            {props.isVariableProduct ? null :
+                                            {props.isVariableProduct ?
+                                                <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
+                                                    <Form.Label style={styles.label}>Brand Name</Form.Label>
+                                                    <InputGroup>
+                                                        <Form.Control
+                                                            type="text"
+                                                            size="sm"
+                                                            placeholder="Enter Brand Name"
+                                                            name="product_brand_name"
+                                                            value={props.product_brand_name_values}
+                                                            onChange={props.onChange}
+                                                            isInvalid={props.product_brand_name_errors}
+                                                        />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {props.product_brand_name_errors}
+                                                        </Form.Control.Feedback>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                                :
                                                 <>
                                                     <Form.Row>
                                                         <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
@@ -183,9 +202,9 @@ const ProductData = props => {
                                                         </Form.Group>
                                                     </Form.Row>
                                                     <Form.Row>
-                                                        {(props.imagePreviewArray || []).map((url, index) => (
+                                                        {(props.imagePreviewArray || []).map((element, index) => (
                                                             <div className="show-image" key={index}>
-                                                                <img style={{ height: '100px', width: '100px', margin: '1%' }} src={url} alt="..." />
+                                                                <img style={{ height: '100px', width: '100px', margin: '1%' }} src={element.url} alt="..." />
                                                                 <input className="deleteImage" type="button" onClick={() => props.deleteImage(index)} value="Delete" />
                                                             </div>
                                                         ))}
@@ -344,7 +363,7 @@ const ProductData = props => {
                                                 </InputGroup>
                                             </Form.Group>
                                             <Form.Row>
-                                                <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
+                                                {/* <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
                                                     <Form.Label style={styles.label}>Product Shipping Charges</Form.Label>
                                                     <InputGroup>
                                                         <Form.Control
@@ -363,8 +382,8 @@ const ProductData = props => {
                                                             {props.shipping_charges_errors}
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
-                                                </Form.Group>
-                                                <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
+                                                </Form.Group> */}
+                                                {/* <Form.Group as={Col} lg={6} md={6} sm={12} xs={12}>
                                                     <Form.Label style={styles.label}>Product Handling Fee</Form.Label>
                                                     <InputGroup>
                                                         <Form.Control
@@ -383,7 +402,7 @@ const ProductData = props => {
                                                             {props.handling_fee_errors}
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
-                                                </Form.Group>
+                                                </Form.Group>*/}
                                             </Form.Row>
                                         </Tab.Pane>
 
@@ -488,16 +507,16 @@ const ProductData = props => {
 
 
 function ProductAttributes(props) {
-    const [attributeName, setAttributeName] = React.useState('')
-    const [attributeValue, setAttributeValue] = React.useState('')
+    const [attributeName, setAttributeName] = useState('')
+    const [attributeValue, setAttributeValue] = useState('')
 
-    const [error, setError] = React.useState('')
-    const [modalShow, setModalShow] = React.useState(false)
-    const [message, setMessage] = React.useState('')
-    const [attributesArray, setAttributesArray] = React.useState([])
+    const [error, setError] = useState('')
+    const [modalShow, setModalShow] = useState(false)
+    const [message, setMessage] = useState('')
+    const [attributesArray, setAttributesArray] = useState([])
 
-    const [userStatusAlert, setUserStatusAlert] = React.useState(false);
-    const [statusAlertMessage, setStatusAlertMessage] = React.useState('');
+    const [userStatusAlert, setUserStatusAlert] = useState(false);
+    const [statusAlertMessage, setStatusAlertMessage] = useState('');
 
     function handleAddProductAttributeClick() {
         setMessage('')
@@ -544,7 +563,8 @@ function ProductAttributes(props) {
                 })
                 data.push({
                     item: item, price: '', stock: '', image_link: [], imagePreviewArray: '',
-                    price_error: '', stock_error: '', image_link_error: '', custom_fields: []
+                    price_error: '', stock_error: '', image_link_error: '', custom_fields: [],
+                    discount: 0, warranty: 0, warranty_type: 'No Warranty',
                 })
             })
             setMessage('Variations Created Successfully')
@@ -620,9 +640,9 @@ function ProductAttributes(props) {
                         value={attributeName}
                         onChange={(e) => setAttributeName(e)}
                     />
-                    <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={handleShowModal}>
+                    {/* <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={handleShowModal}>
                         Add New
-                    </Nav.Link>
+                    </Nav.Link> */}
                     <AddNewFieldNameModal
                         {...props}
                         show={modalShow}
@@ -696,14 +716,18 @@ const createOption = (label) => ({
 
 
 function Variations(props) {
-    const [samePrice, setSamePrice] = React.useState('')
-    const [samePriceError, setSamePriceError] = React.useState('')
+    const [samePrice, setSamePrice] = useState('')
+    const [samePriceError, setSamePriceError] = useState('')
 
-    const [sameStock, setSameStock] = React.useState('')
-    const [sameStockError, setSameStockError] = React.useState('')
+    const [sameStock, setSameStock] = useState('')
+    const [sameStockError, setSameStockError] = useState('')
 
-    const [message, setMessage] = React.useState('')
-    const [error, setError] = React.useState('')
+    const [message, setMessage] = useState('')
+    const [error, setError] = useState('')
+
+    const [sameDiscount, setSameDiscount] = useState('')
+    const [sameWarranty, setSameWarranty] = useState('')
+    const [sameWarrantyType, setsSameWarrantyType] = useState('')
 
     // Same Price For All Variations
     function handleSamePriceApplyBtnClick() {
@@ -732,6 +756,36 @@ function Variations(props) {
         }
     }
 
+
+
+
+    function handleSameDiscountApplyBtnClick() {
+        if (sameDiscount != '') {
+            const copyArray = Object.assign([], props.variationsArray)
+            copyArray.forEach(element => {
+                element.discount = sameDiscount
+            })
+            props.setVariationsArray(copyArray)
+        }
+    }
+    function handleSameWarrantyApplyBtnClick() {
+        if (sameWarranty != '') {
+            const copyArray = Object.assign([], props.variationsArray)
+            copyArray.forEach(element => {
+                element.warranty = sameWarranty
+            })
+            props.setVariationsArray(copyArray)
+        }
+    }
+    function handleSameWarrantyTypeApplyBtnClick(e) {
+        setsSameWarrantyType(e.target.value)
+        const copyArray = Object.assign([], props.variationsArray)
+        copyArray.forEach(element => {
+            element.warranty_type = e.target.value
+        })
+        props.setVariationsArray(copyArray)
+    }
+
     function handlenPriceChange(e, index) {
         const copyArray = Object.assign([], props.variationsArray)
         let object = copyArray[index]
@@ -752,6 +806,35 @@ function Variations(props) {
             props.setVariationsArray(copyArray)
         }
     }
+
+
+    function handleDiscountChang(e, index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let object = copyArray[index]
+        if (e.target.value >= 0) {
+            object.discount = e.target.value
+            copyArray[index] = object
+            props.setVariationsArray(copyArray)
+        }
+    }
+    function handleWarrantyChang(e, index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let object = copyArray[index]
+        if (e.target.value >= 0) {
+            object.warranty = e.target.value
+            copyArray[index] = object
+            props.setVariationsArray(copyArray)
+        }
+    }
+    function handleWarrantyTypeChang(e, index) {
+        const copyArray = Object.assign([], props.variationsArray)
+        let object = copyArray[index]
+        object.warranty_type = e.target.value
+        copyArray[index] = object
+        props.setVariationsArray(copyArray)
+    }
+
+
 
     function handleDeleteVariationClick(index) {
         const copyArray = Object.assign([], props.variationsArray)
@@ -837,7 +920,10 @@ function Variations(props) {
             object.image_link = [...object.image_link, ...e.target.files]
             let array = []
             object.image_link.forEach(element => {
-                array.push(URL.createObjectURL(element))
+                try {
+                    array.push({ 'url': URL.createObjectURL(element) })
+                } catch (err) {
+                }
             })
             object.imagePreviewArray = array
             object.image_link_error = ''
@@ -865,7 +951,7 @@ function Variations(props) {
                 <>
                     <Form.Row>
                         {/* Same Price */}
-                        <Form.Group as={Col} >
+                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
                             <Form.Label style={styles.label}> Same Price</Form.Label>
                             <InputGroup>
                                 <Form.Control
@@ -883,7 +969,7 @@ function Variations(props) {
                                     isInvalid={samePriceError}
                                 />
                                 <InputGroup.Prepend>
-                                    <Button variant='primary' style={styles.label} onClick={handleSamePriceApplyBtnClick} size="sm">Apply</Button>
+                                    <Button variant='outline-dark' style={styles.label} onClick={handleSamePriceApplyBtnClick} size="sm">Apply</Button>
                                 </InputGroup.Prepend>
                                 <Form.Control.Feedback type="invalid">
                                     {props.samePriceError}
@@ -891,7 +977,7 @@ function Variations(props) {
                             </InputGroup>
                         </Form.Group>
                         {/* Same Stock */}
-                        <Form.Group as={Col} >
+                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
                             <Form.Label style={styles.label}> Same Stock</Form.Label>
                             <InputGroup>
                                 <Form.Control
@@ -909,39 +995,76 @@ function Variations(props) {
                                     isInvalid={sameStockError}
                                 />
                                 <InputGroup.Prepend>
-                                    <Button variant='primary' style={styles.label} onClick={handleSameStockApplyBtnClick} size="sm">Apply</Button>
+                                    <Button variant='outline-dark' style={styles.label} onClick={handleSameStockApplyBtnClick} size="sm">Apply</Button>
                                 </InputGroup.Prepend>
                                 <Form.Control.Feedback type="invalid">
                                     {props.sameStockError}
                                 </Form.Control.Feedback>
                             </InputGroup>
                         </Form.Group>
-                        {/* Same Image Link */}
-                        {/* <Form.Group as={Col} >
-                            <Form.Label style={styles.label}> Same Image</Form.Label>
+                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
+                            <Form.Label style={styles.label}> Same Discount</Form.Label>
                             <InputGroup>
                                 <Form.Control
-                                    type="text"
+                                    type="number"
                                     size="sm"
-                                    placeholder="Enter Image Link"
-                                    name="sameImgLinkInput"
-                                    value={sameImgLink}
+                                    placeholder="Enter Discount"
+                                    name="samePrice"
+                                    value={sameDiscount}
                                     onChange={(e) => {
-                                        if (e.target.value != '') {
-                                            setSameImgLink(e.target.value)
-                                            setSameImgLinkError('')
+                                        if (e.target.value >= 0) {
+                                            setSameDiscount(e.target.value)
                                         }
                                     }}
-                                    isInvalid={sameImgLinkError}
                                 />
                                 <InputGroup.Prepend>
-                                    <Button variant='primary' style={styles.label} onClick={handleSameImgLinkApplyBtnClick} size="sm">Apply</Button>
+                                    <Button variant='outline-dark' style={styles.label} onClick={handleSameDiscountApplyBtnClick} size="sm">Apply</Button>
                                 </InputGroup.Prepend>
-                                <Form.Control.Feedback type="invalid">
-                                    {props.sameImgLinkError}
-                                </Form.Control.Feedback>
                             </InputGroup>
-                        </Form.Group> */}
+                        </Form.Group>
+                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
+                            <Form.Label style={styles.label}> Same Warranty</Form.Label>
+                            <InputGroup>
+                                <Form.Control
+                                    type="number"
+                                    size="sm"
+                                    placeholder="Enter Warranty"
+                                    name="samePrice"
+                                    value={sameWarranty}
+                                    onChange={(e) => {
+                                        if (e.target.value >= 0) {
+                                            setSameWarranty(e.target.value)
+                                        }
+                                    }}
+                                />
+                                <InputGroup.Prepend>
+                                    <Button variant='outline-dark' style={styles.label} onClick={handleSameWarrantyApplyBtnClick} size="sm">Apply</Button>
+                                </InputGroup.Prepend>
+                            </InputGroup>
+                        </Form.Group>
+                        <Form.Group as={Col} lg={3} md={4} sm={6} xs={6}>
+                            <Form.Label style={styles.label}> Warranty Type </Form.Label>
+                            <InputGroup>
+                                <InputGroup.Prepend>
+                                    <Form.Control
+                                        as="select"
+                                        name="warranty_type"
+                                        size="sm"
+                                        value={sameWarrantyType}
+                                        onChange={handleSameWarrantyTypeApplyBtnClick}
+                                    >
+                                        <option> No Warranty </option>
+                                        <option> Brand Warranty </option>
+                                        <option> Local Warranty </option>
+                                        <option> Local Seller Warranty </option>
+                                        <option> Non-Local Warranty </option>
+                                        <option> Internationsl Warranty </option>
+                                        <option> Internationsl Seller Warranty </option>
+                                        <option> International Manufacturer Warranty </option>
+                                    </Form.Control>
+                                </InputGroup.Prepend>
+                            </InputGroup>
+                        </Form.Group>
                     </Form.Row>
                     <hr style={{ marginTop: '0%' }} />
                     {props.variationsArray && props.variationsArray.map((element, index) =>
@@ -985,7 +1108,7 @@ function Variations(props) {
 
                                         <Form.Row>
                                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-                                                <Form.Label style={styles.label}>Product Price <span> * </span></Form.Label>
+                                                <Form.Label style={styles.label}>Price <span> * </span></Form.Label>
                                                 <Form.Control
                                                     type="number"
                                                     size="sm"
@@ -1000,7 +1123,7 @@ function Variations(props) {
                                                 </Form.Control.Feedback>
                                             </Form.Group>
                                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
-                                                <Form.Label style={styles.label}>Product in Stock <span> * </span></Form.Label>
+                                                <Form.Label style={styles.label}>Stock <span> * </span></Form.Label>
                                                 <Form.Control type="number"
                                                     size="sm"
                                                     name="product_in_stock"
@@ -1013,6 +1136,63 @@ function Variations(props) {
                                                     {element.stock_error}
                                                 </Form.Control.Feedback>
                                             </Form.Group>
+
+                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
+                                                <Form.Label style={styles.label}>Discount <span> * </span></Form.Label>
+                                                <Form.Control type="number"
+                                                    size="sm"
+                                                    name="product_in_stock"
+                                                    placeholder="Enter Discount"
+                                                    value={element.discount}
+                                                    onChange={(e) => handleDiscountChang(e, index)}
+                                                    isInvalid={element.stock_error}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {element.stock_error}
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
+                                                <Form.Label style={styles.label}>Warranty (months) <span> * </span></Form.Label>
+                                                <Form.Control type="number"
+                                                    size="sm"
+                                                    name="product_in_stock"
+                                                    placeholder="Enter Warranty"
+                                                    value={element.warranty}
+                                                    onChange={(e) => handleWarrantyChang(e, index)}
+                                                    isInvalid={element.stock_error}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {element.stock_error}
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
+                                                <Form.Label style={styles.label}> Warranty Type </Form.Label>
+                                                <InputGroup>
+                                                    <InputGroup.Prepend>
+                                                        <Form.Control
+                                                            as="select"
+                                                            name="warranty_type"
+                                                            size="sm"
+                                                            value={element.warranty_type}
+                                                            onChange={(e) => handleWarrantyTypeChang(e, index)}
+                                                        >
+                                                            <option> No Warranty </option>
+                                                            <option> Brand Warranty </option>
+                                                            <option> Local Warranty </option>
+                                                            <option> Local Seller Warranty </option>
+                                                            <option> Non-Local Warranty </option>
+                                                            <option> Internationsl Warranty </option>
+                                                            <option> Internationsl Seller Warranty </option>
+                                                            <option> International Manufacturer Warranty </option>
+
+                                                        </Form.Control>
+                                                    </InputGroup.Prepend>
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {props.product_warranty_errors}
+                                                    </Form.Control.Feedback>
+                                                </InputGroup>
+                                            </Form.Group>
+
                                             <Form.Group as={Col} lg={4} md={4} sm={12} xs={12}>
                                                 <Form.Label style={styles.label}>Product Images <span> * </span></Form.Label>
                                                 <input type="file" style={{ margin: '0% 2%', fontSize: '13px' }}
@@ -1025,9 +1205,9 @@ function Variations(props) {
                                             </Form.Group>
                                         </Form.Row>
                                         <Form.Row>
-                                            {(element.imagePreviewArray || []).map((url, i) => (
+                                            {(element.imagePreviewArray || []).map((element, i) => (
                                                 <div className="show-image" key={i}>
-                                                    <img style={{ height: '100px', width: '100px', margin: '1%' }} src={url} alt="..." />
+                                                    <img style={{ height: '100px', width: '100px', margin: '1%' }} src={element.url} alt="..." />
                                                     <input className="deleteImage" type="button" onClick={() => deleteImage(index, i)} value="Delete" />
                                                 </div>
                                             ))}

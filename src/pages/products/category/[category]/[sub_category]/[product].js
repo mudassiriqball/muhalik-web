@@ -11,7 +11,7 @@ import {
     isMobile
 } from "react-device-detect";
 import {
-    removeTokenFromStorage,
+    checkTokenExpAuth,
     getDecodedTokenFromStorage,
     getTokenFromStorage
 } from '../../../../../sdk/core/authentication-service';
@@ -46,13 +46,14 @@ export async function getServerSideProps(context) {
     await axios.get(url).then((res) => {
         categories_list = res.data.category.docs,
             sub_categories_list = res.data.sub_category.docs
-    }).catch((error) => {
+    }).catch((err) => {
     })
 
     const url_1 = MuhalikConfig.PATH + `/api/products/product-by-id/${product}`;
     await axios.get(url_1).then((res) => {
         single_product = res.data.data[0]
-    }).catch((error) => {
+    }).catch((err) => {
+        console.log('err:', err)
     })
 
     return {
@@ -69,8 +70,11 @@ function Product(props) {
     const [single_product, setSingle_product] = useState(props.single_product)
     const { category, sub_category, product } = router.query
 
-    const [token, setToken] = useState({ role: '', full_name: '' })
-    const [undecoded_token, setUndecoded_token] = useState('')
+    const [token, setToken] = useState(null)
+    const [user, setUser] = useState({
+        _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+    })
 
     const [showAlertModal, setShowAlertModal] = useState(false)
 
@@ -82,27 +86,43 @@ function Product(props) {
     const [cart_count, setCart_count] = useState(0)
 
     useLayoutEffect(() => {
-        getData()
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+
+        async function getData() {
+            const _decodedToken = await checkTokenExpAuth()
+            if (_decodedToken != null) {
+                await setUser(_decodedToken)
+                const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decodedToken._id}`;
+                await axios.get(user_url, { cancelToken: source.token }).then((res) => {
+                    if (unmounted) {
+                        setUser(res.data.data[0])
+                        setCart_count(res.data.data[0].cart.length)
+                    }
+                }).catch((err) => {
+                    if (axios.isCancel(err)) return
+                })
+
+                const _token = await getTokenFromStorage()
+                setToken(_token)
+            }
+        }
+
         if (props.single_product != '')
             getVendor()
+        getData()
+        return () => {
+            unmounted = false
+            source.cancel();
+        };
     }, []);
-    async function getData() {
-        const _token = await getDecodedTokenFromStorage()
-        if (_token !== null) {
-            setToken(_token)
-            getCartCount(_token._id)
-        }
-        const undecoded_token = await getTokenFromStorage()
-        if (undecoded_token !== null) {
-            setUndecoded_token(undecoded_token)
-        }
-    }
 
     async function getCartCount(user_id) {
         const url = MuhalikConfig.PATH + `/api/users/cart/${user_id}`;
         await axios.get(url).then((res) => {
             setCart_count(res.data.data.length)
-        }).catch((error) => {
+        }).catch((err) => {
         })
     }
 
@@ -110,7 +130,7 @@ function Product(props) {
         const url = MuhalikConfig.PATH + `/api/users/user-by-id/${props.single_product.vendor_id}`;
         await axios.get(url).then((res) => {
             setVendor(res.data.data[0])
-        }).catch((error) => {
+        }).catch((err) => {
         })
     }
 
@@ -119,28 +139,28 @@ function Product(props) {
             _id: product_id,
         }
 
-        if (token.full_name == '') {
+        if (user.full_name == '') {
             Router.push('/login')
         } else if (wish == 'gray') {
-            const url = MuhalikConfig.PATH + `/api/users/add-wish/${props.token._id}`;
+            const url = MuhalikConfig.PATH + `/api/users/add-wish/${props.user._id}`;
             await axios.put(url, data, {
                 headers: {
-                    'authorization': undecoded_token,
+                    'authorization': token,
                 }
             }).then(function (res) {
                 setWish('orange')
-            }).catch(function (error) {
+            }).catch(function (err) {
                 alert('ERROR: Product not added to wishlist')
             });
         } else {
-            const url = MuhalikConfig.PATH + `/api/users/remove-wish/${props.token._id}`;
+            const url = MuhalikConfig.PATH + `/api/users/remove-wish/${props.user._id}`;
             await axios.put(url, data, {
                 headers: {
-                    'authorization': undecoded_token,
+                    'authorization': token,
                 }
             }).then(function (res) {
                 setWish('gray')
-            }).catch(function (error) {
+            }).catch(function (err) {
                 alert('ERROR: Product not removed from wishlist')
             });
         }
@@ -155,20 +175,20 @@ function Product(props) {
             index: index,
             quantity: quantity
         }
-        if (token.full_name == '') {
+        if (user.full_name == '') {
             Router.push('/login')
         } else {
             cartLoading(true)
-            const url = MuhalikConfig.PATH + `/api/users/add-to-cart/${token._id}`;
+            const url = MuhalikConfig.PATH + `/api/users/add-to-cart/${user._id}`;
             await axios.put(url, data, {
                 headers: {
-                    'authorization': undecoded_token,
+                    'authorization': token,
                 }
             }).then(function (res) {
                 cartLoading(false)
                 setShowAlertModal(true)
-                getCartCount(token._id)
-            }).catch(function (error) {
+                getCartCount(user._id)
+            }).catch(function (err) {
                 cartLoading(false)
                 alert('Error')
             });
@@ -179,15 +199,15 @@ function Product(props) {
         const url_1 = MuhalikConfig.PATH + `/api/products/product-by-id/${product}`;
         await axios.get(url_1).then((res) => {
             setSingle_product(res.data.data[0])
-        }).catch((error) => {
+        }).catch((err) => {
         })
     }
 
     return (
         <div className='product_style'>
             <Layout
-                role={token.role || ''}
-                name={token.full_name || ''}
+                token={token}
+                user={user}
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
@@ -231,7 +251,7 @@ function Product(props) {
                                     single_product={single_product}
                                     vendor={vendor}
                                     token={token}
-                                    undecoded_token={undecoded_token}
+                                    user={user}
                                     wish={wish}
                                     addToWishlist={addToWishlist}
                                     handleAddToCart={handleAddToCart}
@@ -243,7 +263,7 @@ function Product(props) {
                                     single_product={single_product}
                                     vendor={vendor}
                                     token={token}
-                                    undecoded_token={undecoded_token}
+                                    user={user}
                                     wish={wish}
                                     addToWishlist={addToWishlist}
                                     handleAddToCart={handleAddToCart}
@@ -341,6 +361,18 @@ function Product(props) {
                     border-top: solid 40px ${GlobalStyleSheet.primry_color};
                     border-right: solid 30px transparent;
                 }
+                .product_style .percent {
+                    font-size: 15px;
+                    padding-left: 8px;
+                }
+                .product_style .discount_label {
+                    width: auto;
+                    color: gray;
+                    border-bottom: 1px solid gray; 
+                    line-height: 0em;
+                    font-size: 15px;
+                    margin-top: 10px;
+                }
 
                 .product_style .stock{
                     font-size: 16px;
@@ -357,6 +389,14 @@ function Product(props) {
                     color: black;
                     padding: 2% 2% 0% 2%;
                     border-top: 1px solid lightgray;
+                }
+                .product_style .warranty {
+                    padding-top: 2%;
+                    font-size: 14px;
+                    color: gray;
+                }
+                .product_style .warranty .label {
+                    width: 100%;
                 }
                 .product_style .cart{
                     margin: 5% 0%;
@@ -576,8 +616,26 @@ function SimpleProduct(props) {
                 </Col>
                 <Col lg={5} md={5} sm={6} xs={12} className='desc_col'>
                     {props.single_product.product_name}
-                    <div className='slope'>{translate('rs')} {props.single_product.product_price}</div>
-                    <Row noGutters>
+                    <div className='slope'>{translate('rs')}
+                        {props.single_product.product_price - props.single_product.product_discount / 100 * props.single_product.product_price}
+                    </div>
+                    {props.single_product.product_discount != '0' ?
+                        <div className='d-inline-flex'>
+                            <p className='discount_label'>
+                                {translate('rs')}
+                                {props.single_product.product_price}
+                            </p>
+                            <div className='percent'>{' -' + props.single_product.product_discount + '%'}</div>
+                        </div>
+                        :
+                        <div className='d-inline-flex'>
+                            <p className='discount_label'>
+                                {''}
+                            </p>
+                            <div className='percent'>{0 + '%'}</div>
+                        </div>
+                    }
+                    <Row noGutters className='mt-2 mb-3'>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
                                 <div className='product_rating'>{translate('rating')}: </div>
@@ -602,7 +660,16 @@ function SimpleProduct(props) {
                         {translate('available_in_stock')}
                         <span>{translate('stock')}: {props.single_product.product_in_stock}</span>
                     </div>
-
+                    <div className='warranty'>
+                        {props.single_product.product_warranty > 0 ?
+                            <>
+                                <label className='label'> {translate('warranty')} : {props.single_product.product_warranty} <span style={{ fontSize: '11px', color: 'gray' }}>{translate('months')}</span></label>
+                                <label className='label'> {props.single_product.warranty_type}</label>
+                            </>
+                            :
+                            translate('no_warranty')
+                        }
+                    </div>
                     <div className='cart'>
                         <Row noGutters>
                             <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
@@ -626,7 +693,7 @@ function SimpleProduct(props) {
                                 </InputGroup>
                             </Form.Group>
                             <Col className='ml-1'>
-                                <MyButton block disabled={props.loading}
+                                <MyButton block disabled={props.loading || props.user.role != 'customer'}
                                     onClick={() => props.handleAddToCart(quantity, props.single_product._id, '', '')}>
                                     {props.loading ? translate('adding') : translate('add_to_cart')}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
@@ -644,9 +711,8 @@ function SimpleProduct(props) {
             <TabComponent
                 single_product={props.single_product}
                 custom_fields={props.single_product.custom_fields}
-                single_product={props.single_product}
                 token={props.token}
-                undecoded_token={props.undecoded_token}
+                user={props.user}
                 reloadProduct={props.reloadProduct}
             />
             <style type="text/css">{`
@@ -660,7 +726,7 @@ function SimpleProduct(props) {
                     max-height: 15px;
                 }
             `}</style>
-        </div>
+        </div >
     )
 }
 // Proxima Nova, Helvetica Neue, Arial, sans - serif;
@@ -736,7 +802,26 @@ function VariableProduct(props) {
 
                 <Col lg={5} md={5} sm={6} xs={12} className='desc_col'>
                     {props.single_product.product_name}
-                    <div className='slope'>{translate('rs')} {activeVariation.price}</div>
+                    <div className='slope'>{translate('rs')}
+                        {activeVariation.price - activeVariation.discount / 100 * activeVariation.price}
+                    </div>
+
+                    {activeVariation.discount != '0' ?
+                        <div className='d-inline-flex'>
+                            <p className='discount_label'>
+                                {translate('rs')}
+                                {activeVariation.price}
+                            </p>
+                            <div className='percent'>{' -' + activeVariation.discount + '%'}</div>
+                        </div>
+                        :
+                        <div className='d-inline-flex'>
+                            <p className='discount_label'>
+                                {''}
+                            </p>
+                            <div className='percent'>{0 + '%'}</div>
+                        </div>
+                    }
                     <Row noGutters>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
@@ -763,6 +848,17 @@ function VariableProduct(props) {
                         <span>{translate('stock')}: {activeVariation.stock}</span>
                     </div>
 
+                    <div className='warranty'>
+                        {activeVariation.warranty > 0 ?
+                            <>
+                                <label className='label'> {translate('warranty')} : {activeVariation.warranty} <span style={{ fontSize: '11px', color: 'gray' }}>{translate('months')}</span></label>
+                                <label className='label'> {activeVariation.warranty_type}</label>
+                            </>
+                            :
+                            translate('no_warranty')
+                        }
+                    </div>
+
                     <div className='cart'>
                         <Row noGutters>
                             <Form.Group as={Col} lg='auto' md='auto' sm='auto' xs='12' controlId="formGridState">
@@ -786,7 +882,7 @@ function VariableProduct(props) {
                                 </InputGroup>
                             </Form.Group>
                             <Col className='ml-1'>
-                                <Button variant='success' block disabled={props.loading}
+                                <Button variant='success' block disabled={props.loading || props.user.role != 'customer'}
                                     onClick={() => props.handleAddToCart(quantity, props.single_product._id, activeVariation._id, activeVariationIndex)}>
                                     {props.loading ? translate('adding') : translate('add_to_cart')}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
@@ -852,9 +948,8 @@ function VariableProduct(props) {
                 activeVariationIndex={activeVariationIndex}
                 custom_fields={activeVariation.custom_fields}
                 item={activeVariation.item}
-                single_product={props.single_product}
                 token={props.token}
-                undecoded_token={props.undecoded_token}
+                user={props.user}
                 reloadProduct={props.reloadProduct}
             />
             <style type="text/css">{`
@@ -1168,9 +1263,9 @@ function TabComponent(props) {
         axios({
             method: 'PUT',
             url: _url,
-            headers: { 'authorization': props.undecoded_token },
+            headers: { 'authorization': props.token },
             params: parameters,
-            data: { rating: rating, review: review, c_name: props.token.full_name }
+            data: { rating: rating, review: review, c_name: props.user.full_name }
         }).then(res => {
             setRating(0)
             setReview('')
@@ -1291,7 +1386,7 @@ function TabComponent(props) {
                                 )
                             }
                         </Tab>
-                        {props.token.role != '' ?
+                        {props.user.role != '' ?
                             <Tab eventKey="GiveReview" title={translate('give_review')} >
                                 <Row className='pt-2 pb-2 pl-5 pr-5'>
                                     <div className='d-inline-flex align-items-center'>

@@ -27,9 +27,10 @@ let animation =
 export async function getServerSideProps(context) {
     let slider_list = []
     let home_categories_list = []
-    let new_products_list = []
     let categories_list = []
     let sub_categories_list = []
+
+    let new_products_list = []
     let top_ranking_products_list = []
 
     const url = MuhalikConfig.PATH + '/api/sliders/sliders';
@@ -41,14 +42,14 @@ export async function getServerSideProps(context) {
     const home_categories_url = MuhalikConfig.PATH + '/api/categories/home-categories';
     await axios.get(home_categories_url).then((res) => {
         home_categories_list = res.data.data
-    }).catch((error) => {
+    }).catch((err) => {
     })
 
-    const url_1 = MuhalikConfig.PATH + '/api/categories/categories';
-    await axios.get(url_1).then((res) => {
-        categories_list = res.data.category.docs,
-            sub_categories_list = res.data.sub_category.docs
-    }).catch((error) => {
+    const cat_url = MuhalikConfig.PATH + '/api/categories/categories';
+    await axios.get(cat_url).then((res) => {
+        categories_list = res.data.category.docs
+        sub_categories_list = res.data.sub_category.docs
+    }).catch((err) => {
     })
 
     const url_3 = MuhalikConfig.PATH + `/api/products/all-products-query-search`
@@ -74,10 +75,10 @@ export async function getServerSideProps(context) {
         props: {
             slider_list,
             home_categories_list,
+            categories_list,
+            sub_categories_list,
             new_products_list,
             top_ranking_products_list,
-            categories_list,
-            sub_categories_list
         },
     }
 }
@@ -86,18 +87,20 @@ class Index extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            token: { full_name: '', role: '' },
-            cart_count: 0,
             slider_list: this.props.slider_list,
-            home_categories_list: this.props.home_categories_list,
             new_products_list: this.props.new_products_list,
             top_ranking_products_list: this.props.top_ranking_products_list,
-            categories_list: this.props.categories_list,
-            sub_categories_list: this.props.sub_categories_list,
+
+            token: null,
+            cart_count: 0,
+            user: {
+                _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+                email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+            }
         }
     }
 
-    ummounted = true
+    unmounted = true
     CancelToken = axios.CancelToken;
     source = this.CancelToken.source();
 
@@ -110,34 +113,49 @@ class Index extends Component {
             });
         });
 
-        let currentComponent = this
-        const _token = await checkTokenExpAuth()
-        if (_token !== null) {
-            this.setState({ token: _token })
-            const url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
-            await axios.get(url, { cancelToken: this.source.token }).then((res) => {
-                if (this.unmounted) {
-                    currentComponent.setState({ cart_count: res.data.data.length })
-                }
-            }).catch((error) => {
-            })
-        }
+        const _decodedToken = await checkTokenExpAuth()
+        if (_decodedToken != null) {
+            let obj = this.state.user
+            obj._id = _decodedToken._id
+            obj.role = _decodedToken.role
+            this.setState({ user: obj })
 
-        const url_1 = MuhalikConfig.PATH + '/api/categories/categories';
-        await axios.get(url_1, { cancelToken: this.source.token }).then((res) => {
-            if (this.unmounted) {
-                currentComponent.setState({
-                    categories_list: res.data.category.docs,
-                    sub_categories_list: res.data.sub_category.docs
-                })
+            this.getUser(_decodedToken._id)
+            // this.getCartCount(_decodedToken._id)
+
+            const _token = await getTokenFromStorage()
+            this.setState({ token: _token })
+        }
+    }
+
+    async getUser(id) {
+        let currentComponent = this
+        const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${id}`;
+        await axios.get(user_url, { cancelToken: this.source.token }).then((res) => {
+            if (currentComponent.unmounted) {
+                currentComponent.setState({ user: res.data.data[0], cart_count: res.data.data[0].cart.length })
             }
-        }).catch((error) => {
+        }).catch((err) => {
+            if (axios.isCancel(err)) return
         })
     }
+
+    // async getCartCount(id) {
+    //     const url = MuhalikConfig.PATH + `/api/users/cart/${id}`;
+    //     await axios.get(url, { cancelToken: source.token }).then((res) => {
+    //         if (unmounted) {
+    //             currentComponent.setState({})
+    //         }
+    //     }).catch((err) => {
+    //         if (axios.isCancel(err)) return
+    //     })
+    // }
+
     componentWillUnmount() {
         this.source.cancel();
         this.unmounted = false
     }
+
 
     render() {
         return (
@@ -156,25 +174,23 @@ class Index extends Component {
                 <main>
                     {animation}
                     <Layout
-                        role={this.state.token.role}
-                        name={this.state.token.full_name}
-                        categories_list={this.state.categories_list}
-                        sub_categories_list={this.state.sub_categories_list}
+                        token={this.state.token}
+                        user={this.state.user}
                         cart_count={this.state.cart_count}
                         {...this.props}
                     >
                         <SliderCarousel
-                            categories_list={this.state.categories_list}
-                            sub_categories_list={this.state.sub_categories_list}
                             slider_list={this.state.slider_list}
+                            categories_list={this.props.categories_list}
+                            sub_categories_list={this.props.sub_categories_list}
                         />
                         <div className='_index'>
                             <Home
                                 new_products_list={this.state.new_products_list}
                                 top_ranking_products_list={this.state.top_ranking_products_list}
-                                categories_list={this.state.categories_list}
-                                sub_categories_list={this.state.sub_categories_list}
-                                home_categories_list={this.state.home_categories_list}
+                                categories_list={this.props.categories_list}
+                                sub_categories_list={this.props.sub_categories_list}
+                                home_categories_list={this.props.home_categories_list}
                             />
                         </div>
                     </Layout>

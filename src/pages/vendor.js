@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
+import Router from 'next/router'
 import axios from 'axios'
 import Dashboard from './components/vendor/dashboard/dashboard'
 import DashboardSideDrawer from './components/vendor/dashboard/dashboard-side-drawer'
 import GlobalStyleSheet from '../styleSheet'
-import { checkAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service'
+import { checkTokenExpAuth, removeTokenFromStorage, getTokenFromStorage } from '../sdk/core/authentication-service'
 import MuhalikConfig from '../sdk/muhalik.config'
 
 const BackDrop = props => (
@@ -26,18 +27,13 @@ const BackDrop = props => (
 
 export async function getServerSideProps(context) {
     let fields_list = []
-    let field_requests_list = []
-
     let categories_list = []
     let sub_categories_list = []
 
     const url_1 = MuhalikConfig.PATH + '/api/categories/fields'
-    await axios.get(url_1).then(function (response) {
-        currentComponent.setState({
-            fields_list: response.data.data.docs,
-            field_requests_list: response.data.data.docs,
-        })
-    }).catch(function (error) {
+    await axios.get(url_1).then((res) => {
+        fields_list = res.data.data.docs
+    }).catch((error) => {
     })
 
     const url_2 = MuhalikConfig.PATH + '/api/categories/categories';
@@ -50,8 +46,6 @@ export async function getServerSideProps(context) {
     return {
         props: {
             fields_list,
-            field_requests_list,
-
             categories_list,
             sub_categories_list,
         },
@@ -63,8 +57,6 @@ class Vendor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: '',
-
             sideDrawerOpen: false,
             showWrapper: true,
 
@@ -72,46 +64,54 @@ class Vendor extends Component {
             sub_categories_list: this.props.sub_categories_list,
 
             fields_list: this.props.fields_list,
-            field_requests_list: this.props.field_requests_list,
 
             pending_orders_count: 0,
             delivered_orders_count: 0,
             cancelled_orders_count: 0,
             returned_orders_count: 0,
 
-            token: '',
-            decodedToken: { _id: null, role: '', full_name: '', status: '' },
+            token: null,
+            user: {
+                _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+                email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+            }
         }
     }
 
-    ummounted = true
+    unmounted = true
     CancelToken = axios.CancelToken;
     source = this.CancelToken.source();
 
     async componentDidMount() {
-        this.authUser();
-    }
-    componentWillUnmount() {
-        this.source.cancel();
-        this.unmounted = false
+        const _decodedToken = await checkTokenExpAuth()
+        if (_decodedToken != null) {
+            await this.authUser(_decodedToken.role)
+            await this.setState({ user: _decodedToken })
+            this.getUser(_decodedToken._id)
+            this.getOrdersCount()
+            const _token = await getTokenFromStorage()
+            this.setState({ token: _token })
+        } else {
+            Router.push('/')
+        }
     }
 
-    async authUser() {
-        const currentComponent = this
-        let _decodedToken = await checkAuth('vendor')
-        if (_decodedToken != null) {
-            const _token = await getTokenFromStorage()
-            this.setState({ token: _token, decodedToken: _decodedToken })
-            this.getOrdersCount()
-            const currentComponent = this
-            const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decodedToken._id}`;
-            await axios.get(user_url, { cancelToken: this.source.token }).then((res) => {
-                if (this.unmounted) {
-                    currentComponent.setState({ user: res.data.data[0] })
-                }
-            }).catch((error) => {
-            })
+    async authUser(role) {
+        if (role != 'vendor') {
+            Router.push('/')
         }
+    }
+
+    async getUser(id) {
+        let currentComponent = this
+        const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${id}`;
+        await axios.get(user_url, { cancelToken: this.source.token }).then((res) => {
+            if (currentComponent.unmounted) {
+                currentComponent.setState({ user: res.data.data[0] })
+            }
+        }).catch((err) => {
+            if (axios.isCancel(err)) return
+        })
     }
 
     drawerToggleClickHandler = () => {
@@ -129,15 +129,17 @@ class Vendor extends Component {
         this.setState({ sideDrawerOpen: false })
     }
 
-    logout = () => {
-        removeTokenFromStorage(false)
+    async logout() {
+        if (await removeTokenFromStorage()) {
+            Router.replace('/')
+        }
     }
 
     async getOrdersCount() {
         let currentComponent = this
-        const order_count_url = MuhalikConfig.PATH + `/api/orders/user-order-count/${this.state.decodedToken._id}`;
+        const order_count_url = MuhalikConfig.PATH + `/api/orders/user-orders-count/${this.state.user._id}`;
         await axios.get(order_count_url, { cancelToken: this.source.token }).then((res) => {
-            if (this.unmounted) {
+            if (currentComponent.unmounted) {
                 currentComponent.setState({
                     pending_orders_count: res.data.pending_orders_count,
                     delivered_orders_count: res.data.delivered_orders_count,
@@ -149,6 +151,13 @@ class Vendor extends Component {
         })
     }
 
+
+    componentWillUnmount() {
+        this.source.cancel();
+        this.unmounted = false
+    }
+
+
     render() {
         let backdrop
         if (this.state.sideDrawerOpen) {
@@ -158,10 +167,13 @@ class Vendor extends Component {
         return (
             <div style={styles.body}>
                 <Dashboard
+                    token={this.state.token}
+                    user={this.state.user}
+                    full_name={this.state.user.full_name}
                     avatar={this.state.user.avatar}
+
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
-                    field_requests_list={this.state.field_requests_list}
                     fields_list={this.state.fields_list}
 
                     pending_orders_count={this.state.pending_orders_count}
@@ -170,23 +182,20 @@ class Vendor extends Component {
                     returned_orders_count={this.state.returned_orders_count}
                     ordersReloadCountHandler={this.getOrdersCount.bind(this)}
 
-                    token={this.state.token}
-                    user_id={this.state.decodedToken._id}
-                    user_name={this.state.decodedToken.full_name}
-                    user_status={this.state.decodedToken.status}
-
-                    profileHref={'/user/profile'}
                     show={this.state.showWrapper}
                     drawerClickHandler={this.drawerToggleClickHandler}
                     wrapperBtnClickHandler={this.ShowWrapperClickHandler}
-                    logoutClickHandler={this.logout}
+                    logout={this.logout.bind(this)}
                 />
 
                 <DashboardSideDrawer
+                    token={this.state.token}
+                    user={this.state.user}
+                    full_name={this.state.user.full_name}
                     avatar={this.state.user.avatar}
+
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
-                    field_requests_list={this.state.field_requests_list}
                     fields_list={this.state.fields_list}
 
                     pending_orders_count={this.state.pending_orders_count}
@@ -195,14 +204,9 @@ class Vendor extends Component {
                     returned_orders_count={this.state.returned_orders_count}
                     ordersReloadCountHandler={this.getOrdersCount.bind(this)}
 
-                    token={this.state.token}
-                    user_id={this.state.decodedToken._id}
-                    user_name={this.state.decodedToken.full_name}
-                    user_status={this.state.decodedToken.status}
-
                     show={this.state.sideDrawerOpen}
                     click={this.backdropClickHandler}
-                    logoutClickHandler={this.logout}
+                    logout={this.logout.bind(this)}
                 />
                 {backdrop}
                 {/* </AdminLayout> */}

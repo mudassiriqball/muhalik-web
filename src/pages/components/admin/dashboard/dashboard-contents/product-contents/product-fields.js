@@ -10,14 +10,13 @@ import AlertModal from '../../../../alert-modal';
 import ConfirmModal from '../../../../confirm-modal'
 import TitleRow from '../../../../title-row';
 import CardAccordion from '../../../../card-accordion';
-import { getUncodededTokenFromStorage } from '../../../../../../sdk/core/authentication-service'
 
 let fieldsArray = [];
 class ProducFields extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            token: '',
+            token: this.props.token,
             isLoading: false,
             showToast: false,
 
@@ -29,8 +28,8 @@ class ProducFields extends Component {
 
             fieldValue: '',
             error: '',
-            fields_list: [],
-            field_requests_list: [],
+            fields_list: this.props.fields_list,
+            field_requests_list: this.props.field_requests_list,
 
             editRequestedField: '',
             showModalMessage: '',
@@ -62,9 +61,11 @@ class ProducFields extends Component {
             currentComponent.setState({ isLoading: false })
             currentComponent.setState({ showModalMessage: 'Product Field Added Successfully' })
             currentComponent.setState({ showModal: true })
+            currentComponent.props.fieldsReloadHandler()
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
-            alert('Error: ', error.response.data.message);
+            alert('Error');
+            console.log('error:', error)
         });
     }
 
@@ -167,20 +168,20 @@ class ProducFields extends Component {
                 '_id': copyArray[index]._id,
                 'authorization': this.state.token
             }
-        }).then(function (response) {
-            copyArray.splice(index, 1);
+        }).then((response) => {
             currentComponent.setState({
-                field_requests_list: copyArray,
                 showModalMessage: 'Product Field Added Successfully',
                 showModal: true
             })
-        }).catch(function (error) {
+            currentComponent.props.fieldsReloadHandler()
+        }).catch((error) => {
             try {
                 alert('Add Field Failed:', error.response.data.message);
             } catch (err) {
                 console.log('Add Field Failed:', error)
                 alert('Add Field Failed ');
             }
+            console.log('error:', error)
         });
     }
     //  => Delete
@@ -195,13 +196,11 @@ class ProducFields extends Component {
         await axios.delete(url, {
             headers: { 'authorization': this.state.token }
         }).then(function (response) {
-            copyArray.splice(index, 1);
             currentComponent.setState({
-                field_requests_list: copyArray,
                 showModalMessage: 'Product Request Field Discarded',
                 showModal: true
             })
-            fieldsArray = copyArray
+            currentComponent.props.fieldsReloadHandler()
         }).catch(function (error) {
             try {
                 alert('Error: ', error.response.data.message);
@@ -275,11 +274,10 @@ class ProducFields extends Component {
                 copyArray[index].label = copyArray[index].value;
                 copyArray[index].prevVal = copyArray[index].value;
                 currentComponent.setState({
-                    fields_list: copyArray,
                     showModalMessage: 'Product Field Updated Successfully',
                     showModal: true
                 });
-                fieldsArray = copyArray
+                currentComponent.props.fieldsReloadHandler()
             }).catch(function (error) {
                 try {
                     alert('Error: ', error.response.data.message);
@@ -302,15 +300,13 @@ class ProducFields extends Component {
         const url = MuhalikConfig.PATH + `/api/categories/field/${copyArray[index]._id}`
         await axios.delete(url, {
             headers: { 'authorization': this.state.token }
-        }).then(function (response) {
-            copyArray.splice(index, 1);
+        }).then((response) => {
             currentComponent.setState({
-                fields_list: copyArray,
                 showModalMessage: 'Product Field Deleted',
                 showModal: true
             })
-            fieldsArray = copyArray
-        }).catch(function (error) {
+            currentComponent.props.fieldsReloadHandler()
+        }).catch((error) => {
             try {
                 alert('Error: ', error.response.data.message);
             } catch (err) {
@@ -373,7 +369,7 @@ class ProducFields extends Component {
                 </CardAccordion>
 
                 {/* Add Field Requests */}
-                <CardAccordion title={'Add Field Requests'} notification={true} badge={99}>
+                <CardAccordion title={'Add Field Requests'} notification={true}>
                     {this.state.field_requests_list && this.state.field_requests_list.map((element, index) =>
                         <Form.Row key={index}>
                             <Form.Group as={Col} lg={2} md={2} sm={3} xs={12}>
@@ -381,7 +377,7 @@ class ProducFields extends Component {
                                     type="text"
                                     size="sm"
                                     name="date"
-                                    value={element.entry_date}
+                                    value={element.entry_date.substring(0, 10)}
                                     disabled={true}
                                 />
                             </Form.Group>

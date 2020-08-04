@@ -1,9 +1,10 @@
 import React, { Component, useState, useRef, useEffect } from 'react'
 import axios from 'axios'
-import { Row, Col, Card, Nav, Table, Form, Button, InputGroup } from 'react-bootstrap'
+import { Row, Col, Card, Nav, Table, Form, Button, InputGroup, Image } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBan, faCheckDouble, faHistory, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faEdit, faThumbsUp, faCheckCircle } from '@fortawesome/free-regular-svg-icons';
+import moment from 'moment'
 
 import CountColoredCard from '../../../count-colored-card'
 import TitleRow from '../../../title-row'
@@ -48,25 +49,23 @@ export default class Orders extends Component {
     }
 
     async handleConfirmed() {
+        this.setState({ confirmModalLoading: true })
         let currentComponent = this
+
         let data = []
         if (this.state.method == 'cancelled') {
-            this.setState({ confirmModalLoading: true })
             data = {
                 status: 'cancelled'
             }
         } else if (this.state.method == 'pending') {
-            this.setState({ confirmModalLoading: true })
             data = {
                 status: 'pending'
             }
         } else if (this.state.method == 'delivered') {
-            this.setState({ confirmModalLoading: true })
             data = {
                 status: 'delivered'
             }
         } else if (this.state.method == 'returned') {
-            this.setState({ confirmModalLoading: true })
             data = {
                 status: 'returned'
             }
@@ -82,8 +81,12 @@ export default class Orders extends Component {
                 alertModalMsg: `Order Status Updated  successfully`,
                 showAlertModal: true,
                 refresh_count: currentComponent.refresh_count + 1,
-                isViewOrder: false,
+                // isViewOrder: false,
             })
+            let obj = {}
+            obj = currentComponent.state.single_order
+            obj.status = data.status
+            currentComponent.setState({ single_order: obj })
             currentComponent.props.ordersReloadCountHandler()
         }).catch(function (error) {
             currentComponent.setState({
@@ -97,7 +100,7 @@ export default class Orders extends Component {
 
     render() {
         return (
-            <div className='vendor_orders'>
+            <div className='admin_orders'>
                 <ConfirmModal
                     onHide={() => this.setState({ showConfirmModal: false, confirmModalLoading: false })}
                     show={this.state.showConfirmModal}
@@ -105,7 +108,7 @@ export default class Orders extends Component {
                     iconname={this.state.iconname}
                     color={this.state.confirmModalColor}
                     _id={this.state.single_order._id}
-                    name={this.state.single_order.full_name}
+                    name={this.state.single_order.c_name}
                     confirm={this.handleConfirmed.bind(this)}
                     loading={this.state.confirmModalLoading}
                 />
@@ -230,7 +233,7 @@ export default class Orders extends Component {
                         }}
                         setCancel={() => {
                             this.setState({
-                                method: 'pending',
+                                method: 'cancelled',
                                 showConfirmModal: true,
                                 confirmModalMsg: 'Cancel Order?',
                                 confirmModalColor: '#ff4d4d',
@@ -249,7 +252,7 @@ export default class Orders extends Component {
                     />
                 }
                 <style type="text/css">{`
-                    .vendor_orders .Card {
+                    .admin_orders .Card {
                         margin: 1%;
                     }
                     th {
@@ -257,7 +260,7 @@ export default class Orders extends Component {
                         font-size: 14px;
                         white-space: nowrap;
                     }
-                    .vendor_orders .td {
+                    .admin_orders .td {
                         display: flex;
                         flex-direction: row;
                         font-size: 12px;
@@ -265,7 +268,7 @@ export default class Orders extends Component {
                         padding: 0%;
                         margin: 0%;
                     }
-                    .vendor_orders td {
+                    .admin_orders td {
                         font-size: 12px;
                     }
                 `}</style>
@@ -334,24 +337,21 @@ function Order(props) {
     }
 
     async function handleConfirmed() {
+        setConfirmModalLoading(true)
         let data = []
         if (method == 'cancelled') {
-            setConfirmModalLoading(true)
             data = {
                 status: 'cancelled'
             }
         } else if (method == 'pending') {
-            setConfirmModalLoading(true)
             data = {
                 status: 'pending'
             }
         } else if (method == 'delivered') {
-            setConfirmModalLoading(true)
             data = {
                 status: 'delivered'
             }
         } else if (method == 'returned') {
-            setConfirmModalLoading(true)
             data = {
                 status: 'returned'
             }
@@ -378,7 +378,7 @@ function Order(props) {
 
 
     return (
-        <div className='vendor_table'>
+        <div className='admin_table'>
             <ConfirmModal
                 onHide={() => { setShowConfirmModal(false), setConfirmModalLoading(false) }}
                 show={showConfirmModal}
@@ -386,7 +386,7 @@ function Order(props) {
                 iconname={iconname}
                 color={confirmModalColor}
                 _id={single_order._id}
-                name={single_order.full_name}
+                name={single_order.c_name}
                 confirm={handleConfirmed}
                 loading={confirmModalLoading}
             />
@@ -458,7 +458,7 @@ function Order(props) {
                                 />
                             </>
                             :
-                            <Row className='_div'>No Data Found</Row>
+                            <Row className='no_data'>No Data Found</Row>
                     :
                     orders_query_loading ?
                         <Loading />
@@ -512,9 +512,18 @@ function Order(props) {
                                 />
                             </>
                             :
-                            <Row className='_div'>No Data Found</Row>
+                            <Row className='no_data'>No Data Found</Row>
                 }
             </CardSearchAccordion>
+            <style type="text/css">{`
+                .admin_table .no_data {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 5% 0%;
+                }
+            `}</style>
         </div>
     )
 }
@@ -534,7 +543,7 @@ function OrderTable(props) {
     let componentref = React.useRef();
 
     return (
-        <div className='vendor_table'>
+        <div className='admin_order_table'>
             <Table responsive bordered hover size="sm">
                 <thead>
                     <tr>
@@ -547,16 +556,18 @@ function OrderTable(props) {
                         <th>Products</th>
                         <th>Sub Total</th>
                         <th>Shipping Charges</th>
+                        <th>Total</th>
                         <th>Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     {props.list && props.list.map((element, index) =>
                         index >= lower_limit && index < upper_limit && <tr key={index}>
-                            <td align="center" >{lower_limit + 1}</td>
+                            <td align="center" >{index + 1}</td>
                             <td>
                                 {element._id}
                                 <div className="td">
+                                    <Nav.Link className='pt-0' onClick={() => props.setView(element)} > View </Nav.Link>
                                     {props.status == 'pending' && <>
                                         <Nav.Link className='pt-0 success' onClick={() => props.setDelivered(element)} > Delivered </Nav.Link>
                                         <Nav.Link className='pt-0 delete' onClick={() => props.setCancel(element)} > Cancel </Nav.Link>
@@ -581,7 +592,6 @@ function OrderTable(props) {
                                         <Nav.Link className='pt-0 delete' onClick={() => props.setCancel(element)} > Cancelled </Nav.Link>
                                     </>
                                     }
-                                    <Nav.Link className='pt-0' onClick={() => props.setView(element)} > View </Nav.Link>
                                 </div>
                             </td>
                             <td align="center" >{element.c_id}</td>
@@ -591,51 +601,50 @@ function OrderTable(props) {
                             <td align="center" >{element.products.length || ''}</td>
                             <td align="center" >{element.sub_total}</td>
                             <td align="center" >{element.shipping_charges}</td>
+                            <td align="center" >{element.shipping_charges + element.sub_total}</td>
                             <td align="center" >{element.entry_date.substring(0, 10) || '-'}</td>
                         </tr>
                     )}
                 </tbody>
             </Table>
-            <style jsx>
-                {`
-        th {
-          text-align: center;
-          font-size: 14px;
-          white-space: nowrap;
-        }
-        .vendor_table .td {
-            display: flex;
-            flex-direction: row;
-            font-size: 12px;
-            float: right;
-            padding: 0%;
-            margin: 0%;
-        }
-        .vendor_table td {
-            font-size: 12px;
-        }
-      `}
-            </style>
+            <style jsx>{`
+                .admin_order_table th {
+                    text-align: center;
+                    font-size: 14px;
+                    white-space: nowrap;
+                }
+                .admin_order_table .td {
+                    display: flex;
+                    flex-direction: row;
+                    font-size: 12px;
+                    float: right;
+                    padding: 0%;
+                    margin: 0%;
+                }
+                .admin_order_table td {
+                    font-size: 12px;
+                }
+            `}</style>
             <style type="text/css">{`
-        .vendor_table .delete{
-            color: #ff4d4d;
-        }
-        .vendor_table .delete:hover{
-            color: #cc0000;
-        }
-        .vendor_table .success {
-          color: #00cc00;
-        }
-        .vendor_table .success:hover {
-          color: #009900;
-        }
-        .vendor_table .warning {
-          color: #ffc107;
-        }
-        .vendor_table .warning:hover {
-          color: #cc9900;
-        }
-    `}</style>
+                .admin_order_table .delete{
+                    color: #ff4d4d;
+                }
+                .admin_order_table .delete:hover{
+                    color: #cc0000;
+                }
+                .admin_order_table .success {
+                    color: #00cc00;
+                }
+                .admin_order_table .success:hover {
+                    color: #009900;
+                }
+                .admin_order_table .warning {
+                    color: #ffc107;
+                }
+                .admin_order_table .warning:hover {
+                    color: #cc9900;
+                }
+            `}</style>
         </div>
     )
 }
@@ -643,8 +652,8 @@ function OrderTable(props) {
 function ViewOrder(props) {
     let componentRef = React.useRef();
     return (
-        <div>
-            <TitleRow icon={faEdit} title={`Admin Dashboard / Vendors / ${props.single_order.full_name}`} />
+        <div className='admin_view_order'>
+            <TitleRow icon={faEdit} title={`Admin Dashboard / Vendors / ${props.single_order.c_name}`} />
             <Form.Row style={{ margin: ' 0% 2%', display: 'flex', alignItems: 'center' }} >
                 <Button size='sm' variant='outline-primary' className="mr-auto mt-2" onClick={props.back}> Back </Button>
 
@@ -674,8 +683,6 @@ function ViewOrder(props) {
                 </>
                 }
 
-
-
                 <ReactToPrint
                     trigger={() => <Button size='sm' variant='primary' className='mt-2 ml-4'> Print </Button>}
                     content={() => componentRef.current}
@@ -687,72 +694,86 @@ function ViewOrder(props) {
             <Card className='view_user' ref={componentRef}>
                 <Card.Body>
                     <Row>
+                        <div className='logo_col'>
+                            <Image src='/muhalik.jpg' className='logo' />
+                            <h2 className='p-0 ml-3'>Mahaalk.com</h2>
+                        </div>
+
                         <p className='p'><span>Order Info</span></p>
                         <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
                             <Form.Label className='form_label'>Placed On</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.entry_date.substring(0, 10)} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order.entry_date.substring(0, 10)} disabled={true} />
                             </InputGroup>
                         </Form.Group>
                         <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
                             <Form.Label className='form_label'>Order Id</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" className='form_control' size="sm" value={props.single_order._id} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order._id} disabled={true} />
                             </InputGroup>
                         </Form.Group>
                         <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
                             <Form.Label className='form_label'>Status</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.status} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order.status} disabled={true} />
                             </InputGroup>
                         </Form.Group>
 
+                        <div style={{ minHeight: '100px' }}></div>
                         <p className='p'><span>Custmer Info</span></p>
                         <Form.Group as={Col} lg={3} md={6} sm={6} xs={12} className='form_group'>
                             <Form.Label className='form_label'>Cutomer Id</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.c_id} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order.c_id} disabled={true} />
                             </InputGroup>
                         </Form.Group>
                         <Form.Group as={Col} lg={3} md={6} sm={6} xs={12} className='form_group'>
                             <Form.Label className='form_label'>Mobile</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.mobile || '-'} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order.mobile || '-'} disabled={true} />
                             </InputGroup>
                         </Form.Group>
                         <Form.Group as={Col} lg={3} md={6} sm={6} xs={12} className='form_group'>
                             <Form.Label className='form_label'>Name</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.c_name || '-'} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order.c_name || '-'} disabled={true} />
                             </InputGroup>
                         </Form.Group>
                         <Form.Group as={Col} lg={3} md={6} sm={6} xs={12} className='form_group'>
                             <Form.Label className='form_label'>City</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.city} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order.city} disabled={true} />
                             </InputGroup>
                         </Form.Group>
                         <Form.Group as={Col} lg={12} md={12} sm={12} xs={12} className='address_form_group'>
                             <Form.Label className='form_label'>Address</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.address} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order.address} disabled={true} />
                             </InputGroup>
                         </Form.Group>
 
+                        <div style={{ minHeight: '100px' }}></div>
                         <p className='p'><span>Price Info</span></p>
-                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
+                        <Form.Group as={Col} lg={4} md={4} sm={4} xs={12} className='form_group'>
                             <Form.Label className='form_label'>Sub Total</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" size="sm" className='form_control' value={props.single_order.sub_total} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order.sub_total} disabled={true} />
                             </InputGroup>
                         </Form.Group>
-                        <Form.Group as={Col} lg={4} md={4} sm={6} xs={12} className='form_group'>
+                        <Form.Group as={Col} lg={4} md={4} sm={4} xs={12} className='form_group'>
                             <Form.Label className='form_label'>Shipping Charges</Form.Label>
                             <InputGroup>
-                                <Form.Control type="text" className='form_control' size="sm" value={props.single_order.shipping_charges} disabled={true} />
+                                <Form.Control type="text" size="sm" value={props.single_order.shipping_charges} disabled={true} />
+                            </InputGroup>
+                        </Form.Group>
+                        <Form.Group as={Col} lg={4} md={4} sm={4} xs={12} className='form_group'>
+                            <Form.Label className='form_label'>Total</Form.Label>
+                            <InputGroup>
+                                <Form.Control type="text" size="sm" value={props.single_order.shipping_charges + props.single_order.sub_total} disabled={true} />
                             </InputGroup>
                         </Form.Group>
 
+                        <div style={{ minHeight: '110px' }}></div>
                         <p className='p' style={{ marginTop: '10px', marginBottom: '40px' }}><span>Order Details</span></p>
                         <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                             <InputGroup>
@@ -762,84 +783,115 @@ function ViewOrder(props) {
                                             <th>#</th>
                                             <th>Product Id</th>
                                             <th>Variation Id</th>
+                                            <th>SKU</th>
                                             <th>Vendor Id</th>
                                             <th>Quantity</th>
                                             <th>Price</th>
                                         </tr>
                                     </thead>
                                     {props.single_order.products && props.single_order.products.map((element, index) =>
-                                        <tbody>
-                                            <td align="center" >{index + 1}</td>
-                                            <td align="center" >{element.p_id}</td>
-                                            <td align="center" >{element.variation_id}</td>
-                                            <td align="center" >{element.vendor_id}</td>
-                                            <td align="center" >{element.quantity}</td>
-                                            <td align="center" >{element.price}</td>
+                                        <tbody key={index}>
+                                            <tr>
+                                                <td align="center" >{index + 1}</td>
+                                                <td align="center" >{element.p_id}</td>
+                                                <td align="center" >{element.variation_id || '-'}</td>
+                                                <td align="center" >{element.sku || '-'} </td>
+                                                <td align="center" >{element.vendor_id}</td>
+                                                <td align="center" >{element.quantity}</td>
+                                                <td align="center" >{element.price}</td>
+                                            </tr>
                                         </tbody>
                                     )}
                                 </Table>
+                            </InputGroup>
+                        </Form.Group>
+                        <Form.Group as={Col} lg={12} md={12} sm={12} xs={12} className='print_date'>
+                            <Form.Label className='form_label'>Print Date</Form.Label>
+                            <InputGroup>
+                                <label disabled={true}>{moment(new Date()).format('YYYY-MM-DD')}</label>
                             </InputGroup>
                         </Form.Group>
                     </Row>
                 </Card.Body>
             </Card>
             <style type="text/css">{`
-        .print_style {
-            display: flex;
-            padding-top: 80px;
-            min-width: 100%;
-            max-width: 100%;
-        }
-        .print_style .form_group {
-            min-width: 25%;
-            max-width: 25%;
-        }
-        .print_style .address_form_group {
-            width: 100%;
-        }
-        .vendor_orders .view_user {
-            margin: 1% 2%;
-        }
-        .vendor_orders .p, .print_style .p {
-            width: 100%; 
-            text-align: center; 
-            border-bottom: 1px solid lightgray; 
-            line-height: 0.1em;
-            margin: 20px 20px;
-        } 
+                .print_style {
+                    display: flex;
+                    padding-top: 80px;
+                    min-width: 100%;
+                    max-width: 100%;
+                }
+                .logo_col, .print_date {
+                    display: none;
+                }
+                .print_style .logo_col {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+               .print_style .print_date {
+                    display: block;
+                    margin-top: 5%;
+                }
+                .print_style .logo_col .logo {
+                    min-width: 100px;
+                    max-width: 100px;
+                    min-height: 100px;
+                    max-height: 100px;
+                }
+                .print_style .form_group {
+                    min-width: 25%;
+                    max-width: 25%;
+                }
+                .print_style .address_form_group {
+                    width: 100%;
+                }
+                .admin_view_order .form_label, .print_style .form_label {
+                    font-size: 13px;
+                    color: gray;
+                }
+                .admin_view_order .view_user {
+                    margin: 1% 2%;
+                }
+                .admin_view_order .p, .print_style .p {
+                    width: 100%; 
+                    text-align: center; 
+                    border-bottom: 1px solid lightgray; 
+                    line-height: 0.1em;
+                    margin: 20px 20px;
+                } 
 
-        .vendor_orders .p span, .print_style .p span {
-            font-size: 13px;
-            color: gray;
-            background: white;
-            padding:0 10px;
-        }
-        th {
-            text-align: center;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-        .vendor_orders .td {
-            display: flex;
-            flex-direction: row;
-            font-size: 12px;
-            float: right;
-            padding: 0%;
-            margin: 0%;
-        }
-        .vendor_orders td {
-            font-size: 12px;
-        }
-        .vendor_orders .form_control:disabled, .print_style .form_control:disabled {
-            background: none;
-            border: none;
-            padding-left: 0%;
-            padding-top: 0%;
-            font-size: 14px;
-            font-weight: bold;
-        }
-    `}</style>
+                .admin_view_order .p span, .print_style .p span {
+                    font-size: 13px;
+                    color: gray;
+                    background: white;
+                    padding:0 10px;
+                }
+                th {
+                    text-align: center;
+                    font-size: 14px;
+                    white-space: nowrap;
+                }
+                .admin_view_order .td {
+                    display: flex;
+                    flex-direction: row;
+                    font-size: 12px;
+                    float: right;
+                    padding: 0%;
+                    margin: 0%;
+                }
+                .admin_view_order td {
+                    font-size: 12px;
+                }
+                .admin_view_order .form-control:disabled, .print_style .form-control:disabled {
+                    background: none;
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+            `}</style>
         </div>
     )
 }
+
 

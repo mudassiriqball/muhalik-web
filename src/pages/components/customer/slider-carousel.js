@@ -217,6 +217,7 @@ const SliderCarousel = (props) => {
                     width: 33%;
                     display: inline-flex;
                     align-items: cener;
+                    margin: 1% 2%;
                 }
 
                 @media (max-width: 1199px){

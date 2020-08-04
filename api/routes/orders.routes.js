@@ -9,6 +9,8 @@ router.post("/place-order/:_id", checkAuth, ordersController.place_order);
 // get Requests
 router.get("/all-orders-count", ordersController.get_all_orders_count);
 router.get("/user-orders-count/:_id", ordersController.get_vendor_orders_count);
+router.get("/abc/abc/customer-orders-count/:_id", ordersController.get_customer_orders_count);
+
 
 router.get("/all-orders/:_status", ordersController.get_all_orders);
 router.get("/vendor-orders/:_id", ordersController.get_vendors_orders);

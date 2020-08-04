@@ -8,7 +8,7 @@ import { faUserCircle, faImage, faThumbsUp, faClock } from '@fortawesome/free-re
 
 import MuhalikConfig from '../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../styleSheet'
-import { getDecodedTokenFromStorage, removeTokenFromStorage, getTokenFromStorage } from '../../sdk/core/authentication-service'
+import { getDecodedTokenFromStorage, removeTokenFromStorage, getTokenFromStorage, checkTokenExpAuth } from '../../sdk/core/authentication-service'
 
 import Layout from '../components/customer/layout';
 import AlertModal from '../components/alert-modal'
@@ -43,10 +43,12 @@ export async function getServerSideProps(context) {
 }
 
 export default function Profile(props) {
-    const [token, setToken] = useState({ role: '', full_name: '', status: '' })
-    const [undecoded_token, setUndecodedToken] = useState('')
+    const [token, setToken] = useState(null)
+    const [user, setUser] = useState({
+        _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+    })
 
-    const [user, setUser] = useState('')
     const [cart_count, setCart_count] = useState(0)
     const [view, setView] = useState('manage_account')
 
@@ -62,38 +64,57 @@ export default function Profile(props) {
     const [returned_orders_count, setReturned_orders_count] = useState(0)
 
     const [isOrderDisabled, setIsOrderDisabled] = useState(false)
+
     useEffect(() => {
-        getData()
-    }, [])
-    async function getData() {
-        const _token = await getDecodedTokenFromStorage()
-        const _undecoded_token = await getTokenFromStorage()
-        if (_token !== null) {
-            setToken(_token)
-            setUndecodedToken(_undecoded_token)
-            await getUser(_token._id)
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
 
-            const cart_count_url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
-            await axios.get(cart_count_url).then((res) => {
-                setCart_count(res.data.data.length)
-            }).catch((error) => {
-            })
+        async function getData() {
+            const _decoded_token = await checkTokenExpAuth()
+            if (_decoded_token != null) {
+                setUser(_decoded_token)
+                const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decoded_token._id}`;
+                await axios.get(user_url, { cancelToken: source.token }).then((res) => {
+                    if (unmounted) {
+                        setUser(res.data.data[0])
+                        setCart_count(res.data.data[0].cart.length)
+                    }
+                }).catch((err) => {
+                    if (axios.isCancel(err)) return
+                })
 
-            const order_count_url = MuhalikConfig.PATH + `/api/orders/user-orders-count/${_token._id}`;
-            await axios.get(order_count_url).then((res) => {
-                setPending_orders_count(res.data.pending_orders_count),
-                    setDelivered_orders_count(res.data.delivered_orders_count),
-                    setCancelled_orders_count(res.data.cancelled_orders_count),
-                    setReturned_orders_count(res.data.returned_orders_count)
-            }).catch((error) => {
-            })
+                const order_count_url = MuhalikConfig.PATH + `/api/orders/abc/abc/customer-orders-count/${_decoded_token._id}`;
+                await axios.get(order_count_url).then((res) => {
+                    if (unmounted) {
+                        setPending_orders_count(res.data.pending_orders_count)
+                        setDelivered_orders_count(res.data.delivered_orders_count)
+                        setCancelled_orders_count(res.data.cancelled_orders_count)
+                        setReturned_orders_count(res.data.returned_orders_count)
+                    }
+                }).catch((error) => {
+                })
+
+                const _token = await getTokenFromStorage()
+                setToken(_token)
+            } else {
+                Router.replace('/')
+            }
         }
-    }
+        getData()
+        return () => {
+            unmounted = false
+            source.cancel();
+        };
+    }, []);
+
+
     async function getUser(id) {
         const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${id}`;
         await axios.get(user_url).then((res) => {
             setUser(res.data.data[0])
-        }).catch((error) => {
+            setCart_count(res.data.data[0].cart.length)
+        }).catch((err) => {
         })
     }
 
@@ -107,24 +128,18 @@ export default function Profile(props) {
     }, [view])
 
     useEffect(() => {
-        if (token.role == 'vendor') {
+        if (user.role == 'vendor') {
             setdashboard_href('/vendor')
-        } else if (token.role == 'admin') {
+        } else if (user.role == 'admin') {
             setdashboard_href('/admin')
         }
         return () => {
         }
-    }, [token])
+    }, [user])
 
     function handleShowAlert(msg) {
         setAlertMsg(msg)
         setShowAlertModal(true)
-    }
-
-    function logout() {
-        setLoading(true)
-        removeTokenFromStorage(false)
-        setLoading(false)
     }
 
     return (
@@ -138,10 +153,7 @@ export default function Profile(props) {
                 color={'green'}
             />
             <Layout
-                home={() => Router.push('/')}
-                role={token.role || ''}
-                name={token.full_name || ''}
-                logout={logout}
+                user={user}
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
@@ -219,7 +231,7 @@ export default function Profile(props) {
                                 setView={(value) => setView(value)}
                             />}
                             {view == 'my_profile' && <MyProfile
-                                token={undecoded_token}
+                                token={token}
                                 _id={user._id}
                                 role={user.role}
                                 full_name={user.full_name}
@@ -227,10 +239,10 @@ export default function Profile(props) {
                                 mobile={user.mobile}
                                 email={user.email}
                                 showAlert={(msg) => handleShowAlert(msg)}
-                                reloadUser={() => getUser(token._id)}
+                                reloadUser={() => getUser(user._id)}
                             />}
                             {view == 'address' && <Address
-                                token={undecoded_token}
+                                token={token}
                                 _id={user._id}
                                 role={user.role}
                                 shop_name={user.shop_name}
@@ -239,14 +251,14 @@ export default function Profile(props) {
                                 countary={user.countary}
                                 city={user.city}
                                 showAlert={(msg) => handleShowAlert(msg)}
-                                reloadUser={() => getUser(token._id)}
+                                reloadUser={() => getUser(user._id)}
                             />}
                             {view == 'change_picture' && <ChangeProfilePicture
-                                token={undecoded_token}
+                                token={token}
                                 _id={user._id}
                                 avatar={user.avatar}
                                 showAlert={(msg) => handleShowAlert(msg)}
-                                reloadUser={() => getUser(token._id)}
+                                reloadUser={() => getUser(user._id)}
                             />}
 
                             {view == 'manage_orders' && <ManageOrders
@@ -259,25 +271,25 @@ export default function Profile(props) {
                                 setView={(value) => setView(value)}
                             />}
                             {view == 'pending_orders' && <Orders
-                                token={undecoded_token}
+                                token={token}
                                 _id={user._id}
                                 status={'pending'}
                                 setView={(value) => setView(value)}
                             />}
                             {view == 'delivered_orders' && <Orders
-                                token={undecoded_token}
+                                token={token}
                                 _id={user._id}
                                 status={'delivered'}
                                 setView={(value) => setView(value)}
                             />}
                             {view == 'cancelled_orders' && <Orders
-                                token={undecoded_token}
+                                token={token}
                                 _id={user._id}
                                 status={'cancelled'}
                                 setView={(value) => setView(value)}
                             />}
                             {view == 'returned_orders' && <Orders
-                                token={undecoded_token}
+                                token={token}
                                 _id={user._id}
                                 status={'returned'}
                                 setView={(value) => setView(value)}

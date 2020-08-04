@@ -2,6 +2,16 @@ import { Modal, Form, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function AlertModal(props) {
+
+    // React.useEffect(() => {
+    //     setTimeout(() => {
+    //         props.onHide()
+    //     }, 3000);
+    //     return () => {
+    //         props.onHide()
+    //     }
+    // }, [])
+
     return (
         <Modal
             {...props}

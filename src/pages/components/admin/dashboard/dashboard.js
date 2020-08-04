@@ -1,3 +1,4 @@
+import Router from "next/router";
 import { Image, Nav, Navbar, Dropdown, NavDropdown, ButtonGroup, Form, FormControl, InputGroup, Button, Spinner, Tab, Row, Col, } from "react-bootstrap"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -7,7 +8,6 @@ import {
     faWarehouse, faTags, faPercent, faChartBar, faTh, faCog, faShoppingBag
 } from '@fortawesome/free-solid-svg-icons';
 import { faEdit, faUserCircle } from '@fortawesome/free-regular-svg-icons'
-
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 import AdminDashboard from './dashboard-contents/admin-dashboard';
@@ -25,16 +25,13 @@ import Inventory from './dashboard-contents/inventory';
 import Orders from './dashboard-contents/orders'
 import Discounts from './dashboard-contents/discount';
 import Commision from './dashboard-contents/commision';
-import Reports from './dashboard-contents/reports';
 import GlobalStyleSheet from '../../../../styleSheet';
-import Router from "next/router";
 
 const Dashboard = props => {
     let wprapper_Casses = "wrapper";
     if (props.show) {
         wprapper_Casses = "wrapper open";
     }
-    const [show_product, setShow_product] = React.useState(false);
     const [show_category, setShow_category] = React.useState(false);
 
     return (
@@ -47,7 +44,7 @@ const Dashboard = props => {
                             <Nav.Item style={styles.image_div}>
                                 <p>
                                     <Image src={props.avatar} roundedCircle thumbnail fluid style={styles.image} />
-                                    <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
+                                    <Nav.Link style={styles.muhalik}> {props.full_name} </Nav.Link>
                                 </p>
                             </Nav.Item>
                             {/* <Nav.Item>
@@ -115,23 +112,23 @@ const Dashboard = props => {
                             </Nav.Item>
                             {show_category ?
                                 <div>
-                                    <div className="categories_submenue">
-                                        <Nav.Link eventKey="AddCategory" style={styles.categories_submenu_link} >
+                                    <div className="limk_submenue">
+                                        <Nav.Link eventKey="AddCategory" style={styles.submenu_link} >
                                             <FontAwesomeIcon size="xs" icon={faPlusCircle} style={styles.fontawesome} />
                                             <div className="mr-auto"> Add Category</div>
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                         </Nav.Link>
                                     </div>
-                                    <div className="categories_submenue">
-                                        <Nav.Link eventKey="AllCategories" style={styles.categories_submenu_link} >
-                                            <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                    <div className="limk_submenue">
+                                        <Nav.Link eventKey="AllCategories" style={styles.submenu_link} >
+                                            <FontAwesomeIcon size="xs" icon={faTh} style={styles.fontawesome} />
                                             <div className="mr-auto"> All Categories</div>
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                         </Nav.Link>
                                     </div>
-                                    <div className="categories_submenue">
-                                        <Nav.Link eventKey="HomeScreenCategories" style={styles.categories_submenu_link} >
-                                            <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                    <div className="limk_submenue">
+                                        <Nav.Link eventKey="HomeScreenCategories" style={styles.submenu_link} >
+                                            <FontAwesomeIcon size="xs" icon={faTh} style={styles.fontawesome} />
                                             <div className="mr-auto"> Home Screen Categories</div>
                                             <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                         </Nav.Link>
@@ -166,15 +163,6 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
-                            <Nav.Item>
-                                <div className="nav_link" >
-                                    <Nav.Link eventKey="Reports" style={styles.nav_link} onClick={() => setShow_category(false)}>
-                                        <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
-                                        <div className="mr-auto">Reports</div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                    </Nav.Link>
-                                </div>
-                            </Nav.Item>
                         </Nav>
                         {/* End Tabs Side Drawer */}
                     </div>
@@ -194,22 +182,6 @@ const Dashboard = props => {
                                     <FontAwesomeIcon icon={faBars} style={styles.toolbar_fontawesomer} />
                                 </Button>
                             </div>
-                            {/* Search Bar */}
-                            {/* <Form inline className='search_form mr-auto'>
-                                <Form.Control
-                                    style={styles.search_bar}
-                                    type="text"
-                                    size="sm"
-                                    placeholder="Search here"
-                                    aria-describedby="side_drawer_searchbar"
-                                    name="side_drawer_searchbar"
-                                />
-                                <InputGroup.Prepend>
-                                    <Button id="side_drawer_searchBtn" style={styles.toolbar_btn}>
-                                        <FontAwesomeIcon icon={faSearch} style={styles.toolbar_fontawesomer} />
-                                    </Button>
-                                </InputGroup.Prepend>
-                            </Form> */}
                             {/* Account Setting Dropdown */}
                             <div className="account_settig_dropdown ml-auto">
                                 <NavDropdown className='nav_dropdown' title={
@@ -243,10 +215,14 @@ const Dashboard = props => {
                                     <AdminDashboard />
                                 </Tab.Pane> */}
                                 <Tab.Pane eventKey="Vendors">
-                                    <Vendors {...props} />
+                                    <Vendors
+                                        {...props}
+                                    />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Customers">
-                                    <Customers {...props} />
+                                    <Customers
+                                        {...props}
+                                    />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Slider">
                                     <Slider {...props} />
@@ -255,44 +231,35 @@ const Dashboard = props => {
                                     <Inventory {...props} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Orders">
-                                    <Orders {...props} />
-                                </Tab.Pane>
-                                {/* <Tab.Pane eventKey="AddProduct">
-                                    <AddNew
+                                    <Orders
                                         {...props}
-                                        title={' Admin Dashboard / Add New'}
-                                        isUpdateProduct={false}
-                                        productCategories={''}
-                                        productSubCategories={''}
-                                        subCategoryDisabled={true}
-                                        productTags={[]}
-                                        warrantyType={''}
-                                        simple_product_image_link={[]}
-                                        variationsArray={[]}
-                                        dangerousGoodsArray={[]}
                                     />
-                                </Tab.Pane> */}
-                                {/* Category */}
+                                </Tab.Pane>
                                 <Tab.Pane eventKey="AddCategory">
-                                    <AddCategory {...props} />
+                                    <AddCategory
+                                        {...props}
+                                    />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AllCategories">
-                                    <AllCategories {...props} />
+                                    <AllCategories
+                                        {...props}
+                                    />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="HomeScreenCategories">
-                                    <HomeScreenCategories {...props} />
+                                    <HomeScreenCategories
+                                        {...props}
+                                    />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="ProductFields">
-                                    <ProductFields {...props} />
+                                    <ProductFields
+                                        {...props}
+                                    />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Discounts">
                                     <Discounts />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Commision">
                                     <Commision />
-                                </Tab.Pane>
-                                <Tab.Pane eventKey="Reports">
-                                    <Reports />
                                 </Tab.Pane>
                             </Tab.Content>
                         </div>
@@ -404,11 +371,14 @@ const Dashboard = props => {
                 .nav_link:hover {
                     background: #30313E;
                 }
-                .categories_submenue {
+                .limk_submenue {
                     background: ${GlobalStyleSheet.admin_primry_color};
                     border-top: 0.5px solid #434556;
                     border-bottom: 0.5px solid #434556;
                     margin: 0% 5% 0% 10%;
+                }
+                .limk_submenue:hover {
+                    background: #30313E;
                 }
                 .side_tab_toogle_btn {
                     margin: 0%
@@ -505,7 +475,7 @@ const styles = {
         alignItems: 'center',
         height: '45px'
     },
-    categories_submenu_link: {
+    submenu_link: {
         color: 'white',
         fontSize: '11px',
         display: 'flex',

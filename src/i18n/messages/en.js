@@ -10,7 +10,7 @@ export default {
         'signup': 'Signup',
         'logout': 'Logout',
         'delete': 'Delete',
-        'rs': 'Rs. ',
+        'rs': 'SAR.',
         'related_categories': 'Related Categories',
 
         // Toolbar
@@ -235,6 +235,9 @@ export default {
         'we_are_sorry_product': 'We are sory, we can\'t find this product',
         'enter_valid_value': 'Enter Valid Value',
 
+        'warranty': 'Warranty',
+        'no_warranty': 'No Warranty',
+        'months': 'months',
     }
 }
 

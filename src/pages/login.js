@@ -58,13 +58,13 @@ class Login extends Component {
                 const decodedToken = decode(response.data.token);
 
                 if (decodedToken.data.role == 'customer') {
-                    Router.replace('/index')
+                    Router.replace('/')
                 } else if (decodedToken.data.role == 'vendor') {
                     Router.replace('/vendor')
                 } else if (decodedToken.data.role == 'admin') {
                     Router.replace('/admin')
                 } else {
-                    Router.replace('/index')
+                    Router.replace('/')
                 }
             }
         }).catch(function (error) {

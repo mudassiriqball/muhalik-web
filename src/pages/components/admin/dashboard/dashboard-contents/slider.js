@@ -20,7 +20,7 @@ const schema = yup.object({
 
 class Slider extends Component {
     state = {
-        token: '',
+        token: this.props.token,
         isLoading: false,
         showToast: false,
         toastMsg: '',
@@ -190,37 +190,32 @@ class Slider extends Component {
             let formData = new FormData()
             formData.append('myImage', copyArray[index].newImg)
 
-            const url = MuhalikConfig.PATH + `/api/sliders/sliders/${copyArray[index]._id}`
+            const url = MuhalikConfig.PATH + `/api/sliders/slider/${copyArray[index]._id}`
             await axios.put(url, formData, {
                 headers: {
                     'content-type': 'multipart/form-data',
                     'authorization': this.state.token,
                 }
             }).then(function (response) {
-                var obj = {};
-                obj['_id'] = copyArray[index]._id;
-                obj['category'] = copyArray[index].category;
-                obj['sub_category'] = copyArray[index].category;
-                obj['url'] = copyArray[index].url;
-                obj['isLoading'] = false;
-                copyArray[index] = obj
                 currentComponent.setState({
                     showToast: true,
                     toastMsg: 'Category Updated Successfully'
                 })
+                currentComponent.props.sliderReloadHandler()
             }).catch(function (error) {
                 copyArray[index].isLoading = false;
+                currentComponent.setState({
+                    sliders_list: copyArray,
+                });
                 try {
                     alert('Error: ', error.response.data.message);
                 } catch (err) {
                     alert('Category Update Failed');
-                    console.log('Request Failed:', error)
                 }
+                console.log('Request Failed:', error)
+
             });
         }
-        this.setState({
-            sliders_list: copyArray,
-        });
     }
 
     // Delete
@@ -239,22 +234,22 @@ class Slider extends Component {
                 'authorization': this.state.token,
             }
         }).then(function (response) {
-            copyArray.splice(index, 1)
             currentComponent.setState({
                 showToast: true,
                 toastMsg: 'Category Deleted Successfully'
             })
+            currentComponent.props.sliderReloadHandler()
         }).catch(function (error) {
             copyArray[index].isLoading = false;
+            currentComponent.setState({
+                sliders_list: copyArray,
+            });
             try {
                 alert('Error: ', error.response.data.message);
             } catch (err) {
                 alert('Category Update Failed');
-                console.log('Request Failed:', error)
             }
-        });
-        this.setState({
-            sliders_list: copyArray,
+            console.log('Request Failed:', error)
         });
     }
 

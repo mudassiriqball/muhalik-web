@@ -7,7 +7,7 @@ const TitleRow = props => (
         <Row className='title_row' noGutters>
             <FontAwesomeIcon icon={props.icon} className='title_fontawesome' />
             <div className="mr-auto" > Muhalik / {props.title} </div>
-            <Link href="/index"><a>Home</a></Link>
+            <Link href="/"><a>Home</a></Link>
         </Row>
         <style type="text/css">{`
             ._title .title_row{

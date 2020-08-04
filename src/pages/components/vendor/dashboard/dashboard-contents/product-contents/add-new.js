@@ -115,7 +115,7 @@ class AddNew extends Component {
         this.state = {
             userStatusAlert: false,
             statusAlertMessage: '',
-            token: '',
+            token: this.props.token,
             isUpdateProduct: this.props.isUpdateProduct,
             _id: this.props._id,
             clearFields: false,
@@ -130,11 +130,11 @@ class AddNew extends Component {
             productSubCategory: this.props.productSubCategory,
             category_id: '',
             sub_category_id: '',
-            categories_list: [],
-            sub_categories_list: [],
+            categories_list: this.props.categories_list,
+            sub_categories_list: this.props.sub_categories_list,
             sub_category_options: [],
 
-            subCategoryDisabled: true,
+            subCategoryDisabled: this.props.subCategoryDisabled,
             categoryErrorDiv: 'BorderDiv',
             subCategoryErrorDiv: 'BorderDiv',
 
@@ -142,16 +142,17 @@ class AddNew extends Component {
 
             warrantyType: this.props.warrantyType,
             inputValue: '',
-            simple_product_image_link: this.props.simple_product_image_link,
 
             variationsArray: this.props.variationsArray,
             isVariationsSaved: false,
 
             // Custom Fields
-            customFieldsArray: [],
+            fields_list: this.props.fields_list,
+            customFieldsArray: this.props.customFieldsArray,
 
             files: [],
-            imagePreviewArray: [],
+            imagePreviewArray: this.props.product_image_link,
+            variationImagePreviewArray: [],
             // Dangerous Goods
             dangerousGoodsArray: this.props.dangerousGoodsArray,
         };
@@ -169,119 +170,20 @@ class AddNew extends Component {
         });
     }
 
-    async uploadProduct(values, currentComponent) {
-        currentComponent.setState({ clearFields: false });
-        const formData = new FormData();
-        if (values.product_name != '') {
-            formData.append('product_name', values.product_name)
-        }
-        if (values.product_description != '') {
-            formData.append('product_description', values.product_description)
-        }
-        if (values.product_type != '') {
-            formData.append('product_type', values.product_type)
-        }
-        if (values.sku != '') {
-            formData.append('sku', values.sku)
-        }
-        if (values.purchase_note != '') {
-            formData.append('purchase_note', values.purchase_note)
-        }
-        if (values.product_weight != '') {
-            formData.append('product_weight', values.product_weight)
-        }
-        if (values.dimension_length != '') {
-            formData.append('dimension_length', values.dimension_length)
-        }
-        if (values.dimension_width != '') {
-            formData.append('dimension_width', values.dimension_width)
-        }
-        if (values.dimension_height != '') {
-            formData.append('dimension_height', values.dimension_height)
-        }
-        if (values.shipping_charges != '') {
-            formData.append('shipping_charges', values.shipping_charges)
-        }
-        if (values.handling_fee != '') {
-            formData.append('handling_fee', values.handling_fee)
-        }
-        if (values.product_brand_name != '') {
-            formData.append('product_brand_name', values.product_brand_name)
-        }
-        if (values.product_type == 'simple-product') {
-            formData.append('product_price', values.product_price)
-            formData.append('product_in_stock', values.product_in_stock)
-            values.product_image_link && values.product_image_link.forEach(element => {
-                formData.append('myImage', element)
+    componentDidMount() {
+        let copyArray = []
+        copyArray = Object.assign([], this.state.variationsArray)
+
+        this.state.variationsArray && this.state.variationsArray.forEach((element, index) => {
+            let obj = []
+            element.image_link && element.image_link.forEach((e, i) => {
+                obj.push({ 'url': e.url })
             })
-            if (values.custom_fields != []) {
-                formData.append('custom_fields', JSON.stringify(values.custom_fields))
-            }
-            formData.append('product_warranty', values.product_warranty)
-            formData.append('warranty_type', values.warranty_type)
-            formData.append('product_discount', values.product_discount)
-        } else {
-            values.product_variations && values.product_variations.forEach((element, index) => {
-                let array = [];
-                element.image_link && element.image_link.forEach(file => {
-                    formData.append('myImage', file)
-                    array.push({ name: file.name })
-                })
-                element.image_link = array
-            })
-            formData.append('product_variations', JSON.stringify(values.product_variations))
-        }
-
-        formData.append('category', values.category_id)
-        formData.append('sub_category', values.sub_category_id)
-
-        formData.append('dangerous_goods', JSON.stringify(values.dangerous_goods))
-        formData.append('product_tags', JSON.stringify(values.product_tags))
-        // if (this.state.isUpdateProduct == false) {
-        const url = MuhalikConfig.PATH + '/api/products/add-product'
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data',
-                'authorization': this.state.token,
-            }
-        };
-        axios.post(url, formData, config)
-            .then((response) => {
-                currentComponent.setState({
-                    isLoading: false,
-                    showToast: true,
-                    toastMessage: 'Product Uploaded Successfully',
-                    clearFields: true
-                });
-            }).catch((error) => {
-                console.log('error:', error)
-                currentComponent.setState({ isLoading: false });
-                alert('Product Upload failed')
-            });
-
-        // } else {
-        // const url = MuhalikConfig.PATH + `/api/products/add`
-        // await axios.post(url, {
-        //     formData
-        // }, {
-        //     headers: { 'authorization': this.state.token }
-        // }).then(function (response) {
-        //     currentComponent.setState({ isLoading: false });
-        //     currentComponent.setState({ showToast: true, toastMessage: 'Product Updated Successfully' });
-        //     return true;
-        // }).catch(function (error) {
-        //     currentComponent.setState({ isLoading: false });
-        //     console.log('error:', error)
-        //     try {
-        //         console.log('error:', error.response.data.mesage)
-        //     } catch (err) {
-        //         console.log('error:', error)
-
-        //     }
-        //     alert('Product Update failed');
-        //     return false;
-        // });
-        // }
+            let ddd = copyArray[index]
+            ddd['imagePreviewArray'] = obj
+            copyArray[index] = ddd
+        })
+        this.setState({ variationImagePreviewArray: copyArray })
     }
 
     // Custom Fields
@@ -343,6 +245,15 @@ class AddNew extends Component {
     }
 
     // Dangerous Goods
+    handleDangrusDoodsChecked = (val) => {
+        let found = false
+        this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
+            if (element.value == val) {
+                found = true
+            }
+        })
+        return found
+    }
     handleDangerousGoodsChange = (e, name) => {
         const copyArray = Object.assign([], this.state.dangerousGoodsArray);
         if (e.target.checked) {
@@ -362,13 +273,13 @@ class AddNew extends Component {
         this.setState({ productTags: arr });
     };
 
-
+    // 
     async fileSelectedHandler(e) {
         await this.setState({ files: [...this.state.files, ...e.target.files] })
 
         let array = []
         this.state.files.forEach(element => {
-            array.push(URL.createObjectURL(element))
+            array.push({ 'url': URL.createObjectURL(element) })
         })
 
         this.setState({ imagePreviewArray: array })
@@ -395,12 +306,11 @@ class AddNew extends Component {
                             product_price: this.props.product_price,
                             product_in_stock: this.props.product_in_stock,
                             product_brand_name: this.props.product_brand_name,
-                            // product_image_link:this.props.product_image_link}
+                            product_image_link: this.props.product_image_link,
                             product_warranty: this.props.product_warranty,
                             warranty_type: this.props.warranty_type,
                             product_discount: this.props.product_discount,
                             purchase_note: this.props.purchase_note,
-                            // product_variations:this.props.product_variations}
                             product_weight: this.props.product_weight,
                             dimension_length: this.props.dimension_length,
                             dimension_width: this.props.dimension_width,
@@ -437,6 +347,8 @@ class AddNew extends Component {
                         }
                 }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
+                    const currentComponent = this
+
                     if (this.props.user_status == 'disapproved') {
                         this.setState({
                             userStatusAlert: true,
@@ -457,7 +369,9 @@ class AddNew extends Component {
                                 this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
                             }
                         } // Product Price/Stock/Imgages Checking for Simple Product
-                        else if (values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
+                        else if (!this.state.isUpdateProduct && values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
+                            this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
+                        } else if (this.state.isUpdateProduct && values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '')) {
                             this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
                         } // Variation saved Check for variable product
                         else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
@@ -465,7 +379,6 @@ class AddNew extends Component {
                         } else {
                             this.setState({ isLoading: true });
                             setTimeout(() => {
-
                                 let array = [];
                                 values.category_id = this.state.category_id;
                                 values.sub_category_id = this.state.sub_category_id;
@@ -487,15 +400,75 @@ class AddNew extends Component {
                                         element.custom_fields.forEach(e => {
                                             item_1.push({ name: e.name, value: e.value })
                                         });
-                                        array.push({ item: item, custom_fields: item_1, price: element.price, stock: element.stock, image_link: element.image_link })
+                                        array.push({
+                                            item: item, custom_fields: item_1, price: element.price, stock: element.stock, image_link: element.image_link,
+                                            discount: element.discount, warranty: element.warranty, warranty_type: element.warranty_type
+                                        })
                                     })
                                     values.product_variations = array;
                                 }
 
-                                this.uploadProduct(values, this)
-                                if (this.state.clearFields) {
-                                    resetForm();
-                                    this.setState({
+                                const formData = new FormData();
+                                formData.append('product_name', values.product_name)
+                                formData.append('product_description', values.product_description)
+                                formData.append('product_type', values.product_type)
+                                formData.append('sku', values.sku)
+                                formData.append('purchase_note', values.purchase_note)
+                                formData.append('product_weight', values.product_weight)
+                                formData.append('dimension_length', values.dimension_length)
+                                formData.append('dimension_width', values.dimension_width)
+                                formData.append('dimension_height', values.dimension_height)
+                                formData.append('shipping_charges', values.shipping_charges)
+                                formData.append('handling_fee', values.handling_fee)
+                                formData.append('product_brand_name', values.product_brand_name)
+
+                                if (values.product_type == 'simple-product') {
+                                    formData.append('product_price', values.product_price)
+                                    formData.append('product_in_stock', values.product_in_stock)
+                                    values.product_image_link && values.product_image_link.forEach(element => {
+                                        formData.append('myImage', element)
+                                    })
+                                    if (values.custom_fields != []) {
+                                        formData.append('custom_fields', JSON.stringify(values.custom_fields))
+                                    }
+                                    formData.append('product_warranty', values.product_warranty)
+                                    formData.append('warranty_type', values.warranty_type)
+                                    formData.append('product_discount', values.product_discount)
+                                } else {
+                                    values.product_variations && values.product_variations.forEach((element, index) => {
+                                        let array = [];
+                                        element.image_link && element.image_link.forEach(file => {
+                                            formData.append('myImage', file)
+                                            array.push({ name: file.name })
+                                        })
+                                        element.image_link = array
+                                    })
+                                    formData.append('product_variations', JSON.stringify(values.product_variations))
+                                }
+
+                                formData.append('category', values.category_id)
+                                formData.append('sub_category', values.sub_category_id)
+
+                                formData.append('dangerous_goods', JSON.stringify(values.dangerous_goods))
+                                formData.append('product_tags', JSON.stringify(values.product_tags))
+                                let url = ''
+                                if (this.state.isUpdateProduct == false) {
+                                    url = MuhalikConfig.PATH + '/api/products/add-product'
+                                } else {
+                                    url = MuhalikConfig.PATH + '/api/products/aaa/bbb/ccc'
+                                }
+                                const config = {
+                                    headers: {
+                                        'content-type': 'multipart/form-data',
+                                        'authorization': this.props.token,
+                                    }
+                                };
+                                axios.post(url, formData, config).then((res) => {
+                                    resetForm()
+                                    currentComponent.setState({
+                                        isLoading: false,
+                                        showToast: true,
+                                        toastMessage: 'Product Uploaded Successfully',
                                         showVariationsErrorAlert: false,
                                         showSimpleProductPriceImgLinkErrorrAlert: false,
                                         isVariableProduct: false,
@@ -523,9 +496,12 @@ class AddNew extends Component {
 
                                         // Dangerous Goods
                                         dangerousGoodsArray: [],
-                                        clearFields: false
                                     });
-                                }
+                                }).catch((error) => {
+                                    console.log('error:', error)
+                                    currentComponent.setState({ isLoading: false });
+                                    alert('Product Upload failed')
+                                });
                                 setSubmitting(false);
                             }, 500);
                         }
@@ -542,7 +518,7 @@ class AddNew extends Component {
                                 <Form.Row style={{ margin: ' 1% 2%', display: 'flex', alignItems: 'center' }} >
                                     <Button variant='outline-primary' size='sm' className="mr-auto" onClick={this.props.back}>Back</Button>
                                     <div className="mr-auto" style={{ fontSize: '14px' }}> {this.props.product_name || '-'}</div>
-                                    <Button variant='outline-primary' size='sm' className="mr-3" onClick={this.props.edit}>Edit</Button>
+                                    <Button variant='outline-primary' size='sm' className="mr-3" onClick={this.props.view}>View</Button>
                                     <Button variant='outline-danger' size='sm' onClick={this.props.delete}>Delete</Button>
                                 </Form.Row>
                                 :
@@ -743,6 +719,7 @@ class AddNew extends Component {
                                                         options={this.state.categories_list}
                                                         value={this.state.productCategory}
                                                         isSearchable={true}
+                                                        isCreateable={false}
                                                         placeholder="Select Category"
                                                     />
                                                 </div>
@@ -759,6 +736,7 @@ class AddNew extends Component {
                                                         options={this.state.sub_category_options}
                                                         value={this.state.productSubCategory}
                                                         isSearchable={true}
+                                                        isCreateable={false}
                                                         placeholder="Select Sub Category"
                                                         isDisabled={this.state.subCategoryDisabled}
                                                     />
@@ -769,16 +747,12 @@ class AddNew extends Component {
                                         {/* End of Product ategory */}
 
                                         {/* Dangerous Goods */}
-                                        <CardAccordion title={'Dangerous Goods'}>
+                                        {/* <CardAccordion title={'Dangerous Goods'}>
                                             <Form.Check
                                                 name="not_specified"
                                                 label="Not Specified"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
-                                                    if (element.value == 'Not-Specified') {
-                                                        return true
-                                                    }
-                                                })}
+                                                checked={() => this.handleDangrusDoodsChecked("Not Specified")}
                                                 onChange={(e) => this.handleDangerousGoodsChange(e, 'Not-Specified')}
                                             />
                                             <br></br>
@@ -786,11 +760,7 @@ class AddNew extends Component {
                                                 name="ceramic"
                                                 label="Ceramic"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
-                                                    if (element.value == 'Ceramic') {
-                                                        return true
-                                                    }
-                                                })}
+                                                checked={() => this.handleDangrusDoodsChecked("Ceramic")}
                                                 onChange={(e) => this.handleDangerousGoodsChange(e, 'Ceramic')}
                                             />
                                             <br></br>
@@ -798,11 +768,7 @@ class AddNew extends Component {
                                                 name="glass"
                                                 label="Glass"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
-                                                    if (element.value == 'Glass') {
-                                                        return true
-                                                    }
-                                                })}
+                                                checked={() => this.handleDangrusDoodsChecked("Glass")}
                                                 onChange={(e) => this.handleDangerousGoodsChange(e, 'Glass')}
                                             />
                                             <br></br>
@@ -810,11 +776,7 @@ class AddNew extends Component {
                                                 name="metal"
                                                 label="Metal"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
-                                                    if (element.value == 'Metal') {
-                                                        return true
-                                                    }
-                                                })}
+                                                checked={() => this.handleDangrusDoodsChecked("Metal")}
                                                 onChange={(e) => this.handleDangerousGoodsChange(e, 'Metal')}
                                             />
                                             <br></br>
@@ -822,14 +784,10 @@ class AddNew extends Component {
                                                 name="plastic"
                                                 label="Plastic"
                                                 style={styles.label}
-                                                checked={this.state.dangerousGoodsArray && this.state.dangerousGoodsArray.forEach(element => {
-                                                    if (element.value == 'Plastic') {
-                                                        return true
-                                                    }
-                                                })}
+                                                checked={() => this.handleDangrusDoodsChecked("Plastic")}
                                                 onChange={(e) => this.handleDangerousGoodsChange(e, 'Plastic')}
                                             />
-                                        </CardAccordion>
+                                        </CardAccordion> */}
                                         {/* End ofDangerous Goods */}
 
                                         {/* Product Tags */}

@@ -7,7 +7,7 @@ import GlobalStyleSheet from '../../../styleSheet'
 import Carousel from "react-multi-carousel"
 import MuhalikConfig from '../../../sdk/muhalik.config'
 import axios from 'axios'
-import useQueryInfiniteScroll from '../../../use-infinite-scroll'
+import useQueryInfiniteScroll from '../../../use-query-infinite-scroll'
 import usePageLimitInfiniteScroll from '../../../use-page-limit-infinite-scroll.js'
 import {
     BrowserView,
@@ -20,6 +20,7 @@ import MovingLogo from '../moving-logo';
 React.useLayoutEffect = React.useEffect
 
 import translate from '../../../i18n/translate'
+import DiscountPrice from '../discount-price';
 
 const responsive = {
     superLargeDesktop: {
@@ -123,7 +124,7 @@ const Home = (props) => {
                                 removeArrowOnDeviceType={["mobile"]}
                             >
                                 {props.new_products_list && props.new_products_list.map((element, index) =>
-                                    <Card key={element._id} className="product_card">
+                                    <Card key={index} className="product_card">
                                         {element.product_type == "simple-product" ?
                                             <div className='card_div'
                                                 onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
@@ -131,20 +132,14 @@ const Home = (props) => {
                                                     style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }}
                                                     src={element.product_image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
-                                                <div className='d-inline-flex align-items-center'>
-                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >{translate('rs')}.</span>{element.product_price}</label>
-                                                    <div className="text_animation pr-1">{translate('new')}</div>
-                                                </div>
+                                                <DiscountPrice price={element.product_price} discount={element.product_discount} />
                                             </div>
                                             :
                                             <div className='card_div'
                                                 onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                                 <Image className='img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
-                                                <div className='d-inline-flex align-items-center'>
-                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >{translate('rs')}.</span>{element.product_variations[0].price || '-'}</label>
-                                                    <div className="text_animation pr-1">{translate('new')}</div>
-                                                </div>
+                                                <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
                                             </div>
                                         }
                                     </Card>
@@ -177,7 +172,7 @@ const Home = (props) => {
                                 removeArrowOnDeviceType={["mobile"]}
                             >
                                 {props.top_ranking_products_list && props.top_ranking_products_list.map((element, index) =>
-                                    <Card key={element._id} className="product_card">
+                                    <Card key={index} className="product_card">
                                         {element.product_type == "simple-product" ?
                                             <div className='card_div'
                                                 onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
@@ -186,20 +181,14 @@ const Home = (props) => {
                                                     src={element.product_image_link[0].url} />
 
                                                 <label className='my_label'>{element.product_name}</label>
-                                                <div className='d-inline-flex align-items-center'>
-                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >{translate('rs')}.</span>{element.product_price}</label>
-                                                    <div className="text_animation pr-1">{translate('top')}</div>
-                                                </div>
+                                                <DiscountPrice price={element.product_price} discount={element.product_discount} />
                                             </div>
                                             :
                                             <div className='card_div'
                                                 onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                                 <Image className='img' style={{ maxHeight: width + 20 || '100px', minHeight: width + 20 || '100px' }} src={element.product_variations[0].image_link[0].url} />
                                                 <label className='my_label'>{element.product_name}</label>
-                                                <div className='d-inline-flex align-items-center'>
-                                                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px', padding: '0%' }} >{translate('rs')}.</span>{element.product_variations[0].price || '-'}</label>
-                                                    <div className="text_animation pr-1">{translate('top')}</div>
-                                                </div>
+                                                <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
                                             </div>
 
                                         }
@@ -213,7 +202,7 @@ const Home = (props) => {
 
             {props.home_categories_list && props.home_categories_list.map((element, index) =>
                 <CategoryCard
-                    key={element._id}
+                    key={index}
                     element={element}
                 />
             )}
@@ -242,8 +231,8 @@ const Home = (props) => {
                         margin: 5px;
                         padding: 5px 5px 0px 5px;
                         cursor: pointer;
-                        background: ${GlobalStyleSheet.body_color};
-                        border: 1px solid ${GlobalStyleSheet.primry_color};
+                        background: $white;
+                        border: 1px solid lightgray;
                     }
                     .home .product_card .card_div:hover{
                         box-shadow: 0px 0px 10px 0.5px  ${GlobalStyleSheet.primry_color};
@@ -303,6 +292,18 @@ const Home = (props) => {
                         cursor: pointer;
                     } 
 
+                    .price_label {
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap; 
+                        display: block;
+                        padding: 0%;
+                        margin: 1.5% 1%;
+                        color: Orange;
+                        font-size: 15px;
+                        cursor: pointer;
+                    }
+
                     .home .only_products_row{
                         background: yellow;
                     }
@@ -317,6 +318,9 @@ const Home = (props) => {
                     @media (max-width: 767px){
                         .my_label{
                             font-size: 11px;
+                        } 
+                        .price_label{
+                            font-size: 13px;
                         } 
                     }
                 `}
@@ -338,7 +342,7 @@ function CategoryCard(props) {
     const [ref, { x, y, width }] = useDimensions();
 
     const [query, setQuery] = useState(props.element.value)
-    const { loading, error, products, hasMore } = useQueryInfiniteScroll("category", query, 1, isMobile ? 6 : 7)
+    const { loading, error, products, pages, total, hasMore } = useQueryInfiniteScroll("category", query, 1, isMobile ? '6' : '14')
     const observer = useRef()
     const lastProducrRef = useCallback((node) => {
         if (loading) return
@@ -370,20 +374,24 @@ function CategoryCard(props) {
                             style={{ maxHeight: width / 3 || '250px', minHeight: width / 3 || '250px' }}
                         />
                     </Row>
-                    <Row noGutters className='box_shadow'>
-                        {products && products.map((element, i) =>
-                            isMobile ?
-                                i < 6 ?
-                                    <CategoryProducts key={element._id} element={element} loading={loading} />
-                                    :
-                                    null
-                                :
-                                <CategoryProducts key={element._id} element={element} loading={loading} />
-                        )}
-                    </Row>
-                    {loading &&
-                        <Row noGutters className='box_shadow'>
-                            <LoadingCategoryCard />
+                    {total > 0 ?
+                        <>
+                            <Row noGutters className='box_shadow'>
+                                {products && products.map((element, index) =>
+                                    <CategoryProducts key={index} element={element} loading={loading} />
+                                )}
+                            </Row>
+                            {loading &&
+                                <Row noGutters className='box_shadow'>
+                                    <LoadingCategoryCard />
+                                </Row>
+                            }
+                        </>
+                        :
+                        <Row className='h-100 p-5 w-100'>
+                            <div className='h-100 w-100 d-flex justify-content-center align-items-center'>
+                                <h5 className='text-center w-100'>{translate('no_data_found')}</h5>
+                            </div>
                         </Row>
                     }
                 </Card.Body>
@@ -463,7 +471,7 @@ function CategoryProducts(props) {
                         src={props.element.product_image_link[0].url} />
 
                     <label className='my_label'>{props.element.product_name}</label>
-                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{props.element.product_price}</label>
+                    <DiscountPrice price={props.element.product_price} discount={props.element.product_discount} />
                 </div>
                 :
                 <div className='category_card_div'
@@ -474,7 +482,7 @@ function CategoryProducts(props) {
                         style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }}
                         src={props.element.product_variations[0].image_link[0].url} />
                     <label className='my_label'>{props.element.product_name}</label>
-                    <label className='mr-auto my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{props.element.product_variations[0].price}</label>
+                    <DiscountPrice price={props.element.product_variations[0].price} discount={props.element.product_variations[0].discount} />
                 </div>
             }
             <style type="text/css">{`
@@ -537,7 +545,7 @@ function LoadingCategoryCard(props) {
                                     <MovingLogo />
                                 </div>
                                 <label className='my_label'>{'-'}</label>
-                                <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
+                                <label className='price_label'>{translate('rs')}{'-'}</label>
                             </div>
                         </Card>
                         :
@@ -549,7 +557,7 @@ function LoadingCategoryCard(props) {
                                 <MovingLogo />
                             </div>
                             <label className='my_label'>{'-'}</label>
-                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
+                            <label className='price_label'>{translate('rs')}{'-'}</label>
                         </div>
                     </Card>
             )}
@@ -635,7 +643,7 @@ function OnlyProducts(props) {
             <Row noGutters>
                 {_products && _products.map((element, index) =>
                     _products.length == (index + 1) ?
-                        <Card ref={lastProducrRef} key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                        <Card ref={lastProducrRef} key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                             {element.product_type == "simple-product" ?
                                 <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img'
@@ -643,18 +651,18 @@ function OnlyProducts(props) {
                                         src={element.product_image_link[0].url}
                                     />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_price}</label>
+                                    <DiscountPrice price={element.product_price} discount={element.product_discount} />
                                 </div>
                                 :
                                 <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_variations[0].price}</label>
+                                    <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
                                 </div>
                             }
                         </Card>
                         :
-                        <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                        <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                             {element.product_type == "simple-product" ?
                                 <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img'
@@ -662,13 +670,13 @@ function OnlyProducts(props) {
                                         src={element.product_image_link[0].url}
                                     />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_price}</label>
+                                    <DiscountPrice price={element.product_price} discount={element.product_discount} />
                                 </div>
                                 :
                                 <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                     <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '150px', minHeight: width + 20 || '150px' }} src={element.product_variations[0].image_link[0].url} />
                                     <label className='my_label'>{element.product_name}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{element.product_variations[0].price}</label>
+                                    <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
                                 </div>
                             }
                         </Card>
@@ -684,7 +692,7 @@ function OnlyProducts(props) {
                                             <MovingLogo />
                                         </div>
                                         <label className='my_label'>{'-'}</label>
-                                        <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
+                                        <label className='price_label'>{translate('rs')}{'-'}</label>
                                     </div>
                                 </Card>
                                 :
@@ -696,7 +704,7 @@ function OnlyProducts(props) {
                                         <MovingLogo />
                                     </div>
                                     <label className='my_label'>{'-'}</label>
-                                    <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}.</span>{'-'}</label>
+                                    <label className='price_label'>{translate('rs')}{'-'}</label>
                                 </div>
                             </Card>
                     )}

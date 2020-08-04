@@ -6,29 +6,15 @@ const Product = new Schema({
   vendor_id: {
     type: Schema.Types.ObjectId,
   },
-  category:{
+  category: {
     type: Schema.Types.ObjectId,
   },
-  sub_category:{
+  sub_category: {
     type: Schema.Types.ObjectId,
   },
   product_name: {
     type: String,
   },
-  // product_category: {
-  //   label: { type: String },
-  //   value: { type: String },
-  // },
-
-  // product_sub_category: {
-  //   label: { type: String },
-  //   value: { type: String },
-  // },
-  // product_sub_sub_category: {
-  //   label: { type: String },
-  //   value: { type: String },
-  // },
-
   product_tags: [
     {
       label: { type: String },
@@ -105,7 +91,6 @@ const Product = new Schema({
     },
   ],
 
-  // r_r:{type:String},
   rating_review: {
     rating: {
       overall: { type: Number, default: 0 },
@@ -140,6 +125,9 @@ const Product = new Schema({
       ],
       price: { type: Number },
       stock: { type: Number },
+      discount: { type: Number },
+      warranty: { type: Number },
+      warranty_type: { type: String },
       image_link: [
         {
           url: { type: String },
@@ -172,15 +160,6 @@ const Product = new Schema({
   isdeleted: {
     type: Boolean,
   },
-
-  // image: {
-  //     data: Buffer,
-  //     contentType: String
-  // },
-  // is_deleted: {
-  //     type: Boolean,
-  //     default: false
-  // }
 });
 
 Product.plugin(mongoosePaginate);

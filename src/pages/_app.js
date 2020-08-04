@@ -2,12 +2,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-multi-carousel/lib/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
 
-import Router from 'next/router'
-import MuhalikConfig from '../sdk/muhalik.config'
-
 import { I18Provider, LOCALES } from '../i18n'
 import React, { useState, useEffect } from 'react';
-import { FormattedMessage } from 'react-intl'
 
 // This default export is required in a new `pages/_app.js` file.
 export default function MyApp({ Component, pageProps }) {
@@ -20,35 +16,7 @@ export default function MyApp({ Component, pageProps }) {
       setLocale(LOCALES.ARABIC)
       setCurrLang('ar')
     }
-
-    window.addEventListener('popstate', (event) => handleUrlChange(event), false);
-    return () => {
-      window.removeEventListener('popstate', (event) => handleUrlChange(event), false);
-    }
-
-
   }, [])
-  function handleUrlChange() {
-    // if (window.location.href === `${MuhalikConfig.PATH}  /user/profile?manage-account` || window.location.href === `${MuhalikConfig.PATH}  /user/profile?my-profile` ||
-    //   window.location.href === `${MuhalikConfig.PATH}  /user/profile?change-profile-picture` || `${MuhalikConfig.PATH}  /user/profile?shop-address` ||
-    //   window.location.href === `${MuhalikConfig.PATH}  /user/profile?my-address` ||
-    //   window.location.href === `${MuhalikConfig.PATH}  /user/profile?orders` || window.location.href === `${MuhalikConfig.PATH}  /user/profile?pending-orders` ||
-    //   window.location.href === `${MuhalikConfig.PATH}  /user/profile?delivered-orders` || window.location.href === `${MuhalikConfig.PATH}  /user/profile?cancelled-orders` ||
-    //   window.location.href === `${MuhalikConfig.PATH}  /user/profile?returned-orders`
-    // ) {
-    //   Router.push('/user/profile')
-    // }
-
-    // if (window.location.href === MuhalikConfig.PATH + '/user/account' || window.location.href === MuhalikConfig.PATH + '/user/account?my-profile' ||
-    //   window.location.href === MuhalikConfig.PATH + '/user/account?change-profile-picture' || MuhalikConfig.PATH + '/user/account?shop-address' ||
-    //   window.location.href === MuhalikConfig.PATH + ' /user/account?my-address' ||
-    //   window.location.href === MuhalikConfig.PATH + '/user/account?orders' || window.location.href === MuhalikConfig.PATH + '/user/account?pending-orders' ||
-    //   window.location.href === MuhalikConfig.PATH + '/user/account?delivered-orders' || window.location.href === MuhalikConfig.PATH + '/user/account?cancelled-orders' ||
-    //   window.location.href === MuhalikConfig.PATH + '/user/account?returned-orders'
-    // ) {
-    //   Router.push('/user/account')
-    // }
-  }
 
   function handleChangeLang(lang) {
     if (lang == 'en') {

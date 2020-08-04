@@ -38,15 +38,13 @@ class BulkUpload extends React.Component {
             headers: {
                 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             }
-        })
-            .then(function (response) {
-                return response;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        }).then(function (response) {
+            return response;
+        }).catch(function (error) {
+            console.log(error);
+        });
 
-        return "fuck";
+        return;
 
 
         // const form = new FormData()

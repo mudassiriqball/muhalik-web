@@ -12,16 +12,14 @@ import {
     isBrowser,
     isMobile
 } from "react-device-detect";
-import {
-    removeTokenFromStorage,
-    getDecodedTokenFromStorage
-} from '../../../../sdk/core/authentication-service';
+import { checkTokenExpAuth } from '../../../../sdk/core/authentication-service';
 import axios from 'axios'
 import MuhalikConfig from '../../../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../../../styleSheet'
 import Link from 'next/link'
 import BreadcrumbRow from '../../../components/breadcrumb-row'
 import MovingLogo from '../../../components/moving-logo'
+import DiscountPrice from '../../../components/discount-price'
 
 React.useLayoutEffect = React.useEffect
 import translate from '../../../../i18n/translate'
@@ -63,7 +61,11 @@ export default function Category(props) {
     const [fieldName, setFieldName] = useState("sub-category")
     const [query, setQuery] = useState(sub_category)
     const [pageNumber, setPageNumber] = useState(1)
-    const [token, setToken] = useState({ role: '', full_name: '' })
+
+    const [user, setUser] = useState({
+        _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+    })
     const [cart_count, setCart_count] = useState(0)
 
     let loadingCard = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
@@ -72,19 +74,32 @@ export default function Category(props) {
     const { loading, error, products, pages, total, hasMore } = useQueryInfiniteScroll(fieldName, query, pageNumber, isMobile ? 12 : 24)
 
     useEffect(() => {
-        getData()
-    }, [])
-    async function getData() {
-        const _token = await getDecodedTokenFromStorage()
-        if (_token !== null) {
-            setToken(_token)
-            const url = MuhalikConfig.PATH + `/api/users/cart/${_token._id}`;
-            await axios.get(url).then((res) => {
-                setCart_count(res.data.data.length)
-            }).catch((error) => {
-            })
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+
+        async function getData() {
+            const _decodedToken = await checkTokenExpAuth()
+            if (_decodedToken != null) {
+                await setUser(_decodedToken)
+                const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decodedToken._id}`;
+                await axios.get(user_url, { cancelToken: source.token }).then((res) => {
+                    if (unmounted) {
+                        setUser(res.data.data[0])
+                        setCart_count(res.data.data[0].cart.length)
+                    }
+                }).catch((err) => {
+                    if (axios.isCancel(err)) return
+                })
+            }
         }
-    }
+
+        getData()
+        return () => {
+            unmounted = false
+            source.cancel();
+        };
+    }, []);
 
     const observer = useRef()
     const lastProducrRef = useCallback((node) => {
@@ -116,8 +131,7 @@ export default function Category(props) {
     return (
         <div className='_sub_category'>
             <Layout
-                role={token.role || ''}
-                name={token.full_name || ''}
+                user={user}
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
@@ -172,13 +186,13 @@ export default function Category(props) {
                                                         <div className='only_products_div'>
                                                             <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />
                                                             <label className='my_label'>{element.product_name}</label>
-                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_price}</label>
+                                                            <DiscountPrice price={element.product_price} discount={element.product_discount} />
                                                         </div>
                                                         :
                                                         <div className='only_products_div'>
                                                             <Image className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                                             <label className='my_label'>{element.product_name}</label>
-                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_variations[0].price}</label>
+                                                            <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
                                                         </div>
                                                     }
                                                 </Card>
@@ -188,13 +202,13 @@ export default function Category(props) {
                                                         <div className='only_products_div' onClick={() => handleProductClick(element)}>
                                                             <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_image_link[0].url} />
                                                             <label className='my_label'>{element.product_name}</label>
-                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_price}</label>
+                                                            <DiscountPrice price={element.product_price} discount={element.product_discount} />
                                                         </div>
                                                         :
                                                         <div className='only_products_div' onClick={() => handleProductClick(element)}>
                                                             <Image className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                                             <label className='my_label'>{element.product_name}</label>
-                                                            <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_variations[0].price}</label>
+                                                            <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
                                                         </div>
                                                     }
                                                 </Card>

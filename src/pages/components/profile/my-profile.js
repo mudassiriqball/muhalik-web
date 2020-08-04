@@ -27,7 +27,6 @@ export default function MyProfile(props) {
         setGender(props.gender)
         setEmail(props.email)
         return () => {
-
         }
     }, [props])
 
@@ -65,7 +64,7 @@ export default function MyProfile(props) {
 
     return (
         <div className='my_profile'>
-            {!props.isMobile && <label className='heading'>My Profile</label>}
+            {!props.isMobile && <label className='heading'>{translate('my_profile')}</label>}
             <Card className='my_card'>
                 <Card.Body>
                     <Row className='p-0 m-0'>

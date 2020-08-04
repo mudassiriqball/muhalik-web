@@ -75,7 +75,7 @@ const CustomFields = props => {
     }
 
     return (
-        <>
+        <div className='custom_fields'>
             <AlertModal
                 onHide={(e) => setUserStatusAlert(false)}
                 show={userStatusAlert}
@@ -101,9 +101,9 @@ const CustomFields = props => {
                                 value={fieldName}
                                 onChange={(e) => setFieldName(e)}
                             />
-                            <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={handleShowModal}>
+                            {/* <Nav.Link style={{ padding: '0%', margin: '0%', fontSize: '14px' }} onClick={handleShowModal}>
                                 Add New
-                        </Nav.Link>
+                        </Nav.Link> */}
                             <AddNewFieldNameModal
                                 {...props}
                                 show={modalShow}
@@ -170,13 +170,20 @@ const CustomFields = props => {
                     </Form.Row>
                 )}
             </div>
+            <style type="text/css">{`
+                .custom_fields {
+                    min-height: 300px;
+                    position: relative;
+                    z-index: 10;
+                }
+            `}</style>
             <style jsx>{`
                 span {
                     color: red;
                     font-size: 13px
                 }
             `}</style>
-        </>
+        </div>
     )
 }
 

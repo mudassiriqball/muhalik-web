@@ -1,4 +1,4 @@
-
+import React, { useState } from 'react';
 import { Nav, Tab, Row, Col, Image } from "react-bootstrap";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,205 +10,235 @@ import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 import VendorDashboard from './dashboard-contents/vendor-dashboard';
 import AddNew from './dashboard-contents/product-contents/add-new';
-// import AddCategory from './dashboard-contents/product-contents/add-category';
-import Inventory from './dashboard-contents/inventory';
+
+import AllProducts from './dashboard-contents/all-products';
+import OutOfStockProducts from './dashboard-contents/out-of-stock-products';
+
 import Discounts from './dashboard-contents/discounts';
-import Reports from './dashboard-contents/reports';
-import BulkUpload from './dashboard-contents/bulk-upload';
 import Orders from './dashboard-contents/orders';
 import GlobalStyleSheet from '../../../../styleSheet';
+import AddNewFieldNameModal from "./dashboard-contents/product-contents/add-new-contents/add-new-field-name-model";
+import { faEdit } from "@fortawesome/free-regular-svg-icons";
 
 const DashboardSideDrawer = props => {
     let drawerClasses = "tabs_side_drawer";
     if (props.show) {
         drawerClasses = "tabs_side_drawer open";
     }
-    const [show_product, setShow_product] = React.useState(false);
+    const [modalShow, setModalShow] = useState(false)
+    const [show_inventory, setShow_inventory] = useState(false)
 
+    function handleShowAddNewFieldModal() {
+        setModalShow(true)
+    }
     return (
-        <div className='vendor_dashboard_drawer'>
-            <Tab.Container id="dashboard-tabs" defaultActiveKey="Dashboard">
-                {/* Side Drawer Components */}
-                <div className={drawerClasses}>
-                    <Nav className="flex-column" variant="pills">
-                        <Nav.Item style={styles.image_div}>
-                            <p>
-                                <Image src={props.avatar} roundedCircle thumbnail fluid style={styles.image} />
-                                <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
-                            </p>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link">
-                                <Nav.Link eventKey="Dashboard" onClick={props.click} style={styles.nav_link}>
-                                    <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
-                                    <div className="mr-auto">Dashboard</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link">
-                                <Nav.Link eventKey="AddProduct" onClick={props.click} style={styles.nav_link}>
-                                    <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
-                                    <div className="mr-auto">Add Product</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link">
-                                <Nav.Link eventKey="Inventory" onClick={props.click} style={styles.nav_link}>
-                                    <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
-                                    <div className="mr-auto">Inventory</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link">
-                                <Nav.Link eventKey="BulkUpload" onClick={props.click} style={styles.nav_link}>
-                                    <FontAwesomeIcon icon={faUpload} style={styles.fontawesome} />
-                                    <div className="mr-auto">Bulk Upload</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link">
-                                <Nav.Link eventKey="Discounts" onClick={props.click} style={styles.nav_link}>
-                                    <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
-                                    <div className="mr-auto">Discount Coupons</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link">
-                                <Nav.Link eventKey="Orders" onClick={props.click} style={styles.nav_link} >
-                                    <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
-                                    <div className="mr-auto">Orders</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link" >
-                                <Nav.Link eventKey="Reports" onClick={props.click} style={styles.nav_link}>
-                                    <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
-                                    <div className="mr-auto">Reports</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link" >
-                                <Nav.Link onClick={props.click, props.logoutClickHandler} style={styles.nav_link}>
-                                    <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
-                                    <div className="mr-auto">Logout</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                    </Nav>
-                </div>
+        <>
+            <AddNewFieldNameModal
+                token={props.token}
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+            />
+            <div className='vendor_dashboard_drawer'>
+                <Tab.Container id="dashboard-tabs" defaultActiveKey="Dashboard">
+                    {/* Side Drawer Components */}
+                    <div className={drawerClasses}>
+                        <Nav className="flex-column" variant="pills">
+                            <Nav.Item style={styles.image_div}>
+                                <p>
+                                    <Image src={props.avatar} roundedCircle thumbnail fluid style={styles.image} />
+                                    <Nav.Link style={styles.muhalik}> {props.full_name} </Nav.Link>
+                                </p>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <div className="nav_link">
+                                    <Nav.Link eventKey="Dashboard" onClick={() => { props.click(), setShow_inventory(false) }} style={styles.nav_link}>
+                                        <FontAwesomeIcon size="xs" icon={faTachometerAlt} style={styles.fontawesome} />
+                                        <div className="mr-auto">Dashboard</div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <div className="nav_link">
+                                    <Nav.Link eventKey="AddProduct" onClick={() => { props.click(), setShow_inventory(false) }} style={styles.nav_link}>
+                                        <FontAwesomeIcon size="xs" icon={faPlusCircle} style={styles.fontawesome} />
+                                        <div className="mr-auto">Add Product</div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <div className="nav_link">
+                                    <Nav.Link onClick={() => setShow_inventory(!show_inventory)} style={styles.nav_link}>
+                                        <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
+                                        <div className="mr-auto">Inventory</div>
+                                        <FontAwesomeIcon icon={show_inventory ? faChevronUp : faChevronDown} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
+                            {show_inventory ?
+                                <div>
+                                    <div className="limk_submenue">
+                                        <Nav.Link eventKey="AllProducts" style={styles.submenu_link} onClick={props.click}>
+                                            <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                            <div className="mr-auto">All Products</div>
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                    <div className="limk_submenue">
+                                        <Nav.Link eventKey="OutOfStock" style={styles.submenu_link} onClick={props.click}>
+                                            <FontAwesomeIcon size="xs" icon={faWarehouse} style={styles.fontawesome} />
+                                            <div className="mr-auto"> Out of Stock</div>
+                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                        </Nav.Link>
+                                    </div>
+                                </div>
+                                : null
+                            }
+                            <Nav.Item>
+                                <div className="nav_link">
+                                    <Nav.Link eventKey="Orders" onClick={() => { props.click(), setShow_inventory(false) }} style={styles.nav_link} >
+                                        <FontAwesomeIcon icon={faEdit} style={styles.fontawesome} />
+                                        <div className="mr-auto">Orders</div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <div className="nav_link">
+                                    <Nav.Link onClick={() => { props.click(), handleShowAddNewFieldModal() }} style={styles.nav_link}>
+                                        <FontAwesomeIcon icon={faPlusCircle} style={styles.fontawesome} />
+                                        <div className="mr-auto">Request Custom Field </div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <div className="nav_link" >
+                                    <Nav.Link onClick={props.click, props.logout} style={styles.nav_link}>
+                                        <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
+                                        <div className="mr-auto">Logout</div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
+                                </div>
+                            </Nav.Item>
+                        </Nav>
+                    </div>
 
-                <div className="tabs_side_drawer_tab_content" >
-                    <Col sm={"auto"} style={{ padding: '0px' }}>
-                        <Tab.Content>
-                            <Tab.Pane eventKey="Dashboard">
-                                <VendorDashboard user_status={props.user_status} />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="AddProduct">
-                                <AddNew
-                                    {...props}
-                                    isUpdateProduct={false}
-                                    productCategories={''}
-                                    productSubCategories={''}
-                                    productSubSubCategories={''}
-                                    subCategoryDisabled={true}
-                                    subSubCategoryDisabled={true}
-                                    productTags={[]}
-                                    warrantyType={''}
-                                    simple_product_image_link={[]}
-                                    variationsArray={[]}
-                                    dangerousGoodsArray={[]}
-                                />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="Inventory">
-                                <Inventory {...props} />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="BulkUpload">
-                                <BulkUpload />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="Discounts">
-                                <Discounts />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="Orders">
-                                <Orders {...props} />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="Reports">
-                                <Reports />
-                            </Tab.Pane>
-                        </Tab.Content>
-                    </Col>
-                </div>
-                {/* End of the Side Drawer Components */}
-            </Tab.Container>
-            <style jsx>
-                {`
-                    .nav_link {
-                        color: ${GlobalStyleSheet.body_color};
-                        border-top: 0.5px solid #434556;
-                        border-bottom: 0.5px solid #434556;
-                    }
-                    .nav_link:hover {
-                        background: #30313E;
-                    }
+                    <div className="tabs_side_drawer_tab_content" >
+                        <Col sm={"auto"} style={{ padding: '0px' }}>
+                            <Tab.Content>
+                                <Tab.Pane eventKey="Dashboard">
+                                    <VendorDashboard
+                                        status={props.user.status}
+                                    />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="AddProduct">
+                                    <AddNew
+                                        {...props}
+                                        title={'Vendor Dashboard / Add New'}
+
+                                        subCategoryDisabled={true}
+                                        isUpdateProduct={false}
+                                        isVariableProduct={false}
+                                        productCategories={''}
+                                        productSubCategories={''}
+                                        productTags={[]}
+                                        warrantyType={''}
+                                        simple_product_image_link={[]}
+                                        variationsArray={[]}
+                                        dangerousGoodsArray={[]}
+                                    />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="AllProducts">
+                                    <AllProducts
+                                        user_id={props.user._id}
+                                        {...props}
+                                    />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="OutOfStock">
+                                    <OutOfStockProducts
+                                        user_id={props.user._id}
+                                        {...props}
+                                    />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="Orders">
+                                    <Orders
+                                        user_id={props.user._id}
+                                        {...props}
+                                    />
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="Discounts">
+                                    <Discounts />
+                                </Tab.Pane>
+                            </Tab.Content>
+                        </Col>
+                    </div>
+                    {/* End of the Side Drawer Components */}
+                </Tab.Container>
+            </div>
+            <style jsx>{`
+                .nav_link {
+                    color: ${GlobalStyleSheet.body_color};
+                    border-top: 0.5px solid #434556;
+                    border-bottom: 0.5px solid #434556;
+                }
+                .nav_link:hover {
+                    background: #30313E;
+                }
+                .limk_submenue {
+                    background: ${GlobalStyleSheet.admin_primry_color};
+                    border-top: 0.5px solid #434556;
+                    border-bottom: 0.5px solid #434556;
+                    margin: 0% 5% 0% 10%;
+                }
+                .limk_submenue:hover {
+                    background: #30313E;
+                }
+                .tabs_side_drawer {
+                    height: 100%;
+                    background: ${GlobalStyleSheet.admin_primry_color};
+                    box-shadow: 1px 0px 7px rgba(0, 0, 0, 0.5);
+                    position: fixed;
+                    top: 0;
+                    bottom: 1px;
+                    left: 0;
+                    overflow-y: auto;                        
+                    width: 80%;
+                    max-width: 400px;
+                    z-index: 200;
+                    transform: translateX(-150% );
+                    transition: transform 0.5s ease-out;
+                }
+                .tabs_side_drawer.open{
+                    transform: translateX(0);
+                }
+                .product_submenu {
+                    background: ${GlobalStyleSheet.admin_primry_color};
+                    border-top: 0.5px solid #434556;
+                    border-bottom: 0.5px solid #434556;
+                    margin: 0% 5% 0% 10%;
+                }
+                p {
+                    text-align: center; 
+                    margin: 0px;
+                    padding: 0px;
+                }
+                label {
+                    margin-top: 4%;
+                    color: ${GlobalStyleSheet.body_color};
+                }
+                
+                @media (min-width: 992px) {
                     .tabs_side_drawer {
-                        height: 100%;
-                        background: ${GlobalStyleSheet.admin_primry_color};
-                        box-shadow: 1px 0px 7px rgba(0, 0, 0, 0.5);
-                        position: fixed;
-                        top: 0;
-                        bottom: 1px;
-                        left: 0;
-                        overflow-y: auto;                        
-                        width: 80%;
-                        max-width: 400px;
-                        z-index: 200;
-                        transform: translateX(-150% );
-                        transition: transform 0.5s ease-out;
+                        display: none;
                     }
-                    .tabs_side_drawer.open{
-                        transform: translateX(0);
+                    .tabs_side_drawer_tab_content {
+                        display: none;
                     }
-                    .product_submenu {
-                        background: ${GlobalStyleSheet.admin_primry_color};
-                        border-top: 0.5px solid #434556;
-                        border-bottom: 0.5px solid #434556;
-                        margin: 0% 5% 0% 10%;
-                    }
-                    p {
-                        text-align: center; 
-                        margin: 0px;
-                        padding: 0px;
-                    }
-                    label {
-                        margin-top: 4%;
-                        color: ${GlobalStyleSheet.body_color};
-                    }
-                    
-                    @media (min-width: 992px) {
-                        .tabs_side_drawer {
-                            display: none;
-                        }
-                        .tabs_side_drawer_tab_content {
-                            display: none;
-                        }
-                    }
-                `}
-            </style>
-        </div>
+                }
+            `}</style>
+        </>
     );
 }
 
@@ -242,7 +272,7 @@ const styles = {
         alignItems: 'center',
         height: '45px'
     },
-    product_submenu_link: {
+    submenu_link: {
         color: 'white',
         fontSize: '11px',
         display: 'flex',

@@ -24,7 +24,6 @@ import Inventory from './dashboard-contents/inventory';
 import Orders from './dashboard-contents/orders'
 import Discounts from './dashboard-contents/discount';
 import Commision from './dashboard-contents/commision';
-import Reports from './dashboard-contents/reports';
 import GlobalStyleSheet from '../../../../styleSheet';
 
 const DashboardSideDrawer = props => {
@@ -46,7 +45,7 @@ const DashboardSideDrawer = props => {
                         <Nav.Item style={styles.image_div}>
                             <p>
                                 <Image src={props.avatar} roundedCircle thumbnail fluid style={styles.image} />
-                                <Nav.Link style={styles.muhalik}> {props.user_name} </Nav.Link>
+                                <Nav.Link style={styles.muhalik}> {props.full_name} </Nav.Link>
                             </p>
                         </Nav.Item>
                         {/* <Nav.Item>
@@ -123,14 +122,14 @@ const DashboardSideDrawer = props => {
                                 </div>
                                 <div className="product_submenu">
                                     <Nav.Link eventKey="AllCategories" onClick={props.click} style={styles.categories_submenu_link} >
-                                        <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                        <FontAwesomeIcon size="xs" icon={faTh} style={styles.fontawesome} />
                                         <div className="mr-auto"> All Categories</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                     </Nav.Link>
                                 </div>
                                 <div className="product_submenu">
                                     <Nav.Link eventKey="HomeScreenCategories" onClick={props.click} style={styles.categories_submenu_link} >
-                                        <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                        <FontAwesomeIcon size="xs" icon={faTh} style={styles.fontawesome} />
                                         <div className="mr-auto">Home Screen Categories</div>
                                         <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                     </Nav.Link>
@@ -162,15 +161,6 @@ const DashboardSideDrawer = props => {
                                 <Nav.Link eventKey="Commission" onClick={props.click} style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
                                     <div className="mr-auto">Commission</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link" >
-                                <Nav.Link eventKey="Reports" onClick={props.click} style={styles.nav_link}>
-                                    <FontAwesomeIcon icon={faChartBar} style={styles.fontawesome} />
-                                    <div className="mr-auto">Reports</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                 </Nav.Link>
                             </div>
@@ -212,10 +202,14 @@ const DashboardSideDrawer = props => {
                                 <AddCategory {...props} />
                             </Tab.Pane>
                             <Tab.Pane eventKey="AllCategories">
-                                <AllCategories {...props} />
+                                <AllCategories
+                                    {...props}
+                                />
                             </Tab.Pane>
                             <Tab.Pane eventKey="HomeScreenCategories">
-                                <HomeScreenCategories {...props} />
+                                <HomeScreenCategories
+                                    {...props}
+                                />
                             </Tab.Pane>
                             <Tab.Pane eventKey="Slider">
                                 <Slider {...props} />
@@ -225,9 +219,6 @@ const DashboardSideDrawer = props => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="Commision">
                                 <Commision />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="Reports">
-                                <Reports />
                             </Tab.Pane>
                         </Tab.Content>
                     </Col>

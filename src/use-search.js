@@ -21,7 +21,7 @@ export default function useSearch(query, pageNumber, limit) {
         const getData = () => {
             setLoading(true)
             setError(false)
-            const _url = MuhalikConfig.PATH + `/api/products/search`
+            const _url = MuhalikConfig.PATH + `/api/products/search/abc`
             axios({
                 method: 'GET',
                 url: _url,

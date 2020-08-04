@@ -102,10 +102,10 @@ usersController.registerUser = async (req, res) => {
 // Set avatar
 usersController.set_avatar = async (req, res) => {
   const _id = req.params._id;
-
   try {
     const user = await Users.findOne({ _id: _id });
-    const token = user.avatar;
+    if(user.avatar){	
+    const token = user.avatar
     const filenameToRemove = token.split("/").slice(-1)[0];
     s3.deleteObject(
       {
@@ -114,6 +114,7 @@ usersController.set_avatar = async (req, res) => {
       },
       function (err, data) { }
     );
+}
     const url = req.files[0].location;
     Users.findOneAndUpdate(
       { _id: _id },
@@ -457,7 +458,6 @@ usersController.get_users_by_query = async (req, res) => {
       try {
         _id = new ObjectId(req.query.q);
       } catch (err) {
-        console.log('errr:', err)
         res.status(200).send({
           code: 200,
           message: "Successful",
@@ -465,7 +465,6 @@ usersController.get_users_by_query = async (req, res) => {
         });
         return
       }
-      console.log('data:', req.params, req.query, _id)
 
       user = await Users.paginate(
         {
