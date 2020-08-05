@@ -130,7 +130,7 @@ const DashboardSideDrawer = props => {
                             <Tab.Content>
                                 <Tab.Pane eventKey="Dashboard">
                                     <VendorDashboard
-                                        status={props.user.status}
+                                        status={props.status}
                                     />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddProduct">
@@ -152,19 +152,16 @@ const DashboardSideDrawer = props => {
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AllProducts">
                                     <AllProducts
-                                        user_id={props.user._id}
                                         {...props}
                                     />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="OutOfStock">
                                     <OutOfStockProducts
-                                        user_id={props.user._id}
                                         {...props}
                                     />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Orders">
                                     <Orders
-                                        user_id={props.user._id}
                                         {...props}
                                     />
                                 </Tab.Pane>

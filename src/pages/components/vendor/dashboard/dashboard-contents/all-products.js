@@ -45,7 +45,6 @@ export default function AllProducts(props) {
         vendorProductsPageLimit(props.token, refresh_count, props.user_id, false, limitPageNumber, '20')
     const { vendor_products_query_loading, vendor_products_query_error, vendor_products_query_products, vendor_products_query_total, vendor_products_query_pages, vendor_products_query_hasMore } =
         vendorProductsQuerySearch(props.token, refresh_count, props.user_id, fieldName, query, queryPageNumber, '20', start_date, end_date)
-
     async function handleSearch(searchType, searchValue, start, end) {
         if (searchValue != '') {
             setFieldName(searchType)
@@ -77,19 +76,19 @@ export default function AllProducts(props) {
 
 
     function handleEditProduct(element) {
-        if (element.product_type != 'simple-product') {
-            let array = [];
-            let variations = element.product_variations
-            variations.forEach((element, i) => {
-                array.push({
-                    item: element.item, price: element.price, stock: element.stock, image_link: element.image_link,
-                    price_error: '', stock_error: '', image_link_error: '', custom_fields: element.custom_fields
-                })
-            })
-            element.product_variations = array
-        } else {
-            element.product_variations = []
-        }
+        // if (element.product_type != 'simple-product') {
+        //     let array = [];
+        //     let variations = element.product_variations
+        //     variations.forEach((element, i) => {
+        //         array.push({
+        //             item: element.item, price: element.price, stock: element.stock, image_link: element.image_link,
+        //             price_error: '', stock_error: '', image_link_error: '', custom_fields: element.custom_fields
+        //         })
+        //     })
+        //     element.product_variations = array
+        // } else {
+        //     element.product_variations = []
+        // }
         setData(element)
         setViewProduct('edit')
     }
@@ -120,6 +119,7 @@ export default function AllProducts(props) {
         switch (param) {
             case 'view':
                 return <ViewProduct
+                    isUpdate={false}
                     data={data}
                     back={() => { setViewProduct(false), setData({}) }}
                     isVariableProduct={data.product_type != "simple-product"}
@@ -128,50 +128,59 @@ export default function AllProducts(props) {
                 />
                 break;
             case 'edit':
-                return <AddNew
-                    title={`Vendor Dashboard / All Products / Update / ${data._id}`}
-                    categories_list={props.categories_list}
-                    sub_categories_list={props.sub_categories_list}
-
-                    isUpdateProduct={true}
-                    _id={data._id}
-                    isVariableProduct={data.product_type != 'simple-product'}
-
+                return <ViewProduct
+                    isUpdate={true}
+                    data={data}
+                    token={props.token}
                     back={() => { setViewProduct(false), setData({}) }}
-                    view={() => setViewProduct('view')}
+                    isVariableProduct={data.product_type != "simple-product"}
                     handleShowConfirmModal={() => handleShowConfirmModal(-1)}
-
-                    productCategory={data.category}
-                    productSubCategory={data.sub_category}
-                    subCategoryDisabled={false}
-
-                    productTags={data.product_tags}
-                    warrantyType={data.warranty_type}
-                    product_image_link={data.product_image_link}
-                    variationsArray={data.product_variations}
-                    customFieldsArray={data.custom_fields}
-                    dangerousGoodsArray={data.dangerous_goods}
-
-                    product_name={data.product_name}
-                    product_description={data.product_description}
-                    product_type={'variable-product'}
-                    product_type={data.product_type}
-                    sku={data.sku}
-                    product_price={data.product_price}
-                    product_in_stock={data.product_in_stock}
-                    product_brand_name={data.product_brand_name}
-
-                    product_warranty={data.product_warranty}
-                    warranty_type={data.warranty_type}
-                    product_discount={data.product_discount}
-                    purchase_note={data.purchase_note}
-                    product_weight={data.product_weight || ''}
-                    dimension_length={data.dimension_length | 1}
-                    dimension_width={data.dimension_width || ''}
-                    dimension_height={data.dimension_height || ''}
-                    shipping_charges={data.shipping_charges || ''}
-                    handling_fee={data.handling_fee || ''}
+                    edit={() => handleEditProduct(data)}
                 />
+                // <AddNew
+                // title={`Vendor Dashboard / All Products / Update / ${data._id}`}
+                // categories_list={props.categories_list}
+                // sub_categories_list={props.sub_categories_list}
+
+                // isUpdateProduct={true}
+                // _id={data._id}
+                // isVariableProduct={data.product_type != 'simple-product'}
+
+                // back={() => { setViewProduct(false), setData({}) }}
+                // view={() => setViewProduct('view')}
+                // handleShowConfirmModal={() => handleShowConfirmModal(-1)}
+
+                // productCategory={data.category}
+                // productSubCategory={data.sub_category}
+                // subCategoryDisabled={false}
+
+                // productTags={data.product_tags}
+                // warrantyType={data.warranty_type}
+                // product_image_link={data.product_image_link}
+                // variationsArray={data.product_variations}
+                // customFieldsArray={data.custom_fields}
+                // dangerousGoodsArray={data.dangerous_goods}
+
+                // product_name={data.product_name}
+                // product_description={data.product_description}
+                // product_type={'variable-product'}
+                // product_type={data.product_type}
+                // sku={data.sku}
+                // product_price={data.product_price}
+                // product_in_stock={data.product_in_stock}
+                // product_brand_name={data.product_brand_name}
+
+                // product_warranty={data.product_warranty}
+                // warranty_type={data.warranty_type}
+                // product_discount={data.product_discount}
+                // purchase_note={data.purchase_note}
+                // product_weight={data.product_weight || ''}
+                // dimension_length={data.dimension_length | 1}
+                // dimension_width={data.dimension_width || ''}
+                // dimension_height={data.dimension_height || ''}
+                // shipping_charges={data.shipping_charges || ''}
+                // handling_fee={data.handling_fee || ''}
+                // />
                 break;
             default:
                 return <>
@@ -215,7 +224,7 @@ export default function AllProducts(props) {
                                             list={vendor_products_query_products}
                                             pageNumber={queryPage}
                                             setViewProduct={(element) => { setData(element), setViewProduct('view') }}
-                                            handleEditProduct={(index) => handleEditProduct(element)}
+                                            handleEditProduct={(element) => handleEditProduct(element)}
                                             handleShowConfirmModal={(element) => handleShowConfirmModal(element)}
                                         />
                                         <hr />
@@ -403,11 +412,28 @@ function ProductTable(props) {
 const ViewProduct = props => {
     const [ref, { x, y, width }] = useDimensions();
 
-    const [imgPreview, setImgPreview] = React.useState(false);
-    const [currentImgIndex, setCurrentImgIndex] = React.useState('')
-    const [imgData, setImgData] = React.useState([])
+    const [imgPreview, setImgPreview] = useState(false);
+    const [currentImgIndex, setCurrentImgIndex] = useState('')
+    const [imgData, setImgData] = useState([])
 
-    // const len = props.data.product_image_link.length;
+    const [data, setData] = useState(props.data)
+
+    const [name, setname] = useState(props.data.product_name)
+    const [brand, setbrand] = useState(props.data.product_brand_name)
+    const [price, setprice] = useState(props.data.product_price)
+    const [stock, setstock] = useState(props.data.product_in_stock)
+    const [discount, setdiscount] = useState(props.data.product_discount)
+    const [description, setdescription] = useState(props.data.product_description)
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false)
+    const [confirmModalMsg, setConfirmModalMsg] = useState('')
+    const [confirmModalLoading, setConfirmModalLoading] = useState(false)
+
+    const [showAlertModal, setShowAlertModal] = useState(false)
+    const [alertModalMsg, setAlertModalMsg] = useState(false)
+
+    const [iconname, setIconname] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     function prevImage() {
         if (currentImgIndex > 0) {
@@ -420,90 +446,233 @@ const ViewProduct = props => {
         }
     }
 
+    async function handleUpdateProduct() {
+        if (name == '' || price == '' || price < 1 || stock == '' || stock < 1 || discount == '') {
+            alert('Enter valid values')
+        } else {
+            setIsLoading(true)
+            let dd = {}
+            dd = {
+                product_price: price,
+                product_name: name,
+                product_brand_name: brand,
+                product_in_stock: stock,
+                product_discount: discount,
+                product_description: description,
+            }
+            console.log('data:', dd)
+
+            const _url = MuhalikConfig.PATH + `/api/products/product/update/product/${data._id}`
+            await axios({
+                method: 'PUT',
+                url: _url,
+                headers: {
+                    'authorization': props.token
+                },
+                data: dd,
+            }).then(res => {
+                setIsLoading(false)
+                setAlertModalMsg('Product Updated Successfully')
+                setShowAlertModal(true)
+            }).then((err) => {
+                setIsLoading(false)
+                alert('Update Failed')
+                console.log('error:', err)
+            })
+        }
+    }
+
+    function handleVariabelPriceChange(val, index) {
+        let copyArray = []
+        copyArray = Object.assign([], data)
+        let obj = {}
+        obj = copyArray.product_variations[index]
+        obj.price = val
+        obj.priceError = ''
+        copyArray.product_variations[index] = obj
+        setData(copyArray)
+    }
+    function handleVariabelStockChange(val, index) {
+        let copyArray = []
+        copyArray = Object.assign([], data)
+        let obj = {}
+        obj = copyArray.product_variations[index]
+        obj.stock = val
+        obj.stockError = ''
+        copyArray.product_variations[index] = obj
+        setData(copyArray)
+    }
+    function handleVariabelDiscountChange(val, index) {
+        let copyArray = []
+        copyArray = Object.assign([], data)
+        let obj = {}
+        obj = copyArray.product_variations[index]
+        obj.discount = val
+        obj.discountError = ''
+        copyArray.product_variations[index] = obj
+        setData(copyArray)
+    }
+
+    async function handleUpdateVariation(element, index) {
+        let copyArray = []
+        copyArray = Object.assign([], data)
+        let obj = {}
+        obj = copyArray.product_variations[index]
+        obj['isLoading'] = true
+        copyArray.product_variations[index] = obj
+        setData(copyArray)
+
+        if (element.price == '' || element.price < 1 || element.stock == '' || element.stock < 1 || element.discount == '' || element.discount < 0) {
+            if (element.price == '' || element.price < 1) {
+                obj['priceError'] = 'Enter valid price'
+            }
+            if (element.stock == '' || element.stock < 1) {
+                obj['stockError'] = 'Enter valid stock'
+            }
+            if (element.discount == '' || element.discount < 0) {
+                obj['discountError'] = 'Enter valid dicount'
+            }
+        } else {
+            let dd = {}
+            dd = {
+                price: element.price,
+                stock: element.stock,
+                discount: element.discount
+            }
+            console.log('data:', dd)
+            const _url = MuhalikConfig.PATH + `/api/products/product/update/product-variation/${data._id}`
+            axios({
+                method: 'PUT',
+                url: _url,
+                headers: {
+                    'authorization': props.token
+                },
+                data: dd,
+                params: { variation_id: element._id },
+            }).then(res => {
+                obj.isLoading = false
+            }).then((err) => {
+                obj.isLoading = false
+            })
+        }
+
+        copyArray.product_variations[index] = obj
+        setData(copyArray)
+    }
+
+    async function handleConfirmed() {
+
+    }
+
     return (
         <div className='vendor_view_product'>
-            <TitleRow icon={faPlus} title={` Vendor Dashboard / All Products / ${props.data.product_name}`} />
+            <ConfirmModal
+                onHide={() => { setShowConfirmModal(false), setConfirmModalLoading(false) }}
+                show={showConfirmModal}
+                title={confirmModalMsg}
+                iconname={iconname}
+                color={'red'}
+                _id={data._id}
+                name={data.full_name}
+                confirm={handleConfirmed}
+                loading={confirmModalLoading}
+            />
+            <AlertModal
+                onHide={(e) => setShowAlertModal(false)}
+                show={showAlertModal}
+                header={'Success'}
+                message={alertModalMsg}
+                iconname={faThumbsUp}
+                color={'green'}
+            />
+            <TitleRow icon={faPlus} title={` Vendor Dashboard / All Products / ${data.product_name}`} />
             <Form.Row style={{ margin: ' 1% 2%', display: 'flex', alignItems: 'center' }} >
                 <Button variant='outline-primary' size='sm' className="mr-auto" onClick={props.back}>Back</Button>
-                <div className="mr-auto" style={{ fontSize: '14px' }}> {props.data.product_name || '-'}</div>
-                <Button variant='outline-primary' size='sm' className="mr-3" onClick={props.edit}>Edit</Button>
-                <Button variant='outline-danger' size='sm' onClick={props.handleShowConfirmModal}>Delete</Button>
+                <div className="mr-auto" style={{ fontSize: '14px' }}> {data.product_name}</div>
+                {props.isUpdate ?
+                    <Button variant='outline-success' size='sm' className="mr-3" onClick={handleUpdateProduct}>
+                        {isLoading ? 'Updating' : 'Update'}
+                        {isLoading ? <Spinner size='sm' animation='grow' /> : null}
+                    </Button>
+                    :
+                    <Button variant='outline-primary' size='sm' className="mr-3" onClick={props.edit}>Edit</Button>
+                }
+                {/* <Button variant='outline-danger' size='sm' onClick={props.handleShowConfirmModal}>Delete</Button> */}
             </Form.Row>
             <CardAccordion title={'General Info'}>
                 <Row>
-                    <Form.Group as={Col} lg={props.isVariableProduct ? 6 : 4} md={props.isVariableProduct ? 6 : 4} sm={props.isVariableProduct ? 6 : 6} xs={12}>
+                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label className='form_label'>Product ID:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data._id} disabled={true} />
+                            <Form.Control type="text" size="sm" value={data._id} disabled={true} />
                         </InputGroup>
                     </Form.Group>
-                    <Form.Group as={Col} lg={props.isVariableProduct ? 6 : 4} md={props.isVariableProduct ? 6 : 4} sm={props.isVariableProduct ? 6 : 6} xs={12}>
+                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label className='form_label'>Product Name:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_name} disabled={true} />
+                            <Form.Control type="text" size="sm" onChange={(e) => setname(e.target.value)} value={name} isInvalid={!name && props.isUpdate} disabled={!props.isUpdate} />
                         </InputGroup>
                     </Form.Group>
-                    <Form.Group as={Col} lg={props.isVariableProduct ? 6 : 4} md={props.isVariableProduct ? 6 : 4} sm={props.isVariableProduct ? 6 : 6} xs={12}>
+                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label className='form_label'>SKU:</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.sku || '-'} disabled={true} />
+                            <Form.Control type="text" size="sm" value={data.sku} disabled={true} />
                         </InputGroup>
                     </Form.Group>
-
+                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
+                        <Form.Label className='form_label'>Brand Name:</Form.Label>
+                        <InputGroup>
+                            <Form.Control type="text" size="sm" onChange={(e) => setbrand(e.target.value)} value={brand} disabled={!props.isUpdate} />
+                        </InputGroup>
+                    </Form.Group>
                     {props.isVariableProduct ?
                         null
                         :
                         <>
                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                                <Form.Label className='form_label'>Brand Name:</Form.Label>
-                                <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.product_brand_name || '-'} disabled={true} />
-                                </InputGroup>
-                            </Form.Group>
-                            <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                 <Form.Label className='form_label'>Price:</Form.Label>
                                 <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.product_price} disabled={true} />
+                                    <Form.Control type="number" size="sm" onChange={(e) => setprice(e.target.value)} value={price} isInvalid={(!price || price < 1) && props.isUpdate} disabled={!props.isUpdate} />
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                 <Form.Label className='form_label'>Product In Stock:</Form.Label>
                                 <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.product_in_stock} disabled={true} />
+                                    <Form.Control type="number" size="sm" onChange={(e) => setstock(e.target.value)} value={stock} isInvalid={(!stock || stock < 1) && props.isUpdate} disabled={!props.isUpdate} />
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                 <Form.Label className='form_label'>Warranty (month):</Form.Label>
                                 <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.product_warranty || 'No Warranty'} disabled={true} />
+                                    <Form.Control type="text" size="sm" value={data.product_warranty} disabled={true} />
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                 <Form.Label className='form_label'>Warranty Type:</Form.Label>
                                 <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.warranty_type || '-'} disabled={true} />
+                                    <Form.Control type="text" size="sm" value={data.warranty_type} disabled={true} />
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                                 <Form.Label className='form_label'>Discount (%):</Form.Label>
                                 <InputGroup>
-                                    <Form.Control type="text" size="sm" value={props.data.product_discount || '0%'} disabled={true} />
+                                    <Form.Control type="number" size="sm" onChange={(e) => setdiscount(e.target.value)} value={discount || '0%'} isInvalid={(!discount || discount < 0) && props.isUpdate} disabled={!props.isUpdate} />
                                 </InputGroup>
                             </Form.Group>
                         </>
                     }
 
-                    <Form.Group as={Col} lg={props.isVariableProduct ? 6 : 4} md={props.isVariableProduct ? 6 : 4} sm={props.isVariableProduct ? 6 : 6} xs={12}>
+                    <Form.Group as={Col} lg={props.isVariableProduct ? 6 : 4} md={props.isVariableProduct ? 6 : 4} sm={6} xs={12}>
                         <Form.Label className='form_label'>Purchase Note(s):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.purchase_note || '-'} disabled={true} />
+                            <Form.Control type="text" size="sm" value={data.purchase_note} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
                     <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                         <Form.Label className='form_label'>Description:</Form.Label>
                         <InputGroup>
-                            <Form.Control as="textarea" row='8' value={props.data.product_description || 'No Description'} disabled={true} />
+                            <Form.Control as="textarea" row='8' onChange={(e) => setdescription(e.target.value)} value={description || 'No Description'} disabled={!props.isUpdate} />
                         </InputGroup>
                     </Form.Group>
                 </Row>
@@ -511,7 +680,7 @@ const ViewProduct = props => {
 
             {props.isVariableProduct ?
                 <CardAccordion title={'Variations'}>
-                    {props.data.product_variations && props.data.product_variations.map((element, index) =>
+                    {data.product_variations && data.product_variations.map((element, index) =>
                         <Accordion key={index} defaultActiveKey='0' className='pb-2'>
                             <Card>
                                 <Accordion.Toggle as={Card.Header} eventKey='1' className='accordian_toggle'>
@@ -522,32 +691,49 @@ const ViewProduct = props => {
                                     <>
                                         <Row noGutters >
                                             <label className='haeder_label'>Variations</label>
-                                            <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl1 pr-1'>
+                                            <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl-1 pr-1'>
                                                 <Form.Label className='form_label'>Price</Form.Label>
                                                 <InputGroup>
-                                                    <Form.Control type="text" size="sm" value={element.price || '-'} disabled={true} />
+                                                    <Form.Control type="number" onChange={(e) => handleVariabelPriceChange(e.target.value, index)} isInvalid={element.priceError} size="sm" value={element.price} disabled={!props.isUpdate} />
                                                 </InputGroup>
                                             </Form.Group>
-                                            <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl1 pr-1'>
+                                            <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl-1 pr-1'>
                                                 <Form.Label className='form_label'>Stock</Form.Label>
                                                 <InputGroup>
-                                                    <Form.Control type="text" size="sm" value={element.stock || '-'} disabled={true} />
+                                                    <Form.Control type="number" onChange={(e) => handleVariabelStockChange(e.target.value, index)} isInvalid={element.stockError} size="sm" value={element.stock} disabled={!props.isUpdate} />
+                                                </InputGroup>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl-1 pr-1'>
+                                                <Form.Label className='form_label'>Discount</Form.Label>
+                                                <InputGroup>
+                                                    <Form.Control type="number" onChange={(e) => handleVariabelDiscountChange(e.target.value, index)} isInvalid={element.discountError} size="sm" value={element.discount} disabled={!props.isUpdate} />
+                                                </InputGroup>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl-1 pr-1'>
+                                                <Form.Label className='form_label'>Warranty</Form.Label>
+                                                <InputGroup>
+                                                    <Form.Control type="text" size="sm" value={element.warranty} disabled={true} />
+                                                </InputGroup>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg={2} md={2} sm={4} xs={6} className='pl-1 pr-1'>
+                                                <Form.Label className='form_label'>Warranty Type</Form.Label>
+                                                <InputGroup>
+                                                    <Form.Control type="text" size="sm" value={element.warranty_type} disabled={true} />
                                                 </InputGroup>
                                             </Form.Group>
                                             {element.item && element.item.map((e, i) =>
-                                                <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={6} className='pl1 pr-1'>
+                                                <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={6} className='pl-1 pr-1'>
                                                     <Form.Label className='form_label'>{e.name}</Form.Label>
                                                     <InputGroup>
                                                         <Form.Control type="text" size="sm" value={e.value} disabled={true} />
                                                     </InputGroup>
                                                 </Form.Group>
                                             )}
-
                                         </Row>
                                         <Row noGutters>
                                             <label className='haeder_label'>Specifications</label>
                                             {element.custom_fields && element.custom_fields.map((e, i) =>
-                                                <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={6} className='pl1 pr-1'>
+                                                <Form.Group key={i} as={Col} lg={2} md={2} sm={4} xs={6} className='pl-1 pr-1'>
                                                     <Form.Label className='form_label'>{e.name}</Form.Label>
                                                     <InputGroup>
                                                         <Form.Control type="text" size="sm" value={e.value} disabled={true} />
@@ -555,7 +741,19 @@ const ViewProduct = props => {
                                                 </Form.Group>
                                             )}
                                         </Row>
-
+                                        <hr />
+                                        <Row noGutters>
+                                            <Col>
+                                                {props.isUpdate ?
+                                                    <Button variant='outline-success' block size='sm' onClick={() => handleUpdateVariation(element, index)}>
+                                                        {element.isLoading ? 'Updating' : 'Update'}
+                                                        {element.isLoading ? <Spinner size='sm' animation='grow' /> : null}
+                                                    </Button>
+                                                    :
+                                                    null
+                                                }
+                                            </Col>
+                                        </Row>
                                     </>
                                 </Accordion.Collapse>
                             </Card>
@@ -577,8 +775,8 @@ const ViewProduct = props => {
                 <>
                     <CardAccordion title={'Custom Fields'}>
                         <Row noGutters>
-                            {props.data.custom_fields && props.data.custom_fields.map((element, index) =>
-                                <Form.Group key={index} as={Col} lg={2} md={2} sm={4} xs={12} className='pl1 pr-1'>
+                            {data.custom_fields && data.custom_fields.map((element, index) =>
+                                <Form.Group key={index} as={Col} lg={2} md={2} sm={4} xs={12} className='pl-1 pr-1'>
                                     <Form.Label className='form_label'>{element.name}</Form.Label>
                                     <InputGroup>
                                         <Form.Control type="text" size="sm" value={element.value} disabled={true} />
@@ -589,7 +787,7 @@ const ViewProduct = props => {
                     </CardAccordion>
                     <CardAccordion title={'Product Images'}>
                         <Row noGutters>
-                            {props.data.product_image_link && props.data.product_image_link.map((img, index) =>
+                            {data.product_image_link && data.product_image_link.map((img, index) =>
                                 <Col key={index} lg={1} md={2} sm={3} xs={3} >
                                     <div className='my_img_div'>
                                         <Image ref={ref} thumbnail
@@ -607,38 +805,26 @@ const ViewProduct = props => {
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label className='form_label'>Length (cm):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.dimension_length || '-'} disabled={true} />
+                            <Form.Control type="text" size="sm" value={data.dimension_length} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label className='form_label'>Width (cm):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.dimension_width || '-'} disabled={true} />
+                            <Form.Control type="text" size="sm" value={data.dimension_width} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label className='form_label'>Height (cm):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.dimension_height || '-'} disabled={true} />
+                            <Form.Control type="text" size="sm" value={data.dimension_height} disabled={true} />
                         </InputGroup>
                     </Form.Group>
 
                     <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
                         <Form.Label className='form_label'>Weight (kg):</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.product_weight || '-'} disabled={true} />
-                        </InputGroup>
-                    </Form.Group>
-                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label className='form_label'>Shipping Charges:</Form.Label>
-                        <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.shipping_charges || '-'} disabled={true} />
-                        </InputGroup>
-                    </Form.Group>
-                    <Form.Group as={Col} lg={4} md={4} sm={6} xs={12}>
-                        <Form.Label className='form_label'>Handlink Fee:</Form.Label>
-                        <InputGroup>
-                            <Form.Control type="text" size="sm" value={props.data.handling_fee || '-'} disabled={true} />
+                            <Form.Control type="text" size="sm" value={data.product_weight} disabled={true} />
                         </InputGroup>
                     </Form.Group>
                 </Row>
@@ -648,7 +834,7 @@ const ViewProduct = props => {
                     <Form.Label className='heading_label'>Product Category:</Form.Label>
                     <InputGroup>
                         <Form.Label className='form_label'>
-                            {props.data.category.value}
+                            {data.category.value}
                         </Form.Label>
                     </InputGroup>
                 </Form.Group >
@@ -657,7 +843,7 @@ const ViewProduct = props => {
                     <Form.Label className='heading_label'>Product Category:</Form.Label>
                     <InputGroup>
                         <Form.Label className='form_label'>
-                            {props.data.sub_category.value}
+                            {data.sub_category.value}
                         </Form.Label>
                     </InputGroup>
                 </Form.Group >
@@ -665,34 +851,25 @@ const ViewProduct = props => {
                 <Form.Group>
                     <Form.Label className='heading_label'>Product Tags:</Form.Label>
                     <InputGroup>
-                        {props.data.product_tags && props.data.product_tags.map((element, index) =>
+                        {data.product_tags && data.product_tags.map((element, index) =>
                             <Form.Label key={index} className='form_label'>
                                 {element.value}
                             </Form.Label>
                         )}
                     </InputGroup>
                 </ Form.Group >
-                <hr />
-                <Form.Group>
-                    <Form.Label className='heading_label'>Dangerous Goods:</Form.Label>
-                    <InputGroup>
-                        {props.data.dangerous_goods && props.data.dangerous_goods.map((element, index) =>
-                            <Form.Label key={index} className='form_label'>
-                                {element.value}
-                            </Form.Label>
-                        )}
-                    </InputGroup>
-                </Form.Group>
             </CardAccordion >
 
             {/* Image Preview */}
-            {imgPreview && <ImagePreview
-                imgData={imgData}
-                index={currentImgIndex}
-                prevImage={prevImage}
-                nextImage={nextImage}
-                setImgPreview={() => setImgPreview(false)}
-            />}
+            {
+                imgPreview && <ImagePreview
+                    imgData={imgData}
+                    index={currentImgIndex}
+                    prevImage={prevImage}
+                    nextImage={nextImage}
+                    setImgPreview={() => setImgPreview(false)}
+                />
+            }
             <style type="text/css">{`
                 .vendor_view_product .heading_label{
                     font-size: 13px;
@@ -729,9 +906,11 @@ const ViewProduct = props => {
                 .vendor_view_product .field_col{
                     padding: 0% 2%;
                 }
-                
+                .vendor_view_product .form-control:disabled {
+                    color: ${props.isUpdate && 'lightgray'};
+                }
             `}</style>
-        </div>
+        </div >
     )
 }
 

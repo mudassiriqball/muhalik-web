@@ -175,7 +175,7 @@ const Dashboard = props => {
                             <Tab.Content style={{ height: `calc(100vh - 65px)`, overflowY: 'auto' }}>
                                 <Tab.Pane eventKey="Dashboard">
                                     <VendorDashboard
-                                        status={props.user.status}
+                                        status={props.status}
                                     />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddProduct">
@@ -197,19 +197,16 @@ const Dashboard = props => {
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AllProducts">
                                     <AllProducts
-                                        user_id={props.user._id}
                                         {...props}
                                     />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="OutOfStock">
                                     <OutOfStockProducts
-                                        user_id={props.user._id}
                                         {...props}
                                     />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="Orders">
                                     <Orders
-                                        user_id={props.user._id}
                                         {...props}
                                     />
                                 </Tab.Pane>

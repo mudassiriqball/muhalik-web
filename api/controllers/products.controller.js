@@ -108,9 +108,14 @@ productsController.add_rating_and_review = async (req, res) => {
 };
 
 //Add product endpoint definition
-productsController.aaabbbcccProduct = async (req, res) => {
+productsController.update_product_data = async (req, res) => {
   console.log('data:', req.body)
 }
+
+productsController.update_product_variation_data = async (req, res) => {
+  console.log('data:', req.body)
+}
+
 productsController.addProduct = async (req, res) => {
   const body = req.body;
 

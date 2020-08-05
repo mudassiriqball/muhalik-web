@@ -168,9 +168,10 @@ class Vendor extends Component {
             <div style={styles.body}>
                 <Dashboard
                     token={this.state.token}
-                    user={this.state.user}
+                    user_id={this.state.user._id}
                     full_name={this.state.user.full_name}
                     avatar={this.state.user.avatar}
+                    status={this.state.user.status}
 
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
@@ -190,9 +191,10 @@ class Vendor extends Component {
 
                 <DashboardSideDrawer
                     token={this.state.token}
-                    user={this.state.user}
+                    user_id={this.state.user._id}
                     full_name={this.state.user.full_name}
                     avatar={this.state.user.avatar}
+                    status={this.state.user.status}
 
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}

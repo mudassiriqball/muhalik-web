@@ -32,21 +32,22 @@ export default function vendorOutOfStockProductsQuerySearch(token, refresh, vend
                     },
                     params: {
                         q: query, page: pageNumber, limit: limit,
-                        // start_date: moment(start_date).format('YYYY-MM-DD'), end_date: moment(end_date).format('YYYY-MM-DD')
                     },
                     cancelToken: source.token
                 }).then(res => {
                     if (unmounted) {
                         setLoading(false)
                         setProducts(prevProducts => {
-                            return [...new Set([...prevProducts, ...res.data.simple_product.docs])]
+                            return [...new Set([...prevProducts, ...res.data.simple_product])]
                         })
                         setProducts(prevProducts => {
-                            return [...new Set([...prevProducts, ...res.data.variable_product.docs])]
+                            return [...new Set([...prevProducts, ...res.data.variable_product])]
                         })
-                        setHasMore(res.data.simple_product.docs > 0 && res.data.variable_product.docs > 0)
-                        setTotal(res.data.simple_product.total + res.data.variable_product.total)
-                        let count = (res.data.simple_product.total + res.data.variable_product.total) / 20
+
+                        setHasMore(res.data.simple_product > 0 && res.data.variable_product > 0)
+
+                        setTotal(res.data.simple_total + res.data.variable_total)
+                        let count = (res.data.simple_total + res.data.variable_total) / 20
                         let rounded = Math.floor(count);
                         let decimal = count - rounded;
                         if (decimal > 0) {

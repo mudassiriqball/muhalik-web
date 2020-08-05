@@ -174,8 +174,9 @@ class Index extends Component {
                 <main>
                     {animation}
                     <Layout
-                        token={this.state.token}
-                        user={this.state.user}
+                        role={this.state.user.role}
+                        full_name={this.state.user.full_name}
+
                         cart_count={this.state.cart_count}
                         {...this.props}
                     >

@@ -177,8 +177,6 @@ export default {
         'all_categories': 'All categories',
 
 
-
-
         'available_in_stock': 'Available in Stock',
         'stock': 'Stock',
         'quantity': 'Quantity',

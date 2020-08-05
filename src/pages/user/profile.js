@@ -153,7 +153,9 @@ export default function Profile(props) {
                 color={'green'}
             />
             <Layout
-                user={user}
+                role={user.role}
+                full_name={user.full_name}
+
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}

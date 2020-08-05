@@ -38,7 +38,7 @@ const productController = require('../controllers/products.controller');
 
 // post Requests 
 router.post("/add-product", checkAuth, productController.addProduct);
-router.post("/aaa/bbb/ccc", productController.aaabbbcccProduct);
+
 //router.post("/bulk_upload", productController.bulkupload);
 
 // get Requests
@@ -62,5 +62,8 @@ router.get("/vendor-search-less-stock/:_id", productController.get_vendor_produc
 // put Requests
 router.put("/review-rating", checkAuth, productController.add_rating_and_review);
 router.put("/delete-product/:_id", checkAuth, productController.deleteProduct);
+
+router.put("/product/update/product/:_id", checkAuth, productController.update_product_data);
+router.put("/product/update/product-variation/:_id", checkAuth, productController.update_product_variation_data);
 
 module.exports = router;

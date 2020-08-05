@@ -32,6 +32,7 @@ export default function vendorProductsPageLimit(token, refresh, vendor_id, isApp
                     params: { page: pageNumber, limit: limit },
                     cancelToken: source.token
                 }).then(res => {
+                    console.log('lll:', res.data.data)
                     if (unmounted) {
                         setLoading(false)
                         setProducts(prevProducts => {
