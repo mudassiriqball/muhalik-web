@@ -197,7 +197,7 @@ export default function Category(props) {
                                                         <div className='only_products_div' onClick={() => handleProductClick(element)}>
                                                             <Image className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                                             <label className='my_label'>{element.product_name}</label>
-                                                            <DiscountPrice price={props.element.product_variations[0].price} discount={props.element.product_variations[0].discount} />
+                                                            <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
                                                         </div>
                                                     }
                                                 </Card>

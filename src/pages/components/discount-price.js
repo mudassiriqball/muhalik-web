@@ -1,11 +1,27 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import translate from '../../i18n/translate'
 
 export default function DiscountPrice(props) {
+    const [discounted_price, setdiscounted_price] = useState(0)
+
+    useEffect(() => {
+        let unmounted = true
+        let count = props.price - props.discount / 100 * props.price
+        let rounded = Math.floor(count);
+        let decimal = count - rounded;
+        if (decimal > 0 && unmounted) {
+            setdiscounted_price(rounded + 1)
+        } else if (unmounted) {
+            setdiscounted_price(rounded)
+        }
+        return () => {
+        }
+    }, [props])
+
     return (
         <div>
             <div className='d-inline-flex align-items-center w-100'>
-                <label className='mr-auto price_label'>{translate('rs')}{props.price - props.discount / 100 * props.price}</label>
+                <label className='mr-auto price_label'>{translate('rs')}{discounted_price}</label>
             </div>
             {props.discount != '0' ?
                 <div className='d-inline-flex'>

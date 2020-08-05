@@ -16,8 +16,8 @@ import translate from '../../../i18n/translate'
 const SliderCarousel = (props) => {
     const [ref, { x, y, width }] = useDimensions();
 
-    const [categoryHover, setCategoryHover] = useState(false)
-    const [hoverCategoryId, setHoverCategoryId] = useState('')
+    const [isCategoryHover, setIsCategoryHover] = useState(false)
+    const [hoverCategory, setHoverCategory] = useState('')
 
     const [categoryMouseOut, setCategoryMouseOut] = useState(false)
     const [subCategoryMouseOut, setSubCategoryMouseOut] = useState(true)
@@ -27,8 +27,8 @@ const SliderCarousel = (props) => {
 
     function handleMouseEnter(element) {
         cat = false
-        setCategoryHover(true)
-        setHoverCategoryId(element._id)
+        setIsCategoryHover(true)
+        setHoverCategory(element)
         console.log('cat in:', cat, sub)
     }
 
@@ -36,17 +36,17 @@ const SliderCarousel = (props) => {
         cat = true
         console.log('cat out:', cat, sub)
         if (sub == true) {
-            setCategoryHover(false)
+            setIsCategoryHover(false)
         }
     }
 
     function handleSubMouseEnter() {
         sub = false
-        console.log('sub in:', cat, sub)
+        // console.log('sub in:', cat, sub)
     }
 
     function handleSubMouseOut() {
-        setCategoryHover(false)
+        setIsCategoryHover(false)
     }
 
 
@@ -84,10 +84,11 @@ const SliderCarousel = (props) => {
                         onMouseEnter={handleSubMouseEnter}
                         onMouseLeave={handleSubMouseOut}
                     >
-                        {categoryHover && <div className='show_sub_categories' style={{ maxHeight: width / 2.5 || '25vw' }}>
+                        {isCategoryHover && <div className='show_sub_categories' style={{ maxHeight: width / 2.5 || '25vw' }}>
                             {props.sub_categories_list && props.sub_categories_list.map((element, index) =>
-                                hoverCategoryId == element.category_id ?
-                                    <div key={index} className='sub_category_item'>
+                                hoverCategory._id == element.category_id ?
+                                    <div key={index} className='sub_category_item'
+                                        onClick={() => Router.push('/products/category/[category]/[sub_category]', `/products/category/${hoverCategory.value}/${element.value}`)}>
                                         <div>{element.value}</div>
                                         <FontAwesomeIcon icon={faChevronRight} className='fontawesome' />
                                     </div>
@@ -184,7 +185,6 @@ const SliderCarousel = (props) => {
                 }
                 .slider_carousel .fontawesome{
                     margin-left: auto;
-                    color: lightgray;
                     min-width: 12px;
                     max-width: 12px;
                     min-height: 12px;
@@ -195,6 +195,7 @@ const SliderCarousel = (props) => {
 
                 .carosuel_col {
                     position: relative;
+                    scroll: ${isCategoryHover && 'auto'};
                 }
                 .slider_img {
                     display: block;
@@ -217,7 +218,16 @@ const SliderCarousel = (props) => {
                     width: 33%;
                     display: inline-flex;
                     align-items: cener;
-                    margin: 1% 2%;
+                    padding: 1% 2%;
+                    cursor: pointer;
+                    font-size: 14px;
+                    color: gray;
+                    display: inline-flex;
+                    align-items: center;
+                }
+                .sub_category_item:hover {
+                    color: blue;
+                    box-shadow: 0px 0px 10px 0.5px lightgray;
                 }
 
                 @media (max-width: 1199px){

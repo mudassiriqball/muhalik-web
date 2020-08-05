@@ -10,7 +10,7 @@ export default {
         'signup': 'Signup',
         'logout': 'Logout',
         'delete': 'Delete',
-        'rs': 'SAR.',
+        'rs': 'SR.',
         'related_categories': 'Related Categories',
 
         // Toolbar
@@ -236,8 +236,9 @@ export default {
         'warranty': 'Warranty',
         'no_warranty': 'No Warranty',
         'months': 'months',
+        'enter_gender': 'Select Gender',
+        'change_language': 'Change Language',
+
     }
 }
 
-
-{/* naseem, 787 , 0301 6067875, 8.30 */ }

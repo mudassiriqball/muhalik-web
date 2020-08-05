@@ -73,6 +73,13 @@ class Login extends Component {
         });
     }
 
+    handleSearchEnterPress(e) {
+        var key = e.keyCode || e.which;
+        if (key == 13) {
+            props.handleSearch(searchType, searchValue, start_date, end_date)
+        }
+    }
+
     render() {
         const { hide } = this.state;
         let eyeBtn;
@@ -162,6 +169,11 @@ class Login extends Component {
                                                             isInvalid={touched.password && errors.password}
                                                             name="password"
                                                             onChange={handleChange}
+                                                            onKeyPress={(e) => {
+                                                                if (e.keyCode == 13 || e.which == 13) {
+                                                                    handleSubmit()
+                                                                }
+                                                            }}
                                                         />
                                                         <InputGroup.Append>
                                                             <MyButton onClick={this.showPassword}>

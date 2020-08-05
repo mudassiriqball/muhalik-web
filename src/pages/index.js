@@ -169,7 +169,7 @@ class Index extends Component {
                         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
                         crossOrigin="anonymous"
                     />
-                    <link rel="shortcut icon" href=""></link>
+                    <link rel="shortcut icon" href="/muhalik.jpg" />
                 </Head>
                 <main>
                     {animation}

@@ -1748,4 +1748,59 @@ productsController.get_vendor_product_less_stock_by_id = async (req, res) => {
   }
 };
 
+productsController.update_product_data = async (req, res) => {
+
+  const body = req.body;
+  try {
+    const _id = req.params._id;
+    Products.findOneAndUpdate(
+      { _id: _id },
+      {
+        $set: body ,
+      },
+      {
+        returnNewDocument: true,
+      },
+      function (error, result) {
+        res.status(200).send({
+          code: 200,
+          message: "updated Successfully",
+        });
+      }
+    );
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
+
+productsController.update_product_variation_data = async (req, res) => {
+  const body = req.body;
+  try {
+    const product = await Products.findOneAndUpdate(
+      { "product_variations._id": req.query.variation_id },
+      {
+        $set: {
+          ["product_variations.$[i].price"]: body.price,
+          ["product_variations.$[i].stock"]: body.stock,
+          ["product_variations.$[i].discount"]: body.discount,
+        },
+      },
+      {
+        arrayFilters: [{ "i._id": req.query.variation_id }],
+        multi: true,
+      }
+    );
+    res.status(200).send({
+      code: 200,
+      message: "updated Successfully",
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
+
+
+
 module.exports = productsController;

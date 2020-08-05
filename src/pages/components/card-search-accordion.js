@@ -23,8 +23,19 @@ export default function CardSearchAccordion(props) {
         }
     }
 
+    function onSearchValueChange(val) {
+        setSearchValue(val)
+        if (val == '') {
+            props.handleSearch(searchType, '', start_date, end_date)
+        }
+    }
+
+    function handleSearchClearBtnClick() {
+        setSearchValue('')
+        props.handleSearch(searchType, '', start_date, end_date)
+    }
+
     function handleSearchBtnClick(value) {
-        setSearchValue(value)
         props.handleSearch(searchType, value, start_date, end_date)
     }
 
@@ -174,10 +185,10 @@ export default function CardSearchAccordion(props) {
                                             name="search"
                                             onKeyPress={(e) => handleSearchEnterPress(e)}
                                             value={searchValue}
-                                            onChange={(e) => handleSearchBtnClick(e.target.value)}
+                                            onChange={(e) => onSearchValueChange(e.target.value)}
                                         />
                                         {searchValue && <InputGroup.Append >
-                                            <Button size='sm' variant='danger' onClick={() => handleSearchBtnClick('')}>
+                                            <Button size='sm' variant='danger' onClick={() => handleSearchClearBtnClick('')}>
                                                 {' x '}
                                             </Button>
                                         </InputGroup.Append>

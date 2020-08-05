@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Router from 'next/router'
 import axios from 'axios'
 import Link from 'next/link'
-import { Row, Col, ListGroup, Nav, Spinner, Image } from 'react-bootstrap'
+import { Row, Col, ListGroup, Nav, Spinner, Image, Form } from 'react-bootstrap'
 import MuhalikConfig from '../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../styleSheet'
 import StickyBottomNavbar from '../components/customer/stick-bottom-navbar'
@@ -12,26 +12,34 @@ import { removeTokenFromStorage, checkTokenExpAuth } from '../../sdk/core/authen
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faDownload, faLanguage, faPowerOff, faDollarSign,
-    faTachometerAlt, faLock, faHome, faChevronRight, faBan, faTimes
+    faTachometerAlt, faLock, faHome, faChevronRight, faBan, faTimes, faChevronCircleUp, faChevronCircleDown, faChevronUp, faChevronDown
 } from '@fortawesome/free-solid-svg-icons'
 import { faUserCircle, faImage, faThumbsUp, faClock } from '@fortawesome/free-regular-svg-icons'
 
 import Toolbar from '../components/toolbar'
 import translate from '../../i18n/translate'
+import TranslateOption from '../../i18n/translate-option'
 
-function Account() {
+function Account(props) {
+    const [selectedLang, setSelectedLang] = useState('English')
     const [user, setUser] = useState({
         _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
         email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
     })
-
     const [loading, setLoading] = useState(false)
     const [dashboard_href, setdashboard_href] = useState('/')
+    const [showChangeLanguage, setShowChangeLanguage] = useState(false)
 
     useEffect(() => {
         let unmounted = true
         const CancelToken = axios.CancelToken;
         const source = CancelToken.source();
+
+        if (props.currLang == 'en') {
+            setSelectedLang("English")
+        } else {
+            setSelectedLang("العربية")
+        }
 
         async function getData() {
             const _decoded_token = await checkTokenExpAuth()
@@ -56,8 +64,6 @@ function Account() {
                     }
                 }).catch((error) => {
                 })
-            } else {
-                Router.replace('/')
             }
         }
         getData()
@@ -78,6 +84,15 @@ function Account() {
         }
     }, [user])
 
+
+    function handleSetLanguage(lang) {
+        setSelectedLang(lang)
+        if (lang == 'English') {
+            props.changeLang('en')
+        } else {
+            props.changeLang('ar')
+        }
+    }
     function logout() {
         setLoading(true)
         removeTokenFromStorage(false)
@@ -167,11 +182,7 @@ function Account() {
                 <div className='w-100 p-1'></div>
 
                 {user.role == '' || user.role == 'customer' ?
-                    <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
-                        <FontAwesomeIcon icon={faDollarSign} style={styles.fontawesome} />
-                        <div className='label'>{translate('sell_on_mahaalk')}</div>
-                        <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                    </ListGroup.Item>
+                    null
                     :
                     <ListGroup.Item className='list_item' action onClick={() => Router.push(dashboard_href)}>
                         <FontAwesomeIcon icon={faTachometerAlt} style={styles.fontawesome} />
@@ -179,11 +190,31 @@ function Account() {
                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                     </ListGroup.Item>
                 }
-                <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
+                <ListGroup.Item className='list_item' onClick={() => setShowChangeLanguage(!showChangeLanguage)}>
                     <FontAwesomeIcon icon={faLanguage} style={styles.fontawesome} />
-                    <div className='label'> {translate('language_currency')}</div>
-                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                    <div className='label'> {translate('change_language')}</div>
+                    <FontAwesomeIcon icon={showChangeLanguage ? faChevronUp : faChevronDown} style={styles.chervon_right_fontawesome} />
                 </ListGroup.Item>
+                {showChangeLanguage &&
+                    <Row noGutters className='pt-1 pl-2 pr-2'>
+                        <Form.Group as={Col}>
+                            <Form.Control as="select" defaultValue={selectedLang} onChange={(e) => handleSetLanguage(e.target.value)}>
+                                <option >English</option>
+                                <option >العربية</option>
+                            </Form.Control>
+                        </Form.Group>
+                    </Row>
+                }
+
+                {user.role == '' || user.role == 'customer' ?
+                    <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
+                        <FontAwesomeIcon icon={faDollarSign} style={styles.fontawesome} />
+                        <div className='label'>{translate('sell_on_mahaalk')}</div>
+                        <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                    </ListGroup.Item>
+                    :
+                    null
+                }
 
                 {user.role == 'customer' && <ListGroup.Item className='list_item' action>
                     <FontAwesomeIcon icon={faDownload} style={styles.fontawesome} />

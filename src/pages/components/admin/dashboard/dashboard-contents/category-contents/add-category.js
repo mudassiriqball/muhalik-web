@@ -57,25 +57,24 @@ class AddCategory extends Component {
                 'content-type': 'multipart/form-data',
                 'authorization': currentComponent.state.token,
             }
-        }).then(function (response) {
-            currentComponent.categoriesReloadHandler()
+        }).then(function (res) {
             currentComponent.setState({
                 isLoading: false,
                 showToast: true,
                 isCategoryNew: false,
                 isSubCategoryNew: false,
                 category: '',
+                subCategory: '',
                 imgError: '',
             })
-            return true
+            currentComponent.categoriesReloadHandler()
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
             try {
-                alert('Error: ', error.response.data.message);
+                alert('Error: ', error.res.data.message);
             } catch (err) {
                 console.log('Request Failed:', error)
             }
-            return false
         });
     }
     handleCategoryChange = (e) => {
@@ -84,7 +83,7 @@ class AddCategory extends Component {
         if (e != null) {
             search = this.props.categories_list.filter(element => element._id == e._id)
             if (search.length == 0) {
-                this.setState({ isCategoryNew: true })
+                this.setState({ category: e, isCategoryNew: true })
             } else {
                 this.setState({ category: e, isCategoryNew: false })
             }
@@ -139,9 +138,7 @@ class AddCategory extends Component {
                         this.setState({ isLoading: true });
                         setSubmitting(true);
                         setTimeout(() => {
-                            if (this.addCategory(values, this)) {
-                                this.props.categoriesReloadHandler()
-                            }
+                            this.addCategory(values, this)
                             setSubmitting(false);
                         }, 500);
                     }

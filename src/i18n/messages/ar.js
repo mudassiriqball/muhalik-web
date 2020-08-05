@@ -220,6 +220,11 @@ export default {
         'we_are_sorry_product': 'نعتذر , لا يمكننا العثور على هذا المنتج',
         'enter_valid_value': 'أدخل قيمة صحيحة',
 
+        'warranty': 'ضمان',
+        'no_warranty': 'لا يوجد ضمان',
+        'months': 'الشهور',
+        'enter_gender': 'حدد نوع الجنس',
+        'change_language': 'تغيير اللغة',
 
 
     }

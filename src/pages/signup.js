@@ -216,7 +216,7 @@ class Signup extends Component {
                 validationSchema={schema}
                 initialValues={{
                     mobile: '', full_name: '', verification_code: '', email: '', password: '', confirm_password: '',
-                    countary: 'KSA', city: '', role: 'customer'
+                    countary: 'KSA', city: '', role: 'customer', address: '',
                 }}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     this.setState({ isLoading: true });
@@ -300,7 +300,7 @@ class Signup extends Component {
                                                             }}
                                                             disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
                                                             className='append_button' variant='success' >
-                                                            <div className='append_button'>{this.state.isCodeSended ? traslate('resend') : translate('send_code')}</div>
+                                                            <div className='append_button'>{this.state.isCodeSended ? translate('resend') : translate('send_code')}</div>
                                                             {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                         </MyButton>
                                                         <Form.Control.Feedback type="invalid">
@@ -526,7 +526,7 @@ class Signup extends Component {
                                             <Form.Row>
                                                 <Form.Group as={Col} controlId="loginGrop">
                                                     <MyButton type="submit"
-                                                        onSubmit={handleSubmit}
+                                                        onClick={handleSubmit}
                                                         variant='success'
                                                         disabled={this.state.isLoading || !this.state.isCodeVerified} block>
                                                         {this.state.isLoading ? translate('signing') : translate('signup')}

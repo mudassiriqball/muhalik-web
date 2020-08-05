@@ -447,8 +447,12 @@ const ViewProduct = props => {
     }
 
     async function handleUpdateProduct() {
-        if (name == '' || price == '' || price < 1 || stock == '' || stock < 1 || discount == '') {
+        if (name == '' || price == '' || price < 1 || stock == '' || stock < 1 || discount == '' || discount < 0) {
             alert('Enter valid values')
+        } else if (name == props.data.product_name && price == props.data.product_price && discount == props.data.product_discount &&
+            brand == props.data.product_brand_name && stock == props.data.product_in_stock && description == props.data.product_description
+        ) {
+            alert('Enter diffrent values')
         } else {
             setIsLoading(true)
             let dd = {}
@@ -460,7 +464,7 @@ const ViewProduct = props => {
                 product_discount: discount,
                 product_description: description,
             }
-            console.log('data:', dd)
+
 
             const _url = MuhalikConfig.PATH + `/api/products/product/update/product/${data._id}`
             await axios({
@@ -474,7 +478,7 @@ const ViewProduct = props => {
                 setIsLoading(false)
                 setAlertModalMsg('Product Updated Successfully')
                 setShowAlertModal(true)
-            }).then((err) => {
+            }).catch((err) => {
                 setIsLoading(false)
                 alert('Update Failed')
                 console.log('error:', err)
@@ -518,9 +522,12 @@ const ViewProduct = props => {
         copyArray = Object.assign([], data)
         let obj = {}
         obj = copyArray.product_variations[index]
-        obj['isLoading'] = true
-        copyArray.product_variations[index] = obj
-        setData(copyArray)
+
+
+        // let copyArray_1 = []
+        // copyArray_1 = Object.assign([], props.data)
+        // let obj_1 = {}
+        // obj_1 = dd.product_variations[index]
 
         if (element.price == '' || element.price < 1 || element.stock == '' || element.stock < 1 || element.discount == '' || element.discount < 0) {
             if (element.price == '' || element.price < 1) {
@@ -532,14 +539,29 @@ const ViewProduct = props => {
             if (element.discount == '' || element.discount < 0) {
                 obj['discountError'] = 'Enter valid dicount'
             }
-        } else {
+        }
+        // else if (element.price == obj_1.price && element.stock == obj_1.stock && element.discount == obj_1.discount) {
+        //     if (element.price == obj_1.price) {
+        //         obj['priceError'] = 'Enter diffrent price'
+        //     }
+        //     if (element.stock == obj_1.stock) {
+        //         obj['stockError'] = 'Enter diffrent stock'
+        //     }
+        //     if (element.discount == obj_1.discount) {
+        //         obj['discountError'] = 'Enter diffrent dicount'
+        //     }
+        // }
+        else {
+            obj['isLoading'] = true
+            copyArray.product_variations[index] = obj
+            setData(copyArray)
             let dd = {}
             dd = {
                 price: element.price,
                 stock: element.stock,
                 discount: element.discount
             }
-            console.log('data:', dd)
+
             const _url = MuhalikConfig.PATH + `/api/products/product/update/product-variation/${data._id}`
             axios({
                 method: 'PUT',
@@ -549,34 +571,20 @@ const ViewProduct = props => {
                 },
                 data: dd,
                 params: { variation_id: element._id },
-            }).then(res => {
-                obj.isLoading = false
-            }).then((err) => {
-                obj.isLoading = false
+            }).then((res) => {
+                obj['isLoading'] = false
+                setAlertModalMsg('Product Variation Updated Successfully')
+                setShowAlertModal(true)
+            }).catch((err) => {
+                obj['isLoading'] = false
             })
         }
-
         copyArray.product_variations[index] = obj
         setData(copyArray)
     }
 
-    async function handleConfirmed() {
-
-    }
-
     return (
         <div className='vendor_view_product'>
-            <ConfirmModal
-                onHide={() => { setShowConfirmModal(false), setConfirmModalLoading(false) }}
-                show={showConfirmModal}
-                title={confirmModalMsg}
-                iconname={iconname}
-                color={'red'}
-                _id={data._id}
-                name={data.full_name}
-                confirm={handleConfirmed}
-                loading={confirmModalLoading}
-            />
             <AlertModal
                 onHide={(e) => setShowAlertModal(false)}
                 show={showAlertModal}
@@ -590,14 +598,11 @@ const ViewProduct = props => {
                 <Button variant='outline-primary' size='sm' className="mr-auto" onClick={props.back}>Back</Button>
                 <div className="mr-auto" style={{ fontSize: '14px' }}> {data.product_name}</div>
                 {props.isUpdate ?
-                    <Button variant='outline-success' size='sm' className="mr-3" onClick={handleUpdateProduct}>
-                        {isLoading ? 'Updating' : 'Update'}
-                        {isLoading ? <Spinner size='sm' animation='grow' /> : null}
-                    </Button>
+                    null
                     :
                     <Button variant='outline-primary' size='sm' className="mr-3" onClick={props.edit}>Edit</Button>
                 }
-                {/* <Button variant='outline-danger' size='sm' onClick={props.handleShowConfirmModal}>Delete</Button> */}
+                <Button variant='outline-danger' size='sm' onClick={props.handleShowConfirmModal}>Delete</Button>
             </Form.Row>
             <CardAccordion title={'General Info'}>
                 <Row>
@@ -672,9 +677,19 @@ const ViewProduct = props => {
                     <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                         <Form.Label className='form_label'>Description:</Form.Label>
                         <InputGroup>
-                            <Form.Control as="textarea" row='8' onChange={(e) => setdescription(e.target.value)} value={description || 'No Description'} disabled={!props.isUpdate} />
+                            <Form.Control as="textarea" row='8' onChange={(e) => setdescription(e.target.value)} value={description || ''} disabled={!props.isUpdate} />
                         </InputGroup>
                     </Form.Group>
+                    {props.isUpdate ?
+                        <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                            <Button variant='outline-success' size='sm' block className="mt-5" onClick={handleUpdateProduct}>
+                                {isLoading ? 'Updating' : 'Update'}
+                                {isLoading ? <Spinner size='sm' animation='grow' /> : null}
+                            </Button>
+                        </Form.Group>
+                        :
+                        null
+                    }
                 </Row>
             </CardAccordion>
 

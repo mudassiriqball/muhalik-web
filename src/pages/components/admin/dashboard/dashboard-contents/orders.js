@@ -366,6 +366,10 @@ function Order(props) {
             setAlertModalMsg(`Order Status Updated successfully`)
             setShowAlertModal(true)
             props.ordersReloadCountHandler()
+            setpageNumber(1)
+            setQueryPageNumber(1)
+            setPage(1)
+            setQueryPage(1)
             props.setRefresh()
         }).catch(function (error) {
             setConfirmModalLoading(false)

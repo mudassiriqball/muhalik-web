@@ -433,6 +433,7 @@ const ViewProduct = props => {
     const [alertModalMsg, setAlertModalMsg] = useState(false)
 
     const [iconname, setIconname] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     function prevImage() {
         if (currentImgIndex > 0) {
@@ -448,6 +449,10 @@ const ViewProduct = props => {
     async function handleUpdateProduct() {
         if (name == '' || price == '' || price < 1 || stock == '' || stock < 1 || discount == '') {
             alert('Enter valid values')
+        } else if (name == props.data.product_name && price == props.data.product_price && discount == props.data.product_discount &&
+            brand == props.data.product_brand_name && stock == props.data.product_in_stock && description == props.data.product_description
+        ) {
+            alert('Enter diffrent values')
         } else {
             let dd = {}
             dd = {
@@ -458,7 +463,6 @@ const ViewProduct = props => {
                 product_discount: discount,
                 product_description: description,
             }
-            console.log('data:', dd)
 
             const _url = MuhalikConfig.PATH + `/api/products/product/update/product/${data._id}`
             await axios({
@@ -469,9 +473,13 @@ const ViewProduct = props => {
                 },
                 data: dd,
             }).then(res => {
-
-            }).then((err) => {
-
+                setIsLoading(false)
+                setAlertModalMsg('Product Updated Successfully')
+                setShowAlertModal(true)
+            }).catch((err) => {
+                setIsLoading(false)
+                alert('Update Failed')
+                console.log('error:', err.response.data.message)
             })
         }
     }
@@ -532,7 +540,6 @@ const ViewProduct = props => {
                 stock: element.stock,
                 discount: element.discount
             }
-            console.log('data:', dd)
             const _url = MuhalikConfig.PATH + `/api/products/product/update/product-variation/${data._id}`
             axios({
                 method: 'PUT',
@@ -544,7 +551,7 @@ const ViewProduct = props => {
                 params: { variation_id: element._id },
             }).then(res => {
 
-            }).then((err) => {
+            }).catch((err) => {
 
             })
         }
@@ -580,7 +587,7 @@ const ViewProduct = props => {
                 <Button variant='outline-primary' size='sm' className="mr-auto" onClick={props.back}>Back</Button>
                 <div className="mr-auto" style={{ fontSize: '14px' }}> {data.product_name}</div>
                 {props.isUpdate ?
-                    <Button variant='outline-success' size='sm' className="mr-3" onClick={handleUpdateProduct}>Update</Button>
+                    null
                     :
                     <Button variant='outline-primary' size='sm' className="mr-3" onClick={props.edit}>Edit</Button>
                 }
@@ -659,9 +666,19 @@ const ViewProduct = props => {
                     <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                         <Form.Label className='form_label'>Description:</Form.Label>
                         <InputGroup>
-                            <Form.Control as="textarea" row='8' onChange={(e) => setdescription(e.target.value)} value={description || 'No Description'} disabled={!props.isUpdate} />
+                            <Form.Control as="textarea" row='8' onChange={(e) => setdescription(e.target.value)} value={description || ''} disabled={!props.isUpdate} />
                         </InputGroup>
                     </Form.Group>
+                    {props.isUpdate ?
+                        <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                            <Button variant='outline-success' size='sm' block className="mt-5" onClick={handleUpdateProduct}>
+                                {isLoading ? 'Updating' : 'Update'}
+                                {isLoading ? <Spinner size='sm' animation='grow' /> : null}
+                            </Button>
+                        </Form.Group>
+                        :
+                        null
+                    }
                 </Row>
             </CardAccordion>
 

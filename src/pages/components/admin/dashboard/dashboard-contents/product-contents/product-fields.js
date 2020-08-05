@@ -57,10 +57,13 @@ class ProducFields extends Component {
         }
         await axios.post(url, data, {
             headers: { 'authorization': this.state.token }
-        }).then(function (response) {
-            currentComponent.setState({ isLoading: false })
-            currentComponent.setState({ showModalMessage: 'Product Field Added Successfully' })
-            currentComponent.setState({ showModal: true })
+        }).then(function (res) {
+            currentComponent.setState({
+                isLoading: false,
+                showModalMessage: 'Product Field Added Successfully',
+                showModal: true,
+                fieldValue: '',
+            })
             currentComponent.props.fieldsReloadHandler()
         }).catch(function (error) {
             currentComponent.setState({ isLoading: false });
@@ -89,8 +92,7 @@ class ProducFields extends Component {
         if (this.state.fieldValue == '') {
             this.setState({ error: 'Enter Value First' })
         } else {
-            this.setState({ isLoading: true })
-            this.setState({ error: '' })
+            this.setState({ isLoading: true, error: '' })
             this.addField(this.state.fieldValue, this)
         }
     }
@@ -168,7 +170,7 @@ class ProducFields extends Component {
                 '_id': copyArray[index]._id,
                 'authorization': this.state.token
             }
-        }).then((response) => {
+        }).then((res) => {
             currentComponent.setState({
                 showModalMessage: 'Product Field Added Successfully',
                 showModal: true
@@ -176,7 +178,7 @@ class ProducFields extends Component {
             currentComponent.props.fieldsReloadHandler()
         }).catch((error) => {
             try {
-                alert('Add Field Failed:', error.response.data.message);
+                alert('Add Field Failed:', error.res.data.message);
             } catch (err) {
                 console.log('Add Field Failed:', error)
                 alert('Add Field Failed ');
@@ -195,7 +197,7 @@ class ProducFields extends Component {
         const url = MuhalikConfig.PATH + `/api/categories/field-request/${copyArray[index]._id}`
         await axios.delete(url, {
             headers: { 'authorization': this.state.token }
-        }).then(function (response) {
+        }).then(function (res) {
             currentComponent.setState({
                 showModalMessage: 'Product Request Field Discarded',
                 showModal: true
@@ -203,7 +205,7 @@ class ProducFields extends Component {
             currentComponent.props.fieldsReloadHandler()
         }).catch(function (error) {
             try {
-                alert('Error: ', error.response.data.message);
+                alert('Error: ', error.res.data.message);
             } catch (err) {
                 alert('Delete Field Failed ');
                 console.log('Request Failed:', error)
@@ -270,7 +272,7 @@ class ProducFields extends Component {
             const url = MuhalikConfig.PATH + `/api/categories/field/${copyArray[index]._id}`
             await axios.put(url, data, {
                 headers: { 'authorization': this.state.token }
-            }).then(function (response) {
+            }).then(function (res) {
                 copyArray[index].label = copyArray[index].value;
                 copyArray[index].prevVal = copyArray[index].value;
                 currentComponent.setState({
@@ -280,7 +282,7 @@ class ProducFields extends Component {
                 currentComponent.props.fieldsReloadHandler()
             }).catch(function (error) {
                 try {
-                    alert('Error: ', error.response.data.message);
+                    alert('Error: ', error.res.data.message);
                 } catch (err) {
                     alert('Update field Failed')
                     console.log('Request Failed:', error)
@@ -300,7 +302,7 @@ class ProducFields extends Component {
         const url = MuhalikConfig.PATH + `/api/categories/field/${copyArray[index]._id}`
         await axios.delete(url, {
             headers: { 'authorization': this.state.token }
-        }).then((response) => {
+        }).then((res) => {
             currentComponent.setState({
                 showModalMessage: 'Product Field Deleted',
                 showModal: true
@@ -308,7 +310,7 @@ class ProducFields extends Component {
             currentComponent.props.fieldsReloadHandler()
         }).catch((error) => {
             try {
-                alert('Error: ', error.response.data.message);
+                alert('Error: ', error.res.data.message);
             } catch (err) {
                 console.log('Request Failed:', error)
             }

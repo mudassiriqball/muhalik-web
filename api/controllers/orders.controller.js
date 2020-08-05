@@ -77,28 +77,28 @@ orderController.place_order = async (req, res) => {
           );
           saveorder = true;
           const check = await Product.find(
-            {"product_variations._id": body.products[index].variation_id},
-            { "product_variations._id.$[i].stock":1},
-	          {
+            { "product_variations._id": body.products[index].variation_id },
+            { "product_variations._id.$[i].stock": 1 },
+            {
               arrayFilters: [{ "i._id": body.products[index].variation_id }],
               multi: true,
             }
-          ); 
-          if(check[0].product_variations[0].stock===0){
+          );
+          if (check[0].product_variations[0].stock === 0) {
             const result = await Product.findOneAndUpdate(
               {
                 _id: check[0]._id,
               },
               {
-                $pull: { product_variations: { _id:check[0].product_variations[0]._id  } },
+                $pull: { product_variations: { _id: check[0].product_variations[0]._id } },
               },
               { new: true }
             );
-const search=await Product.find({_id:check[0]._id})
-            if(search[0].product_variations.length===0){
+            const search = await Product.find({ _id: check[0]._id })
+            if (search[0].product_variations.length === 0) {
               console.log("haa");
               Product.findByIdAndDelete(search[0]._id, function (err) {
-              });                           
+              });
             }
           }
         } else {
@@ -110,11 +110,11 @@ const search=await Product.find({_id:check[0]._id})
               $inc: { product_in_stock: -body.products[index].quantity },
             }
           );
-          
+
           const check = await Product.find(
             { _id: body.products[index].p_id },
             { product_in_stock: 1 }
-          );          
+          );
           if (check[0].product_in_stock === 0) {
             Product.findByIdAndDelete(check[0]._id, function (err) {
             });
@@ -372,7 +372,7 @@ orderController.get_all_orders_count = async (req, res) => {
       status: "cancelled",
     });
     const returned_orders_count = await Orders.countDocuments({
-      status: "return",
+      status: "returned",
     });
 
     res.status(200).send({
