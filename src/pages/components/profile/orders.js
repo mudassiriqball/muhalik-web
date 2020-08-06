@@ -96,11 +96,11 @@ export default function Orders(props) {
             {orders && orders.map((element, index) =>
                 orders.length == (index + 1) ?
                     <Card key={index} ref={lastProducrRef} >
-                        <CardBody element={element} index={index} />
+                        <CardBody element={element} status={props.status} index={index} />
                     </Card>
                     :
                     <Card key={index} >
-                        <CardBody element={element} index={index} />
+                        <CardBody element={element} status={props.status} index={index} />
                     </Card>
             )}
             {user_orders_loading && <Loading />}
@@ -179,6 +179,11 @@ function CardBody(props) {
     let index = element.index
     return (
         <Card.Body>
+            {props.status == 'pending' &&
+                <Row className='p-0 m-0'>
+                    <Form.Label className='form_label'>{translate('for_cancel_order')}</Form.Label>
+                </Row>
+            }
             <Row className='p-0 m-0'>
                 <Form.Group as={Col} lg={4} md={4} sm={12} xs={12} className='order_col'>
                     <Form.Label className='form_label'>{translate('order_id')}</Form.Label>

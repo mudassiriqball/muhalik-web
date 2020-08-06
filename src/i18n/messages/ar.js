@@ -225,7 +225,7 @@ export default {
         'months': 'الشهور',
         'enter_gender': 'حدد نوع الجنس',
         'change_language': 'تغيير اللغة',
-
+        'for_cancel_order': '+966 59 091 1771 لإلغاء الطلب ، يرجى الاتصال على'
 
     }
 }

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Button } from 'react-bootstrap'
 import Head from 'next/head'
 import Router from 'next/router'
 import axios from 'axios'
@@ -7,22 +6,10 @@ import Layout from './components/customer/layout'
 import { getTokenFromStorage, removeTokenFromStorage, getDecodedTokenFromStorage, checkTokenExpAuth } from '../sdk/core/authentication-service';
 import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config'
-import Typical from 'react-typical'
 import SliderCarousel from './components/customer/slider-carousel'
 import Home from './components/customer/home'
 // import { connect } from 'react-redux'
 // import { setCategories } from '../redux/actions/category-actions';
-
-let animation =
-    <h3 style={{ background: 'transparent', color: `${GlobalStyleSheet.primry_color}`, position: 'fixed', left: '1%', bottom: '1%', zIndex: 1000 }}>
-        <Typical
-            steps={['This website is under development', 1000,
-                'Comming Soon...!', 1000,
-                'Be Ready to Shop online...', 1000]}
-            loop={Infinity}
-            wrapper="p"
-        />
-    </h3>
 
 export async function getServerSideProps(context) {
     let slider_list = []
@@ -140,22 +127,10 @@ class Index extends Component {
         })
     }
 
-    // async getCartCount(id) {
-    //     const url = MuhalikConfig.PATH + `/api/users/cart/${id}`;
-    //     await axios.get(url, { cancelToken: source.token }).then((res) => {
-    //         if (unmounted) {
-    //             currentComponent.setState({})
-    //         }
-    //     }).catch((err) => {
-    //         if (axios.isCancel(err)) return
-    //     })
-    // }
-
     componentWillUnmount() {
         this.source.cancel();
         this.unmounted = false
     }
-
 
     render() {
         return (
@@ -172,11 +147,9 @@ class Index extends Component {
                     <link rel="shortcut icon" href="/muhalik.jpg" />
                 </Head>
                 <main>
-                    {animation}
                     <Layout
                         role={this.state.user.role}
                         full_name={this.state.user.full_name}
-
                         cart_count={this.state.cart_count}
                         {...this.props}
                     >

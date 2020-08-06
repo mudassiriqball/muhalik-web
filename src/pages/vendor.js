@@ -65,6 +65,9 @@ class Vendor extends Component {
 
             fields_list: this.props.fields_list,
 
+            total_products_count: 0,
+            in_stock_products_count: 0,
+
             pending_orders_count: 0,
             delivered_orders_count: 0,
             cancelled_orders_count: 0,
@@ -89,6 +92,7 @@ class Vendor extends Component {
             await this.setState({ user: _decodedToken })
             this.getUser(_decodedToken._id)
             this.getOrdersCount()
+            this.getProductsCount(_decodedToken._id)
             const _token = await getTokenFromStorage()
             this.setState({ token: _token })
         } else {
@@ -135,6 +139,20 @@ class Vendor extends Component {
         }
     }
 
+    async getProductsCount(id) {
+        let currentComponent = this
+        const order_count_url = MuhalikConfig.PATH + `/api/products/products-all-count/${id}`;
+        await axios.get(order_count_url, { cancelToken: this.source.token }).then((res) => {
+            if (currentComponent.unmounted) {
+                currentComponent.setState({
+                    total_products_count: res.data.total_products,
+                    in_stock_products_count: res.data.in_stock_products,
+                })
+            }
+        }).catch((error) => {
+        })
+    }
+
     async getOrdersCount() {
         let currentComponent = this
         const order_count_url = MuhalikConfig.PATH + `/api/orders/user-orders-count/${this.state.user._id}`;
@@ -176,6 +194,9 @@ class Vendor extends Component {
                     categories_list={this.state.categories_list}
                     sub_categories_list={this.state.sub_categories_list}
                     fields_list={this.state.fields_list}
+
+                    total_products_count={this.state.total_products_count}
+                    in_stock_products_count={this.state.in_stock_products_count}
 
                     pending_orders_count={this.state.pending_orders_count}
                     delivered_orders_count={this.state.delivered_orders_count}

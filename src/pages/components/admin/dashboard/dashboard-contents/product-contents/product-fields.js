@@ -11,7 +11,6 @@ import ConfirmModal from '../../../../confirm-modal'
 import TitleRow from '../../../../title-row';
 import CardAccordion from '../../../../card-accordion';
 
-let fieldsArray = [];
 class ProducFields extends Component {
     constructor(props) {
         super(props);
@@ -31,6 +30,8 @@ class ProducFields extends Component {
             fields_list: this.props.fields_list,
             field_requests_list: this.props.field_requests_list,
 
+            fieldsArray: this.props.fields_list,
+
             editRequestedField: '',
             showModalMessage: '',
             showModal: false,
@@ -43,6 +44,7 @@ class ProducFields extends Component {
         this.setState({
             fields_list: nextProps.fields_list,
             field_requests_list: nextProps.field_requests_list,
+            fieldsArray: nextProps.fields_list,
             token: nextProps.token
         });
     }
@@ -75,7 +77,7 @@ class ProducFields extends Component {
     handleFilterStrChange(e) {
         this.setState({ filterStr: e.target.value });
         if (e.target.value == '') {
-            this.setState({ fields_list: fieldsArray });
+            this.setState({ fields_list: this.state.fieldsArray });
         } else {
             let array = [];
             this.state.fields_list.filter(function (data) {
@@ -148,9 +150,10 @@ class ProducFields extends Component {
             this.setState({
                 field_requests_list: copyArray,
                 showModalMessage: 'Product Field Updated Successfully',
-                showModal: true
+                showModal: true,
+                fieldsArray: copyArray,
             });
-            fieldsArray = copyArray
+
         }
     }
     //  => Add

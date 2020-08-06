@@ -89,7 +89,7 @@ export default {
 
         'number_already_exists': 'This number already exists',
         'code_sended': 'Code Sended, Check your number',
-        'code_not_sended': 'Error: Code not sended',
+        'code_not_sended': 'Code not sended,check your number and try again',
         'enter_valid_number': 'Enter valid number with country code',
         'nmbr_verified': 'Number Verified',
         'invalid_code': 'Invalid Code, Try again',
@@ -238,7 +238,7 @@ export default {
         'months': 'months',
         'enter_gender': 'Select Gender',
         'change_language': 'Change Language',
-
+        'for_cancel_order': 'To cancel order, please contact to +966 59 091 1771'
     }
 }
 

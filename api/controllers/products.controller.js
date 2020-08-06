@@ -1502,7 +1502,8 @@ productsController.get_search_products = async (req, res) => {
         actual_products = products4;
       }
       else {
-        set = 4;
+        actual_products = products4;
+
       }
     }
     res.status(200).send({
@@ -1519,7 +1520,6 @@ productsController.get_search_products = async (req, res) => {
 
 
 productsController.get_less_stock_products = async (req, res) => {
-
   let simple_total;
   let simple_product;
   let variable_total;
@@ -1541,18 +1541,18 @@ productsController.get_less_stock_products = async (req, res) => {
   try {
     simple_total = await Products.countDocuments({
       vendor_id: _id,
-      product_type: 'simple-product',
+      product_type: "simple-product",
       isdeleted: false,
-      product_in_stock: { $lt: 5 }
+      product_in_stock: { $lt: 5 },
     });
 
     simple_product = await Products.aggregate([
       {
         $match: {
           vendor_id: _id,
-          product_type: 'simple-product',
+          product_type: "simple-product",
           isdeleted: false,
-          product_in_stock: { $lt: 5 }
+          product_in_stock: { $lt: 5 },
         },
       },
       {
@@ -1583,18 +1583,18 @@ productsController.get_less_stock_products = async (req, res) => {
 
     variable_total = await Products.countDocuments({
       vendor_id: _id,
-      product_type: 'variable-product',
+      product_type: "variable-prouct",
       isdeleted: false,
-      "product_variations.stock": { $lt: 5 }
+      "product_variations.stock": { $lt: 5 },
     });
 
     variable_product = await Products.aggregate([
       {
         $match: {
           vendor_id: _id,
-          product_type: 'variable-product',
+          product_type: "variable-prouct",
           isdeleted: false,
-          "product_variations.stock": { $lt: 5 }
+          "product_variations.stock": { $lt: 5 },
         },
       },
       {
@@ -1628,7 +1628,7 @@ productsController.get_less_stock_products = async (req, res) => {
       simple_product,
       simple_total,
       variable_product,
-      variable_total
+      variable_total,
     });
   } catch (error) {
     console.log("error", error);
@@ -1637,7 +1637,6 @@ productsController.get_less_stock_products = async (req, res) => {
 };
 
 productsController.get_vendor_product_less_stock_by_id = async (req, res) => {
-
   let simple_total;
   let simple_product;
   let variable_total;
@@ -1662,9 +1661,9 @@ productsController.get_vendor_product_less_stock_by_id = async (req, res) => {
     simple_total = await Products.countDocuments({
       _id: id,
       vendor_id: _id,
-      product_type: 'simple-product',
+      product_type: "simple-product",
       isdeleted: false,
-      product_in_stock: { $lt: 5 }
+      product_in_stock: { $lt: 5 },
     });
 
     simple_product = await Products.aggregate([
@@ -1672,9 +1671,9 @@ productsController.get_vendor_product_less_stock_by_id = async (req, res) => {
         $match: {
           _id: id,
           vendor_id: _id,
-          product_type: 'simple-product',
+          product_type: "simple-product",
           isdeleted: false,
-          product_in_stock: { $lt: 5 }
+          product_in_stock: { $lt: 5 },
         },
       },
       {
@@ -1700,9 +1699,9 @@ productsController.get_vendor_product_less_stock_by_id = async (req, res) => {
     variable_total = await Products.countDocuments({
       _id: id,
       vendor_id: _id,
-      product_type: 'variable-product',
+      product_type: "variable-prouct",
       isdeleted: false,
-      "product_variations.stock": { $lt: 5 }
+      "product_variations.stock": { $lt: 5 },
     });
 
     variable_product = await Products.aggregate([
@@ -1710,9 +1709,9 @@ productsController.get_vendor_product_less_stock_by_id = async (req, res) => {
         $match: {
           _id: id,
           vendor_id: _id,
-          product_type: 'variable-product',
+          product_type: "variable-prouct",
           isdeleted: false,
-          "product_variations.stock": { $lt: 5 }
+          "product_variations.stock": { $lt: 5 },
         },
       },
       {
@@ -1740,7 +1739,7 @@ productsController.get_vendor_product_less_stock_by_id = async (req, res) => {
       simple_product,
       simple_total,
       variable_product,
-      variable_total
+      variable_total,
     });
   } catch (error) {
     console.log("error", error);
@@ -1756,7 +1755,7 @@ productsController.update_product_data = async (req, res) => {
     Products.findOneAndUpdate(
       { _id: _id },
       {
-        $set: body ,
+        $set: body,
       },
       {
         returnNewDocument: true,

@@ -15,16 +15,19 @@ export default function MyApp({ Component, pageProps }) {
     if (lang == 'ar') {
       setLocale(LOCALES.ARABIC)
       setCurrLang('ar')
+    } else {
+      setCurrLang('en')
+      setLocale(LOCALES.ENGLISH)
     }
   }, [])
 
   function handleChangeLang(lang) {
     if (lang == 'en') {
-      setLocale(LOCALES.ENGLISH)
       localStorage.setItem('lang', 'en')
+      setLocale(LOCALES.ENGLISH)
     } else {
-      setLocale(LOCALES.ARABIC)
       localStorage.setItem('lang', 'ar')
+      setLocale(LOCALES.ARABIC)
     }
   }
   return <I18Provider locale={locale}>

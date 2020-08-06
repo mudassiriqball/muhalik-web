@@ -122,7 +122,15 @@ export default class Orders extends Component {
           <>
             <TitleRow icon={faEdit} title={' Admin Dashboard / Orders'} />
             <Row className='Card' noGutters>
-              <Col lg={12} md={12} sm={12} xs={12} className='p-0 m-0'>
+              <Col lg={6} md={6} sm={6} xs={12} className='p-0 m-0'>
+                <CountColoredCard
+                  count={this.props.pending_orders_count + this.props.delivered_orders_count + this.props.cancelled_orders_count + this.props.returned_orders_count}
+                  header={'Total Orders'}
+                  background={'lightblue'}
+                  iconname={faHistory}
+                />
+              </Col>
+              <Col lg={6} md={6} sm={6} xs={12} className='p-0 m-0'>
                 <CountColoredCard
                   count={this.props.pending_orders_count}
                   header={'Pending'}
@@ -142,8 +150,8 @@ export default class Orders extends Component {
                 <CountColoredCard
                   count={this.props.cancelled_orders_count}
                   header={'Cancelled'}
-                  background={'lightblue'}
-                  iconname={faBan}
+                  background={'#ff6666'}
+                  iconname={faTimes}
                 />
               </Col>
               <Col lg={4} md={4} sm={4} xs={12} className='p-0 m-0'>

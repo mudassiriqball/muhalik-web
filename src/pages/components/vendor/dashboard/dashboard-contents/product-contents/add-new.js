@@ -116,7 +116,7 @@ class AddNew extends Component {
             userStatusAlert: false,
             statusAlertMessage: '',
             token: this.props.token,
-            isUpdateProduct: this.props.isUpdateProduct,
+            isUpdateProduct: false,
             _id: this.props._id,
             clearFields: false,
             isLoading: false,
@@ -124,37 +124,37 @@ class AddNew extends Component {
             toastMessage: '',
             showVariationsErrorAlert: false,
             showSimpleProductPriceImgLinkErrorrAlert: false,
-            isVariableProduct: this.props.isVariableProduct,
+            isVariableProduct: '',
 
-            productCategory: this.props.productCategory,
-            productSubCategory: this.props.productSubCategory,
+            productCategory: '',
+            productSubCategory: '',
             category_id: '',
             sub_category_id: '',
             categories_list: this.props.categories_list,
             sub_categories_list: this.props.sub_categories_list,
             sub_category_options: [],
 
-            subCategoryDisabled: this.props.subCategoryDisabled,
+            subCategoryDisabled: true,
             categoryErrorDiv: 'BorderDiv',
             subCategoryErrorDiv: 'BorderDiv',
 
-            productTags: this.props.productTags,
+            productTags: [],
 
-            warrantyType: this.props.warrantyType,
+            warrantyType: '',
             inputValue: '',
 
-            variationsArray: this.props.variationsArray,
+            variationsArray: [],
             isVariationsSaved: false,
 
             // Custom Fields
             fields_list: this.props.fields_list,
-            customFieldsArray: this.props.customFieldsArray,
+            customFieldsArray: [],
 
             files: [],
-            imagePreviewArray: this.props.product_image_link,
+            imagePreviewArray: [],
             variationImagePreviewArray: [],
             // Dangerous Goods
-            dangerousGoodsArray: this.props.dangerousGoodsArray,
+            dangerousGoodsArray: [],
         };
     }
 
@@ -297,64 +297,42 @@ class AddNew extends Component {
             <Formik
                 validationSchema={schema}
                 initialValues={
-                    this.props.isUpdateProduct ?
-                        {
-                            product_name: this.props.product_name,
-                            product_description: this.props.product_description,
-                            product_type: this.props.product_type,
-                            sku: this.props.sku,
-                            product_price: this.props.product_price,
-                            product_in_stock: this.props.product_in_stock,
-                            product_brand_name: this.props.product_brand_name,
-                            product_image_link: this.props.product_image_link,
-                            product_warranty: this.props.product_warranty,
-                            warranty_type: this.props.warranty_type,
-                            product_discount: this.props.product_discount,
-                            purchase_note: this.props.purchase_note,
-                            product_weight: this.props.product_weight,
-                            dimension_length: this.props.dimension_length,
-                            dimension_width: this.props.dimension_width,
-                            dimension_height: this.props.dimension_height,
-                            shipping_charges: this.props.shipping_charges,
-                            handling_fee: this.props.handling_fee,
-                        }
-                        :
-                        {
-                            product_type: 'simple-product',
-                            product_price: '',
-                            product_in_stock: '',
-                            product_name: '',
-                            product_description: '',
-                            sku: '',
-                            product_brand_name: '',
-                            product_image_link: '',
-                            product_warranty: 0,
-                            warranty_type: 'No Warranty',
-                            product_discount: 0,
-                            purchase_note: '',
-                            product_variations: [],
-                            product_weight: '',
-                            dimension_length: '',
-                            dimension_width: '',
-                            dimension_height: '',
-                            shipping_charges: '',
-                            handling_fee: '',
-                            custom_fields: [],
-                            category_id: '',
-                            sub_category_id: '',
-                            dangerous_goods: [],
-                            product_tags: [],
-                        }
+                    {
+                        product_type: 'simple-product',
+                        product_price: '',
+                        product_in_stock: '',
+                        product_name: '',
+                        product_description: '',
+                        sku: '',
+                        product_brand_name: '',
+                        product_image_link: '',
+                        product_warranty: 0,
+                        warranty_type: 'No Warranty',
+                        product_discount: 0,
+                        purchase_note: '',
+                        product_variations: [],
+                        product_weight: '',
+                        dimension_length: '',
+                        dimension_width: '',
+                        dimension_height: '',
+                        shipping_charges: '',
+                        handling_fee: '',
+                        custom_fields: [],
+                        category_id: '',
+                        sub_category_id: '',
+                        dangerous_goods: [],
+                        product_tags: [],
+                    }
                 }
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     const currentComponent = this
 
-                    if (this.props.user_status == 'disapproved') {
+                    if (this.props.status == 'disapproved') {
                         this.setState({
                             userStatusAlert: true,
                             statusAlertMessage: 'You can\'t upload product, Your account is not approved yet'
                         })
-                    } else if (this.props.user_status == 'restricted') {
+                    } else if (this.props.status == 'restricted') {
                         this.setState({
                             userStatusAlert: true,
                             statusAlertMessage: 'You can\'t upload product, Your account has blocked, Contact to Admin'
@@ -369,11 +347,9 @@ class AddNew extends Component {
                                 this.setState({ subCategoryErrorDiv: 'RedBorderDiv' });
                             }
                         } // Product Price/Stock/Imgages Checking for Simple Product
-                        else if (!this.state.isUpdateProduct && values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
+                        else if (values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '' || this.state.files == '')) {
                             this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
-                        } else if (this.state.isUpdateProduct && values.product_type != 'variable-prouct' && (values.product_price == '' || values.product_in_stock == '')) {
-                            this.setState({ showSimpleProductPriceImgLinkErrorrAlert: true });
-                        } // Variation saved Check for variable product
+                        }// Variation saved Check for variable product
                         else if (this.state.isVariationsSaved == false && values.product_type == 'variable-prouct') {
                             this.setState({ showVariationsErrorAlert: true });
                         } else {
@@ -428,9 +404,7 @@ class AddNew extends Component {
                                     values.product_image_link && values.product_image_link.forEach(element => {
                                         formData.append('myImage', element)
                                     })
-                                    if (values.custom_fields != []) {
-                                        formData.append('custom_fields', JSON.stringify(values.custom_fields))
-                                    }
+                                    formData.append('custom_fields', JSON.stringify(values.custom_fields))
                                     formData.append('product_warranty', values.product_warranty)
                                     formData.append('warranty_type', values.warranty_type)
                                     formData.append('product_discount', values.product_discount)
@@ -451,12 +425,9 @@ class AddNew extends Component {
 
                                 formData.append('dangerous_goods', JSON.stringify(values.dangerous_goods))
                                 formData.append('product_tags', JSON.stringify(values.product_tags))
-                                let url = ''
-                                if (this.state.isUpdateProduct == false) {
-                                    url = MuhalikConfig.PATH + '/api/products/add-product'
-                                } else {
-                                    url = MuhalikConfig.PATH + '/api/products/aaa/bbb/ccc'
-                                }
+
+                                let url = MuhalikConfig.PATH + '/api/products/add-product'
+
                                 const config = {
                                     headers: {
                                         'content-type': 'multipart/form-data',
@@ -524,14 +495,14 @@ class AddNew extends Component {
                                 :
                                 null
                             }
-                            {this.props.user_status == 'disapproved' ?
+                            {this.props.status == 'disapproved' ?
                                 <Alert variant='danger' style={{ fontSize: '14px' }}>
                                     You can't upload product, Your account is not approved yet
                                 </Alert>
                                 :
                                 null
                             }
-                            {this.props.user_status == 'restricted' ?
+                            {this.props.status == 'restricted' ?
                                 <Alert variant='danger' style={{ fontSize: '14px' }}>
                                     You can't upload product, Your account is blocked, Contact to Admin
                                 </Alert>
@@ -581,7 +552,7 @@ class AddNew extends Component {
                                                     type="text"
                                                     placeholder="Enter Product Name"
                                                     name="product_name"
-                                                    value={values.product_name || ''}
+                                                    value={values.product_name}
                                                     onChange={handleChange}
                                                     isInvalid={errors.product_name && touched.product_name}
                                                 />
@@ -599,7 +570,7 @@ class AddNew extends Component {
                                                     as="textarea"
                                                     placeholder="Enter Product Description"
                                                     name="product_description"
-                                                    value={values.product_description || ''}
+                                                    value={values.product_description}
                                                     rows="7"
                                                     onChange={handleChange}
                                                     isInvalid={errors.product_description && touched.product_description}
@@ -629,14 +600,14 @@ class AddNew extends Component {
 
                                             product_type_values={values.product_type}
 
-                                            product_price_values={values.product_price || ''}
+                                            product_price_values={values.product_price}
                                             product_price_errors={errors.product_price}
                                             product_price_touched={touched.product_price}
 
-                                            product_in_stock_values={values.product_in_stock || ''}
+                                            product_in_stock_values={values.product_in_stock}
                                             product_in_stock_errors={errors.product_in_stock}
 
-                                            product_brand_name_values={values.product_brand_name || ''}
+                                            product_brand_name_values={values.product_brand_name}
                                             product_brand_name_errors={errors.product_brand_name}
 
 
@@ -644,37 +615,37 @@ class AddNew extends Component {
                                             imagePreviewArray={this.state.imagePreviewArray}
                                             deleteImage={this.deleteImage}
 
-                                            product_warranty_values={values.product_warranty || ''}
+                                            product_warranty_values={values.product_warranty}
                                             product_warranty_errors={errors.product_warranty}
 
-                                            warranty_type_values={values.warranty_type || ''}
+                                            warranty_type_values={values.warranty_type}
                                             warranty_type_errors={errors.warranty_type}
 
-                                            product_discount_values={values.product_discount || ''}
+                                            product_discount_values={values.product_discount}
                                             product_discount_errors={errors.product_discount}
 
-                                            sku_values={values.sku || ''}
+                                            sku_values={values.sku}
                                             sku_errors={errors.sku}
 
-                                            product_weight_values={values.product_weight || ''}
+                                            product_weight_values={values.product_weight}
                                             product_weight_errors={errors.product_weight}
 
-                                            dimension_length_values={values.dimension_length || ''}
+                                            dimension_length_values={values.dimension_length}
                                             dimension_length_errors={errors.dimension_length}
 
-                                            dimension_width_values={values.dimension_width || ''}
+                                            dimension_width_values={values.dimension_width}
                                             dimension_width_errors={errors.dimension_width}
 
-                                            dimension_height_values={values.dimension_height || ''}
+                                            dimension_height_values={values.dimension_height}
                                             dimension_height_errors={errors.dimension_height}
 
-                                            shipping_charges_values={values.shipping_charges || ''}
+                                            shipping_charges_values={values.shipping_charges}
                                             shipping_charges_errors={errors.shipping_charges}
 
-                                            handling_fee_values={values.handling_fee || ''}
+                                            handling_fee_values={values.handling_fee}
                                             handling_fee_errors={errors.handling_fee}
 
-                                            purchase_note_values={values.purchase_note || ''}
+                                            purchase_note_values={values.purchase_note}
                                             purchase_note_errors={errors.purchase_note}
 
                                             onChange={handleChange}

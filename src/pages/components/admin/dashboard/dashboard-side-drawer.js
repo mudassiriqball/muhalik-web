@@ -22,8 +22,6 @@ import HomeScreenCategories from './dashboard-contents/category-contents/home-sc
 
 import Inventory from './dashboard-contents/inventory';
 import Orders from './dashboard-contents/orders'
-import Discounts from './dashboard-contents/discount';
-import Commision from './dashboard-contents/commision';
 import GlobalStyleSheet from '../../../../styleSheet';
 
 const DashboardSideDrawer = props => {
@@ -148,24 +146,6 @@ const DashboardSideDrawer = props => {
                             </div>
                         </Nav.Item>
                         <Nav.Item>
-                            <div className="nav_link">
-                                <Nav.Link eventKey="Discounts" onClick={props.click} style={styles.nav_link}>
-                                    <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
-                                    <div className="mr-auto">Discounts</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <div className="nav_link" >
-                                <Nav.Link eventKey="Commission" onClick={props.click} style={styles.nav_link}>
-                                    <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
-                                    <div className="mr-auto">Commission</div>
-                                    <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                </Nav.Link>
-                            </div>
-                        </Nav.Item>
-                        <Nav.Item>
                             <div className="nav_link" >
                                 <Nav.Link onClick={props.click, props.logout} style={styles.nav_link}>
                                     <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
@@ -213,12 +193,6 @@ const DashboardSideDrawer = props => {
                             </Tab.Pane>
                             <Tab.Pane eventKey="Slider">
                                 <Slider {...props} />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="Discounts">
-                                <Discounts />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="Commision">
-                                <Commision />
                             </Tab.Pane>
                         </Tab.Content>
                     </Col>

@@ -13,7 +13,6 @@ import AddNew from './dashboard-contents/product-contents/add-new';
 import AllProducts from './dashboard-contents/all-products';
 import OutOfStockProducts from './dashboard-contents/out-of-stock-products';
 
-import Discounts from './dashboard-contents/discounts';
 import Orders from './dashboard-contents/orders';
 import GlobalStyleSheet from '../../../../styleSheet';
 import { faUserCircle, faEdit } from "@fortawesome/free-regular-svg-icons";
@@ -37,6 +36,7 @@ const Dashboard = props => {
         <div className='vendor_dashboard'>
             <AddNewFieldNameModal
                 token={props.token}
+                status={props.status}
                 show={modalShow}
                 onHide={() => setModalShow(false)}
             />
@@ -70,34 +70,26 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
+
+
                             <Nav.Item>
                                 <div className="nav_link">
-                                    <Nav.Link style={styles.nav_link} onClick={() => setShow_inventory(!show_inventory)}>
-                                        <FontAwesomeIcon icon={faWarehouse} style={styles.fontawesome} />
-                                        <div className="mr-auto"> Inventory </div>
-                                        <FontAwesomeIcon icon={show_inventory ? faChevronUp : faChevronDown} style={styles.forword_fontawesome} />
+                                    <Nav.Link eventKey="AllProducts" style={styles.nav_link} onClick={() => setShow_inventory(false)}>
+                                        <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
+                                        <div className="mr-auto"> All Products </div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
-                            {show_inventory ?
-                                <div>
-                                    <div className="limk_submenue">
-                                        <Nav.Link eventKey="AllProducts" style={styles.submenu_link} >
-                                            <FontAwesomeIcon size="xs" icon={faProductHunt} style={styles.fontawesome} />
-                                            <div className="mr-auto"> All Products</div>
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                        </Nav.Link>
-                                    </div>
-                                    <div className="limk_submenue">
-                                        <Nav.Link eventKey="OutOfStock" style={styles.submenu_link} >
-                                            <FontAwesomeIcon size="xs" icon={faWarehouse} style={styles.fontawesome} />
-                                            <div className="mr-auto"> Out of Stock</div>
-                                            <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                        </Nav.Link>
-                                    </div>
+                            <Nav.Item>
+                                <div className="nav_link">
+                                    <Nav.Link eventKey="OutOfStock" style={styles.nav_link} onClick={() => setShow_inventory(false)}>
+                                        <FontAwesomeIcon size="xs" icon={faWarehouse} style={styles.fontawesome} />
+                                        <div className="mr-auto"> Out of Stock </div>
+                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
+                                    </Nav.Link>
                                 </div>
-                                : null
-                            }
+                            </Nav.Item>
                             <Nav.Item>
                                 <div className="nav_link">
                                     <Nav.Link eventKey="Orders" style={styles.nav_link} onClick={() => setShow_inventory(false)}>
@@ -116,16 +108,6 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
-                            <Nav.Item>
-                                <div className="nav_link">
-                                    <Nav.Link eventKey="Discounts" style={styles.nav_link} onClick={() => setShow_inventory(false)}>
-                                        <FontAwesomeIcon size="xs" icon={faTags} style={styles.fontawesome} />
-                                        <div className="mr-auto"> Discount </div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                    </Nav.Link>
-                                </div>
-                            </Nav.Item>
-
                         </Nav>
                         {/* End Tabs Side Drawer */}
                     </div>
@@ -175,14 +157,13 @@ const Dashboard = props => {
                             <Tab.Content style={{ height: `calc(100vh - 65px)`, overflowY: 'auto' }}>
                                 <Tab.Pane eventKey="Dashboard">
                                     <VendorDashboard
-                                        status={props.status}
+                                        {...props}
                                     />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="AddProduct">
                                     <AddNew
                                         {...props}
                                         title={'Vendor Dashboard / Add New'}
-
                                         subCategoryDisabled={true}
                                         isUpdateProduct={false}
                                         isVariableProduct={false}
@@ -209,9 +190,6 @@ const Dashboard = props => {
                                     <Orders
                                         {...props}
                                     />
-                                </Tab.Pane>
-                                <Tab.Pane eventKey="Discounts">
-                                    <Discounts />
                                 </Tab.Pane>
                             </Tab.Content>
                         </div>

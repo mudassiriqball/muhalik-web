@@ -79,11 +79,7 @@ const Toolbar = (props) => {
 
         getSuggestions()
 
-        if (props.currLang == 'en') {
-            setSelectedLang("English")
-        } else {
-            setSelectedLang("العربية")
-        }
+
 
         window.addEventListener('scroll', handleScroll);
 
@@ -94,12 +90,22 @@ const Toolbar = (props) => {
         };
     }, []);
 
+    useEffect(() => {
+        if (props.currLang == 'en') {
+            setSelectedLang('English')
+        } else {
+            setSelectedLang('العربية')
+        }
+        return () => {
+        }
+    }, [props.currLang])
+
     function handleSetLanguage(lang) {
         props.changeLang(lang)
         if (lang == 'en') {
-            setSelectedLang("English")
+            setSelectedLang('English')
         } else {
-            setSelectedLang("العربية")
+            setSelectedLang('العربية')
         }
     }
 

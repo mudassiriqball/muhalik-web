@@ -23,8 +23,6 @@ import HomeScreenCategories from './dashboard-contents/category-contents/home-sc
 
 import Inventory from './dashboard-contents/inventory';
 import Orders from './dashboard-contents/orders'
-import Discounts from './dashboard-contents/discount';
-import Commision from './dashboard-contents/commision';
 import GlobalStyleSheet from '../../../../styleSheet';
 
 const Dashboard = props => {
@@ -145,24 +143,6 @@ const Dashboard = props => {
                                     </Nav.Link>
                                 </div>
                             </Nav.Item>
-                            <Nav.Item>
-                                <div className="nav_link">
-                                    <Nav.Link eventKey="Discounts" style={styles.nav_link} onClick={() => setShow_category(false)}>
-                                        <FontAwesomeIcon icon={faTags} style={styles.fontawesome} />
-                                        <div className="mr-auto">Discounts</div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                    </Nav.Link>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className="nav_link" >
-                                    <Nav.Link eventKey="Commission" style={styles.nav_link} onClick={() => setShow_category(false)}>
-                                        <FontAwesomeIcon icon={faPercent} style={styles.fontawesome} />
-                                        <div className="mr-auto">Commission</div>
-                                        <FontAwesomeIcon icon={faChevronRight} style={styles.forword_fontawesome} />
-                                    </Nav.Link>
-                                </div>
-                            </Nav.Item>
                         </Nav>
                         {/* End Tabs Side Drawer */}
                     </div>
@@ -254,12 +234,6 @@ const Dashboard = props => {
                                     <ProductFields
                                         {...props}
                                     />
-                                </Tab.Pane>
-                                <Tab.Pane eventKey="Discounts">
-                                    <Discounts />
-                                </Tab.Pane>
-                                <Tab.Pane eventKey="Commision">
-                                    <Commision />
                                 </Tab.Pane>
                             </Tab.Content>
                         </div>

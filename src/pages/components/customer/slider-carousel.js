@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Router from 'next/router'
 import { Carousel, Row, Col, ListGroup, Button, Image } from 'react-bootstrap'
 import useDimensions from "react-use-dimensions";
@@ -25,31 +25,58 @@ const SliderCarousel = (props) => {
     let cat = false
     let sub = false
 
+    useEffect(() => {
+        document.querySelector('#content').onmouseleave = function (mouse) {
+            var edge = closestEdge(mouse, this);
+            console.log(edge);
+        }
+    }, [])
+
+
+
+    function closestEdge(mouse, elem) {
+        var elemBounding = elem.getBoundingClientRect();
+
+        var elementLeftEdge = elemBounding.left;
+        var elementTopEdge = elemBounding.top;
+        var elementRightEdge = elemBounding.right;
+        var elementBottomEdge = elemBounding.bottom;
+
+        var mouseX = mouse.pageX;
+        var mouseY = mouse.pageY;
+
+        var topEdgeDist = Math.abs(elementTopEdge - mouseY);
+        var bottomEdgeDist = Math.abs(elementBottomEdge - mouseY);
+        var leftEdgeDist = Math.abs(elementLeftEdge - mouseX);
+        var rightEdgeDist = Math.abs(elementRightEdge - mouseX);
+
+        var min = Math.min(topEdgeDist, bottomEdgeDist, leftEdgeDist, rightEdgeDist);
+
+        switch (min) {
+            case leftEdgeDist:
+                setIsCategoryHover(false)
+                break;
+            case rightEdgeDist:
+                return;
+                break;
+            case topEdgeDist:
+                setIsCategoryHover(false)
+                break;
+            case bottomEdgeDist:
+                setIsCategoryHover(false)
+                break;
+        }
+    }
+
     function handleMouseEnter(element) {
         cat = false
         setIsCategoryHover(true)
         setHoverCategory(element)
         console.log('cat in:', cat, sub)
     }
-
-    function handleMouseOut() {
-        cat = true
-        console.log('cat out:', cat, sub)
-        if (sub == true) {
-            setIsCategoryHover(false)
-        }
-    }
-
-    function handleSubMouseEnter() {
-        sub = false
-        // console.log('sub in:', cat, sub)
-    }
-
     function handleSubMouseOut() {
         setIsCategoryHover(false)
     }
-
-
 
     const [index, setIndex] = React.useState(0);
     const handleSelect = (selectedIndex, e) => {
@@ -61,28 +88,28 @@ const SliderCarousel = (props) => {
             <Row noGutters className='_row'>
                 <Row className='w-100' noGutters >
                     <Col lg={3} md={3} className='category_col'>
-                        <ListGroup variant='flush' className='list_group' style={{ maxHeight: width / 2.5 || '25vw' }}>
-                            <ListGroup.Item className='list_outer_item' onClick={() => Router.push('/categories')}>
-                                <FontAwesomeIcon icon={faBuromobelexperte} className='categories_fontawsome' />
-                                <div>{translate('all_categories')}</div>
-                                <FontAwesomeIcon icon={faChevronRight} className='fontawesome' />
-                            </ListGroup.Item>
-                            {props.categories_list && props.categories_list.map((element, index) =>
-                                <ListGroup.Item key={element._id} className='list_item'
-                                    onMouseEnter={() => handleMouseEnter(element)}
-                                    onMouseLeave={handleMouseOut}
-                                    onClick={() => Router.push('/products/category/[category]', `/products/category/${element.value}`)}
-                                >
-                                    <Image src={element.url} roundedCircle fluid style={{ width: '30px', maxWidth: '30px', minHeight: '30px', maxHeight: '30px', marginRight: '10px' }} />
-                                    <div>{element.value}</div>
+                        <div id='content'>
+                            <ListGroup variant='flush' className='list_group' style={{ maxHeight: width / 2.5 || '25vw' }}>
+                                <ListGroup.Item className='list_outer_item' onClick={() => Router.push('/categories')}>
+                                    <FontAwesomeIcon icon={faBuromobelexperte} className='categories_fontawsome' />
+                                    <div>{translate('all_categories')}</div>
                                     <FontAwesomeIcon icon={faChevronRight} className='fontawesome' />
                                 </ListGroup.Item>
-                            )}
-                        </ListGroup>
+                                {props.categories_list && props.categories_list.map((element, index) =>
+                                    <ListGroup.Item key={element._id} className='list_item'
+                                        onMouseEnter={() => handleMouseEnter(element)}
+                                        onClick={() => Router.push('/products/category/[category]', `/products/category/${element.value}`)}
+                                    >
+                                        <Image src={element.url} roundedCircle fluid style={{ width: '30px', maxWidth: '30px', minHeight: '30px', maxHeight: '30px', marginRight: '10px' }} />
+                                        <div>{element.value}</div>
+                                        <FontAwesomeIcon icon={faChevronRight} className='fontawesome' />
+                                    </ListGroup.Item>
+                                )}
+                            </ListGroup>
+                        </div>
                     </Col>
                     <Col className='carosuel_col' ref={ref}
-                        onMouseEnter={handleSubMouseEnter}
-                        onMouseLeave={handleSubMouseOut}
+                        onMouseLeave={isCategoryHover && handleSubMouseOut}
                     >
                         {isCategoryHover && <div className='show_sub_categories' style={{ maxHeight: width / 2.5 || '25vw' }}>
                             {props.sub_categories_list && props.sub_categories_list.map((element, index) =>

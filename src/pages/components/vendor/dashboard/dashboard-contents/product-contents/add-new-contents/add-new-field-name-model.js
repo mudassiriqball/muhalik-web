@@ -46,49 +46,58 @@ function AddNewFieldNameModal(props) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {message ?
-                    <Form.Label style={{ fontSize: '14px', textAlign: 'center', width: '100%' }}>{message}</Form.Label>
-                    :
-                    <>
-                        <Form.Label style={{ fontSize: '14px', textAlign: 'center', width: '100%' }}>
-                            Your Request for Adding New Field Name will be send to Admin, Admin will Approve/Discard it.
-                </Form.Label>
-                        <Form.Group>
-                            <InputGroup>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    placeholder="Enter Field Name"
-                                    name="sku"
-                                    value={value}
-                                    onChange={(e) => {
-                                        setValue(e.target.value)
-                                        if (e.target.value.length > 2 && e.target.value.length < 21) {
-                                            setError("")
-                                        }
-                                    }}
-                                    isInvalid={error}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {error}
-                                </Form.Control.Feedback>
-                            </InputGroup>
-                        </Form.Group>
-                    </>
+                {props.status == 'restricted' ?
+                    <Form.Label style={{ fontSize: '14px', textAlign: 'center', width: '100%', color: 'red' }}>
+                        {'You can\'t upload product, Your account has blocked, Contact to Admin'}
+                    </Form.Label>
+                    : props.status == 'disapproved' ?
+                        <Form.Label style={{ fontSize: '14px', textAlign: 'center', width: '100%', color: 'red' }}>
+                            {'You can\'t upload product, Your account is not approved yet'}
+                        </Form.Label>
+                        :
+                        message ?
+                            <Form.Label style={{ fontSize: '14px', textAlign: 'center', width: '100%' }}>{message}</Form.Label>
+                            :
+                            <>
+                                <Form.Label style={{ fontSize: '14px', textAlign: 'center', width: '100%' }}>
+                                    {'Your Request for Adding New Field Name will be send to Admin, Admin will Approve/Discard it.'}
+                                </Form.Label>
+                                <Form.Group>
+                                    <InputGroup>
+                                        <Form.Control
+                                            type="text"
+                                            size="sm"
+                                            placeholder="Enter Field Name"
+                                            name="sku"
+                                            value={value}
+                                            onChange={(e) => {
+                                                setValue(e.target.value)
+                                                if (e.target.value.length > 2 && e.target.value.length < 21) {
+                                                    setError("")
+                                                }
+                                            }}
+                                            isInvalid={error}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {error}
+                                        </Form.Control.Feedback>
+                                    </InputGroup>
+                                </Form.Group>
+                            </>
                 }
             </Modal.Body>
             <Modal.Footer>
                 {message ?
-                    <Button size="sm" className="mr-auto" onClick={() => { setMessage("") }}>Add More?</Button>
+                    <Button size="sm" className="mr-auto" disabled={props.status != 'approved'} onClick={() => { setMessage("") }}>Add More?</Button>
                     :
-                    <Button size="sm" className="mr-auto" onClick={handleAdd}>
+                    <Button size="sm" className="mr-auto" disabled={props.status != 'approved'} onClick={handleAdd}>
                         {isLoading ? 'Adding' : 'Add Field'}
                         {isLoading ? <Spinner animation="grow" size="sm" /> : <div></div>}
                     </Button>
                 }
-                <Button size="sm" onClick={props.onHide}>Cancel</Button>
+                <Button size="sm" disabled={props.status != 'approved'} onClick={props.onHide}>Cancel</Button>
             </Modal.Footer>
-        </Modal>
+        </Modal >
     )
 }
 

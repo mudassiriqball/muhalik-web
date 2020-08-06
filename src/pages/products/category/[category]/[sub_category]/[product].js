@@ -33,6 +33,8 @@ import TranslateFormControl from '../../../../../i18n/translate-form-control'
 import TranslateOption from '../../../../../i18n/translate-option'
 import MyButton from '../../../../components/buttons/my-btn';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import DiscountPrice from '../../../../components/discount-price';
+import CalculateDiscountPrice from '../../../../../calculate-discount';
 
 
 export async function getServerSideProps(context) {
@@ -618,7 +620,7 @@ function SimpleProduct(props) {
                 <Col lg={5} md={5} sm={6} xs={12} className='desc_col'>
                     {props.single_product.product_name}
                     <div className='slope'>{translate('rs')}
-                        {props.single_product.product_price - props.single_product.product_discount / 100 * props.single_product.product_price}
+                        <CalculateDiscountPrice price={props.single_product.product_price} discount={props.single_product.product_discount} />
                     </div>
                     {props.single_product.product_discount != '0' ?
                         <div className='d-inline-flex'>
@@ -804,7 +806,7 @@ function VariableProduct(props) {
                 <Col lg={5} md={5} sm={6} xs={12} className='desc_col'>
                     {props.single_product.product_name}
                     <div className='slope'>{translate('rs')}
-                        {activeVariation.price - activeVariation.discount / 100 * activeVariation.price}
+                        <CalculateDiscountPrice price={activeVariation.price} discount={activeVariation.discount} />
                     </div>
 
                     {activeVariation.discount != '0' ?
@@ -913,9 +915,10 @@ function VariableProduct(props) {
                                         element={element.image_link[0]}
                                         plus={16}
                                         setData={() => {
-                                            setActiveVariation(element),
-                                                setActiveVariationIndex(index),
-                                                setActiveImageIndex(0)
+                                            setActiveVariation(element)
+                                            setActiveVariationIndex(index)
+                                            setActiveImageIndex(0)
+                                            setQuantity(1)
                                         }}
                                     />
                                 </Col>
@@ -930,8 +933,9 @@ function VariableProduct(props) {
                                     plus={16}
                                     setData={() => {
                                         setActiveVariation(element),
-                                            setActiveVariationIndex(index),
-                                            setActiveImageIndex(0)
+                                            setActiveVariationIndex(index)
+                                        setActiveImageIndex(0)
+                                        setQuantity(1)
                                     }}
                                 />
                             </Col>
@@ -1387,7 +1391,7 @@ function TabComponent(props) {
                                 )
                             }
                         </Tab>
-                        {props.user.role != '' ?
+                        {props.user.role != '' && props.user.role == 'customer' ?
                             <Tab eventKey="GiveReview" title={translate('give_review')} >
                                 <Row className='pt-2 pb-2 pl-5 pr-5'>
                                     <div className='d-inline-flex align-items-center'>
@@ -1553,13 +1557,13 @@ function RelatedProducts(props) {
                                             src={element.product_image_link[0].url}
                                         />
                                         <label className='my_label'>{element.product_name}</label>
-                                        <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_price}</label>
+                                        <DiscountPrice price={element.product_price} discount={element.product_discount} />
                                     </div>
                                     :
                                     <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
                                         <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
                                         <label className='my_label'>{element.product_name}</label>
-                                        <label className='my_label'><span style={{ color: 'green', fontSize: '13px' }} >{translate('rs')}</span>{element.product_variations[0].price}</label>
+                                        <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
                                     </div>
                                 }
                             </Card>

@@ -67,11 +67,6 @@ class ForgotPassword extends Component {
             });
     }
 
-
-
-
-
-
     async handleSenVerificationCode(mobile) {
         const currentComponent = this
 

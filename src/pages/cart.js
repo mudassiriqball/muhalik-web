@@ -17,6 +17,7 @@ React.useLayoutEffect = React.useEffect
 
 import translate from '../i18n/translate'
 import TranslateFormControl from '../i18n/translate-form-control'
+import CalculateDiscountPrice from '../calculate-discount'
 
 
 export async function getServerSideProps(context) {
@@ -58,7 +59,6 @@ export default function Cart(props) {
 
     const [showErrorAlertModal, setShowErrorAlertModal] = useState(false)
 
-
     useLayoutEffect(() => {
         setProducts([])
         let unmounted = true
@@ -83,7 +83,7 @@ export default function Cart(props) {
                         }).catch((err) => {
                             if (axios.isCancel(err)) return
                         })
-                        if (_decoded_token.city == 'riyadh' || _decoded_token.city == 'Riyadh') {
+                        if (_decoded_token.city == 'riyadh' || _decoded_token.city == 'Riyadh' || _decoded_token.city == 'الرياض' || _decoded_token.city == 'رياض') {
                             setShipping_charges(25)
                         } else {
                             setShipping_charges(45)
@@ -105,7 +105,7 @@ export default function Cart(props) {
 
 
     useEffect(() => {
-        calculateTotalPrice()
+        calculateSubTotalPrice()
     }, [products])
 
     useEffect(() => {
@@ -153,21 +153,33 @@ export default function Cart(props) {
     }, [cart_list])
 
 
-    function calculateTotalPrice() {
+    function calculateSubTotalPrice() {
         let count = 0
         products.forEach(element => {
-            let discount = 0
             if (element.product.product_type == "simple-product") {
-                // discount = element.product_discount / 100 * element.product.product_price
-                count += (element.product.product_price - element.product.product_discount / 100 * element.product.product_price) * element.quantity
+                let pp = 0
+                let rounded = Math.floor((element.product.product_price - element.product.product_discount / 100 * element.product.product_price) * element.quantity)
+                let decimal = count - rounded;
+                if (decimal > 0) {
+                    pp = rounded + 1;
+                } else {
+                    pp = rounded
+                }
+                count += pp
             } else {
-                // discount = element.discount / 100 * element.price
-                count += (element.variation.price - element.variation.discount / 100 * element.variation.price) * element.quantity
+                let pp = 0
+                let rounded = Math.floor((element.variation.price - element.variation.discount / 100 * element.variation.price) * element.quantity)
+                let decimal = count - rounded;
+                if (decimal > 0) {
+                    pp = rounded + 1;
+                } else {
+                    pp = rounded
+                }
+                count += pp
             }
         })
         setSubTotal(count)
     }
-
     function getCartCont(length) {
         let options = []
         for (let i = 0; i < length; i++) {
@@ -345,7 +357,7 @@ export default function Cart(props) {
                                                                 <div className='p-0 m-0'>{element.product.product_name}</div>
                                                             </Col>
                                                             <Col className='_padding' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
-                                                                <label>{translate('rs')}{(element.product.product_price - element.product.product_discount / 100 * element.product.product_price) * element.quantity}</label>
+                                                                <CalculateDiscountPrice price={element.product.product_price} discount={element.product.product_discount} />
                                                             </Col>
                                                             <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
                                                                 <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
@@ -376,7 +388,7 @@ export default function Cart(props) {
                                                                 <div className='p-0 m-0'>{element.product.product_name}</div>
                                                             </Col>
                                                             <Col className='_padding' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
-                                                                <label>{translate('rs')}{(element.variation.price - element.variation.discount / 100 * element.variation.price) * element.quantity}</label>
+                                                                <CalculateDiscountPrice price={element.variation.price} discount={element.variation.discount} />
                                                             </Col>
                                                             <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
                                                                 <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
@@ -555,19 +567,40 @@ function ProcedeOrder(props) {
             let data = []
             props.products.forEach((element, index) => {
                 if (element.product.product_type == "simple-product") {
+                    let pp = 0
+                    let unmounted = true
+                    let count = element.product.product_price - element.product.product_discount / 100 * element.product.product_price
+                    let rounded = Math.floor(count);
+                    let decimal = count - rounded;
+                    if (decimal > 0 && unmounted) {
+                        pp = rounded + 1;
+                    } else if (unmounted) {
+                        pp = rounded
+                    }
                     data.push({
                         'vendor_id': element.product.vendor_id,
                         'p_id': element.p_id,
                         'quantity': element.quantity,
-                        'price': (element.product.product_price - (element.product.product_discount / 100 * element.product.product_price)) * element.quantity,
+                        'price': pp
                     })
                 } else {
+                    let pp = 0
+                    let unmounted = true
+                    let count = element.variation.price - element.variation.discount / 100 * element.variation.price
+                    let rounded = Math.floor(count);
+                    let decimal = count - rounded;
+                    if (decimal > 0 && unmounted) {
+                        pp = rounded + 1;
+                    } else if (unmounted) {
+                        pp = rounded
+                    }
+
                     data.push({
                         'vendor_id': element.product.vendor_id,
                         'p_id': element.p_id,
                         'variation_id': element.variation_id,
                         'quantity': element.quantity,
-                        'price': (element.variation.price - (element.variation.discount / 100 * element.variation.price)) * element.quantity,
+                        'price': pp
                     })
                 }
             })
@@ -606,7 +639,7 @@ function ProcedeOrder(props) {
     function handleSetCity(city) {
         setCity(city)
         setCityError('')
-        if (city == 'Riyadh' || city == 'riyadh') {
+        if (city == 'Riyadh' || city == 'riyadh' || 'رياض' || 'الرياض') {
             setShipping_charges(25)
         } else {
             setShipping_charges(45)

@@ -41,13 +41,13 @@ function Categories({ categories_list, sub_categories_list }) {
                 {categories_list && categories_list.map((element, index) =>
                     <Col key={index} className='col' lg={4} md={4} sm={12} xs={12}>
                         <div>
-                            <label className='category' onClick={() => Router.push('/[category]', `/${element.value}`)}>{element.value}</label>
+                            <label className='category' onClick={() => Router.push('/products/category/[category]', `/products/category/${element.value}`)}>{element.value}</label>
                         </div>
                         <hr className='hr' />
                         {sub_categories_list && sub_categories_list.map((e, i) =>
                             element._id == e.category_id ?
                                 <div key={i}>
-                                    <label className='sub-category' onClick={() => Router.push('/[category]/[sub_category]', `/${element.value}/${e.value}`)}>{e.value}</label>
+                                    <label className='sub-category' onClick={() => Router.push('/products/category/[category]/[sub_category]', `/products/category/${element.value}/${e.value}`)}>{e.value}</label>
                                 </div>
                                 :
                                 null

@@ -47,7 +47,7 @@ const schema = yup.object({
         is: val => (val && val.length > 0 ? true : false),
         then: yup.string().oneOf(
             [yup.ref("password")],
-            translate('passwrd_match')
+            translate('password_match')
         )
     }),
 
@@ -118,7 +118,7 @@ class VendorSignup extends Component {
                     feedback: ''
                 });
                 let interval = null
-                var appVerifier = window.recaptchaVerifier;
+                var appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
                 firebase.auth().signInWithPhoneNumber(mobileNumber, appVerifier)
                     .then(function (confirmationResult) {
                         window.confirmationResult = confirmationResult;
@@ -290,7 +290,7 @@ class VendorSignup extends Component {
                                                             disabled={this.state.isCodeSended}
                                                         />
                                                         {/* <InputGroup.Append> */}
-                                                        <MyButton id="recaptcha-container"
+                                                        <MyButton
                                                             onClick={() => {
                                                                 this.state.isCodeSended ?
                                                                     this.handleSenVerificationCode(values.mobile)
@@ -353,6 +353,11 @@ class VendorSignup extends Component {
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
+                                                {!this.state.isCodeVerified &&
+                                                    <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                        <div id="recaptcha-container"></div>
+                                                    </Form.Group>
+                                                }
                                             </Form.Row>
 
                                             <Form.Row>
@@ -626,7 +631,7 @@ class VendorSignup extends Component {
                                             display: flex;
                                             width: 100%;
                                             font-size: 12.8px;
-                                            color: ${GlobalStyleSheet.primry_color};
+                                            color: green;
                                         }
                                         .vendor_signup .feedback a{
                                             font-size: 12.8px;
