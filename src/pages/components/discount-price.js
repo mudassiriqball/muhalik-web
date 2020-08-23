@@ -33,10 +33,7 @@ export default function DiscountPrice(props) {
                 </div>
                 :
                 <div className='d-inline-flex'>
-                    <p className='discount_label'>
-                        {''}
-                    </p>
-                    <div className='percent'>{0 + '%'}</div>
+                    <div style={{ fontSize: '13px' }}>{0 + '%'}</div>
                 </div>
             }
             <style type="text/css">{`
@@ -56,12 +53,12 @@ export default function DiscountPrice(props) {
                     padding-left: 8px;
                 }
                 .discount_label {
-                    width: auto;
+                    width: 100%;
                     color: gray;
-                    border-bottom: 1px solid gray; 
-                    line-height: 0.1em;
+                    margin: 0%;
+                    
+                    text-decoration-line: line-through;
                     font-size: 13px;
-                    margin-top: 10px;
                 }
             `}</style>
         </div>

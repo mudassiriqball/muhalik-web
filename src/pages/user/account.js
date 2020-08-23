@@ -31,16 +31,19 @@ function Account(props) {
     const [showChangeLanguage, setShowChangeLanguage] = useState(false)
 
     useEffect(() => {
-        let unmounted = true
-        const CancelToken = axios.CancelToken;
-        const source = CancelToken.source();
-
         if (props.currLang == 'en') {
             setSelectedLang("English")
         } else {
             setSelectedLang("العربية")
         }
+        return () => {
+        }
+    }, [props.currLang])
 
+    useEffect(() => {
+        let unmounted = true
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
         async function getData() {
             const _decoded_token = await checkTokenExpAuth()
             if (_decoded_token != null) {
@@ -95,8 +98,10 @@ function Account(props) {
     }
     function logout() {
         setLoading(true)
-        removeTokenFromStorage(false)
-        setLoading(false)
+        if (removeTokenFromStorage()) {
+            setLoading(false)
+            Router.reload()
+        }
     }
 
     return (
@@ -132,17 +137,17 @@ function Account(props) {
                                 <Nav.Link className='p-0' onClick={() => Router.push('/user/account/personel-info')}> {translate('view')} </Nav.Link>
                             </div>
                         </ListGroup.Item>
-                        <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/my-address')}>
+                        <ListGroup.Item className='list_item' onClick={() => Router.push('/user/account/my-address')}>
                             <FontAwesomeIcon icon={faHome} style={styles.fontawesome} />
                             <div className='label'>{user.role == 'vendor' ? translate('shop_address') : translate('address')}</div>
                             <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                         </ListGroup.Item>
-                        <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/change-picture')}>
+                        <ListGroup.Item className='list_item' onClick={() => Router.push('/user/account/change-picture')}>
                             <FontAwesomeIcon icon={faImage} style={styles.fontawesome} />
                             <div className='label'> {translate('change_picture')}</div>
                             <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                         </ListGroup.Item>
-                        <ListGroup.Item className='list_item' action onClick={() => Router.push('/reset-password')}>
+                        <ListGroup.Item className='list_item' onClick={() => Router.push('/reset-password')}>
                             <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
                             <div className='label'> {translate('change_password')}</div>
                             <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
@@ -152,22 +157,22 @@ function Account(props) {
                         {user.role == 'customer' ?
                             <>
                                 <ListGroup.Item disabled>{translate('my_orders')}</ListGroup.Item>
-                                <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/pending`)} >
+                                <ListGroup.Item className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/pending`)} >
                                     <FontAwesomeIcon icon={faClock} style={styles.fontawesome} />
                                     <div className='label'>{translate('pending')}</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                                 </ListGroup.Item>
-                                <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/delivered`)} >
+                                <ListGroup.Item className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/delivered`)} >
                                     <FontAwesomeIcon icon={faThumbsUp} style={styles.fontawesome} />
                                     <div className='label'>{translate('delivered')}</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                                 </ListGroup.Item>
-                                <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/cancelled`)}>
+                                <ListGroup.Item className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/cancelled`)}>
                                     <FontAwesomeIcon icon={faTimes} style={styles.fontawesome} />
                                     <div className='label'>{translate('cancelled')}</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                                 </ListGroup.Item>
-                                <ListGroup.Item action className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/returned`)}>
+                                <ListGroup.Item className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/returned`)}>
                                     <FontAwesomeIcon icon={faBan} style={styles.fontawesome} />
                                     <div className='label'>{translate('returned')}</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
@@ -184,7 +189,7 @@ function Account(props) {
                 {user.role == '' || user.role == 'customer' ?
                     null
                     :
-                    <ListGroup.Item className='list_item' action onClick={() => Router.push(dashboard_href)}>
+                    <ListGroup.Item className='list_item' onClick={() => Router.push(dashboard_href)}>
                         <FontAwesomeIcon icon={faTachometerAlt} style={styles.fontawesome} />
                         <div className='label'>{translate('go_to_dashbord')}</div>
                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
@@ -207,7 +212,7 @@ function Account(props) {
                 }
 
                 {user.role == '' || user.role == 'customer' ?
-                    <ListGroup.Item className='list_item' action onClick={() => Router.push('/vendor-signup')}>
+                    <ListGroup.Item className='list_item' onClick={() => Router.push('/vendor-signup')}>
                         <FontAwesomeIcon icon={faDollarSign} style={styles.fontawesome} />
                         <div className='label'>{translate('sell_on_mahaalk')}</div>
                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
@@ -225,7 +230,7 @@ function Account(props) {
 
                 <div className='w-100 p-1'></div>
 
-                {user.full_name != '' && <ListGroup.Item action onClick={logout} className='list_item'>
+                {user.full_name != '' && <ListGroup.Item onClick={logout} className='list_item'>
                     <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
                     <div className='label'>
                         {translate('logout')}

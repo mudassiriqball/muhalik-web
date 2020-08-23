@@ -11,7 +11,6 @@ import MuhalikConfig from '../../../sdk/muhalik.config'
 
 import translate from '../../../i18n/translate'
 
-
 const StickyBottomNavbar = () => {
     const [isSticky, setSticky] = useState(true);
     const [curentHref, setCurentHref] = useState('')
@@ -91,7 +90,7 @@ const StickyBottomNavbar = () => {
                             }}
                         >
                             <FontAwesomeIcon icon={faUserCircle} style={styles.fontawesome} />
-                            {translate('cart')}
+                            {translate('home')}
                         </Nav.Link>
                     </Nav>
                 </Navbar>

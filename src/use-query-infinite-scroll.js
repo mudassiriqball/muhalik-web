@@ -11,7 +11,6 @@ export default function useQueryInfiniteScroll(fieldName, query, pageNumber, lim
     const [pages, setPages] = useState(0)
     const [total, setTotal] = useState(0)
 
-
     useEffect(() => {
         setProducts([])
     }, [query])

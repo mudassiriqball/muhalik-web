@@ -6,7 +6,6 @@ const checkAuth = require('../middleware/check-auth');
 // post Requests
 router.post("/login", UserController.loginUser);
 router.post("/register", UserController.registerUser);
-
 // router.post("/",UserController.addUser);
 
 // get Requests
@@ -22,6 +21,7 @@ router.get("/restricted-customers", UserController.get_restricted_customers);
 router.get("/cart/:_id", UserController.get_cart);
 router.get("/users-count", UserController.get_total_specific_users);
 router.get("/users-query-search/:_role", UserController.get_users_by_query) //has
+router.get("/user-wishlist/:_id", UserController.get_wishlist);
 // router.get("/:_id",UserController.getSingleUser);
 
 // put Requests
@@ -31,6 +31,8 @@ router.put("/reset-password/:_id", UserController.reset_password);
 router.put("/add-to-cart/:_id", checkAuth, UserController.add_to_cart);
 router.put("/clear-cart-data-by-id/:_id", UserController.deleteCartData);
 router.put("/user-profile/:_id", UserController.update_profile);
+router.put("/add-to-wishlist/:_id", checkAuth, UserController.add_to_wishlist);
+router.put("/delete/user-wishlist/:_id", UserController.delete_wishlist_Data);
 // router.put("/:_id", UserController.updateUser);
 
 // delete Requests

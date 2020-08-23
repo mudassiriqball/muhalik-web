@@ -19,17 +19,17 @@ import TranslateFormControl from '../i18n/translate-form-control'
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
 
 const schema = yup.object({
-    mobile: yup.string().required("Enter Mobile Number")
-        .matches(phoneRegExp, "Phone number is not valid"),
-    password: yup.string().required("Enter Password")
-        .min(8, "Must have at least 8 characters")
-        .max(20, "Can't be longer than 20 characters"),
+    mobile: yup.string().required(translate('enter_mobile_nmbr'))
+        .matches(phoneRegExp, translate('enter_valid_number')),
+    password: yup.string().required(translate('enter_password'))
+        .min(8, translate('password_min'))
+        .max(20, translate('password_max')),
 });
 
 import * as decode from 'jwt-decode'
 import Router from 'next/router'
 import MyButton from './components/buttons/my-btn';
-import MySubmitButton from './components/buttons/my-submit-btn';
+
 class Login extends Component {
 
     constructor(props) {
@@ -52,10 +52,10 @@ class Login extends Component {
 
     async login(data, currentComponent) {
         const url = MuhalikConfig.PATH + '/api/users/login';
-        await axios.post(url, data).then(function (response) {
-            if (response.status == '200') {
-                saveTokenToStorage(response.data.token);
-                const decodedToken = decode(response.data.token);
+        await axios.post(url, data).then((res) => {
+            if (res.status == '200') {
+                saveTokenToStorage(res.data.token);
+                const decodedToken = decode(res.data.token);
 
                 if (decodedToken.data.role == 'customer') {
                     Router.replace('/')
@@ -67,9 +67,14 @@ class Login extends Component {
                     Router.replace('/')
                 }
             }
-        }).catch(function (error) {
+        }).catch((error) => {
             currentComponent.setState({ isLoading: false })
-            currentComponent.setState({ serverErrorMsg: error.response.data.message })
+            try {
+                currentComponent.setState({ serverErrorMsg: error.response.data.message })
+            } catch (err) {
+                alert('Error')
+                console.log('Login Error:', error)
+            }
         });
     }
 

@@ -1094,18 +1094,17 @@ function Variations(props) {
                                                     value={e.value}
                                                     onChange={(event) => handleItemValueChange(event, index, i)}
                                                 />
-                                                <InputGroup.Append>
+                                                {/* <InputGroup.Append>
                                                     <Button size='sm' variant='outline-danger' onClick={() => handleDeleteSingleAttribute(index, i)}>
                                                         Delete
                                                     </Button>
-                                                </InputGroup.Append>
+                                                </InputGroup.Append> */}
                                             </InputGroup>
                                         </Form.Group>
                                     )}
                                 </Row>
                                 <Accordion.Collapse eventKey="0">
                                     <>
-
                                         <Form.Row>
                                             <Form.Group as={Col} lg={4} md={4} sm={6} xs={6}>
                                                 <Form.Label style={styles.label}>Price <span> * </span></Form.Label>

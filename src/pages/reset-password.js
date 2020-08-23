@@ -16,7 +16,8 @@ import AlertModal from './components/alert-modal';
 import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config';
 import Toolbar from './components/toolbar';
-import { checkAuth } from '../sdk/core/authentication-service'
+import { checkAuth, removeTokenFromStorage } from '../sdk/core/authentication-service'
+import MyButton from './components/buttons/my-btn';
 
 // RegEx for phone number validation
 const phoneRegExp = /^\+(?:[0-9]?){6,14}[0-9]$/;
@@ -60,7 +61,7 @@ class ForgotPassword extends Component {
         intervalTime: 60,
     };
 
-    componentDidMount() {
+    async componentDidMount() {
         window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container",
             {
                 size: "invisible"
@@ -83,7 +84,7 @@ class ForgotPassword extends Component {
                     _id: response.data.data._id
                 });
 
-                var appVerifier = window.recaptchaVerifier;
+                var appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
                 firebase.auth().signInWithPhoneNumber(mobile, appVerifier)
                     .then(function (confirmationResult) {
                         window.confirmationResult = confirmationResult;
@@ -157,6 +158,7 @@ class ForgotPassword extends Component {
         const url = MuhalikConfig.PATH + `/api/users/reset-password/${this.state._id}`;
         if (this.state.isCodeVerified && this.state.isCodeSended) {
             await axios.put(url, data).then(function (response) {
+                removeTokenFromStorage()
                 currentComponent.setState({
                     isLoading: false,
                     showToast: true,
@@ -264,7 +266,7 @@ class ForgotPassword extends Component {
                                                             disabled={this.state.isCodeSended}
                                                         />
                                                         <InputGroup.Append>
-                                                            <Button id="recaptcha-container"
+                                                            <MyButton
                                                                 onClick={() => {
                                                                     this.state.isCodeSended ?
                                                                         this.handleSenVerificationCode(values.mobile)
@@ -272,10 +274,10 @@ class ForgotPassword extends Component {
                                                                         this.handleSenVerificationCode(values.mobile)
                                                                 }}
                                                                 disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
-                                                                className='append_button' variant='success' >
+                                                            >
                                                                 {this.state.isCodeSended ? 'Resend' : 'Send Code'}
                                                                 {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
-                                                            </Button>
+                                                            </MyButton>
                                                         </InputGroup.Append>
                                                         <Form.Control.Feedback type="invalid">
                                                             {this.state.mobileError}
@@ -300,7 +302,6 @@ class ForgotPassword extends Component {
                                                     </InputGroup>
                                                 </Form.Group>
 
-
                                                 <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                                                     <Form.Label style={styles.label}>Verification Code <span> * </span></Form.Label>
                                                     <InputGroup>
@@ -315,10 +316,11 @@ class ForgotPassword extends Component {
                                                         />
                                                         {this.state.isCodeSended ?
                                                             <InputGroup.Append>
-                                                                <Button className='append_button'
+                                                                <MyButton disabled={this.state.isCodeVerified}
                                                                     onClick={() => this.handleVerifyVarificationCode(values.verification_code)}
-                                                                    disabled={this.state.isCodeVerified}
-                                                                    variant='success'>{this.state.isCodeVerified ? 'Verified' : 'Verify'}</Button>
+                                                                >
+                                                                    {this.state.isCodeVerified ? 'Verified' : 'Verify'}
+                                                                </MyButton>
                                                             </InputGroup.Append>
                                                             : null
                                                         }
@@ -327,13 +329,13 @@ class ForgotPassword extends Component {
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
+
+                                                {!this.state.isCodeVerified &&
+                                                    <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                        <div id="recaptcha-container"></div>
+                                                    </Form.Group>
+                                                }
                                             </Form.Row>
-
-
-
-
-
-                                            {/* <hr className='mt-0 pt-0' /> */}
 
                                             {this.state.isCodeVerified ?
                                                 <>
@@ -352,9 +354,9 @@ class ForgotPassword extends Component {
                                                                     isInvalid={touched.password && errors.password}
                                                                 />
                                                                 <InputGroup.Append>
-                                                                    <Button variant='success' onClick={this.showPassword} className='append_button'>
+                                                                    <MyButton onClick={this.showPassword}>
                                                                         {eyeBtn}
-                                                                    </Button>
+                                                                    </MyButton>
                                                                 </InputGroup.Append>
                                                                 <Form.Control.Feedback type="invalid">
                                                                     {errors.password}
@@ -374,9 +376,9 @@ class ForgotPassword extends Component {
                                                                     isInvalid={touched.confirm_password && errors.confirm_password}
                                                                 />
                                                                 <InputGroup.Append>
-                                                                    <Button variant='success' onClick={this.showPassword} className='append_button'>
+                                                                    <MyButton onClick={this.showPassword}>
                                                                         {eyeBtn}
-                                                                    </Button>
+                                                                    </MyButton>
                                                                 </InputGroup.Append>
                                                                 <Form.Control.Feedback type="invalid">
                                                                     {errors.confirm_password}
@@ -386,13 +388,12 @@ class ForgotPassword extends Component {
                                                     </Form.Row>
                                                     <Form.Row>
                                                         <Form.Group as={Col} controlId="loginGrop">
-                                                            <Button type="submit"
-                                                                onSubmit={handleSubmit}
-                                                                variant='success'
+                                                            <MyButton
+                                                                onClick={handleSubmit}
                                                                 disabled={this.state.isLoading || !this.state.isCodeVerified} block>
                                                                 {this.state.isLoading ? ' Continue ' : ' Continue '}
                                                                 {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
-                                                            </Button>
+                                                            </MyButton>
                                                         </Form.Group>
                                                     </Form.Row>
                                                 </>

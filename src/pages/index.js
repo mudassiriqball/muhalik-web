@@ -144,7 +144,6 @@ class Index extends Component {
                         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
                         crossOrigin="anonymous"
                     />
-                    <link rel="shortcut icon" href="/muhalik.jpg" />
                 </Head>
                 <main>
                     <Layout
@@ -203,7 +202,9 @@ class Index extends Component {
                         padding: 0;
                         margin: 0;
                         font-family: Roboto, Helvetica Neue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
-                        // font-family: 'Janna LT Regular خط الجنة'
+                        // font-family: Janna LT Regular خط الجنة;
+                        // font-family: Droid Arabic Kufi, serif;
+                        // font-family: Janna LT Bold;
                     }
 
                     * {

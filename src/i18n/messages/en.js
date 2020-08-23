@@ -10,7 +10,7 @@ export default {
         'signup': 'Signup',
         'logout': 'Logout',
         'delete': 'Delete',
-        'rs': 'SR.',
+        'rs': 'SR. ',
         'related_categories': 'Related Categories',
 
         // Toolbar
@@ -31,9 +31,9 @@ export default {
         'follow_us': 'Follow Us',
         'payment_methods': 'Payment Method:',
         'need_help': 'Need Help?',
-        'contact_us': 'Contact Us',
+        'contact_us': 'Contact us',
         'submit_issue': 'Submit Issue',
-        'about_us': 'About Us',
+        'about_us': 'About us',
         'know_about_us': 'Know More About Us',
         'mahaalk_team': 'Mahaalk\'s Team',
         'be_part_mahaalk': 'Be Mahaalk\'s Part',
@@ -182,7 +182,8 @@ export default {
         'quantity': 'Quantity',
         'select_quantity_first': 'Select quantity first',
         'adding': 'Adding',
-        'add_to_cart': 'Add To Cart',
+        'add_to_wishlist': 'Add to Wishlist',
+        'add_to_cart': 'Add to Cart',
         'not_added_to_cart': 'ERROR: Product not added to cart',
         'cart_ot_deleted': 'Card data not deleted',
         'enter_value': 'Enter Value',
@@ -238,7 +239,11 @@ export default {
         'months': 'months',
         'enter_gender': 'Select Gender',
         'change_language': 'Change Language',
-        'for_cancel_order': 'To cancel order, please contact to +966 59 091 1771'
+        'for_cancel_order': 'To cancel order, please contact to +966 59 091 1771',
+        'no_content_found': 'No Content Found',
+        'combination_not_found': 'Combination not fount, try changing the variants',
+        'brand': 'Brand',
+        'account': 'Account'
     }
 }
 

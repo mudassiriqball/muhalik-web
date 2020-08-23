@@ -38,7 +38,6 @@ export async function getServerSideProps(context) {
 
     const order_count_url = MuhalikConfig.PATH + '/api/orders/all-orders-count';
     await axios.get(order_count_url).then((res) => {
-        console.log('order count:', res.data)
         pending_orders_count = res.data.pending_orders_count
         delivered_orders_count = res.data.delivered_orders_count
         cancelled_orders_count = res.data.cancelled_orders_count
@@ -236,7 +235,6 @@ class Admin extends Component {
         let currentComponent = this
         const url = MuhalikConfig.PATH + '/api/categories/categories';
         await axios.get(url, { cancelToken: this.source.token }).then((res) => {
-            console.log('reload_categories:', res.data)
             if (currentComponent.unmounted) {
                 currentComponent.setState({
                     categories_list: res.data.category.docs,

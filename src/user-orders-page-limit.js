@@ -39,8 +39,8 @@ export default function userOrdersPageLimit(token, user_id, status, pageNumber, 
                         setOrders(prevOrders => {
                             return [...new Set([...prevOrders, ...res.data.data.docs])]
                         })
-                        setTotal(res.data.total)
-                        setPages(res.data.pages)
+                        setTotal(res.data.data.total)
+                        setPages(res.data.data.pages)
                         setHasMore(res.data.data.docs.length > 0)
                     }
                 }).catch(err => {

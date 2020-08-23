@@ -27,6 +27,7 @@ import BreadcrumbRow from '../../../../components/breadcrumb-row'
 React.useLayoutEffect = React.useEffect
 
 import AlertModal from '../../../../components/alert-modal'
+import CustomerWarningAlert from '../../../../components/customer-warning'
 
 import translate from '../../../../../i18n/translate'
 import TranslateFormControl from '../../../../../i18n/translate-form-control'
@@ -35,6 +36,7 @@ import MyButton from '../../../../components/buttons/my-btn';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import DiscountPrice from '../../../../components/discount-price';
 import CalculateDiscountPrice from '../../../../../calculate-discount';
+import capitalize from '../../../../../capitalize';
 
 
 export async function getServerSideProps(context) {
@@ -136,15 +138,22 @@ function Product(props) {
         })
     }
 
-    async function addToWishlist(product_id) {
-        let data = {
-            _id: product_id,
-        }
-
+    async function addToWishlist(product_id, variation_id) {
         if (user.full_name == '') {
             Router.push('/login')
         } else if (wish == 'gray') {
-            const url = MuhalikConfig.PATH + `/api/users/add-wish/${props.user._id}`;
+            let data = []
+            if (variation_id == null) {
+                data = {
+                    product_id: product_id,
+                }
+            } else {
+                data = {
+                    product_id: product_id,
+                    variation_id: variation_id,
+                }
+            }
+            const url = MuhalikConfig.PATH + `/api/users/add-to-wishlist/${props.user._id}`;
             await axios.put(url, data, {
                 headers: {
                     'authorization': token,
@@ -154,18 +163,19 @@ function Product(props) {
             }).catch(function (err) {
                 alert('ERROR: Product not added to wishlist')
             });
-        } else {
-            const url = MuhalikConfig.PATH + `/api/users/remove-wish/${props.user._id}`;
-            await axios.put(url, data, {
-                headers: {
-                    'authorization': token,
-                }
-            }).then(function (res) {
-                setWish('gray')
-            }).catch(function (err) {
-                alert('ERROR: Product not removed from wishlist')
-            });
         }
+        // else {
+        //     const url = MuhalikConfig.PATH + `/api/users/remove-wish/${props.user._id}`;
+        //     await axios.put(url, data, {
+        //         headers: {
+        //             'authorization': token,
+        //         }
+        //     }).then(function (res) {
+        //         setWish('gray')
+        //     }).catch(function (err) {
+        //         alert('ERROR: Product not removed from wishlist')
+        //     });
+        // }
     }
 
 
@@ -342,27 +352,29 @@ function Product(props) {
                 }
 
                 .product_style .slope{
-                    width: 40%;
-                    height:40px;
+                    width: 80%;
+                    height: 50px;
                     margin: 2% 0%;
                     background:${GlobalStyleSheet.primry_color};
                     text-align:center;
                     font-size:26px;
                     color:#fff;
-                    vertical-align:middle;
                     overflow: visible;
                     position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
                 .product_style .slope:after {
                     content: "";
                     position: absolute;
                     display: block;
-                    right: -30px;
+                    right: -35px;
                     top: 0px;
                     width: 0px;
                     height: 0px;
-                    border-top: solid 40px ${GlobalStyleSheet.primry_color};
-                    border-right: solid 30px transparent;
+                    border-top: solid 50px ${GlobalStyleSheet.primry_color};
+                    border-right: solid 35px transparent;
                 }
                 .product_style .percent {
                     font-size: 15px;
@@ -380,8 +392,8 @@ function Product(props) {
                 .product_style .stock{
                     font-size: 16px;
                     width: 100%;
-                    background: #d6f5d6;
-                    color: gray;
+                    background: #c1f0c1;
+                    color: #595959;
                     padding: 2%;
                     margin: 2% 0%;
                 }
@@ -421,21 +433,20 @@ function Product(props) {
 
                 .product_style .add_to_wish_list{
                     color: gray;
+                    width: 100%;
                     margin: 3% 0%;
+                    display: flex;
                     align-items: center;
                 }
-                .product_style .add_to_wish_list label{
-                    padding: 0%;
-                    margin-right: 4%;
-                }
-                .product_style .add_to_wish_list .font_awsome{
+                .product_style .wishlist_font_awsome{
                     color: ${wish};
-                    min-width: 15px;
-                    max-width: 15px;
-                    min-height: 15px;
-                    max-height: 15px;
+                    margin-left: 3%;
+                    min-width: 20px;
+                    max-width: 20px;
+                    min-height: 20px;
+                    max-height: 20px;
                 }
-                .product_style .add_to_wish_list .font_awsome:hover{
+                .product_style  .wishlist_font_awsome:hover{
                     color: orange;
                     cursor: pointer;
                 }
@@ -512,6 +523,9 @@ function Product(props) {
                     .product_style .vendor_desc_col{
                         margin-bottom: 2%;
                     }
+                    .product_style .slope{
+                        width: 90%;
+                    }
 
                     .product_style .display_in_lg_md_sm{
                         display: none;
@@ -568,7 +582,6 @@ function SimpleProduct(props) {
     if ('rating_review' in props.single_product) {
         rating_review = props.single_product.rating_review;
     }
-
     const [quantity, setQuantity] = useState(1)
 
     function handleSetQuantityMinus() {
@@ -585,7 +598,7 @@ function SimpleProduct(props) {
                     <Row >
                         <Col lg={3} md={3} sm={2} xs={12} className='display_in_lg_md_sm vertical_align_img'>
                             {props.single_product.product_image_link && props.single_product.product_image_link.map((element, index) =>
-                                <MyImages key={element._id}
+                                <MyImages key={index}
                                     undefind={'50px'}
                                     element={element}
                                     index={index == activeImageIndex}
@@ -603,8 +616,8 @@ function SimpleProduct(props) {
                         <Col xs={12} className='display_in_xs'>
                             <div className='disable_scroll'>
                                 {props.single_product.product_image_link && props.single_product.product_image_link.map((element, index) =>
-                                    <Col xs={2} key={element._id} className='p-0 m-0'>
-                                        <MyImages key={element._id}
+                                    <Col xs={2} key={index} className='p-0 m-0'>
+                                        <MyImages key={index}
                                             undefind={'250px'}
                                             element={element}
                                             index={index == activeImageIndex}
@@ -658,10 +671,16 @@ function SimpleProduct(props) {
                             <div>{rating_review.reviews.length}</div>
                         </Col>
                     </Row>
-
+                    <div className='add_to_wish_list'>
+                        <label className='p-0 m-0'>{translate('add_to_wishlist')}</label>
+                        <FontAwesomeIcon icon={faHeart} className='wishlist_font_awsome' onClick={() => props.addToWishlist(props.single_product._id, null)} />
+                    </div>
                     <div className='stock'>
                         {translate('available_in_stock')}
                         <span>{translate('stock')}: {props.single_product.product_in_stock}</span>
+                    </div>
+                    <div className='warranty'>
+                        <label className='label'>{translate('brand')}: {props.single_product.product_brand_name}</label>
                     </div>
                     <div className='warranty'>
                         {props.single_product.product_warranty > 0 ?
@@ -696,7 +715,7 @@ function SimpleProduct(props) {
                                 </InputGroup>
                             </Form.Group>
                             <Col className='ml-1'>
-                                <MyButton block disabled={props.loading || props.user.role != 'customer'}
+                                <MyButton block disabled={props.loading || props.user.role == 'vendor' || props.user.role == 'admin'}
                                     onClick={() => props.handleAddToCart(quantity, props.single_product._id, '', '')}>
                                     {props.loading ? translate('adding') : translate('add_to_cart')}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
@@ -738,6 +757,10 @@ function VariableProduct(props) {
     const [activeVariation, setActiveVariation] = useState(props.single_product.product_variations[0])
     const [activeImageIndex, setActiveImageIndex] = useState(0)
     const [activeVariationIndex, setActiveVariationIndex] = useState(0)
+    const [variation_items_array, setVariation_items_array] = useState([])
+
+    const [selected_items_array, setSelected_items_array] = useState([])
+    const [showVariationNotFountAlert, setShowVariationNotFountAlert] = useState(false)
 
     let rating_review = {
         rating: {
@@ -762,15 +785,109 @@ function VariableProduct(props) {
     if ('rating_review' in activeVariation) {
         rating_review = activeVariation.rating_review;
     }
+    React.useEffect(() => {
+
+        let array = []
+        let array_1 = []
+        let array_2 = []
+        let array_3 = []
+        let obj = {}
+
+        props.single_product.product_variations.forEach((element, index) => {
+            element.item.forEach((e, i) => {
+                array.push(e)
+            })
+        })
+
+        array.forEach((element, index) => {
+            array_2 = []
+            array.forEach((e, i) => {
+                if (e.name == element.name) {
+                    let found = false
+                    array_2 && array_2.forEach((ee, ii) => {
+                        if (e.value == ee) {
+                            found = true
+                            return
+                        }
+                    })
+                    if (!found) {
+                        array_2.push(e.value)
+                    }
+                }
+            })
+
+            let found = false
+            array_1 && array_1.forEach((e, i) => {
+                if (element.name == e.name) {
+                    found = true
+                    return
+                }
+            })
+
+            if (!found) {
+                obj = {}
+                obj['name'] = element.name
+                obj['value'] = array_2
+                if (array_2.length > 5) {
+                    obj['isOptions'] = true
+                } else {
+                    obj['isOptions'] = false
+                }
+                array_1.push(obj)
+                array_3.push(props.single_product.product_variations[0].item[index].value)
+            }
+        })
+        setSelected_items_array(array_3)
+        setVariation_items_array(array_1)
+
+        return () => { }
+    }, [])
+
+    async function handleVariationItemClick(curr_item_index, curr_item_val) {
+        let copyArray = []
+        copyArray = Object.assign([], selected_items_array)
+        copyArray[curr_item_index] = curr_item_val
+
+        let flag = false
+        props.single_product.product_variations.forEach((element, index) => {
+            let found = false
+            copyArray.forEach((e, i) => {
+                if (element.item[i].value != e) {
+                    found = true
+                    return
+                }
+            })
+            if (!found) {
+                setSelected_items_array(copyArray)
+                setActiveVariation(element)
+                setActiveVariationIndex(index)
+                setActiveImageIndex(0)
+                flag = true
+                return
+            }
+        })
+        if (!flag) {
+            setShowVariationNotFountAlert(true)
+            setTimeout(() => {
+                setShowVariationNotFountAlert(false)
+            }, 3000);
+        }
+        console.log('selected_items_array', selected_items_array)
+    }
 
     return (
         <div className='variable_product'>
+            <CustomerWarningAlert
+                show={showVariationNotFountAlert}
+                onHide={() => setShowVariationNotFountAlert(false)}
+                delay={3000}
+            />
             <Row className='m-0 p-0'>
                 <Col lg={4} md={4} sm={6} xs={12} className='img_col'>
                     <Row className='p-0 m-0'>
                         <Col lg={3} md={3} sm={2} xs={12} className='display_in_lg_md_sm vertical_align_img'>
                             {activeVariation.image_link && activeVariation.image_link.map((element, index) =>
-                                <MyImages key={element._id}
+                                <MyImages
                                     undefind={'50px'}
                                     element={element}
                                     index={index == activeImageIndex}
@@ -788,8 +905,8 @@ function VariableProduct(props) {
                         <Col xs={12} className='display_in_xs'>
                             <div className='disable_scroll'>
                                 {activeVariation.image_link && activeVariation.image_link.map((element, index) =>
-                                    <Col xs={2} key={element._id} className='p-0 m-0'>
-                                        <MyImages key={element._id}
+                                    <Col xs={2} key={index} className='p-0 m-0'>
+                                        <MyImages
                                             undefind={'50px'}
                                             element={element}
                                             index={index == activeImageIndex}
@@ -841,14 +958,23 @@ function VariableProduct(props) {
                             />
                         </Col>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
-                            <div>Reviews </div>
+                            <div>{translate('reviews')}</div>
                             <div>{rating_review.reviews.length}</div>
                         </Col>
                     </Row>
 
+                    <div className='add_to_wish_list'>
+                        <label className='p-0 m-0'>{translate('add_to_wishlist')}</label>
+                        <FontAwesomeIcon icon={faHeart} className='wishlist_font_awsome' onClick={() => props.addToWishlist(props.single_product._id, activeVariation._id)} />
+                    </div>
+
                     <div className='stock'>
                         {translate('available_in_stock')}
                         <span>{translate('stock')}: {activeVariation.stock}</span>
+                    </div>
+
+                    <div className='warranty'>
+                        <label className='label'>{translate('brand')}: {props.single_product.product_brand_name}</label>
                     </div>
 
                     <div className='warranty'>
@@ -860,6 +986,32 @@ function VariableProduct(props) {
                             :
                             translate('no_warranty')
                         }
+                    </div>
+
+                    <div className='variation_item'>
+                        {variation_items_array && variation_items_array.map((element, index) =>
+                            <div key={index}>
+                                <div className='item_name_div'>
+                                    {capitalize(element.name)}
+                                </div>
+
+                                {element.isOptions ?
+                                    <Form.Control as='select' value={selected_items_array[index]} onChange={(e) => { handleVariationItemClick(index, e.target.value) }}>
+                                        {element.value && element.value.map((e, i) =>
+                                            <option key={i} value={e}>{e}</option>
+                                        )}
+                                    </Form.Control>
+                                    :
+                                    element.value && element.value.map((e, i) =>
+                                        <Button key={i} className='item_value_btn' size='sm' variant={e == selected_items_array[index] ? 'primary' : 'outline-primary'}
+                                            onClick={() => { handleVariationItemClick(index, e) }}
+                                        >
+                                            {e}
+                                        </Button>
+                                    )
+                                }
+                            </div>
+                        )}
                     </div>
 
                     <div className='cart'>
@@ -885,29 +1037,17 @@ function VariableProduct(props) {
                                 </InputGroup>
                             </Form.Group>
                             <Col className='ml-1'>
-                                <Button variant='success' block disabled={props.loading || props.user.role != 'customer'}
+                                <MyButton block disabled={props.loading || props.user.role == 'vendor' || props.user.role == 'admin'}
                                     onClick={() => props.handleAddToCart(quantity, props.single_product._id, activeVariation._id, activeVariationIndex)}>
                                     {props.loading ? translate('adding') : translate('add_to_cart')}
                                     {props.loading ? <Spinner animation="grow" size="sm" /> : null}
-                                </Button>
+                                </MyButton>
                             </Col>
                         </Row>
                     </div>
-                    <div className='variation_item'>
-                        {activeVariation.item && activeVariation.item.map((element, index) =>
-                            <div key={element._id} className='item'>
-                                <div className='item_name_div'>
-                                    {element.name}:
-                                    {/* <span style={{ color: 'black', fontSize: '16px' }}>{element.value}</span> */}
-                                </div>
-                                <div>
-                                    <Button block size='sm' variant='primary' disabled className='item_value_btn'> {element.value} </Button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+
                     <hr />
-                    <div className='display_in_lg_md_sm'>
+                    {/* <div className='display_in_lg_md_sm'>
                         <Row noGutters className='d-flex flex-row'>
                             {props.single_product.product_variations && props.single_product.product_variations.map((element, index) =>
                                 <Col lg={2} md={2} xs={2} sm={2} key={element._id} >
@@ -924,8 +1064,8 @@ function VariableProduct(props) {
                                 </Col>
                             )}
                         </Row>
-                    </div>
-                    <div className='display_in_xs disable_scroll'>
+                    </div> */}
+                    {/* <div className='display_in_xs disable_scroll'>
                         {props.single_product.product_variations && props.single_product.product_variations.map((element, index) =>
                             <Col lg={2} md={2} xs={2} sm={2} key={element._id} className='p-0 m-0'>
                                 <MyImages index={index == activeVariationIndex}
@@ -940,7 +1080,7 @@ function VariableProduct(props) {
                                 />
                             </Col>
                         )}
-                    </div>
+                    </div> */}
                 </Col>
                 <Col lg={3} md={3} sm={12} xs={12} className='vendor_desc_col'>
                     <VendorInfo vendor={props.vendor} />
@@ -964,7 +1104,7 @@ function VariableProduct(props) {
                 .variable_product .variation_item{
                     width: 100%;
                     padding: 4%;
-                    background: #f7f9fe;
+                    background: #ebf6f9;
                     border-radius: 5px;
                 }
                 .variable_product .item{
@@ -973,8 +1113,8 @@ function VariableProduct(props) {
                     flex-direction: column;
                 }
                 .variable_product .item_name_div{
-                    color: gray;
-                    font-size: 13px;
+                    color: black;
+                    font-size: 14px;
                     margin: 0% 1%;
                 }
                 .variable_product .item_value_btn{
@@ -1056,7 +1196,7 @@ function VendorInfo(props) {
             </label>
             <hr className='pt-0 mt-1' />
             <Row noGutters className='abc'>
-                <div > Rating: </div>
+                <div >{translate('rating')}</div>
                 <Badge variant='info' style={{ fontSize: '13px', margin: '0% 4% 0% 2%' }}>
                     {rating.overall}
                 </Badge>
@@ -1156,63 +1296,6 @@ function VendorInfo(props) {
                 }
                 .vendor_info .five_stars_vendor_rating span:after{
                     width: calc(${rating.five_star}% / 10);
-                }
-                
-                .vendor_info .delivered_slope , .cancelled_slope, .returned_slope {
-                    width: 70%;
-                    height:30px;
-                    margin: 2% 0%;
-                    text-align:center;
-                    font-size:16px;
-                    color: black;
-                    vertical-align:middle;
-                    overflow: visible;
-                    position: relative;
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .vendor_info .delivered_slope{
-                    background: #adebbb;
-                } 
-                .vendor_info .cancelled_slope{
-                    background: #ffe699;
-                }
-                .vendor_info .returned_slope {
-                    background: #ff9999;
-                }
-                .vendor_info .delivered_slope:after {
-                    content: "";
-                    position: absolute;
-                    display: block;
-                    right: -30px;
-                    top: 0px;
-                    width: 0px;
-                    height: 0px;
-                    border-top: solid 30px #adebbb;
-                    border-right: solid 30px transparent;
-                }
-                .vendor_info .cancelled_slope:after {
-                    content: "";
-                    position: absolute;
-                    display: block;
-                    right: -30px;
-                    top: 0px;
-                    width: 0px;
-                    height: 0px;
-                    border-top: solid 30px #ffe699;
-                    border-right: solid 30px transparent;
-                }
-                .vendor_info .returned_slope:after {
-                    content: "";
-                    position: absolute;
-                    display: block;
-                    right: -30px;
-                    top: 0px;
-                    width: 0px;
-                    height: 0px;
-                    border-top: solid 30px #ff9999;
-                    border-right: solid 30px transparent;
                 }
             `}</style>
         </div >
@@ -1314,7 +1397,7 @@ function TabComponent(props) {
                         <Table borderless size="sm" >
                             <tbody>
                                 {props.custom_fields.map((element, index) =>
-                                    <tr key={element._id} style={{ background: index % 2 == 0 ? '#F7F9FE' : 'white' }}>
+                                    <tr key={index} style={{ background: index % 2 == 0 ? '#F7F9FE' : 'white' }}>
                                         <td>{element.name}</td>
                                         <td>{element.value}</td>
                                     </tr>
@@ -1380,7 +1463,7 @@ function TabComponent(props) {
                                 <label className='text-center p-5 w-100' style={{ fontSize: '13px', color: 'gray' }}>{translate('no_reviews')}</label>
                                 :
                                 rating_review.reviews && rating_review.reviews.map((element, index) =>
-                                    <div key={element._id} className='review'>
+                                    <div key={index} className='review'>
                                         <div>
                                             <label>{element.c_name}</label>
                                             <span>{element.entry_date.substring(0, 10)}</span>
@@ -1549,22 +1632,26 @@ function RelatedProducts(props) {
                 {props.total > 0 ?
                     props.products && props.products.map((element, index) =>
                         props.current_product_id != element._id ?
-                            <Card key={element._id} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
+                            <Card key={index} as={Col} lg={2} md={3} sm={3} xs={4} className='only_products_card'>
                                 {element.product_type == "simple-product" ?
-                                    <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
-                                        <Image ref={ref} className='only_product_img'
-                                            style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
-                                            src={element.product_image_link[0].url}
-                                        />
-                                        <label className='my_label'>{element.product_name}</label>
-                                        <DiscountPrice price={element.product_price} discount={element.product_discount} />
-                                    </div>
+                                    <Link href='/products/category/[category]/[sub_category]/[product]' as={`/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`}>
+                                        <a className='only_products_div'>
+                                            <Image ref={ref} className='only_product_img'
+                                                style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }}
+                                                src={element.product_image_link[0].url}
+                                            />
+                                            <label className='my_label'>{element.product_name}</label>
+                                            <DiscountPrice price={element.product_price} discount={element.product_discount} />
+                                        </a>
+                                    </Link>
                                     :
-                                    <div className='only_products_div' onClick={() => Router.push('/products/category/[category]/[sub_category]/[product]', `/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`)}>
-                                        <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
-                                        <label className='my_label'>{element.product_name}</label>
-                                        <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
-                                    </div>
+                                    <Link href='/products/category/[category]/[sub_category]/[product]' as={`/products/category/${element.category.value}/${element.sub_category.value}/${element._id}`}>
+                                        <a className='only_products_div'>
+                                            <Image ref={ref} className='only_product_img' style={{ maxHeight: width + 20 || '200px', minHeight: width + 20 || '200px' }} src={element.product_variations[0].image_link[0].url} />
+                                            <label className='my_label'>{element.product_name}</label>
+                                            <DiscountPrice price={element.product_variations[0].price} discount={element.product_variations[0].discount} />
+                                        </a>
+                                    </Link>
                                 }
                             </Card>
                             :
@@ -1605,6 +1692,7 @@ function RelatedProducts(props) {
                     display: flex;
                     flex-direction: column;
                     border-radius: 3px;
+                    text-decoration: none;
                     margin: 3%;
                     padding: 2%;
                     cursor: pointer;
@@ -1614,6 +1702,7 @@ function RelatedProducts(props) {
                 .related_products .only_products_div:hover{
                     box-shadow: 0px 0px 10px 0.5px gray;
                     transition-timing-function: ease-in;
+                    text-decoration: none;
                     transition: 0.5s;
                     margin: 0% 0% 6% 0%;
                 }     

@@ -117,6 +117,8 @@ productsController.update_product_variation_data = async (req, res) => {
 }
 
 productsController.addProduct = async (req, res) => {
+
+
   const body = req.body;
 
   var url;
@@ -124,7 +126,7 @@ productsController.addProduct = async (req, res) => {
   for (const file of req.files) {
     urls.push({ url: file.location });
   }
-
+  console.log("req", urls[0]);
   try {
     body.dangerous_goods = JSON.parse(body.dangerous_goods);
     body.product_tags = JSON.parse(body.product_tags);
@@ -145,15 +147,12 @@ productsController.addProduct = async (req, res) => {
           overall: 0,
         },
       };
+      body.product_image_link = urls;
       body.rating_review = body1;
       body.custom_fields = JSON.parse(body.custom_fields);
-      body.product_image_link = urls;
-      body.product_variations = undefined;
     } else if (body.product_type === "variable-prouct") {
-      body.product_image_link = undefined;
-      body.custom_fields = undefined;
       body.product_variations = JSON.parse(body.product_variations);
-      var count = 0;
+      let count = 0;
       for (let index = 0; index < body.product_variations.length; index++) {
         for (
           let k = 0;

@@ -104,17 +104,17 @@ usersController.set_avatar = async (req, res) => {
   const _id = req.params._id;
   try {
     const user = await Users.findOne({ _id: _id });
-    if(user.avatar){	
-    const token = user.avatar
-    const filenameToRemove = token.split("/").slice(-1)[0];
-    s3.deleteObject(
-      {
-        Bucket: "slider-images",
-        Key: filenameToRemove,
-      },
-      function (err, data) { }
-    );
-}
+    if (user.avatar) {
+      const token = user.avatar
+      const filenameToRemove = token.split("/").slice(-1)[0];
+      s3.deleteObject(
+        {
+          Bucket: "slider-images",
+          Key: filenameToRemove,
+        },
+        function (err, data) { }
+      );
+    }
     const url = req.files[0].location;
     Users.findOneAndUpdate(
       { _id: _id },
@@ -711,6 +711,98 @@ usersController.delete_cart = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+
+
+
+// Wishlist Methods
+usersController.add_to_wishlist = async (req, res) => {
+  const body = req.body;
+  if (body.variation_id === "") {
+    body.variation_id = undefined;
+  }
+  if (!req.params._id) {
+    Fu;
+    res.status(500).send({
+      message: "ID missing",
+    });
+  }
+  try {
+    const user = await Users.update(
+      { _id: req.params._id },
+      {
+        $push: { ["wish_list"]: body },
+      }
+    );
+    res.status(200).send({
+      code: 200,
+      message: "Added",
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
+usersController.get_wishlist = async (req, res) => {
+  if (!req.params._id) {
+    Fu;
+    res.status(500).send({
+      message: "ID missing",
+    });
+  }
+  let user;
+  let check = [];
+  const _id = req.params._id;
+  try {
+    user = await Users.find({ _id: _id }, { wish_list: 1, _id: 0 });
+    for (let index = 0; index < user[0].wish_list.length; index++) {
+      check.push(user[0].cart[index]);
+    }
+    if (user) {
+      res.status(200).send({
+        code: 200,
+        message: "Successful",
+        data: check,
+      });
+    } else {
+      res.status(500).send({
+        code: 500,
+        message: "does not exits",
+      });
+    }
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+usersController.delete_wishlist_Data = async (req, res) => {
+  if (!req.params._id) {
+    Fu;
+    res.status(500).send({
+      message: "ID missing",
+    });
+  }
+  try {
+    const _id = req.params._id;
+    const object_id = req.query.object_id;
+
+    const result = await Users.findOneAndUpdate(
+      {
+        _id: _id,
+      },
+      {
+        $pull: { wish_list: { _id: object_id } },
+      },
+      { new: true }
+    );
+    res.status(200).send({
+      code: 200,
+      message: "Deleted Successfully",
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).send(error);
+  }
+};
+
 // usersController.getSingleUser = async (req, res) => {
 //   let user;
 //   try {

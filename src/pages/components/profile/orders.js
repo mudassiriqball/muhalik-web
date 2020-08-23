@@ -48,6 +48,7 @@ export default function Orders(props) {
         let _order = {}
         _order['_id'] = element._id
         _order['sub_total'] = element.sub_total
+        _order['shipping_charges'] = element.shipping_charges
         _order['entry_date'] = element.entry_date
         let array = []
 
@@ -62,8 +63,9 @@ export default function Orders(props) {
 
                 if (data.product_type != "simple-product") {
                     data.product_variations.forEach((ee, ii) => {
-                        if (ee._id == element.variation_id) {
+                        if (ee._id == e.variation_id) {
                             obj['variation'] = ee
+                            return
                         }
                     })
                 }
@@ -79,6 +81,7 @@ export default function Orders(props) {
         })
     }
 
+
     return (
         <div className='orders_style'>
             {!props.isMobile && <label className='heading'>{
@@ -93,17 +96,32 @@ export default function Orders(props) {
                             :
                             translate('returned_orders')
             }</label>}
-            {orders && orders.map((element, index) =>
-                orders.length == (index + 1) ?
-                    <Card key={index} ref={lastProducrRef} >
-                        <CardBody element={element} status={props.status} index={index} />
-                    </Card>
-                    :
-                    <Card key={index} >
-                        <CardBody element={element} status={props.status} index={index} />
-                    </Card>
-            )}
-            {user_orders_loading && <Loading />}
+            {user_orders_total > 0 ?
+                <>
+                    {props.status == 'pending' &&
+                        <Row className='p-0 m-0 d-flex justify-content-center'>
+                            <Form.Label style={{ fontSize: '14px', color: `${GlobalStyleSheet.primry_color}` }}>{translate('for_cancel_order')}</Form.Label>
+                        </Row>
+                    }
+                    {orders && orders.map((element, index) =>
+                        orders.length == (index + 1) ?
+                            <Card key={index} ref={lastProducrRef} >
+                                <CardBody element={element} status={props.status} index={index} />
+                            </Card>
+                            :
+                            <Card key={index} >
+                                <CardBody element={element} status={props.status} index={index} />
+                            </Card>
+                    )}
+                    {user_orders_loading && <Loading />}
+                </>
+                :
+                <Row className='h-100 p-5 w-100'>
+                    <div className='h-100 w-100 d-flex justify-content-center align-items-center'>
+                        <h5 className='text-center w-100'>{translate('no_data_found')}</h5>
+                    </div>
+                </Row>
+            }
             <style type="text/css">{`
                 .orders_style .card {
                     border: none;
@@ -179,11 +197,6 @@ function CardBody(props) {
     let index = element.index
     return (
         <Card.Body>
-            {props.status == 'pending' &&
-                <Row className='p-0 m-0'>
-                    <Form.Label className='form_label'>{translate('for_cancel_order')}</Form.Label>
-                </Row>
-            }
             <Row className='p-0 m-0'>
                 <Form.Group as={Col} lg={4} md={4} sm={12} xs={12} className='order_col'>
                     <Form.Label className='form_label'>{translate('order_id')}</Form.Label>
@@ -257,6 +270,7 @@ function CardBody(props) {
                     }
                 </Card>
             )}
+
         </Card.Body>
     )
 }

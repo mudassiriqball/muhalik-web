@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
-import { Row, Col, Card, Button, Form, InputGroup } from 'react-bootstrap'
+import { Row, Col } from 'react-bootstrap'
 
 import axios from 'axios'
 import MuhalikConfig from '../sdk/muhalik.config'
@@ -8,10 +8,6 @@ import { checkTokenExpAuth } from '../sdk/core/authentication-service';
 
 import Layout from './components/customer/layout'
 import translate from '../i18n/translate';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMobile, faMobileAlt } from '@fortawesome/free-solid-svg-icons';
-import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
-import MyButton from './components/buttons/my-btn';
 
 
 export async function getServerSideProps(context) {
@@ -32,7 +28,7 @@ export async function getServerSideProps(context) {
     }
 }
 
-export default function ContactUs(props) {
+export default function Services(props) {
     const [cart_count, setCart_count] = useState(0)
     const [user, setUser] = useState({
         _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
@@ -79,42 +75,7 @@ export default function ContactUs(props) {
                 {...props}
             >
                 <Row noGutters className='help_row'>
-                    <div className='w-100 h-100 d-flex justify-content-center align-items-center'>
-                        <Card>
-                            <Card.Body className='card_body'>
-                                <Form.Group as={Row}>
-                                    <InputGroup>
-                                        <InputGroup.Prepend>
-                                            <MyButton size='md' disabled={true}>
-                                                <FontAwesomeIcon icon={faMobileAlt} className='fontaweome' />
-                                            </MyButton>
-                                        </InputGroup.Prepend>
-                                        <Form.Control
-                                            size='md'
-                                            type="text"
-                                            value={'+966 59 091 1771'}
-                                            disabled
-                                        />
-                                    </InputGroup>
-                                </Form.Group>
-                                <Form.Group as={Row}>
-                                    <InputGroup>
-                                        <InputGroup.Prepend>
-                                            <MyButton size='md' disabled={true}>
-                                                <FontAwesomeIcon icon={faEnvelope} className='fontaweome' />
-                                            </MyButton>
-                                        </InputGroup.Prepend>
-                                        <Form.Control
-                                            size='md'
-                                            type="text"
-                                            value={'mahalk2020@gmail.com'}
-                                            disabled
-                                        />
-                                    </InputGroup>
-                                </Form.Group>
-                            </Card.Body>
-                        </Card>
-                    </div>
+                    <div className='w-100 h-100 d-flex justify-content-center align-items-center'>{translate('no_content_found')}</div>
                 </Row>
             </Layout>
             <style type='text/css'>{`
@@ -129,16 +90,6 @@ export default function ContactUs(props) {
                 .help_row {
                     height: 70vh;
                     width: 100%;
-                }
-                .help .fontaweome {
-                    min-width: 25px;
-                    max-width: 25px;
-                    min-height: 25px;
-                    max-height: 25px;
-                    margin-right: 5%;
-                }
-                .help .card_body {
-                    padding: 10% 20% 8% 20%;
                 }
             `}</style>
             <style jsx global>{`

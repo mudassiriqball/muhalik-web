@@ -10,7 +10,7 @@ const Layout = (props) => (
             {props.children}
         </div>
         <div className='display_in_md_lg'>
-            <Footer />
+            <Footer {...props} />
         </div>
 
         <div className='display_in_sm_xs'>

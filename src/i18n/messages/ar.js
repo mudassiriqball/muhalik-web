@@ -10,7 +10,7 @@ export default {
         'signup': 'اشترك',
         'logout': 'تسجيل خروج',
         'delete': 'حذف',
-        'rs': 'ريال سعودي',
+        'rs': 'ريال سعودي. ',
         'related_categories': 'فئات ذات صلة',
 
         // Toolbar
@@ -176,6 +176,19 @@ export default {
         // Slider Carosuel
         'all_categories': 'جميع الفئات',
 
+        'available_in_stock': 'موجود في المستودع',
+        'stock': 'مخزون',
+        'quantity': 'كمية',
+        'select_quantity_first': 'حدد الكمية أولا',
+        'adding': 'مضيفا',
+        'add_to_wishlist': 'أضف إلى قائمة الامنيات',
+        'add_to_cart': 'أضف إلى السلة',
+        'not_added_to_cart': 'خطأ: لم يتم إضافة المنتج إلى سلة التسوق',
+        'cart_ot_deleted': 'لم يتم حذف بيانات البطاقة',
+        'enter_value': 'أدخل القيمة',
+        'confirm_order': 'أكد الطلب',
+        'cancel': 'إلغاء',
+
         "order_placed": "تم تقديم الطلب بنجاح",
         'place_order_error': 'كمية المنتج غير متوفرة , قم بتغيير المخزون وحاول مرة أخرى',
         "search_here": "ابحث هنا",
@@ -190,9 +203,9 @@ export default {
         'profile_picture_updated': 'تم تحديث صورة الملف الشخصي بنجاح',
         "my_address": "عنواني",
         "pending_orders": "الطلبات المعلقة",
-        "التسليم_الطلبات": "الطلبات المسلمة",
+        "delivered_orders": "الطلبات المسلمة",
         "cancelled_orders": "الطلبات الملغاة",
-        "return_orders": "الطلبات المرتجعة",
+        "returned_orders": "الطلبات المرتجعة",
         "order_id": "معرّف الطلب",
         'placed_on': "تم وضعه",
         "print": "طباعة",
@@ -200,12 +213,12 @@ export default {
         "returned": "عودة",
         "mobile": "جوّال",
         "EDIT": "تحرير",
-        "عرض": "VIEW",
+        "VIEW": "عرض",
         "personel_info": "معلومات شخصية",
         "related_products": "منتجات ذات صلة",
         "review_added": "تمت إضافة تعليقك بنجاح",
         "rating": "تقييم",
-        "خطأ": "خطأ",
+        "error": "خطأ",
         "put_order": "تقديم الطلب",
         "customer_restricted": "العميل مقيد بنجاح",
         "customer_unrestricted": "Customer Unrestricted Success",
@@ -225,7 +238,10 @@ export default {
         'months': 'الشهور',
         'enter_gender': 'حدد نوع الجنس',
         'change_language': 'تغيير اللغة',
-        'for_cancel_order': '+966 59 091 1771 لإلغاء الطلب ، يرجى الاتصال على'
-
+        'for_cancel_order': '+966 59 091 1771 لإلغاء الطلب ، يرجى الاتصال على',
+        'no_content_found': 'لا يوجد محتوى',
+        'combination_not_found': 'الجمع لا ينفع ، حاول تغيير المتغيرات',
+        'brand': 'الماركة',
+        'account': 'الحساب',
     }
 }

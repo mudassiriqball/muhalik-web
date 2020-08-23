@@ -175,10 +175,10 @@ const Toolbar = (props) => {
                         {translate('get_app')}
                     </Nav.Link>
 
-                    <Nav.Link href='' className='first_nav_link'>
+                    <Nav.Link href='/services' className='first_nav_link'>
                         {translate('services')}
                     </Nav.Link>
-                    <Nav.Link href='' className='first_nav_link'>
+                    <Nav.Link href='/help' className='first_nav_link'>
                         {translate('help')}
                     </Nav.Link>
                     <Dropdown className='d-flex align-items-center'>
@@ -268,19 +268,21 @@ const Toolbar = (props) => {
                             </ListGroup>
                         }
                     </InputGroup>
-                    <Nav.Link href='/cart' className='display_in_md_lg nav_link pb-0 mb-0'>
-                        <div className='cart_div'>
-                            <FontAwesomeIcon icon={faShoppingCart} style={styles.second_nav_fontawesome} />
-                            <Badge variant='primary' className='cart_badge'>{props.cart_count}</Badge>
-                        </div>
-                        {translate('cart')}
-                    </Nav.Link>
+                    {props.role == 'customer' &&
+                        <Nav.Link href='/cart' className='display_in_md_lg nav_link pb-0 mb-0'>
+                            <div className='cart_div'>
+                                <FontAwesomeIcon icon={faShoppingCart} style={styles.second_nav_fontawesome} />
+                                <Badge variant='primary' className='cart_badge'>{props.cart_count}</Badge>
+                            </div>
+                            {translate('cart')}
+                        </Nav.Link>
+                    }
                 </Navbar>
             </div>
 
             {/* Third Navbar */}
             <Navbar className=' third_nav_bar' style={{ background: `${GlobalStyleSheet.primry_color}` }}>
-                <Nav>
+                <Nav className='mr-auto'>
                     <Dropdown
                         onMouseOver={() => { setIsCategoryOpen(true), setHoverCategory(true) }}
                         onMouseLeave={() => { setIsCategoryOpen(false), setHoverCategory(false) }}
@@ -290,6 +292,7 @@ const Toolbar = (props) => {
                             style={{
                                 background: hoverCategory ? 'white' : null,
                                 color: hoverCategory ? `${GlobalStyleSheet.primry_color}` : 'white',
+                                fontSize: '15px'
                             }}>
                             <FontAwesomeIcon icon={faListUl} style={hoverCategory ? styles.third_nav_fontawesome_hover : styles.third_nav_fontawesome} />
                             <div style={{ color: hoverCategory ? `${GlobalStyleSheet.primry_color}` : 'white' }}>
@@ -338,6 +341,14 @@ const Toolbar = (props) => {
                         </Dropdown.Menu>
                     </ Dropdown>
                 </Nav>
+                <Nav.Link href='/about-us' className='third_nav_link' >
+                    {translate('about_us')}
+                </Nav.Link>
+                <Nav.Link href='/contact-us' className='third_nav_link' >
+                    {translate('contact_us')}
+                </Nav.Link>
+                <Nav.Link href='' >
+                </Nav.Link>
             </Navbar>
             <style type="text/css">{`
                 .customer_toolbar .mahaalk_img{
@@ -502,10 +513,14 @@ const Toolbar = (props) => {
                 }
                 .customer_toolbar .third_nav_link {
                     white-space: nowrap;
-                    font-size: 15px;
-                    color: lightgray;
+                    font-size: 14px;
+                    color: white;
                     display: inline-flex;
                     align-items: center;
+                }
+                .customer_toolbar .third_nav_link:hover {
+                    background: white;
+                    color: ${GlobalStyleSheet.primry_hover_color};
                 }
                 .customer_toolbar .category_list_item {
                     cursor: pointer;

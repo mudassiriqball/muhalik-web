@@ -3,8 +3,8 @@ import axios from 'axios'
 import MuhalikConfig from './sdk/muhalik.config'
 
 export default function usePageLimitInfiniteScroll(isAppend, pageNumber, limit) {
-    const [_loading, setLoading] = useState('')
-    const [_error, setError] = useState('')
+    const [_loading, setLoading] = useState(false)
+    const [_error, setError] = useState(false)
     const [_products, setProducts] = useState([])
     const [_hasMore, setHasMore] = useState(false)
     const [_pages, setPages] = useState(0)
