@@ -2,26 +2,20 @@ import React, { useState, useEffect } from 'react';
 import Router from 'next/router'
 import axios from 'axios'
 import { Row, Col, ListGroup } from 'react-bootstrap'
-
 import { faUserCircle, faImage, faThumbsUp, faClock } from '@fortawesome/free-regular-svg-icons'
-
-
 import MuhalikConfig from '../../sdk/muhalik.config'
 import GlobalStyleSheet from '../../styleSheet'
 import { getDecodedTokenFromStorage, removeTokenFromStorage, getTokenFromStorage, checkTokenExpAuth } from '../../sdk/core/authentication-service'
-
 import Layout from '../components/customer/layout';
 import AlertModal from '../components/alert-modal'
-
 import ManageAccount from '../components/profile/manage-account'
 import MyProfile from '../components/profile/my-profile'
 import Address from '../components/profile/address'
 import ChangeProfilePicture from '../components/profile/change-profile-picture'
-
 import ManageOrders from '../components/profile/manage-orders'
 import Orders from '../components/profile/orders'
-
 import translate from '../../i18n/translate'
+import MyWishlist from '../components/profile/my-wishlist';
 
 export async function getServerSideProps(context) {
     let categories_list = []
@@ -46,7 +40,7 @@ export default function Profile(props) {
     const [token, setToken] = useState(null)
     const [user, setUser] = useState({
         _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
-        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: '', wish_list: ''
     })
 
     const [cart_count, setCart_count] = useState(0)
@@ -55,7 +49,6 @@ export default function Profile(props) {
     const [showAlertModal, setShowAlertModal] = useState(false)
     const [alertMsg, setAlertMsg] = useState('')
 
-    const [loading, setLoading] = useState(false)
     const [dashboard_href, setdashboard_href] = useState('/')
 
     const [pending_orders_count, setPending_orders_count] = useState(0)
@@ -76,6 +69,7 @@ export default function Profile(props) {
                 setUser(_decoded_token)
                 const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decoded_token._id}`;
                 await axios.get(user_url, { cancelToken: source.token }).then((res) => {
+                    console.log('user:', res.data.data)
                     if (unmounted) {
                         setUser(res.data.data[0])
                         setCart_count(res.data.data[0].cart.length)
@@ -155,7 +149,6 @@ export default function Profile(props) {
             <Layout
                 role={user.role}
                 full_name={user.full_name}
-
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
@@ -164,8 +157,8 @@ export default function Profile(props) {
                 <div className='_div'>
                     <Row>
                         <Col lg={3} md={3}>
-                            <ListGroup variant="flush" >
-                                <ListGroup.Item style={{ color: view == 'manage_account' || view == 'my_profile' || view == 'change_picture' || view == 'address' ? 'blue' : null }}
+                            <ListGroup variant="flush">
+                                <ListGroup.Item style={{ color: view == 'manage_account' || view == 'my_profile' || view == 'change_picture' || view == 'address' ? 'blue' : 'black' }}
                                     onClick={() => { setView('manage_account') }}
                                 >
                                     {'Manage Account'}
@@ -187,9 +180,17 @@ export default function Profile(props) {
                                 </ListGroup.Item>
                                 <ListGroup.Item onClick={() => Router.push('/reset-password')}>{translate('change_password')}</ListGroup.Item>
                             </ListGroup>
-                            {user.role == 'customer' &&
+                            {user.role == 'customer' && <>
                                 <ListGroup variant="flush" >
-                                    <ListGroup.Item style={{ color: view == 'manage_orders' || view == 'pending_orders' || view == 'delivered_orders' || view == 'cancelled_orders' || view == 'returned_orders' ? 'blue' : null }}
+                                    <ListGroup.Item style={{ color: view == 'wish_list' ? 'blue' : 'black' }}
+                                        onClick={() => { setView('wish_list') }}
+                                    >
+                                        {translate('my_wishlist')}
+                                    </ListGroup.Item>
+                                </ListGroup>
+
+                                <ListGroup variant="flush" >
+                                    <ListGroup.Item style={{ color: view == 'manage_orders' || view == 'pending_orders' || view == 'delivered_orders' || view == 'cancelled_orders' || view == 'returned_orders' ? 'blue' : 'black' }}
                                         onClick={() => { setView('manage_orders') }}
                                     >
                                         {translate('my_orders')}
@@ -215,9 +216,10 @@ export default function Profile(props) {
                                         {translate('returned')}
                                     </ListGroup.Item>
                                 </ListGroup>
+                            </>
                             }
                         </Col>
-                        <Col>
+                        <Col style={{ overflowY: 'auto', height: '75vh' }}>
                             {view == 'manage_account' && <ManageAccount
                                 _id={user._id}
                                 role={user.role}
@@ -262,7 +264,14 @@ export default function Profile(props) {
                                 showAlert={(msg) => handleShowAlert(msg)}
                                 reloadUser={() => getUser(user._id)}
                             />}
-
+                            {view == 'wish_list' && <MyWishlist
+                                token={token}
+                                role={user.role}
+                                _id={user._id}
+                                wish_list={user.wish_list}
+                                showAlert={(msg) => handleShowAlert(msg)}
+                                reloadUser={() => getUser(user._id)}
+                            />}
                             {view == 'manage_orders' && <ManageOrders
                                 _id={user._id}
                                 role={user.role}
@@ -311,7 +320,8 @@ export default function Profile(props) {
                     right: 0;
                 }
                 .profile ._div {
-                    margin: 1% 7% 20% 7%;
+                    margin: 1% 7% 0% 7%;
+                    min-height: 75vh;
                 }
                 .profile .list-group-item:first-child {
                     background: none;
@@ -347,12 +357,12 @@ export default function Profile(props) {
               
                 @media (max-width: 1199px){
                     .profile ._div {
-                        margin: 1% 3% 20% 3%;
+                        margin: 1% 3% 0% 3%;
                     }
                 }
                 @media (max-width: 991px){
                     .profile ._div {
-                        margin: 1% 0% 20% 0%;
+                        margin: 1% 0% 0% 0%;
                         padding: 0%;
                     }
                 }

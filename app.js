@@ -52,8 +52,7 @@ const upload = multer({
     }
   })
 })
-app
-  .prepare()
+app.prepare()
   .then(() => {
     const app = express();
     const http = require("https");

@@ -10,6 +10,7 @@ import useDimensions from "react-use-dimensions";
 
 import translate from '../../../i18n/translate'
 import Loading from '../loading'
+import NoDataFound from '../no-data-found'
 
 export default function Orders(props) {
     const [pageNumber, setpageNumber] = useState(1)
@@ -116,11 +117,10 @@ export default function Orders(props) {
                     {user_orders_loading && <Loading />}
                 </>
                 :
-                <Row className='h-100 p-5 w-100'>
-                    <div className='h-100 w-100 d-flex justify-content-center align-items-center'>
-                        <h5 className='text-center w-100'>{translate('no_data_found')}</h5>
-                    </div>
-                </Row>
+                user_order_hasMore ?
+                    <Loading />
+                    :
+                    <NoDataFound />
             }
             <style type="text/css">{`
                 .orders_style .card {

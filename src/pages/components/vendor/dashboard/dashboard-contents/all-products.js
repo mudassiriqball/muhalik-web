@@ -43,8 +43,10 @@ export default function AllProducts(props) {
 
     const { vendor_products_loading, vendor_products_error, vendor_products_products, vendor_products_pages, vendor_products_total, vendor_products_hasMore } =
         vendorProductsPageLimit(props.token, refresh_count, props.user_id, false, limitPageNumber, '20')
+
     const { vendor_products_query_loading, vendor_products_query_error, vendor_products_query_products, vendor_products_query_total, vendor_products_query_pages, vendor_products_query_hasMore } =
         vendorProductsQuerySearch(props.token, refresh_count, props.user_id, fieldName, query, queryPageNumber, '20', start_date, end_date)
+
     async function handleSearch(searchType, searchValue, start, end) {
         if (searchValue != '') {
             setFieldName(searchType)

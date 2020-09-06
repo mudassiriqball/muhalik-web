@@ -1420,7 +1420,10 @@ productsController.get_search_products = async (req, res) => {
   let set = 0;
   try {
     const products = await Products.paginate(
-      { product_name: regex },
+      {
+        product_name: regex,
+        isdeleted: false
+      },
       {
         limit: parseInt(req.query.limit),
         page: parseInt(req.query.page),
@@ -1433,7 +1436,10 @@ productsController.get_search_products = async (req, res) => {
       category = await Categories.find({ value: regex }, { _id: 1 });
       if (category.length > 0) {
         products1 = await Products.paginate(
-          { category: category[0]._id },
+          {
+            category: category[0]._id,
+            isdeleted: false
+          },
           {
             limit: parseInt(req.query.limit),
             page: parseInt(req.query.page),
@@ -1455,7 +1461,10 @@ productsController.get_search_products = async (req, res) => {
       sub_category = await Sub_categories.find({ value: regex }, { _id: 1 });
       if (sub_category.length > 0) {
         products2 = await Products.paginate(
-          { sub_category: sub_category[0]._id },
+          {
+            sub_category: sub_category[0]._id,
+            isdeleted: false
+          },
           {
             limit: parseInt(req.query.limit),
             page: parseInt(req.query.page),
@@ -1475,7 +1484,10 @@ productsController.get_search_products = async (req, res) => {
 
     if (set === 2) {
       products3 = await Products.paginate(
-        { product_name: new RegExp(query, "i") },
+        {
+          product_name: new RegExp(query, "i"),
+          isdeleted: false
+        },
         {
           limit: parseInt(req.query.limit),
           page: parseInt(req.query.page),
@@ -1491,7 +1503,10 @@ productsController.get_search_products = async (req, res) => {
 
     if (set === 3) {
       products4 = await Products.paginate(
-        { "product_tags.label": regex },
+        {
+          "product_tags.label": regex,
+          isdeleted: false
+        },
         {
           limit: parseInt(req.query.limit),
           page: parseInt(req.query.page),
@@ -1502,7 +1517,6 @@ productsController.get_search_products = async (req, res) => {
       }
       else {
         actual_products = products4;
-
       }
     }
     res.status(200).send({

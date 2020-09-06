@@ -10,6 +10,7 @@ export default {
         'signup': 'Signup',
         'logout': 'Logout',
         'delete': 'Delete',
+        'deleting': 'Deleting...',
         'rs': 'SR. ',
         'related_categories': 'Related Categories',
 
@@ -181,8 +182,10 @@ export default {
         'stock': 'Stock',
         'quantity': 'Quantity',
         'select_quantity_first': 'Select quantity first',
-        'adding': 'Adding',
+        'adding': 'Adding...',
+        'removing': 'Removing...',
         'add_to_wishlist': 'Add to Wishlist',
+        'remove_to_wishlist': 'Remove to Wishlist',
         'add_to_cart': 'Add to Cart',
         'not_added_to_cart': 'ERROR: Product not added to cart',
         'cart_ot_deleted': 'Card data not deleted',
@@ -243,7 +246,9 @@ export default {
         'no_content_found': 'No Content Found',
         'combination_not_found': 'Combination not fount, try changing the variants',
         'brand': 'Brand',
-        'account': 'Account'
+        'account': 'Account',
+        'order_summary': 'Order Summary',
+        'my_wishlist': 'My Wishlist',
     }
 }
 

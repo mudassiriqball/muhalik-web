@@ -8,7 +8,7 @@ import { Navbar, Nav, InputGroup, Image, NavDropdown, ListGroup, Dropdown, Row, 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faPowerOff, faStoreAlt, faChevronRight, faListUl, faShoppingCart, faSuitcaseRolling } from '@fortawesome/free-solid-svg-icons'
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
-import { faUserCircle } from '@fortawesome/free-regular-svg-icons'
+import { faHeart, faUserCircle } from '@fortawesome/free-regular-svg-icons'
 
 
 import { removeTokenFromStorage } from '../../../sdk/core/authentication-service'
@@ -217,9 +217,13 @@ const Toolbar = (props) => {
                                     {translate('profile')}
                                 </NavDropdown.Item>
                                 {props.role == 'customer' && <>
-                                    <Dropdown.Item className='dropdown_item' href=''>
+                                    <Dropdown.Item onClick={() => Router.push('/user/profile')} className='dropdown_item'>
                                         <FontAwesomeIcon icon={faSuitcaseRolling} className='dropdown_fontawesome' />
                                         {translate('my_orders')}
+                                    </Dropdown.Item>
+                                    <Dropdown.Item onClick={() => Router.push('/user/profile')} className='dropdown_item'>
+                                        <FontAwesomeIcon icon={faHeart} className='dropdown_fontawesome' />
+                                        {translate('my_wishlist')}
                                     </Dropdown.Item>
                                 </>
                                 }

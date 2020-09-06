@@ -10,6 +10,7 @@ export default {
         'signup': 'اشترك',
         'logout': 'تسجيل خروج',
         'delete': 'حذف',
+        'deleting': '...حذف',
         'rs': 'ريال سعودي. ',
         'related_categories': 'فئات ذات صلة',
 
@@ -180,8 +181,10 @@ export default {
         'stock': 'مخزون',
         'quantity': 'كمية',
         'select_quantity_first': 'حدد الكمية أولا',
-        'adding': 'مضيفا',
+        'adding': '...مضيفا',
+        'removing': '...إزالة',
         'add_to_wishlist': 'أضف إلى قائمة الامنيات',
+        'remove_to_wishlist': 'إزالة إلى قائمة الرغبات',
         'add_to_cart': 'أضف إلى السلة',
         'not_added_to_cart': 'خطأ: لم يتم إضافة المنتج إلى سلة التسوق',
         'cart_ot_deleted': 'لم يتم حذف بيانات البطاقة',
@@ -243,5 +246,7 @@ export default {
         'combination_not_found': 'الجمع لا ينفع ، حاول تغيير المتغيرات',
         'brand': 'الماركة',
         'account': 'الحساب',
+        'order_summary': 'ملخص الطلب',
+        'my_wishlist': 'قائمة امنياتي',
     }
 }

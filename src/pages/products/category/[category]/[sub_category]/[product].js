@@ -1,18 +1,14 @@
-import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
-import { Row, Col, Card, Image, Button, Form, Breadcrumb, Table, Tab, Nav, Badge, Tabs, InputGroup, Spinner } from 'react-bootstrap'
+import React, { useState, useEffect } from 'react';
+import { Row, Col, Card, Image, Button, Form, Table, Tab, Badge, Tabs, InputGroup, Spinner } from 'react-bootstrap'
 import { useRouter } from 'next/router'
 import Layout from '../../../../components/customer/layout';
 import useDimensions from "react-use-dimensions";
 import Router from 'next/router'
 import {
-    BrowserView,
-    MobileView,
-    isBrowser,
     isMobile
 } from "react-device-detect";
 import {
     checkTokenExpAuth,
-    getDecodedTokenFromStorage,
     getTokenFromStorage
 } from '../../../../../sdk/core/authentication-service';
 import axios from 'axios'
@@ -24,7 +20,6 @@ import ReactStars from "react-rating-stars-component";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart, faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import BreadcrumbRow from '../../../../components/breadcrumb-row'
-React.useLayoutEffect = React.useEffect
 
 import AlertModal from '../../../../components/alert-modal'
 import CustomerWarningAlert from '../../../../components/customer-warning'
@@ -38,13 +33,12 @@ import DiscountPrice from '../../../../components/discount-price';
 import CalculateDiscountPrice from '../../../../../calculate-discount';
 import capitalize from '../../../../../capitalize';
 
-
 export async function getServerSideProps(context) {
     let categories_list = []
     let sub_categories_list = []
     let single_product = []
-
     const { product } = context.query
+    console.log('hhhh', product)
 
     const url = MuhalikConfig.PATH + '/api/categories/categories';
     await axios.get(url).then((res) => {
@@ -73,23 +67,20 @@ function Product(props) {
     const router = useRouter()
     const [single_product, setSingle_product] = useState(props.single_product)
     const { category, sub_category, product } = router.query
-
     const [token, setToken] = useState(null)
     const [user, setUser] = useState({
         _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
-        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: ''
+        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: '', wish_list: ''
     })
-
     const [showAlertModal, setShowAlertModal] = useState(false)
-
     const { loading, error, products, pages, total, hasMore } = useQueryInfiniteScroll('sub-category', props.single_product == '' ? null : props.single_product.sub_category.value, '1', isMobile ? '6' : '8')
     const [vendor, setVendor] = useState({})
-    const [wish, setWish] = useState('gray')
     const [_loading, cartLoading] = useState(false)
-
     const [cart_count, setCart_count] = useState(0)
+    const [isWishListLoading, setIsWishListLoading] = useState(false)
 
-    useLayoutEffect(() => {
+    useEffect(() => {
+        setSingle_product(props.single_product)
         let unmounted = true
         const CancelToken = axios.CancelToken;
         const source = CancelToken.source();
@@ -120,7 +111,7 @@ function Product(props) {
             unmounted = false
             source.cancel();
         };
-    }, []);
+    }, [props]);
 
     async function getCartCount(user_id) {
         const url = MuhalikConfig.PATH + `/api/users/cart/${user_id}`;
@@ -141,7 +132,8 @@ function Product(props) {
     async function addToWishlist(product_id, variation_id) {
         if (user.full_name == '') {
             Router.push('/login')
-        } else if (wish == 'gray') {
+        } else {
+            setIsWishListLoading(true)
             let data = []
             if (variation_id == null) {
                 data = {
@@ -153,32 +145,44 @@ function Product(props) {
                     variation_id: variation_id,
                 }
             }
-            const url = MuhalikConfig.PATH + `/api/users/add-to-wishlist/${props.user._id}`;
+            const url = MuhalikConfig.PATH + `/api/users/add-to-wishlist/${user._id}`;
             await axios.put(url, data, {
                 headers: {
                     'authorization': token,
                 }
             }).then(function (res) {
-                setWish('orange')
+                reloadUser()
+                setIsWishListLoading(false)
             }).catch(function (err) {
                 alert('ERROR: Product not added to wishlist')
+                setIsWishListLoading(false)
             });
         }
-        // else {
-        //     const url = MuhalikConfig.PATH + `/api/users/remove-wish/${props.user._id}`;
-        //     await axios.put(url, data, {
-        //         headers: {
-        //             'authorization': token,
-        //         }
-        //     }).then(function (res) {
-        //         setWish('gray')
-        //     }).catch(function (err) {
-        //         alert('ERROR: Product not removed from wishlist')
-        //     });
-        // }
     }
 
-
+    async function removeToWishlist(obj_id) {
+        if (user.full_name == '') {
+            Router.push('/login')
+        } else {
+            setIsWishListLoading(true)
+            const _url = MuhalikConfig.PATH + `/api/users/delete/user-wishlist/${user._id}`;
+            axios({
+                method: 'PUT',
+                url: _url,
+                params: { object_id: obj_id },
+                headers: {
+                    'authorization': token,
+                }
+            }).then(res => {
+                reloadUser()
+                setIsWishListLoading(false)
+            }).catch(err => {
+                console.log('remove to wishlist error:', err)
+                setIsWishListLoading(false)
+                alert('ERROR')
+            })
+        }
+    }
 
     async function handleAddToCart(quantity, product_id, variation_id, index) {
         let data = {
@@ -215,12 +219,21 @@ function Product(props) {
         })
     }
 
+    async function reloadUser() {
+        const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${user._id}`;
+        await axios.get(user_url).then((res) => {
+            setUser(res.data.data[0])
+            setCart_count(res.data.data[0].cart.length)
+        }).catch((err) => {
+            console.log('reload user error:', err)
+        })
+    }
+
     return (
         <div className='product_style'>
             <Layout
                 role={user.role}
                 full_name={user.full_name}
-
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
@@ -265,11 +278,12 @@ function Product(props) {
                                     vendor={vendor}
                                     token={token}
                                     user={user}
-                                    wish={wish}
                                     addToWishlist={addToWishlist}
+                                    removeToWishlist={removeToWishlist}
                                     handleAddToCart={handleAddToCart}
                                     loading={_loading}
                                     reloadProduct={reloadProduct}
+                                    isWishListLoading={isWishListLoading}
                                 />
                                 :
                                 <VariableProduct
@@ -277,18 +291,19 @@ function Product(props) {
                                     vendor={vendor}
                                     token={token}
                                     user={user}
-                                    wish={wish}
                                     addToWishlist={addToWishlist}
+                                    removeToWishlist={removeToWishlist}
                                     handleAddToCart={handleAddToCart}
                                     loading={_loading}
                                     reloadProduct={reloadProduct}
+                                    isWishListLoading={isWishListLoading}
                                 />
                             }
                         </Row>
                         <RelatedProducts
                             products={products}
                             current_product_id={props.single_product._id}
-                            totl={total}
+                            total={total}
                         />
                     </div>
                 }
@@ -376,19 +391,6 @@ function Product(props) {
                     border-top: solid 50px ${GlobalStyleSheet.primry_color};
                     border-right: solid 35px transparent;
                 }
-                .product_style .percent {
-                    font-size: 15px;
-                    padding-left: 8px;
-                }
-                .product_style .discount_label {
-                    width: auto;
-                    color: gray;
-                    border-bottom: 1px solid gray; 
-                    line-height: 0em;
-                    font-size: 15px;
-                    margin-top: 10px;
-                }
-
                 .product_style .stock{
                     font-size: 16px;
                     width: 100%;
@@ -439,18 +441,26 @@ function Product(props) {
                     align-items: center;
                 }
                 .product_style .wishlist_font_awsome{
-                    color: ${wish};
+                    color: gray;
                     margin-left: 3%;
                     min-width: 20px;
                     max-width: 20px;
                     min-height: 20px;
                     max-height: 20px;
                 }
-                .product_style  .wishlist_font_awsome:hover{
+                .product_style .wishlist_font_awsome:hover{
                     color: orange;
                     cursor: pointer;
                 }
-
+                .product_style  .remove_wishlist_font_awsome {
+                    cursor: pointer;
+                    color: orange;
+                    margin-left: 3%;
+                    min-width: 20px;
+                    max-width: 20px;
+                    min-height: 20px;
+                    max-height: 20px;
+                }
                 @media (max-width: 1199px) {
                     .product_style .main-row{
                         padding: 2% 3%;
@@ -591,6 +601,22 @@ function SimpleProduct(props) {
         setQuantity(quantity + 1)
     }
 
+    const [isInWishlist, setIsInWishlist] = useState(false)
+    const [wish_list_obj_id, setwish_list_obj_id] = useState('')
+
+    useEffect(() => {
+        setIsInWishlist(false)
+        setwish_list_obj_id('')
+        props.user.wish_list && props.user.wish_list.forEach((element, index) => {
+            if (element.product_id == props.single_product._id) {
+                setIsInWishlist(true)
+                setwish_list_obj_id(element._id)
+            }
+        })
+        return () => {
+        }
+    }, [props])
+
     return (
         <div className='simple_product'>
             <Row className='m-0 p-0'>
@@ -635,22 +661,7 @@ function SimpleProduct(props) {
                     <div className='slope'>{translate('rs')}
                         <CalculateDiscountPrice price={props.single_product.product_price} discount={props.single_product.product_discount} />
                     </div>
-                    {props.single_product.product_discount != '0' ?
-                        <div className='d-inline-flex'>
-                            <p className='discount_label'>
-                                {translate('rs')}
-                                {props.single_product.product_price}
-                            </p>
-                            <div className='percent'>{' -' + props.single_product.product_discount + '%'}</div>
-                        </div>
-                        :
-                        <div className='d-inline-flex'>
-                            <p className='discount_label'>
-                                {''}
-                            </p>
-                            <div className='percent'>{0 + '%'}</div>
-                        </div>
-                    }
+                    <DiscountPrice isShowProuct={true} price={props.single_product.product_price} discount={props.single_product.product_discount} />
                     <Row noGutters className='mt-2 mb-3'>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
@@ -671,10 +682,21 @@ function SimpleProduct(props) {
                             <div>{rating_review.reviews.length}</div>
                         </Col>
                     </Row>
-                    <div className='add_to_wish_list'>
-                        <label className='p-0 m-0'>{translate('add_to_wishlist')}</label>
-                        <FontAwesomeIcon icon={faHeart} className='wishlist_font_awsome' onClick={() => props.addToWishlist(props.single_product._id, null)} />
-                    </div>
+                    {props.user.role == 'customer' || props.user.role == '' ?
+                        isInWishlist ?
+                            <div className='add_to_wish_list'>
+                                <label className='p-0 m-0'>{props.isWishListLoading ? translate('removing') : translate('remove_to_wishlist')}</label>
+                                <FontAwesomeIcon icon={faHeart} className='remove_wishlist_font_awsome' onClick={() => props.removeToWishlist(wish_list_obj_id)} />
+                            </div>
+                            :
+                            <div className='add_to_wish_list'>
+                                <label className='p-0 m-0'>{props.isWishListLoading ? translate('adding') : translate('add_to_wishlist')}</label>
+                                <FontAwesomeIcon icon={faHeart} className='wishlist_font_awsome' onClick={() => props.addToWishlist(props.single_product._id, null)} />
+                            </div>
+                        :
+                        null
+                    }
+
                     <div className='stock'>
                         {translate('available_in_stock')}
                         <span>{translate('stock')}: {props.single_product.product_in_stock}</span>
@@ -762,6 +784,22 @@ function VariableProduct(props) {
     const [selected_items_array, setSelected_items_array] = useState([])
     const [showVariationNotFountAlert, setShowVariationNotFountAlert] = useState(false)
 
+    const [isInWishlist, setIsInWishlist] = useState(false)
+    const [wish_list_obj_id, setwish_list_obj_id] = useState('')
+
+    useEffect(() => {
+        setIsInWishlist(false)
+        setwish_list_obj_id('')
+        props.user.wish_list && props.user.wish_list.forEach((element, index) => {
+            if (element.product_id == props.single_product._id && element.variation_id == activeVariation._id) {
+                setIsInWishlist(true)
+                setwish_list_obj_id(element._id)
+            }
+        })
+        return () => {
+        }
+    }, [props])
+
     let rating_review = {
         rating: {
             overall: 0,
@@ -785,20 +823,18 @@ function VariableProduct(props) {
     if ('rating_review' in activeVariation) {
         rating_review = activeVariation.rating_review;
     }
-    React.useEffect(() => {
 
+    useEffect(() => {
         let array = []
         let array_1 = []
         let array_2 = []
         let array_3 = []
         let obj = {}
-
         props.single_product.product_variations.forEach((element, index) => {
             element.item.forEach((e, i) => {
                 array.push(e)
             })
         })
-
         array.forEach((element, index) => {
             array_2 = []
             array.forEach((e, i) => {
@@ -823,7 +859,6 @@ function VariableProduct(props) {
                     return
                 }
             })
-
             if (!found) {
                 obj = {}
                 obj['name'] = element.name
@@ -925,23 +960,7 @@ function VariableProduct(props) {
                     <div className='slope'>{translate('rs')}
                         <CalculateDiscountPrice price={activeVariation.price} discount={activeVariation.discount} />
                     </div>
-
-                    {activeVariation.discount != '0' ?
-                        <div className='d-inline-flex'>
-                            <p className='discount_label'>
-                                {translate('rs')}
-                                {activeVariation.price}
-                            </p>
-                            <div className='percent'>{' -' + activeVariation.discount + '%'}</div>
-                        </div>
-                        :
-                        <div className='d-inline-flex'>
-                            <p className='discount_label'>
-                                {''}
-                            </p>
-                            <div className='percent'>{0 + '%'}</div>
-                        </div>
-                    }
+                    <DiscountPrice isShowProuct={true} price={activeVariation.price} discount={activeVariation.discount} />
                     <Row noGutters>
                         <Col lg={6} md={6} sm={6} xs={6} className='rating_review_col'>
                             <div className='d-inline-flex'>
@@ -963,10 +982,20 @@ function VariableProduct(props) {
                         </Col>
                     </Row>
 
-                    <div className='add_to_wish_list'>
-                        <label className='p-0 m-0'>{translate('add_to_wishlist')}</label>
-                        <FontAwesomeIcon icon={faHeart} className='wishlist_font_awsome' onClick={() => props.addToWishlist(props.single_product._id, activeVariation._id)} />
-                    </div>
+                    {props.user.role == 'customer' || props.user.role == '' ?
+                        isInWishlist ?
+                            <div className='add_to_wish_list'>
+                                <label className='p-0 m-0'>{props.isWishListLoading ? translate('removing') : translate('remove_to_wishlist')}</label>
+                                <FontAwesomeIcon icon={faHeart} className='remove_wishlist_font_awsome' onClick={() => props.removeToWishlist(wish_list_obj_id)} />
+                            </div>
+                            :
+                            <div className='add_to_wish_list'>
+                                <label className='p-0 m-0'>{props.isWishListLoading ? translate('adding') : translate('add_to_wishlist')}</label>
+                                <FontAwesomeIcon icon={faHeart} className='wishlist_font_awsome' onClick={() => props.addToWishlist(props.single_product._id, null)} />
+                            </div>
+                        :
+                        null
+                    }
 
                     <div className='stock'>
                         {translate('available_in_stock')}
@@ -1045,42 +1074,7 @@ function VariableProduct(props) {
                             </Col>
                         </Row>
                     </div>
-
                     <hr />
-                    {/* <div className='display_in_lg_md_sm'>
-                        <Row noGutters className='d-flex flex-row'>
-                            {props.single_product.product_variations && props.single_product.product_variations.map((element, index) =>
-                                <Col lg={2} md={2} xs={2} sm={2} key={element._id} >
-                                    <MyImages index={index == activeVariationIndex}
-                                        element={element.image_link[0]}
-                                        plus={16}
-                                        setData={() => {
-                                            setActiveVariation(element)
-                                            setActiveVariationIndex(index)
-                                            setActiveImageIndex(0)
-                                            setQuantity(1)
-                                        }}
-                                    />
-                                </Col>
-                            )}
-                        </Row>
-                    </div> */}
-                    {/* <div className='display_in_xs disable_scroll'>
-                        {props.single_product.product_variations && props.single_product.product_variations.map((element, index) =>
-                            <Col lg={2} md={2} xs={2} sm={2} key={element._id} className='p-0 m-0'>
-                                <MyImages index={index == activeVariationIndex}
-                                    element={element.image_link[0]}
-                                    plus={16}
-                                    setData={() => {
-                                        setActiveVariation(element),
-                                            setActiveVariationIndex(index)
-                                        setActiveImageIndex(0)
-                                        setQuantity(1)
-                                    }}
-                                />
-                            </Col>
-                        )}
-                    </div> */}
                 </Col>
                 <Col lg={3} md={3} sm={12} xs={12} className='vendor_desc_col'>
                     <VendorInfo vendor={props.vendor} />

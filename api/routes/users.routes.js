@@ -20,7 +20,7 @@ router.get("/customers", UserController.get_customers);
 router.get("/restricted-customers", UserController.get_restricted_customers);
 router.get("/cart/:_id", UserController.get_cart);
 router.get("/users-count", UserController.get_total_specific_users);
-router.get("/users-query-search/:_role", UserController.get_users_by_query) //has
+router.get("/users-query-search/:_role", UserController.get_users_by_query)
 router.get("/user-wishlist/:_id", UserController.get_wishlist);
 // router.get("/:_id",UserController.getSingleUser);
 

@@ -44,6 +44,7 @@ export default function Inventory(props) {
 
     const { admin_inventory_loading, admin_inventory_products, admin_inventory_pages, admin_inventory_total } =
         adminInventoryPageLimit(refresh_count, limitPageNumber, '20')
+
     const { admin_inventory_query_loading, admin_inventory_query_products, admin_inventory_query_pages, admin_inventory_query_total } =
         adminInventoryQuerySearch(refresh_count, fieldName, query, queryPageNumber, '20', start_date, end_date)
 

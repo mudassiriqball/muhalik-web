@@ -11,10 +11,6 @@ export default function vendorProductsPageLimit(token, refresh, vendor_id, isApp
     const [vendor_products_total, setTotal] = useState(0)
 
     useEffect(() => {
-        if (isAppend == false)
-            setProducts([])
-    }, [refresh, pageNumber])
-    useEffect(() => {
         let unmounted = true
         const CancelToken = axios.CancelToken;
         const source = CancelToken.source();

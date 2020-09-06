@@ -8,7 +8,7 @@ export default function userOrdersPageLimit(token, user_id, status, pageNumber, 
     const [user_orders, setOrders] = useState([])
     const [user_orders_pages, setPages] = useState(0)
     const [user_orders_total, setTotal] = useState(0)
-    const [user_order_hasMore, setHasMore] = useState(false)
+    const [user_order_hasMore, setHasMore] = useState(true)
 
     useEffect(() => {
         setOrders([])
@@ -45,6 +45,7 @@ export default function userOrdersPageLimit(token, user_id, status, pageNumber, 
                     }
                 }).catch(err => {
                     if (unmounted) {
+                        setHasMore(false)
                         setLoading(false)
                         if (axios.isCancel(err)) return
                         setError(true)

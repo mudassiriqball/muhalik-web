@@ -20,9 +20,11 @@ export default function DiscountPrice(props) {
 
     return (
         <div>
-            <div className='d-inline-flex align-items-center w-100'>
-                <label className='mr-auto price_label'>{translate('rs')}{discounted_price}</label>
-            </div>
+            {!props.isShowProuct &&
+                <div className='d-inline-flex align-items-center w-100'>
+                    <label className='mr-auto price_label'>{translate('rs')}{discounted_price}</label>
+                </div>
+            }
             {props.discount != '0' ?
                 <div className='d-inline-flex'>
                     <p className='discount_label'>
@@ -33,7 +35,7 @@ export default function DiscountPrice(props) {
                 </div>
                 :
                 <div className='d-inline-flex'>
-                    <div style={{ fontSize: '13px' }}>{0 + '%'}</div>
+                    <div style={{ fontSize: '13px', paddingLeft: '2px' }}>{'-0%'}</div>
                 </div>
             }
             <style type="text/css">{`
@@ -50,13 +52,13 @@ export default function DiscountPrice(props) {
                 }
                 .percent {
                     font-size: 13px;
-                    padding-left: 8px;
+                    padding-left: 15px;
                 }
                 .discount_label {
                     width: 100%;
                     color: gray;
                     margin: 0%;
-                    
+                    padding-left: 2px;
                     text-decoration-line: line-through;
                     font-size: 13px;
                 }

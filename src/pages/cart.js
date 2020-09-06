@@ -18,6 +18,7 @@ React.useLayoutEffect = React.useEffect
 import translate from '../i18n/translate'
 import TranslateFormControl from '../i18n/translate-form-control'
 import CalculateDiscountPrice from '../calculate-discount'
+import Loading from './components/loading'
 
 
 export async function getServerSideProps(context) {
@@ -50,6 +51,7 @@ export default function Cart(props) {
     })
 
     const [cart_list, setCart_list] = useState([])
+    const [isCartLoading, setIsCartLoading] = useState(true)
     const [cart_count, setCart_count] = useState(0)
     const [products, setProducts] = useState([])
 
@@ -79,10 +81,13 @@ export default function Cart(props) {
                                 setUser(res.data.data[0])
                                 setCart_count(res.data.data[0].cart.length)
                                 setCart_list(res.data.data[0].cart)
+                                setIsCartLoading(false)
                             }
                         }).catch((err) => {
                             if (axios.isCancel(err)) return
+                            setIsCartLoading(false)
                         })
+
                         if (_decoded_token.city == 'riyadh' || _decoded_token.city == 'Riyadh' || _decoded_token.city == 'الرياض' || _decoded_token.city == 'رياض') {
                             setShipping_charges(25)
                         } else {
@@ -94,9 +99,7 @@ export default function Cart(props) {
                 }
             }
         }
-
         getData()
-
         return () => {
             unmounted = false
             source.cancel();
@@ -154,31 +157,30 @@ export default function Cart(props) {
 
 
     function calculateSubTotalPrice() {
-        let count = 0
+        setSubTotal(0)
+        let sum = 0
         products.forEach(element => {
             if (element.product.product_type == "simple-product") {
-                let pp = 0
-                let rounded = Math.floor((element.product.product_price - element.product.product_discount / 100 * element.product.product_price) * element.quantity)
+                let count = element.product.product_price - element.product.product_discount / 100 * element.product.product_price
+                let rounded = Math.floor(count);
                 let decimal = count - rounded;
                 if (decimal > 0) {
-                    pp = rounded + 1;
+                    sum += rounded + 1 * element.quantity
                 } else {
-                    pp = rounded
+                    sum += rounded * element.quantity
                 }
-                count += pp
             } else {
-                let pp = 0
-                let rounded = Math.floor((element.variation.price - element.variation.discount / 100 * element.variation.price) * element.quantity)
+                let count = element.variation.price - element.variation.discount / 100 * element.variation.price
+                let rounded = Math.floor(count);
                 let decimal = count - rounded;
                 if (decimal > 0) {
-                    pp = rounded + 1;
+                    sum += rounded + 1 * element.quantity
                 } else {
-                    pp = rounded
+                    sum += rounded * element.quantity
                 }
-                count += pp
             }
         })
-        setSubTotal(count)
+        setSubTotal(sum)
     }
     function getCartCont(length) {
         let options = []
@@ -294,8 +296,8 @@ export default function Cart(props) {
     return (
         <div className='_cart'>
             <Layout
-                token={token}
-                user={user}
+                role={user.role}
+                full_name={user.full_name}
                 cart_count={cart_count}
                 categories_list={props.categories_list}
                 sub_categories_list={props.sub_categories_list}
@@ -322,125 +324,131 @@ export default function Cart(props) {
                             handlePlaceOrderError={handlePlaceOrderError}
                         />
                         :
-                        products == '' ?
-                            <div style={{ minHeight: '40vh' }} className='w-100 d-flex align-items-center justify-content-center'>
-                                <MyButton onClick={() => Router.push('/')}> {translate('continue_shopping')}</MyButton>
-                            </div>
+                        isCartLoading ?
+                            <Loading />
                             :
-                            < Row noGutters>
-                                <Col className='_col' lg={8} md={8} sm={12} xs={12}>
-                                    <div>
-                                        <Card>
-                                            <Card.Body className='card_body'>
-                                                <Form.Check checked={checkAll} onChange={(e) => handleAllCheck(e)}></Form.Check>
-                                                <div>{translate('select_all')}</div>
-                                                <div className='delete' onClick={handleAllDeleteClick}>
-                                                    <FontAwesomeIcon icon={faTrash} className='fontawesome' />
-                                                    <div>{translate('delete')}</div>
-                                                </div>
-                                            </Card.Body>
-                                        </Card>
-
-                                        {products && products.map((element, index) =>
-                                            <Card key={element._id}>
-                                                <Card.Body className='card_body' style={{ border: element.err ? '1px solid red' : null }}>
-                                                    <Form.Check className='m-0 pr-0' checked={element.check} onChange={(e) => handleCheck(e.target.checked, index)} ></Form.Check>
-                                                    {element.product.product_type == "simple-product" ?
-                                                        <Row className='w-100 p-0 m-0'>
-                                                            <Col lg={2} md={2} sm={2} xs={3} className='_padding'>
-                                                                <Image ref={ref} className='cart_img' thumbnail
-                                                                    style={{ maxHeight: width + 15 || '200px', minHeight: width + 15 || '200px' }}
-                                                                    src={element.product.product_image_link[0].url}
-                                                                />
-                                                            </Col>
-                                                            <Col className='_padding'>
-                                                                <div className='p-0 m-0'>{element.product.product_name}</div>
-                                                            </Col>
-                                                            <Col className='_padding' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
-                                                                <CalculateDiscountPrice price={element.product.product_price} discount={element.product.product_discount} />
-                                                            </Col>
-                                                            <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
-                                                                <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
-                                                                    <option>{element.quantity}</option>
-                                                                    {getCartCont(element.product.product_in_stock).map(element =>
-                                                                        element
-                                                                    )}
-                                                                </Form.Control>
-                                                                <div className='d-inline-flex mt-auto'>
-                                                                    <Link href='/[category]/[sub_category]/[product]' as={`/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
-                                                                        <a style={{ fontSize: '12px', marginRight: '10px' }}>View</a>
-                                                                    </Link>
-                                                                    <div className='delete' onClick={() => handleDeleteCart(element._id, index)}>
-                                                                        <div>{element.isLoading ? <Spinner animation="grow" size="sm" /> : 'Delete'}</div>
-                                                                    </div>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                        :
-                                                        <Row className='w-100 p-0 m-0'>
-                                                            <Col lg={2} md={2} sm={2} xs={3} className='_padding'>
-                                                                <Image ref={ref} className='cart_img' thumbnail
-                                                                    style={{ maxHeight: width + 15 || '200px', minHeight: width + 15 || '200px' }}
-                                                                    src={element.variation.image_link[0].url}
-                                                                />
-                                                            </Col>
-                                                            <Col className='_padding'>
-                                                                <div className='p-0 m-0'>{element.product.product_name}</div>
-                                                            </Col>
-                                                            <Col className='_padding' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
-                                                                <CalculateDiscountPrice price={element.variation.price} discount={element.variation.discount} />
-                                                            </Col>
-                                                            <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
-                                                                <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
-                                                                    <option>{element.quantity}</option>
-                                                                    {getCartCont(element.variation.stock).map(element =>
-                                                                        element
-                                                                    )}
-                                                                </Form.Control>
-                                                                <div className='d-inline-flex mt-auto'>
-                                                                    <Link href='/products/category/[category]/[sub_category]/[product]' as={`/products/category/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
-                                                                        <a style={{ fontSize: '12px', marginRight: '10px' }}>{translate('view')}</a>
-                                                                    </Link>
-                                                                    <div className='delete' onClick={() => handleDeleteCart(element._id, index)}>
-                                                                        <div>{element.isLoading ? <Spinner animation="grow" size="sm" /> : translate('delete')}</div>
-                                                                    </div>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    }
+                            products == '' ?
+                                <div style={{ minHeight: '70vh' }} className='w-100 d-flex align-items-center justify-content-center'>
+                                    <MyButton onClick={() => Router.push('/')}> {translate('continue_shopping')}</MyButton>
+                                </div>
+                                :
+                                < Row noGutters>
+                                    <Col className='_col' lg={8} md={8} sm={12} xs={12}>
+                                        <div>
+                                            <Card>
+                                                <Card.Body className='card_body'>
+                                                    <Form.Check checked={checkAll} onChange={(e) => handleAllCheck(e)}></Form.Check>
+                                                    <div>{translate('select_all')}</div>
+                                                    <div className='delete' onClick={handleAllDeleteClick}>
+                                                        <FontAwesomeIcon icon={faTrash} className='fontawesome' />
+                                                        <div>{translate('delete')}</div>
+                                                    </div>
                                                 </Card.Body>
                                             </Card>
-                                        )}
-                                    </div>
-                                </Col>
-                                <Col lg={4} md={4} sm={12} xs={12} className='_col'>
-                                    <Card>
-                                        <Card.Body className='p-3'>
-                                            <div>Order Summary</div>
-                                            <div className='d-inline-flex w-100 mt-4' style={{ fontSize: '14px', color: 'blue' }}>
-                                                <div className='mr-auto'>{translate('sub_total')}</div>
-                                                <div>{translate('rs')}{sub_total}</div>
-                                            </div>
-                                            <div className='d-inline-flex w-100 mt-2' style={{ fontSize: '14px', color: 'blue' }}>
-                                                <div className='mr-auto'>{translate('shipping_charges')}</div>
-                                                <div>{translate('rs')}{shipping_charges}</div>
-                                            </div>
-                                            <hr style={{ color: 'blue' }} />
-                                            <div className='d-inline-flex w-100 mb-2' style={{ fontSize: '14px', color: 'blue' }}>
-                                                <div className='mr-auto'>{translate('total')}</div>
-                                                <div>{translate('rs')}{sub_total + shipping_charges}</div>
-                                            </div>
-                                            <MyButton onClick={handleProcedeOrder} disabled={products == ''} block={true}> {translate('procede_order')} </MyButton>
-                                        </Card.Body>
-                                    </Card>
-                                </Col>
-                            </Row>
+
+                                            {products && products.map((element, index) =>
+                                                <Card key={element._id}>
+                                                    <Card.Body className='card_body' style={{ border: element.err ? '1px solid red' : null }}>
+                                                        <Form.Check className='m-0 pr-0' checked={element.check} onChange={(e) => handleCheck(e.target.checked, index)} ></Form.Check>
+                                                        {element.product.product_type == "simple-product" ?
+                                                            <Row className='w-100 p-0 m-0'>
+                                                                <Col lg={2} md={2} sm={2} xs={3} className='_padding'>
+                                                                    <Image ref={ref} className='cart_img' thumbnail
+                                                                        style={{ maxHeight: width + 15 || '200px', minHeight: width + 15 || '200px' }}
+                                                                        src={element.product.product_image_link[0].url}
+                                                                    />
+                                                                </Col>
+                                                                <Col className='_padding'>
+                                                                    <div className='p-0 m-0'>{element.product.product_name}</div>
+                                                                </Col>
+                                                                <Col className='_padding d-inline-flex' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
+                                                                    <div>{translate('rs')}</div>
+                                                                    <CalculateDiscountPrice price={element.product.product_price} discount={element.product.product_discount} />
+                                                                </Col>
+                                                                <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
+                                                                    <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
+                                                                        <option>{element.quantity}</option>
+                                                                        {getCartCont(element.product.product_in_stock).map(element =>
+                                                                            element
+                                                                        )}
+                                                                    </Form.Control>
+                                                                    <div className='d-inline-flex mt-auto'>
+                                                                        <Link href='/[category]/[sub_category]/[product]' as={`/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
+                                                                            <a style={{ fontSize: '12px', marginRight: '10px' }}>View</a>
+                                                                        </Link>
+                                                                        <div className='delete' onClick={() => handleDeleteCart(element._id, index)}>
+                                                                            <div>{element.isLoading ? <Spinner animation="grow" size="sm" /> : translate('delete')}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                            :
+                                                            <Row className='w-100 p-0 m-0'>
+                                                                <Col lg={2} md={2} sm={2} xs={3} className='_padding'>
+                                                                    <Image ref={ref} className='cart_img' thumbnail
+                                                                        style={{ maxHeight: width + 15 || '200px', minHeight: width + 15 || '200px' }}
+                                                                        src={element.variation.image_link[0].url}
+                                                                    />
+                                                                </Col>
+                                                                <Col className='_padding'>
+                                                                    <div className='p-0 m-0'>{element.product.product_name}</div>
+                                                                </Col>
+                                                                <Col className='_padding d-inline-flex' lg='auto' md='auto' sm='auto' xs='auto' style={{ color: 'blue' }}>
+                                                                    <div>{translate('rs')}</div>
+                                                                    <CalculateDiscountPrice price={element.variation.price} discount={element.variation.discount} />
+                                                                </Col>
+                                                                <Col className='d-flex flex-column _padding' lg={2} md='auto' sm='auto' xs='auto'>
+                                                                    <Form.Control as="select" size='sm' onChange={(e) => handleSetQuantity(e.target.value, index)} defaultValue="Choose...">
+                                                                        <option>{element.quantity}</option>
+                                                                        {getCartCont(element.variation.stock).map(element =>
+                                                                            element
+                                                                        )}
+                                                                    </Form.Control>
+                                                                    <div className='d-inline-flex mt-auto'>
+                                                                        <Link href='/products/category/[category]/[sub_category]/[product]' as={`/products/category/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
+                                                                            <a style={{ fontSize: '12px', marginRight: '10px' }}>{translate('view')}</a>
+                                                                        </Link>
+                                                                        <div className='delete' onClick={() => handleDeleteCart(element._id, index)}>
+                                                                            <div>{element.isLoading ? <Spinner animation="grow" size="sm" /> : translate('delete')}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        }
+                                                    </Card.Body>
+                                                </Card>
+                                            )}
+                                        </div>
+                                    </Col>
+                                    <Col lg={4} md={4} sm={12} xs={12} className='_col'>
+                                        <Card>
+                                            <Card.Body className='p-3'>
+                                                <div>{translate('order_summary')}</div>
+                                                <div className='d-inline-flex w-100 mt-4' style={{ fontSize: '14px', color: 'blue' }}>
+                                                    <div className='mr-auto'>{translate('sub_total')}</div>
+                                                    <div>{translate('rs')}{sub_total}</div>
+                                                </div>
+                                                <div className='d-inline-flex w-100 mt-2' style={{ fontSize: '14px', color: 'blue' }}>
+                                                    <div className='mr-auto'>{translate('shipping_charges')}</div>
+                                                    <div>{translate('rs')}{shipping_charges}</div>
+                                                </div>
+                                                <hr style={{ color: 'blue' }} />
+                                                <div className='d-inline-flex w-100 mb-2' style={{ fontSize: '14px', color: 'blue' }}>
+                                                    <div className='mr-auto'>{translate('total')}</div>
+                                                    <div>{translate('rs')}{sub_total + shipping_charges}</div>
+                                                </div>
+                                                <MyButton onClick={handleProcedeOrder} disabled={products == ''} block={true}> {translate('procede_order')} </MyButton>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                </Row>
                     }
                 </div>
             </Layout>
             <style type="text/css">{`
                 .cart{
                     margin: 1% 11% 2% 11%;
+                    min-height: 75vh;
                 }
                 .cart ._col{
                     padding: 0.5%;
