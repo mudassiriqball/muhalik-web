@@ -9,7 +9,6 @@ const Home_Categories = require("../models/home-categories.model");
 const jwt = require("jsonwebtoken");
 var AWS = require('aws-sdk');
 
-
 categoriesController.add_Category = async (req, res) => {
   // const uploader = async (path) =>
   //   await cloudinary.uploads(path, "User-Images");

@@ -14,7 +14,7 @@ import {
     faDownload, faLanguage, faPowerOff, faDollarSign,
     faTachometerAlt, faLock, faHome, faChevronRight, faBan, faTimes, faChevronCircleUp, faChevronCircleDown, faChevronUp, faChevronDown
 } from '@fortawesome/free-solid-svg-icons'
-import { faUserCircle, faImage, faThumbsUp, faClock } from '@fortawesome/free-regular-svg-icons'
+import { faUserCircle, faImage, faThumbsUp, faClock, faHeart } from '@fortawesome/free-regular-svg-icons'
 
 import Toolbar from '../components/toolbar'
 import translate from '../../i18n/translate'
@@ -147,15 +147,20 @@ function Account(props) {
                             <div className='label'> {translate('change_picture')}</div>
                             <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                         </ListGroup.Item>
-                        <ListGroup.Item className='list_item' onClick={() => Router.push('/reset-password')}>
+                        <ListGroup.Item className='list_item mb-2' onClick={() => Router.push('/reset-password')}>
                             <FontAwesomeIcon icon={faLock} style={styles.fontawesome} />
                             <div className='label'> {translate('change_password')}</div>
                             <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                         </ListGroup.Item>
 
-                        <div className='w-100 p-1'></div>
                         {user.role == 'customer' ?
                             <>
+                                <ListGroup.Item className='list_item mb-2' onClick={() => Router.push('/user/account/my-wishlist')} >
+                                    <FontAwesomeIcon icon={faHeart} style={styles.fontawesome} />
+                                    <div className='label'>{translate('my_wishlist')}</div>
+                                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                                </ListGroup.Item>
+
                                 <ListGroup.Item disabled>{translate('my_orders')}</ListGroup.Item>
                                 <ListGroup.Item className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/pending`)} >
                                     <FontAwesomeIcon icon={faClock} style={styles.fontawesome} />
@@ -172,7 +177,7 @@ function Account(props) {
                                     <div className='label'>{translate('cancelled')}</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                                 </ListGroup.Item>
-                                <ListGroup.Item className='list_item' onClick={() => Router.push('/user/account/[orders]', `/user/account/returned`)}>
+                                <ListGroup.Item className='list_item mb-2' onClick={() => Router.push('/user/account/[orders]', `/user/account/returned`)}>
                                     <FontAwesomeIcon icon={faBan} style={styles.fontawesome} />
                                     <div className='label'>{translate('returned')}</div>
                                     <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
@@ -183,8 +188,6 @@ function Account(props) {
                         }
                     </>
                 }
-
-                <div className='w-100 p-1'></div>
 
                 {user.role == '' || user.role == 'customer' ?
                     null
@@ -211,26 +214,21 @@ function Account(props) {
                     </Row>
                 }
 
-                {user.role == '' || user.role == 'customer' ?
+                {user.role == '' || user.role == 'customer' && <>
                     <ListGroup.Item className='list_item' onClick={() => Router.push('/vendor-signup')}>
                         <FontAwesomeIcon icon={faDollarSign} style={styles.fontawesome} />
                         <div className='label'>{translate('sell_on_mahaalk')}</div>
                         <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
                     </ListGroup.Item>
-                    :
-                    null
+                    <ListGroup.Item className='list_item' action>
+                        <FontAwesomeIcon icon={faDownload} style={styles.fontawesome} />
+                        <div className='label'>{translate('get_app')}</div>
+                        <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
+                    </ListGroup.Item>
+                </>
                 }
 
-                {user.role == 'customer' && <ListGroup.Item className='list_item' action>
-                    <FontAwesomeIcon icon={faDownload} style={styles.fontawesome} />
-                    <div className='label'>{translate('get_app')}</div>
-                    <FontAwesomeIcon icon={faChevronRight} style={styles.chervon_right_fontawesome} />
-                </ListGroup.Item>
-                }
-
-                <div className='w-100 p-1'></div>
-
-                {user.full_name != '' && <ListGroup.Item onClick={logout} className='list_item'>
+                {user.full_name != '' && <ListGroup.Item onClick={logout} className='list_item mt-2'>
                     <FontAwesomeIcon icon={faPowerOff} style={styles.fontawesome} />
                     <div className='label'>
                         {translate('logout')}

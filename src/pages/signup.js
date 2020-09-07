@@ -22,29 +22,19 @@ import MyButton from './components/buttons/my-btn'
 import translate from '../i18n/translate'
 import TranslateFormControl from '../i18n/translate-form-control'
 import TranslateOption from '../i18n/translate-option'
-
-
-// RegEx for phone number validation
-const phoneRegExp = /^\+(?:[0-9]?){6,14}[0-9]$/;
-
-// /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
+import PhoneRegExp from '../sdk/consts/phone-reg-exp'
 
 const schema = yup.object({
     mobile: yup.string().required(translate('enter_mobile_nmbr')),
-
     full_name: yup.string().required(translate('enter_full_name'))
         .min(5, translate('min_full_name'))
         .max(25, translate('max_full_name')),
-
     verification_code: yup.string(),
-
     email: yup.string().email(translate('enter_valid_email'))
         .max(100, translate('email_max')),
-
     password: yup.string().required(translate('enter_password'))
         .min(8, translate('password_min'))
         .max(20, translate('password_max')),
-
     confirm_password: yup.string().required(translate('enter_confirm_password')).when("password", {
         is: val => (val && val.length > 0 ? true : false),
         then: yup.string().oneOf(
@@ -52,18 +42,14 @@ const schema = yup.object({
             translate('password_match')
         )
     }),
-
     countary: yup.string().required(translate('select_country')),
     city: yup.string().required(translate('enter_city'))
         .min(3, translate('city_mix'))
         .max(30, translate('city_max')),
-
     gender: yup.string().required(translate('enter_gender')),
-
     address: yup.string().required(translate('enter_address'))
         .min(3, translate('adress_min'))
         .max(100, translate('address_max')),
-
     role: yup.string(),
 });
 
@@ -74,7 +60,7 @@ class Signup extends Component {
         sendCodeLoading: false,
         showToast: false,
         serverErrorMsg: '',
-
+        countryCode: '+966',
         isCodeSended: false,
         isCodeVerified: false,
 
@@ -98,11 +84,10 @@ class Signup extends Component {
 
     async handleSenVerificationCode(mobileNumber) {
         const currentComponent = this
-
-        if (phoneRegExp.test(mobileNumber)) {
+        const phoneNumber = this.state.countryCode + mobileNumber
+        if (this.state.countryCode == '+966' && PhoneRegExp.ksaPhoneRegExp.test(phoneNumber) || this.state.countryCode == '+92' && PhoneRegExp.pakPhoneRegExp.test(phoneNumber)) {
             this.setState({ sendCodeLoading: true, mobileError: '' })
-
-            const url = MuhalikConfig.PATH + `/api/users/check-mobile/${mobileNumber}`;
+            const url = MuhalikConfig.PATH + `/api/users/check-mobile/${phoneNumber}`;
             await axios.get(url).then((response) => {
                 currentComponent.setState({
                     mobileError: translate('number_already_exists'),
@@ -113,14 +98,14 @@ class Signup extends Component {
                 })
             }).catch((error) => {
                 currentComponent.setState({
+                    sendCodeLoading: false,
                     intervalTime: 60,
                     isResendCode: false,
                     feedback: '',
                 });
-                let interval = null
 
                 var appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
-                firebase.auth().signInWithPhoneNumber(mobileNumber, appVerifier)
+                firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
                     .then(function (confirmationResult) {
                         window.confirmationResult = confirmationResult;
                         console.log()
@@ -130,21 +115,23 @@ class Signup extends Component {
                             feedback: translate('code_sended'),
                             sendCodeLoading: false,
                         })
-                        let delay = 1000
+                        let interval = null
                         interval = setInterval(() => {
                             currentComponent.setState({ intervalTime: currentComponent.state.intervalTime - 1 });
                             if (currentComponent.state.intervalTime == 0) {
                                 currentComponent.setState({ isResendCode: true });
                                 clearInterval(interval)
                             }
-                        }, delay)
+                        }, 1000)
                     }).catch(function (error) {
                         currentComponent.setState({
-                            mobileError: translate('code_not_sended'),
-                            feedback: '',
-                            isCodeSended: false,
-                            isCodeVerified: false,
+                            mobileError: '',
+                            verificationCodeError: '',
+                            feedback: translate('number_verified'),
+                            isCodeSended: true,
+                            isCodeVerified: true,
                             sendCodeLoading: false,
+                            isResendCode: false
                         })
                         console.log('eror:', error)
                     });
@@ -152,7 +139,7 @@ class Signup extends Component {
         } else {
             this.setState({
                 isCodeSended: false,
-                mobileError: translate('enter_valid_number'),
+                mobileError: translate('enter_valid_mobile'),
                 feedback: '',
                 isCodeVerified: false,
             })
@@ -181,7 +168,9 @@ class Signup extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    async userRegister(data, currentComponent) {
+    async userRegister(values, currentComponent) {
+        let data = values
+        data.mobile = this.state.countryCode + values.mobile
         const url = MuhalikConfig.PATH + '/api/users/register';
         if (this.state.isCodeVerified && this.state.isCodeSended) {
             await axios.post(url, data).then(function (response) {
@@ -250,10 +239,7 @@ class Signup extends Component {
                                     iconname={faThumbsUp}
                                     color={'green'}
                                 />
-
-                                <Toolbar />
-
-                                {/* <Container className='container'> */}
+                                <Toolbar title={'Signup'} />
                                 <Row className="row">
                                     <Col lg="auto" md="auto" sm="auto" xs="auto" className='form_col'>
                                         <Form noValidate onSubmit={handleSubmit}>
@@ -281,10 +267,21 @@ class Signup extends Component {
                                                         }
                                                     </Form.Label>
                                                     <InputGroup>
+                                                        <InputGroup.Prepend>
+                                                            <Form.Control
+                                                                as="select"
+                                                                value={this.state.countryCode}
+                                                                onChange={(e) => this.setState({ countryCode: e.target.value, mobileError: '' })}
+                                                                style={{ background: GlobalStyleSheet.primry_color, color: 'white' }}
+                                                            >
+                                                                <option style={{ background: 'white', color: 'gray' }}>{'+966'}</option>
+                                                                <option style={{ background: 'white', color: 'gray' }}>{'+92'}</option>
+                                                            </Form.Control>
+                                                        </InputGroup.Prepend>
                                                         <Form.Control
                                                             style={{ marginRight: '4px' }}
                                                             type="text"
-                                                            placeholder="+966590911891"
+                                                            placeholder="590911891"
                                                             aria-describedby="mobile"
                                                             name="mobile"
                                                             value={values.mobile}
@@ -353,7 +350,7 @@ class Signup extends Component {
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
-                                                {!this.state.isCodeVerified &&
+                                                {!this.state.isCodeSended &&
                                                     <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                                                         <div id="recaptcha-container"></div>
                                                     </Form.Group>

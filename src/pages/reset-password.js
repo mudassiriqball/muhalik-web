@@ -3,36 +3,29 @@ import Router from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
 import firebase from '../sdk/custom/firebase'
-import { Navbar, Container, Form, Col, Row, InputGroup, Button, Image, Spinner } from 'react-bootstrap';
-
+import { Form, Col, Row, InputGroup, Button, Image, Spinner } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
-
 import AlertModal from './components/alert-modal';
 import GlobalStyleSheet from '../styleSheet';
 import MuhalikConfig from '../sdk/muhalik.config';
 import Toolbar from './components/toolbar';
 import { checkAuth, removeTokenFromStorage } from '../sdk/core/authentication-service'
 import MyButton from './components/buttons/my-btn';
+import PhoneRegExp from '../sdk/consts/phone-reg-exp'
+import translate from '../i18n/translate';
+import TranslateFormControl from '../i18n/translate-form-control';
 
-// RegEx for phone number validation
-const phoneRegExp = /^\+(?:[0-9]?){6,14}[0-9]$/;
-
-// /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
 
 const schema = yup.object({
     mobile: yup.string().required("Enter Mobile Number"),
-
     verification_code: yup.string(),
-
     password: yup.string().required("Enter Password")
         .min(8, "Password must have at least 8 characters")
         .max(20, "Can't be longer than 20 characters"),
-
     confirm_password: yup.string().required("Enter Confirm Password").when("password", {
         is: val => (val && val.length > 0 ? true : false),
         then: yup.string().oneOf(
@@ -40,7 +33,6 @@ const schema = yup.object({
             "Passwords must match"
         )
     }),
-
 });
 
 class ForgotPassword extends Component {
@@ -50,7 +42,7 @@ class ForgotPassword extends Component {
         sendCodeLoading: false,
         showToast: false,
         serverErrorMsg: '',
-
+        countryCode: '+966',
         isCodeSended: false,
         isCodeVerified: false,
 
@@ -68,31 +60,30 @@ class ForgotPassword extends Component {
             });
     }
 
-    async handleSenVerificationCode(mobile) {
+    async handleSenVerificationCode(mobileNumber) {
         const currentComponent = this
-
-        if (phoneRegExp.test(mobile)) {
+        const phoneNumber = this.state.countryCode + mobileNumber
+        if (this.state.countryCode == '+966' && PhoneRegExp.ksaPhoneRegExp.test(phoneNumber) || this.state.countryCode == '+92' && PhoneRegExp.pakPhoneRegExp.test(phoneNumber)) {
             this.setState({ sendCodeLoading: true, mobileError: '' })
-            const url = MuhalikConfig.PATH + `/api/users/check-mobile/${mobile}`;
-
+            const url = MuhalikConfig.PATH + `/api/users/check-mobile/${phoneNumber}`;
             await axios.get(url).then(function (response) {
                 let interval = null
                 currentComponent.setState({
                     intervalTime: 60,
                     isResendCode: false,
                     feedback: '',
-                    _id: response.data.data._id
+                    _id: response.data.data._id,
+                    sendCodeLoading: false,
                 });
 
                 var appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
-                firebase.auth().signInWithPhoneNumber(mobile, appVerifier)
+                firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
                     .then(function (confirmationResult) {
                         window.confirmationResult = confirmationResult;
                         currentComponent.setState({
                             isCodeSended: true,
                             mobileError: '',
-                            feedback: 'Code Sended, Check your number',
-                            sendCodeLoading: false,
+                            feedback: translate('code_sended'),
                         })
                         let delay = 1000
                         interval = setInterval(() => {
@@ -104,8 +95,7 @@ class ForgotPassword extends Component {
                         }, delay)
                     }).catch(function (error) {
                         currentComponent.setState({
-                            mobileError: 'Error: Code not sended',
-                            sendCodeLoading: false,
+                            mobileError: translate('code_not_sended'),
                             feedback: '',
                             isCodeSended: false,
                             isCodeVerified: false,
@@ -124,7 +114,7 @@ class ForgotPassword extends Component {
         } else {
             this.setState({
                 isCodeSended: false,
-                mobileError: 'Enter valid number with countary code',
+                mobileError: translate('enter_valid_mobile'),
                 feedback: '',
                 isCodeVerified: false,
             })
@@ -138,13 +128,13 @@ class ForgotPassword extends Component {
         confirmationResult.confirm(code).then(function (result) {
             currentComponent.setState({
                 isCodeVerified: true,
-                feedback: 'Number Verified',
+                feedback: translate('number_verified'),
                 verificationCodeError: '',
                 isResendCode: false,
             })
         }).catch(function (error) {
             currentComponent.setState({
-                verificationCodeError: 'Invalid Code, Try again',
+                verificationCodeError: translate('invalid_code'),
                 feedback: '',
             })
         });
@@ -154,7 +144,12 @@ class ForgotPassword extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    async resetPassword(data, currentComponent) {
+    async resetPassword(values, currentComponent) {
+        let data = {}
+        data = {
+            mobile: values.mobile,
+            password: values.password
+        }
         const url = MuhalikConfig.PATH + `/api/users/reset-password/${this.state._id}`;
         if (this.state.isCodeVerified && this.state.isCodeSended) {
             await axios.put(url, data).then(function (response) {
@@ -219,15 +214,12 @@ class ForgotPassword extends Component {
                                 <AlertModal
                                     onHide={(e) => this.setState({ showToast: false })}
                                     show={this.state.showToast}
-                                    header={'Success'}
-                                    message={'Password Changed Successfully'}
+                                    header={translate('success')}
+                                    message={translate('reset_pswrd_success')}
                                     iconname={faThumbsUp}
                                     color={'green'}
                                 />
-
                                 <Toolbar />
-
-                                {/* <Container className='container'> */}
                                 <Row className="row">
                                     <Col lg="auto" md="auto" sm="auto" xs="auto" className='form_col'>
                                         <Form noValidate onSubmit={handleSubmit}>
@@ -235,8 +227,8 @@ class ForgotPassword extends Component {
                                                 <Col lg={12} md={12} sm={12} xs={12} className='mahaalk_col'>
                                                     <Image src="muhalik.jpg" roundedCircle fluid style={styles.image} />
                                                     <div className='d-flex flex-column ml-3'>
-                                                        <div className="text-center welcome_note" >Welcome To Mahaalk </div>
-                                                        <div className="text-center welcome_note" >Change Password</div>
+                                                        <div className="text-center welcome_note" >{translate('welcome_to_mahaalk')} </div>
+                                                        <div className="text-center welcome_note" >{translate('creat_account')} </div>
                                                     </div>
                                                 </Col>
                                             </Form.Row>
@@ -244,7 +236,7 @@ class ForgotPassword extends Component {
 
                                             <Form.Row>
                                                 <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
-                                                    <Form.Label style={styles.label}>Mobile Number <span>*</span>
+                                                    <Form.Label style={styles.label}>{translate('mobile_number')}<span>*</span>
                                                         {this.state.isCodeVerified ?
                                                             null
                                                             :
@@ -255,9 +247,20 @@ class ForgotPassword extends Component {
                                                         }
                                                     </Form.Label>
                                                     <InputGroup>
+                                                        <InputGroup.Prepend>
+                                                            <Form.Control
+                                                                as="select"
+                                                                value={this.state.countryCode}
+                                                                onChange={(e) => this.setState({ countryCode: e.target.value, mobileError: '' })}
+                                                                style={{ background: GlobalStyleSheet.primry_color, color: 'white' }}
+                                                            >
+                                                                <option style={{ background: 'white', color: 'gray' }}>{'+966'}</option>
+                                                                <option style={{ background: 'white', color: 'gray' }}>{'+92'}</option>
+                                                            </Form.Control>
+                                                        </InputGroup.Prepend>
                                                         <Form.Control
                                                             type="text"
-                                                            placeholder="+966590911891"
+                                                            placeholder="590911891"
                                                             aria-describedby="mobile"
                                                             name="mobile"
                                                             value={values.mobile}
@@ -267,15 +270,10 @@ class ForgotPassword extends Component {
                                                         />
                                                         <InputGroup.Append>
                                                             <MyButton
-                                                                onClick={() => {
-                                                                    this.state.isCodeSended ?
-                                                                        this.handleSenVerificationCode(values.mobile)
-                                                                        :
-                                                                        this.handleSenVerificationCode(values.mobile)
-                                                                }}
+                                                                onClick={() => { this.handleSenVerificationCode(values.mobile) }}
                                                                 disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
                                                             >
-                                                                {this.state.isCodeSended ? 'Resend' : 'Send Code'}
+                                                                {this.state.isCodeSended ? translate('resend') : translate('send_code')}
                                                                 {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                             </MyButton>
                                                         </InputGroup.Append>
@@ -293,21 +291,24 @@ class ForgotPassword extends Component {
                                                                         mobileError: '',
                                                                         verificationCodeError: '',
                                                                     })
-                                                                }>Change Number</a>
+                                                                }>{translate('change_nmbr')}</a>
                                                                 :
                                                                 null
                                                             }
                                                         </div>
-
                                                     </InputGroup>
                                                 </Form.Group>
-
+                                                {!this.state.isCodeSended &&
+                                                    <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
+                                                        <div id="recaptcha-container"></div>
+                                                    </Form.Group>
+                                                }
                                                 <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
-                                                    <Form.Label style={styles.label}>Verification Code <span> * </span></Form.Label>
+                                                    <Form.Label style={styles.label}>{translate('verification_code')}<span> * </span></Form.Label>
                                                     <InputGroup>
-                                                        <Form.Control
+                                                        <TranslateFormControl
+                                                            id='verification_code'
                                                             type="text"
-                                                            placeholder="Verification Code"
                                                             name="verification_code"
                                                             value={values.verification_code}
                                                             onChange={handleChange}
@@ -319,7 +320,7 @@ class ForgotPassword extends Component {
                                                                 <MyButton disabled={this.state.isCodeVerified}
                                                                     onClick={() => this.handleVerifyVarificationCode(values.verification_code)}
                                                                 >
-                                                                    {this.state.isCodeVerified ? 'Verified' : 'Verify'}
+                                                                    {this.state.isCodeVerified ? translate('verified') : translate('verify')}
                                                                 </MyButton>
                                                             </InputGroup.Append>
                                                             : null
@@ -329,25 +330,17 @@ class ForgotPassword extends Component {
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
-
-                                                {!this.state.isCodeVerified &&
-                                                    <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
-                                                        <div id="recaptcha-container"></div>
-                                                    </Form.Group>
-                                                }
                                             </Form.Row>
 
                                             {this.state.isCodeVerified ?
                                                 <>
                                                     <Form.Row>
                                                         <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
-                                                            <Form.Label style={styles.label}>New Password <span>*</span></Form.Label>
+                                                            <Form.Label style={styles.label}>{translate('new_password')} <span>*</span></Form.Label>
                                                             <InputGroup>
-                                                                <Form.Control
+                                                                <TranslateFormControl
+                                                                    id='enter_new_password'
                                                                     type={hide ? 'password' : 'text'}
-
-                                                                    placeholder="Enter New Password"
-                                                                    aria-describedby="inputGroup"
                                                                     name="password"
                                                                     value={values.password}
                                                                     onChange={handleChange}
@@ -364,12 +357,11 @@ class ForgotPassword extends Component {
                                                             </InputGroup>
                                                         </Form.Group>
                                                         <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
-                                                            <Form.Label style={styles.label}>Confirm Password <span>*</span></Form.Label>
+                                                            <Form.Label style={styles.label}>{translate('confirm_password')}<span>*</span></Form.Label>
                                                             <InputGroup>
-                                                                <Form.Control
+                                                                <TranslateFormControl
+                                                                    id='reenter_password'
                                                                     type={hide ? 'password' : 'text'}
-                                                                    placeholder="Re-enter Password"
-                                                                    aria-describedby="confirm_password"
                                                                     name="confirm_password"
                                                                     value={values.confirm_password}
                                                                     onChange={handleChange}
@@ -391,7 +383,7 @@ class ForgotPassword extends Component {
                                                             <MyButton
                                                                 onClick={handleSubmit}
                                                                 disabled={this.state.isLoading || !this.state.isCodeVerified} block>
-                                                                {this.state.isLoading ? ' Continue ' : ' Continue '}
+                                                                {translate('continue')}
                                                                 {this.state.isLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                             </MyButton>
                                                         </Form.Group>
@@ -404,7 +396,6 @@ class ForgotPassword extends Component {
                                         </Form>
                                     </Col>
                                 </Row>
-                                {/* </Container > */}
                                 <style type="text/css">{`
                                     .forgot-password .row{
                                         align-items: center;

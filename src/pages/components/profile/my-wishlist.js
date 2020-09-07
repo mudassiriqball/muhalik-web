@@ -14,7 +14,7 @@ import NoDataFound from '../no-data-found'
 export default function WishlistScreen(props) {
     const [my_wishlist, setMy_wishlist] = useState([])
     const [ref, { x, y, width }] = useDimensions();
-
+    console.log('role:', props.role)
     useEffect(() => {
         setMy_wishlist([])
         let unmounted = true
@@ -22,7 +22,7 @@ export default function WishlistScreen(props) {
         const source = CancelToken.source();
 
         if (props.role != 'customer') {
-            Router.push('/login')
+            // Router.push('/login')
         } else {
             props.wish_list && props.wish_list.forEach((element, index) => {
                 getProducts(element, index)

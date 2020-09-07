@@ -3,7 +3,7 @@ import Router from 'next/router'
 import Link from 'next/link';
 import axios from 'axios';
 import firebase from '../sdk/custom/firebase'
-import { Navbar, Container, Form, Col, Row, InputGroup, Image, Spinner } from 'react-bootstrap';
+import { Form, Col, Row, InputGroup, Image, Spinner } from 'react-bootstrap';
 
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -13,36 +13,25 @@ import MyButton from './components/buttons/my-btn'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
-import { getTokenFromStorage } from '../sdk/core/authentication-service'
-
 import GlobalStyleSheet from '../styleSheet';
 import Toolbar from './components/toolbar';
 import { checkAuth } from '../sdk/core/authentication-service'
-
 import translate from '../i18n/translate'
 import TranslateFormControl from '../i18n/translate-form-control'
 import TranslateOption from '../i18n/translate-option'
-
-// RegEx for phone number validation
-const phoneRegExp = /^\+(?:[0-9]?){6,14}[0-9]$/;
-// /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
+import PhoneRegExp from '../sdk/consts/phone-reg-exp'
 
 const schema = yup.object({
     mobile: yup.string().required(translate('enter_mobile_nmbr')),
-
     full_name: yup.string().required(translate('enter_full_name'))
         .min(5, translate('min_full_name'))
         .max(25, translate('max_full_name')),
-
     verification_code: yup.string(),
-
     email: yup.string().email(translate('enter_valid_email'))
         .max(100, translate('email_max')),
-
     password: yup.string().required(translate('enter_password'))
         .min(8, translate('password_min'))
         .max(20, translate('password_max')),
-
     confirm_password: yup.string().required(translate('enter_confirm_password')).when("password", {
         is: val => (val && val.length > 0 ? true : false),
         then: yup.string().oneOf(
@@ -50,17 +39,13 @@ const schema = yup.object({
             translate('password_match')
         )
     }),
-
     shop_name: yup.string().required(translate('enter_shop_name'))
         .min(3, translate('shop_name_min'))
         .max(50, translate('shop_name_max')),
-
     shop_category: yup.string().required(translate('enter_category')),
-
     shop_address: yup.string().required(translate('enter_shop_address'))
         .min(5, translate('min_shop_address'))
         .max(200, translate('max_shop_address')),
-
     countary: yup.string().required(translate('enter_country')),
     city: yup.string().required(translate('enter_city'))
         .min(3, translate('city_mix'))
@@ -69,14 +54,13 @@ const schema = yup.object({
 });
 
 class VendorSignup extends Component {
-
     state = {
         hide: true,
         isLoading: false,
         sendCodeLoading: false,
         showToast: false,
         serverErrorMsg: '',
-
+        countryCode: '+966',
         isCodeSended: false,
         isCodeVerified: false,
 
@@ -98,11 +82,10 @@ class VendorSignup extends Component {
     }
     async handleSenVerificationCode(mobileNumber) {
         const currentComponent = this
-
-        if (phoneRegExp.test(mobileNumber)) {
+        const phoneNumber = this.state.countryCode + mobileNumber
+        if (this.state.countryCode == '+966' && PhoneRegExp.ksaPhoneRegExp.test(phoneNumber) || this.state.countryCode == '+92' && PhoneRegExp.pakPhoneRegExp.test(phoneNumber)) {
             this.setState({ sendCodeLoading: true, mobileError: '' })
-
-            const url = MuhalikConfig.PATH + `/api/users/check-mobile/${mobileNumber}`;
+            const url = MuhalikConfig.PATH + `/api/users/check-mobile/${phoneNumber}`;
             await axios.get(url).then((response) => {
                 currentComponent.setState({
                     mobileError: translate('number_already_exists'),
@@ -115,41 +98,41 @@ class VendorSignup extends Component {
                 this.setState({
                     intervalTime: 60,
                     isResendCode: false,
-                    feedback: ''
+                    feedback: '',
+                    sendCodeLoading: false,
                 });
-                let interval = null
                 var appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
-                firebase.auth().signInWithPhoneNumber(mobileNumber, appVerifier)
+                firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
                     .then(function (confirmationResult) {
                         window.confirmationResult = confirmationResult;
                         currentComponent.setState({
                             isCodeSended: true,
                             mobileError: '',
                             feedback: translate('code_sended'),
-                            sendCodeLoading: false,
                         })
-                        let delay = 1000
+                        let interval = null
                         interval = setInterval(() => {
                             currentComponent.setState({ intervalTime: currentComponent.state.intervalTime - 1 });
                             if (currentComponent.state.intervalTime == 0) {
                                 currentComponent.setState({ isResendCode: true });
                                 clearInterval(interval)
                             }
-                        }, delay)
+                        }, 1000)
                     }).catch(function (error) {
                         currentComponent.setState({
-                            mobileError: translate('code_not_sended'),
-                            feedback: '',
-                            isCodeSended: false,
-                            isCodeVerified: false,
-                            sendCodeLoading: false,
+                            mobileError: '',
+                            verificationCodeError: '',
+                            feedback: translate('number_verified'),
+                            isCodeSended: true,
+                            isCodeVerified: true,
+                            isResendCode: false
                         })
                     });
             })
         } else {
             this.setState({
                 isCodeSended: false,
-                mobileError: translate('enter_valid_number'),
+                mobileError: translate('enter_valid_mobile'),
                 feedback: '',
                 isCodeVerified: false,
             })
@@ -178,7 +161,10 @@ class VendorSignup extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    async userRegister(data, currentComponent) {
+    async userRegister(values, currentComponent) {
+        let data = values
+        data.mobile = this.state.countryCode + values.mobile
+
         const url = MuhalikConfig.PATH + '/api/users/register';
         if (this.state.isCodeVerified && this.state.isCodeSended) {
             await axios.post(url, data).then(function (response) {
@@ -262,9 +248,6 @@ class VendorSignup extends Component {
                                                 </Col>
                                             </Form.Row>
                                             <hr className='pt-0 mt-0' />
-
-
-
                                             <Form.Row>
                                                 <Form.Group as={Col} lg={6} md={6} sm={6} xs={12}>
                                                     <Form.Label style={styles.label}>{translate('mobile_number')}<span>*</span>
@@ -278,10 +261,21 @@ class VendorSignup extends Component {
                                                         }
                                                     </Form.Label>
                                                     <InputGroup>
+                                                        <InputGroup.Prepend>
+                                                            <Form.Control
+                                                                as="select"
+                                                                value={this.state.countryCode}
+                                                                onChange={(e) => this.setState({ countryCode: e.target.value, mobileError: '' })}
+                                                                style={{ background: GlobalStyleSheet.primry_color, color: 'white' }}
+                                                            >
+                                                                <option style={{ background: 'white', color: 'gray' }}>{'+966'}</option>
+                                                                <option style={{ background: 'white', color: 'gray' }}>{'+92'}</option>
+                                                            </Form.Control>
+                                                        </InputGroup.Prepend>
                                                         <Form.Control
                                                             style={{ marginRight: '4px' }}
                                                             type="text"
-                                                            placeholder="+966590911891"
+                                                            placeholder="590911891"
                                                             aria-describedby="mobile"
                                                             name="mobile"
                                                             value={values.mobile}
@@ -289,20 +283,13 @@ class VendorSignup extends Component {
                                                             isInvalid={this.state.mobileError}
                                                             disabled={this.state.isCodeSended}
                                                         />
-                                                        {/* <InputGroup.Append> */}
                                                         <MyButton
-                                                            onClick={() => {
-                                                                this.state.isCodeSended ?
-                                                                    this.handleSenVerificationCode(values.mobile)
-                                                                    :
-                                                                    this.handleSenVerificationCode(values.mobile)
-                                                            }}
+                                                            onClick={() => { this.handleSenVerificationCode(values.mobile) }}
                                                             disabled={this.state.isCodeVerified ? true : this.state.isCodeSended ? this.state.isResendCode ? false : true : false}
                                                         >
                                                             <div className='append_button'>{this.state.isCodeSended ? translate('resend') : translate('send_code')}</div>
                                                             {this.state.sendCodeLoading ? <Spinner animation="grow" size="sm" /> : null}
                                                         </MyButton>
-                                                        {/* </InputGroup.Append> */}
                                                         <Form.Control.Feedback type="invalid">
                                                             {this.state.mobileError}
                                                         </Form.Control.Feedback>
@@ -353,7 +340,7 @@ class VendorSignup extends Component {
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Form.Group>
-                                                {!this.state.isCodeVerified &&
+                                                {!this.state.isCodeSended &&
                                                     <Form.Group as={Col} lg={12} md={12} sm={12} xs={12}>
                                                         <div id="recaptcha-container"></div>
                                                     </Form.Group>

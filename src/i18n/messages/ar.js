@@ -62,7 +62,10 @@ export default {
         'confirm_password': 'تأكيد كلمة المرور',
         'reenter_password': 'اعادة ادخال كلمة المرور',
         'enter_confirm_password': 'ادخل تأكيد كلمة المرور',
+        'new_password': 'كلمة سر جديدة',
+        'enter_new_password': 'أدخل كلمة مرور جديدة',
         'password_match': 'كلمة المرور متطابقة',
+        'reset_pswrd_success': 'تم تحديث كلمة السر بنجاح',
 
         'select_country': 'اختر البلد',
         'city': 'المدينة',
@@ -92,6 +95,7 @@ export default {
         'code_sended': 'تم ارسال الرمز',
         'code_not_sended': 'لم يتم ارسال الرمز',
         'enter_valid_number': 'ادخل رمز البلد',
+        'enter_valid_mobile': 'أدخل رقمًا صالحًا',
         'nmbr_verified': 'تحقق من الرقم',
         'invalid_code': 'الرمز غير صحيح',
         'verify_your_nmbr': 'تحقق من الرقم',
@@ -248,5 +252,6 @@ export default {
         'account': 'الحساب',
         'order_summary': 'ملخص الطلب',
         'my_wishlist': 'قائمة امنياتي',
+        'continue': 'استمر',
     }
 }

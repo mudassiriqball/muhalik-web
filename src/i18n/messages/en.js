@@ -62,7 +62,10 @@ export default {
         'confirm_password': 'Confirm Password',
         'reenter_password': 'Re-enter Password',
         'enter_confirm_password': 'Enter Confirm Password',
+        'new_password': 'New Password',
+        'enter_new_password': 'Enter New Password',
         'password_match': 'Passwords must match',
+        'reset_pswrd_success': 'Password updated successfully',
 
         'select_country': 'Select Country',
         'city': 'City',
@@ -92,6 +95,7 @@ export default {
         'code_sended': 'Code Sended, Check your number',
         'code_not_sended': 'Code not sended,check your number and try again',
         'enter_valid_number': 'Enter valid number with country code',
+        'enter_valid_mobile': 'Enter valid number',
         'nmbr_verified': 'Number Verified',
         'invalid_code': 'Invalid Code, Try again',
         'verify_your_nmbr': 'Please first verify your mobile number!',
@@ -249,6 +253,7 @@ export default {
         'account': 'Account',
         'order_summary': 'Order Summary',
         'my_wishlist': 'My Wishlist',
+        'continue': 'Continue',
     }
 }
 

@@ -6,15 +6,18 @@ import { faUserCircle, faImage, faThumbsUp, faClock } from '@fortawesome/free-re
 
 import { getDecodedTokenFromStorage, removeTokenFromStorage, getTokenFromStorage } from '../../../sdk/core/authentication-service'
 import AlertModal from '../../components/alert-modal'
-import Address from '../../components/profile/address'
+import Wishlist from '../../components/profile/my-wishlist'
 import Toolbar from '../../components/toolbar'
 
 import translate from '../../../i18n/translate'
 
-export default function MyAddress() {
-    const [token, setToken] = useState({ role: '', full_name: '', status: '' })
-    const [undecoded_token, setUndecodedToken] = useState('')
-    const [user, setUser] = useState('')
+export default function MyWishlist() {
+    const [token, setToken] = useState(null)
+    const [user, setUser] = useState({
+        _id: null, role: '', mobile: '', full_name: '', gender: '', countary: '', city: '', address: '',
+        email: '', shop_name: '', shop_category: '', shop_address: '', avatar: '', status: '', wish_list: ''
+    })
+
     const [showAlertModal, setShowAlertModal] = useState(false)
     const [alertMsg, setAlertMsg] = useState('')
 
@@ -28,8 +31,8 @@ export default function MyAddress() {
         const _token = await getDecodedTokenFromStorage()
         const _undecoded_token = await getTokenFromStorage()
         if (_token !== null) {
-            setToken(_token)
-            setUndecodedToken(_undecoded_token)
+            setUser(_token)
+            setToken(_undecoded_token)
             await getUser(_token._id)
         }
     }
@@ -57,19 +60,15 @@ export default function MyAddress() {
                 iconname={faThumbsUp}
                 color={'green'}
             />
-            <Toolbar title={translate('my_address')} />
-            <Address
+            <Toolbar title={translate('my_wishlist')} />
+            <Wishlist
                 isMobile={true}
-                token={undecoded_token}
+                token={token}
                 _id={user._id}
                 role={user.role}
-                shop_name={user.shop_name}
-                address={user.address}
-                shop_address={user.shop_address}
-                countary={user.countary}
-                city={user.city}
+                reloadUser={() => getUser(user._id)}
+                wish_list={user.wish_list}
                 showAlert={(msg) => handleShowAlert(msg)}
-                reloadUser={() => getUser(token._id)}
             />
         </div>
     )

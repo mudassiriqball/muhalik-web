@@ -14,13 +14,10 @@ import { saveTokenToStorage } from '../sdk/core/authentication-service';
 import { checkAuth } from '../sdk/core/authentication-service'
 import translate from '../i18n/translate'
 import TranslateFormControl from '../i18n/translate-form-control'
-
-// RegEx for phone number validation
-const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/
+import PhoneRegExp from '../sdk/consts/phone-reg-exp'
 
 const schema = yup.object({
-    mobile: yup.string().required(translate('enter_mobile_nmbr'))
-        .matches(phoneRegExp, translate('enter_valid_number')),
+    mobile: yup.string().required(translate('enter_mobile_nmbr')),
     password: yup.string().required(translate('enter_password'))
         .min(8, translate('password_min'))
         .max(20, translate('password_max')),
@@ -31,13 +28,14 @@ import Router from 'next/router'
 import MyButton from './components/buttons/my-btn';
 
 class Login extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
             hide: true,
             isLoading: '',
-            serverErrorMsg: ''
+            serverErrorMsg: '',
+            mobileError: '',
+            countryCode: '+966'
         }
     }
     async componentDidMount() {
@@ -50,32 +48,45 @@ class Login extends Component {
         this.setState({ hide: !this.state.hide })
     }
 
-    async login(data, currentComponent) {
-        const url = MuhalikConfig.PATH + '/api/users/login';
-        await axios.post(url, data).then((res) => {
-            if (res.status == '200') {
-                saveTokenToStorage(res.data.token);
-                const decodedToken = decode(res.data.token);
+    async login(values, currentComponent) {
+        const phoneNumber = currentComponent.state.countryCode + values.mobile
+        if (currentComponent.state.countryCode == '+966' && PhoneRegExp.ksaPhoneRegExp.test(phoneNumber) ||
+            currentComponent.state.countryCode == '+92' && PhoneRegExp.pakPhoneRegExp.test(phoneNumber)) {
+            currentComponent.setState({ mobileError: '' })
+            currentComponent.setState({ isLoading: true })
+            let data = {}
+            data = {
+                mobile: phoneNumber,
+                password: values.password
+            }
+            const url = MuhalikConfig.PATH + '/api/users/login';
+            await axios.post(url, data).then((res) => {
+                if (res.status == '200') {
+                    saveTokenToStorage(res.data.token);
+                    const decodedToken = decode(res.data.token);
 
-                if (decodedToken.data.role == 'customer') {
-                    Router.replace('/')
-                } else if (decodedToken.data.role == 'vendor') {
-                    Router.replace('/vendor')
-                } else if (decodedToken.data.role == 'admin') {
-                    Router.replace('/admin')
-                } else {
-                    Router.replace('/')
+                    if (decodedToken.data.role == 'customer') {
+                        Router.replace('/')
+                    } else if (decodedToken.data.role == 'vendor') {
+                        Router.replace('/vendor')
+                    } else if (decodedToken.data.role == 'admin') {
+                        Router.replace('/admin')
+                    } else {
+                        Router.replace('/')
+                    }
                 }
-            }
-        }).catch((error) => {
-            currentComponent.setState({ isLoading: false })
-            try {
-                currentComponent.setState({ serverErrorMsg: error.response.data.message })
-            } catch (err) {
-                alert('Error')
-                console.log('Login Error:', error)
-            }
-        });
+            }).catch((error) => {
+                currentComponent.setState({ isLoading: false })
+                try {
+                    currentComponent.setState({ serverErrorMsg: error.response.data.message })
+                } catch (err) {
+                    alert('Error')
+                    console.log('Login Error:', error)
+                }
+            });
+        } else {
+            currentComponent.setState({ mobileError: translate('enter_valid_mobile') })
+        }
     }
 
     handleSearchEnterPress(e) {
@@ -103,7 +114,6 @@ class Login extends Component {
                 onSubmit={(values, { setSubmitting }) => {
                     this.setState({ serverErrorMsg: '' })
                     setSubmitting(true);
-                    this.setState({ isLoading: true })
                     setTimeout(() => {
                         this.login(values, this);
 
@@ -139,23 +149,30 @@ class Login extends Component {
                                                     </Form.Label>
                                                     <InputGroup>
                                                         <InputGroup.Prepend>
-                                                            <MyButton>
-                                                                <FontAwesomeIcon icon={faMobileAlt} style={styles.fontawesome} />
-                                                            </MyButton>
+                                                            <Form.Control
+                                                                as="select"
+                                                                value={this.state.countryCode}
+                                                                onChange={(e) => this.setState({ countryCode: e.target.value, mobileError: '' })}
+                                                                style={{ background: GlobalStyleSheet.primry_color, color: 'white' }}
+                                                            >
+                                                                <option style={{ background: 'white', color: 'gray' }}>{'+966'}</option>
+                                                                <option style={{ background: 'white', color: 'gray' }}>{'+92'}</option>
+                                                            </Form.Control>
                                                         </InputGroup.Prepend>
                                                         <Form.Control
                                                             type="text"
-                                                            placeholder="+966590911891"
+                                                            placeholder="590911891"
                                                             aria-describedby="mobile"
                                                             name="mobile"
                                                             value={values.mobile}
                                                             onChange={handleChange}
-                                                            isInvalid={touched.mobile && errors.mobile}
+                                                            isInvalid={this.state.mobileError}
                                                         />
                                                         <Form.Control.Feedback type="invalid">
-                                                            {errors.mobile}
+                                                            {this.state.mobileError}
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
+
                                                 </Form.Group>
                                             </Form.Row>
                                             <Form.Row>

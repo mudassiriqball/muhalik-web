@@ -38,7 +38,6 @@ export async function getServerSideProps(context) {
     let sub_categories_list = []
     let single_product = []
     const { product } = context.query
-    console.log('hhhh', product)
 
     const url = MuhalikConfig.PATH + '/api/categories/categories';
     await axios.get(url).then((res) => {
@@ -907,7 +906,6 @@ function VariableProduct(props) {
                 setShowVariationNotFountAlert(false)
             }, 3000);
         }
-        console.log('selected_items_array', selected_items_array)
     }
 
     return (
