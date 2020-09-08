@@ -297,6 +297,8 @@ export default function Category(props) {
                 }
                 ._sub_category .products_col{
                     background: white;
+                    min-width: 100%;
+                    min-height: 70vh;
                 }
                 
                 ._sub_category .id_row{
@@ -389,9 +391,6 @@ export default function Category(props) {
                         margin: 0%;
                         padding: 1%;
                         font-size: 13px;
-                    }
-                    ._sub_category .products_col{
-                        min-width: 100%;
                     }
                 }
                 @media (max-width: 767px) {

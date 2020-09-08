@@ -20,9 +20,10 @@ export default function PaginationRow(props) {
                     onClick={() => props.setActivePageNumber(props.activePageNumber + 1)}>
                 </Pagination.Next>
 
-                <Pagination.Item
+                {/* <Pagination.Item
                     disabled={props.totalPages == -1 ? true : false}
-                    onClick={() => props.setActivePageNumber(props.totalPages)}>{props.totalPages == -1 ? '-' : props.totalPages}</Pagination.Item>
+                    onClick={() => props.setActivePageNumber(props.totalPages)}>{props.totalPages == -1 ? '-' : props.totalPages}
+                    </Pagination.Item> */}
             </Pagination>
         </Row>
     )

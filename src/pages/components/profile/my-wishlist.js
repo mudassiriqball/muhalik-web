@@ -14,7 +14,7 @@ import NoDataFound from '../no-data-found'
 export default function WishlistScreen(props) {
     const [my_wishlist, setMy_wishlist] = useState([])
     const [ref, { x, y, width }] = useDimensions();
-    console.log('role:', props.role)
+
     useEffect(() => {
         setMy_wishlist([])
         let unmounted = true
@@ -52,7 +52,6 @@ export default function WishlistScreen(props) {
                     })
                 }
             }).catch((error) => {
-                console.log("product getting error:", error)
                 if (unmounted) {
                     alert('Error')
                 }
@@ -112,8 +111,8 @@ export default function WishlistScreen(props) {
                                             <label>{translate('rs')}{element.product.product_price}</label>
                                         </Col>
                                         <Col className='_padding' lg={2} md='auto' sm='auto' xs='auto'>
-                                            <Link href='/[category]/[sub_category]/[product]' as={`/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
-                                                <a style={{ fontSize: '12px', marginRight: '10px' }}>View</a>
+                                            <Link href='/products/category/[category]/[sub_category]/[product]' as={`/products/category/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
+                                                <a style={{ fontSize: '12px', marginRight: '10px' }}>{translate('view')}</a>
                                             </Link>
                                             <div className='delete' onClick={() => removeToWishlist(element._id, index)}>
                                                 <div>{element.isLoading ? translate('deleting') : translate('delete')}</div>
@@ -133,8 +132,8 @@ export default function WishlistScreen(props) {
                                             <label>{translate('rs')}{element.variation.price}</label>
                                         </Col>
                                         <Col className='_padding' lg={2} md='auto' sm='auto' xs='auto'>
-                                            <Link href='/[category]/[sub_category]/[product]' as={`/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
-                                                <a style={{ fontSize: '12px', marginRight: '10px' }}>View</a>
+                                            <Link href='/products/category/[category]/[sub_category]/[product]' as={`/products/category/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
+                                                <a style={{ fontSize: '12px', marginRight: '10px' }}>{translate('view')}</a>
                                             </Link>
                                             <div className='delete' onClick={() => removeToWishlist(element._id, index)}>
                                                 <div>{element.isLoading ? translate('deleting') : translate('delete')}</div>

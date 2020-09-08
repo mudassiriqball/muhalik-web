@@ -373,8 +373,8 @@ export default function Cart(props) {
                                                                         )}
                                                                     </Form.Control>
                                                                     <div className='d-inline-flex mt-auto'>
-                                                                        <Link href='/[category]/[sub_category]/[product]' as={`/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
-                                                                            <a style={{ fontSize: '12px', marginRight: '10px' }}>View</a>
+                                                                        <Link href='/products/category/[category]/[sub_category]/[product]' as={`/products/category/${element.product.category.value}/${element.product.sub_category.value}/${element.product._id}`}>
+                                                                            <a style={{ fontSize: '12px', marginRight: '10px' }}>{translate('view')}</a>
                                                                         </Link>
                                                                         <div className='delete' onClick={() => handleDeleteCart(element._id, index)}>
                                                                             <div>{element.isLoading ? <Spinner animation="grow" size="sm" /> : translate('delete')}</div>

@@ -69,7 +69,6 @@ export default function Profile(props) {
                 setUser(_decoded_token)
                 const user_url = MuhalikConfig.PATH + `/api/users/user-by-id/${_decoded_token._id}`;
                 await axios.get(user_url, { cancelToken: source.token }).then((res) => {
-                    console.log('user:', res.data.data)
                     if (unmounted) {
                         setUser(res.data.data[0])
                         setCart_count(res.data.data[0].cart.length)

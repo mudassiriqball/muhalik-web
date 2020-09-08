@@ -194,7 +194,7 @@ export default function SearchPage(props) {
                             }
                         </Row>
                         :
-                        <Row className='p-5 w-100'>
+                        <Row className='p-5 w-100' style={{ minHeight: '80vh' }}>
                             <div className='w-100'>
                                 <h5 className='text-center w-100'>{translate('no_results_found')}</h5>
                                 <label className='text-center w-100 p-1'>{translate('we_are_sorry_serch')}</label>
@@ -222,6 +222,7 @@ export default function SearchPage(props) {
                     margin: 0%;
                     padding: 0%;
                     background: white;
+                    min-height: 70vh;
                 }
                 .search_page {
                     min-height: 100vh;

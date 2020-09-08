@@ -78,19 +78,6 @@ export default function AllProducts(props) {
 
 
     function handleEditProduct(element) {
-        // if (element.product_type != 'simple-product') {
-        //     let array = [];
-        //     let variations = element.product_variations
-        //     variations.forEach((element, i) => {
-        //         array.push({
-        //             item: element.item, price: element.price, stock: element.stock, image_link: element.image_link,
-        //             price_error: '', stock_error: '', image_link_error: '', custom_fields: element.custom_fields
-        //         })
-        //     })
-        //     element.product_variations = array
-        // } else {
-        //     element.product_variations = []
-        // }
         setData(element)
         setViewProduct('edit')
     }
@@ -139,50 +126,6 @@ export default function AllProducts(props) {
                     handleShowConfirmModal={() => handleShowConfirmModal(-1)}
                     edit={() => handleEditProduct(data)}
                 />
-                // <AddNew
-                // title={`Vendor Dashboard / All Products / Update / ${data._id}`}
-                // categories_list={props.categories_list}
-                // sub_categories_list={props.sub_categories_list}
-
-                // isUpdateProduct={true}
-                // _id={data._id}
-                // isVariableProduct={data.product_type != 'simple-product'}
-
-                // back={() => { setViewProduct(false), setData({}) }}
-                // view={() => setViewProduct('view')}
-                // handleShowConfirmModal={() => handleShowConfirmModal(-1)}
-
-                // productCategory={data.category}
-                // productSubCategory={data.sub_category}
-                // subCategoryDisabled={false}
-
-                // productTags={data.product_tags}
-                // warrantyType={data.warranty_type}
-                // product_image_link={data.product_image_link}
-                // variationsArray={data.product_variations}
-                // customFieldsArray={data.custom_fields}
-                // dangerousGoodsArray={data.dangerous_goods}
-
-                // product_name={data.product_name}
-                // product_description={data.product_description}
-                // product_type={'variable-product'}
-                // product_type={data.product_type}
-                // sku={data.sku}
-                // product_price={data.product_price}
-                // product_in_stock={data.product_in_stock}
-                // product_brand_name={data.product_brand_name}
-
-                // product_warranty={data.product_warranty}
-                // warranty_type={data.warranty_type}
-                // product_discount={data.product_discount}
-                // purchase_note={data.purchase_note}
-                // product_weight={data.product_weight || ''}
-                // dimension_length={data.dimension_length | 1}
-                // dimension_width={data.dimension_width || ''}
-                // dimension_height={data.dimension_height || ''}
-                // shipping_charges={data.shipping_charges || ''}
-                // handling_fee={data.handling_fee || ''}
-                // />
                 break;
             default:
                 return <>

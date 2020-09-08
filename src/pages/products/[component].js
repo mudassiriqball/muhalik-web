@@ -220,6 +220,7 @@ export default function ComponentPage(props) {
                     margin: 0%;
                     padding: 0%;
                     background: white;
+                    min-height: 70vh;
                 }
                 .component_page {
                     min-height: 100vh;

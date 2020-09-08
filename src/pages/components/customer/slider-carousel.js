@@ -28,7 +28,6 @@ const SliderCarousel = (props) => {
     useEffect(() => {
         document.querySelector('#content').onmouseleave = function (mouse) {
             var edge = closestEdge(mouse, this);
-            console.log(edge);
         }
     }, [])
 
@@ -72,7 +71,6 @@ const SliderCarousel = (props) => {
         cat = false
         setIsCategoryHover(true)
         setHoverCategory(element)
-        console.log('cat in:', cat, sub)
     }
     function handleSubMouseOut() {
         setIsCategoryHover(false)

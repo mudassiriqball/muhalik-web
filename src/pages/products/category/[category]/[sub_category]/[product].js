@@ -989,7 +989,7 @@ function VariableProduct(props) {
                             :
                             <div className='add_to_wish_list'>
                                 <label className='p-0 m-0'>{props.isWishListLoading ? translate('adding') : translate('add_to_wishlist')}</label>
-                                <FontAwesomeIcon icon={faHeart} className='wishlist_font_awsome' onClick={() => props.addToWishlist(props.single_product._id, null)} />
+                                <FontAwesomeIcon icon={faHeart} className='wishlist_font_awsome' onClick={() => props.addToWishlist(props.single_product._id, activeVariation._id)} />
                             </div>
                         :
                         null
