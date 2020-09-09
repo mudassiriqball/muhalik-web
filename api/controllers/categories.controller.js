@@ -186,10 +186,7 @@ categoriesController.get_fields = async (req, res) => {
 categoriesController.get_tags = async (req, res) => {
   let tags;
   try {
-    let merged = {};
-    const start = 0;
-    const length = 100;
-    tags = await Product.find({}, { _id: 0, product_tags: 1 }).distinct(
+    tags = await Product.find({ isdeleted: false }, { _id: 0, product_tags: 1 }).distinct(
       "product_tags.value"
     );
     res.status(200).send({

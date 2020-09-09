@@ -55,7 +55,7 @@ const upload = multer({
 app.prepare()
   .then(() => {
     const app = express();
-    const http = require("https");
+    const http = require("http");
     const server = http.createServer(app);
     require("dotenv").config();
 

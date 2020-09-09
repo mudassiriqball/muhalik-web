@@ -284,8 +284,7 @@ export default function Category(props) {
                 }
                 ._category .products_col{
                     background: white;
-                    min-width: 100%;
-                    min-height: 70vh;
+                    width: 100%;
                 }
                 
                 ._category .id_row{

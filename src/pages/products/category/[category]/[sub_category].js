@@ -297,8 +297,7 @@ export default function Category(props) {
                 }
                 ._sub_category .products_col{
                     background: white;
-                    min-width: 100%;
-                    min-height: 70vh;
+                    width: 100%;
                 }
                 
                 ._sub_category .id_row{
