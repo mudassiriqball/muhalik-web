@@ -3,7 +3,9 @@ This is a website + app for ecommerce.
 like daraz.pk
 
 Mobile app repository: https://github.com/mudassiriqball/mahaalk-app
+
 Video Demo for web: https://youtu.be/It2LUK9zFbI
+
 Video demo for app: https://youtu.be/HfZpD7nct80
 
 Technologies used:
